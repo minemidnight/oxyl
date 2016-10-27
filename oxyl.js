@@ -3,12 +3,11 @@ const Discord = require("discord.js"),
       https = require("https"),
       math = require("mathjs"),
       fs = require("fs"),
-      jsonfile = require("jsonfile"),
       yaml = require("js-yaml");
 
 var ready = false;
-var yamlFile = fs.readFileSync("./oxylfiles/config.yml")
-var config = yaml.safeLoad(yamlFile);
+const config = yaml.safeLoad(fs.readFileSync("./oxylfiles/config.yml"));
+const defaultConfig = fs.readFileSync("./oxylfiles/default-config.yml");
 
 var commands = {
   default: {
@@ -20,7 +19,8 @@ var commands = {
         var cmds = {
           default: [],
           moderator: [],
-          creator: []
+          creator: [],
+          dm: [],
         }
 
         for (var cmd_type in commands) {
@@ -34,16 +34,18 @@ var commands = {
           }
         }
 
-        for (var cmd_type in cmds) { cmds[cmd_type].sort(); } //ABC Sort
+        for (var cmd_type in cmds) { cmds[cmd_type].sort(); }
 
         var defaultcmds = Object.keys(cmds["default"]).length;
         var modcmds = Object.keys(cmds["moderator"]).length;
         var creatorcmds = Object.keys(cmds["creator"]).length;
+        var dmcmds = Object.keys(cmds["dm"]).length;
 
         return "Default Commands **(" + defaultcmds + "):** `" + cmds["default"].join("`**,** `") +
         "`\nModerator Commands **(" + modcmds + "):** `" + cmds["moderator"].join("`**,** `") +
         "`\nCreator Commands **(" + creatorcmds + "):** `" + cmds["creator"].join("`**,** `") +
-        "`\nAll Commands - **" + (defaultcmds + modcmds + creatorcmds) + "**" +
+        "`\nDM Commands **(" + dmcmds + "):** `" + cmds["dm"].join("`**,** `") +
+        "`\nAll Commands - **" + (defaultcmds + modcmds + creatorcmds + dmcmds) + "**" +
         "\nUse `advancedhelp` to get a advanced list of commands, or cmdinfo for a detailed description of one.";
       }
     },
@@ -55,6 +57,7 @@ var commands = {
         var helpMsg = "";
 
         for (var cmd_type in commands) {
+          helpMsg += "**~~——————~~** __" + cmd_type.toUpperCase() + " COMMANDS__ **~~——————~~**";
           for (var loop_cmd in commands[cmd_type]) {
             helpMsg += "```\nCommand: " + loop_cmd;
             if (commands[cmd_type][loop_cmd].aliases.length > 0) {
@@ -97,6 +100,7 @@ var commands = {
         if (realCmd) {
           helpinfo += "info on `" + cmd + "`:\n```" +
                       "\nCommand: " + realCmd;
+          helpinfo += "\nCommand Type: " + cmdType;
           if (commands[cmdType][realCmd].aliases.length > 0) {
             helpinfo += "\nAliases: " + commands[cmdType][realCmd].aliases.join(", ");
           } else {
@@ -166,7 +170,7 @@ var commands = {
         if (secs > 0) {
           timestr += secs + "s ";
         }
-        return "**Uptime**: " + timestr;
+        return "**Uptime:** " + timestr;
       }
     },
     ping: {
@@ -210,10 +214,10 @@ var commands = {
     },
     support: {
       aliases: ["invite"],
-      description: "Get invite link to the support server, aswell as Oxyl's invite link",
+      description: "Get invite link to the support guild, aswell as Oxyl's invite link",
       usage: "[]",
       process: function(message) {
-        return "Support Server: https://discord.gg/KtyNPcE" +
+        return "Support Guild: https://discord.gg/KtyNPcE" +
         "\nInvite Link: https://goo.gl/9tHfuB";
       }
     }
@@ -378,44 +382,232 @@ var commands = {
   			}
       }
     },
-  }
-}
+  },
+  dm: {
+    config: {
+      aliases: ["setup"],
+      description: "Configurate Oxyl and his settings per guild",
+      usage: "<guild id> [option] [option]",
+      process: function(message) {
+        var args = message.content.split(" ");
+        var guild = bot.guilds.get(args[0]);
+        if (!guild) {
+          return "Guild with id `" + args[0] + "` not found.";
+        } else if (guild.owner.id != message.author.id) {
+          return "You are not the owner of `" + guild + "` **(**" + guild.id + "**)**";
+        } else {
+          var path = "./oxylfiles/" + guild.id + ".yml";
+          var data = yaml.safeLoad(fs.readFileSync(path));
+          if (args[1] == "get") {
+            var configMsg = "", cNumb = 1;
+            configMsg += "Config for `" + guild + "` **(**" + guild.id + "**)**";
+            configMsg += "\n```";
 
-var stepTypes = {
-  boolean: {
-    validation: function(input, guild) {
-      if (input == "yes" || input == "true") {
-        return true;
-      } else if (input == "no" || input == "false") {
-        return false;
-      } else {
-        return null;
-      }
-    }
-  },
-  integer: {
-    validation: function(input, guild) {
-      if (!isNaN(parseInt(input))) {
-        return parseInt(input);
-      } else {
-        return null;
-      }
-    }
-  },
-  roles: {
-    validation: function(input, guild) {
-      var roles = guild.roles.array(), roleNames = [], result = [];
-      for (var i = 0; i < roles.length; i++) { roleNames.push(roles[i].name); }
-      input = input.split(" ");
-      for (var i = 0; i < input.length; i++) {
-        if (input[i].inList(roleNames)) {
-          result.push(roleNames[input[i]]);
+            if (data["channels"]["ignored"].length > 0) {
+              var channelNames = [];
+              for (var i = 0; i < data["channels"]["ignored"].length; i++) {
+                channelNames.push(bot.channels.get(data["channels"]["ignored"][i]).name);
+              }
+              configMsg += "\n[" + cNumb + "] Ignored Channels: " + channelNames.sort();
+            } else {
+              configMsg += "\n[" + cNumb + "] Ignored Channels: None";
+            } cNumb++;
+
+            if (data["roles"]["mod"].length > 0) {
+              var modRoles = [];
+              for (var i = 0; i < data["roles"]["mod"].length; i++) {
+                modRoles.push(guild.roles.get(data["roles"]["mod"][i]).name);
+              }
+              configMsg += "\n\n[" + cNumb + "] Moderator Roles: " + modRoles.sort();
+            } else {
+              configMsg += "\n\n[" + cNumb + "] Moderator Roles: None";
+             cNumb++;
+
+            if (data["roles"]["whitelist"].length > 0) {
+              var whitelistedRoles = [];
+              for (var i = 0; i < data["roles"]["whitelist"].length; i++) {
+                whitelistedRoles.push(guild.roles.get(data["roles"]["whitelist"][i]).name);
+              }
+              configMsg += "\n[" + cNumb + "] Whitelisted Roles: " + whitelistedRoles.sort();
+            } else {
+              configMsg += "\n[" + cNumb + "] Whitelisted Roles: None";
+            } cNumb++;
+
+            if (data["filters"]["swear"].length > 0) {
+              configMsg += "\n\n[" + cNumb + "] Swear Filter: " + data["filters"]["swear"][i].sort();
+            } else {
+              configMsg += "\n\n[" + cNumb + "] Swear Filter: Disabled";
+            } cNumb++;
+
+            if (data["filters"]["link"]) {
+              configMsg += "\n[" + cNumb + "] Link Filter: Enabled";
+            } else {
+              configMsg += "\n[" + cNumb + "] Link Filter: Disabled";
+            } cNumb++;
+
+            if (data["filters"]["spam"]) {
+              configMsg += "\n[" + cNumb + "] Spam Filter: Enabled";
+            } else {
+              configMsg += "\n[" + cNumb + "] Spam Filter: Disabled";
+            } cNumb++;
+
+            configMsg += "\n```\nTo change a value, type these arguments: `<guild id> set <number shown> <new value/reset>`";
+            configMsg += "\n\n**Accepted Values for Different Types:**";
+            configMsg += "\nChannels: ID or Name (not including #)";
+            configMsg += "\nRoles: ID or Name";
+            configMsg += "\nSwear Filter: word";
+            configMsg += "\nOther Filters: on/enable/true/yes or off/disable/false/no";
+
+            return configMsg;
+          }
+        } else if (args[1] == "set" || args[1] == "edit") {
+          try { args[3].toLowerCase() } catch (e) { return; }
+          if (args[2]) {
+            var cNumb = parseInt(args[2])
+            if (isNaN(cNumb)) {
+              return "Invalid config ID " + cNumb + ". (Use `<guild id> get` as arguments to get the current settings and config numbers)";
+
+            } else if (cNumb == 1) {
+              var value = args[3], channel, type;
+              if (!value) {
+                return "Please provide a channel ID or a channel name to add to the Ignored Channels, or provide `reset` to reset it.";
+              } else if (value == "reset" || value == "clear") {
+                changeConfig(guild.id,
+                  function() {
+                    data["channels"]["ignored"] = [];
+                  });
+                return "Reset the Ignored Channels"
+              } else if (!isNaN(parseInt(value))) {
+                type = "id";
+              } else {
+                type = "name";
+              }
+
+              channel = guild.channels.filter(c => c.type == "text").find(type, value);
+              if (!channel) {
+                return "Invalid Input Value, please provide a channel ID or a channel name."
+              } else {
+                changeConfig(guild.id,
+                  function() {
+                    data["channels"]["ignored"].push(channel.id);
+                  });
+                return "Added " + channel + " to Ignored Channels of `" + guild + "` **(**" + guild.id + "**)**"
+              }
+
+            } else if (cNumb == 2) {
+              var value = args[3], role, type;
+              if (!value) {
+                return "Please provide a role ID or a role name to add to the Moderator Roles, or provide `reset` to reset it.";
+              } else if (value == "reset" || value == "clear") {
+                changeConfig(guild.id,
+                  function() {
+                    data["roles"]["mod"] = [];
+                  });
+                return "Reset the Moderator Roles"
+              } else if (!isNaN(parseInt(value))) {
+                type = "id";
+              } else {
+                type = "name";
+              }
+
+              role = guild.roles.find(type, value);
+              if (!channel) {
+                return "Invalid Input Value, please provide a role ID or a role name."
+              } else {
+                changeConfig(guild.id,
+                  function() {
+                    data["roles"]["mod"].push(role.id);
+                  });
+                return "Added " + role.name + " to Moderator Roles of `" + guild + "` **(**" + guild.id + "**)**"
+              }
+
+            } else if (cNumb == 3) {
+              var value = args[3], role, type;
+              if (!value) {
+                return "Please provide a role ID or a role name to add to the Whitelisted Roles, or provide `reset` to reset it.";
+              } else if (value == "reset" || value == "clear") {
+                changeConfig(guild.id,
+                  function() {
+                    data["roles"]["whitelist"] = [];
+                  });
+                return "Reset the Whitelisted Roles"
+              } else if (!isNaN(parseInt(value))) {
+                type = "id";
+              } else {
+                type = "name";
+              }
+
+              role = guild.roles.find(type, value);
+              if (!channel) {
+                return "Invalid Input Value, please provide a role ID or a role name."
+              } else {
+                changeConfig(guild.id,
+                  function() {
+                    data["roles"]["whitelist"].push(role.id);
+                  });
+                return "Added " + role.name + " to Whitelisted Roles of `" + guild + "` **(**" + guild.id + "**)**"
+              }
+
+            } else if (cNumb == 4) {
+              var value = args[3];
+              if (!value) {
+                return "Please provide a word to add to the Swear Filter, or provide `reset` to reset it.";
+              } else if (value == "reset" || value == "clear") {
+                changeConfig(guild.id,
+                  function() {
+                    data["filters"]["swear"] = [];
+                  });
+                return "Reset the Swear Filter"
+              }
+
+              changeConfig(guild.id,
+                function() {
+                  data["filters"]["swear"].push(value);
+                });
+              return "Added `" + value + "` to Swear Filter of `" + guild + "` **(**" + guild.id + "**)**"
+
+            } else if (cNumb == 5) {
+              var value = args[3];
+              if (!value) {
+                return "Please provide a value for the Link Filter.";
+              } else if (value == "enable" || value == "true" || value == "yes") {
+                value = true;
+              } else if (value == "disable" || value == "false" || value == "no") {
+                value = false;
+              }
+
+              changeConfig(guild.id,
+                function() {
+                  data["filters"]["swear"] = (value);
+                });
+              return "Set Link Filter to `" + value + "` in `" + guild + "` **(**" + guild.id + "**)**"
+
+            } else if (cNumb == 6) {
+              var value = args[3];
+              if (!value) {
+                return "Please provide a value for the Spam Filter.";
+              } else if (value == "enable" || value == "true" || value == "yes") {
+                value = true;
+              } else if (value == "disable" || value == "false" || value == "no") {
+                value = false;
+              }
+
+              changeConfig(guild.id,
+                function() {
+                  data["filters"]["swear"] = (value);
+                });
+              return "Set Spam Filter to `" + value + "` in `" + guild + "` **(**" + guild.id + "**)**"
+
+              } else {
+                return "Provide a config ID to change. (Use `<guild id> get` as arguments to get the current settings and config numbers)";
+              }
+            } else {
+              return "Provide a config ID to change. (Use `<guild id> get` as arguments to get the current settings and config numbers)";
+            }
+          } else {
+            return "Argument Missing: `get` or `set`"
+          }
         }
-      }
-      if (input.length == result.length) {
-          return result;
-      } else {
-        return null;
       }
     }
   }
@@ -425,7 +617,7 @@ bot.on("ready", () => {
   ready = true;
 	consoleLog("```md" +
   "\n* Timestamp: " + Date() +
-  "\n* Servers: " + bot.guilds.size +
+  "\n* Guilds: " + bot.guilds.size +
   "\n* Text Channels: " + bot.channels.filter(c=>c.type === "text").size +
   "\n* Users: " + bot.users.size +
   "```", "important")
@@ -437,29 +629,26 @@ bot.on("ready", () => {
 bot.on("reconnecting", () => {
   bot.user.setGame(config["messages"]["onlineGame"]);
   bot.user.setStatus("online");
-  console.log("Oxyl has reconnected to Discord");
+  console.log("Oxyl has reconnected to Discord");``
 });
 
 String.prototype.inList = function(list) {
   return (list.indexOf(this.toString()) != -1);
 }
 
-function setConfigValue(guild_id, object) {
-  var path = "./oxylfiles/" + guild_id + ".json";
-  var data = JSON.parse(jsonfile.readFileSync(path));
-  data.push(object);
-  fs.writeFileSync(path, JSON.stringify(data));
-  consoleLog("Added JSON object + `" + JSON.stringify(object) + "` at `" + path + "`", "debug");
+function changeConfig(guildId, callback) {
+  var path = "./oxylfiles/" + guildId + ".yml";
+  var data = yaml.safeLoad(fs.readFileSync(path));
+  callback();
+  fs.writeFileSync(path, yaml.safeDump(data));
+  consoleLog("Edited config in `" + path + "`\n\n```\n" + callback + "\n```", "debug");
 }
 
-function getConfigValue(guild_id, object) {
-  var path = "./oxylfiles/" + guild_id + ".json";
-  var data = JSON.parse(jsonfile.readFileSync(path));
-  try {JSON.stringify()
-    return data[object];
-  } catch (e) {
-    return null;
-  }
+function getConfigValue(guildId, name) {
+  var path = "./oxylfiles/" + guildId + ".yml";
+  var data = yaml.safeLoad(fs.readFileSync(path));
+  try { return data[name]; }
+  catch(err) { return; }
 }
 
 function consoleLog(message, type) {
@@ -471,7 +660,7 @@ function consoleLog(message, type) {
     var channel = "dm";
   } else if (type == "command" || type == "cmd") {
     console.log("[CMD] " + message);
-    var channel = "command";
+    var channel = "commands";
   } else if (type == "debug") {
     if (config["options"]["debugMode"]) {
       console.log("[DEBUG] " + message);
@@ -479,9 +668,13 @@ function consoleLog(message, type) {
     }
   }
   if (channel != null) {
-    if (!ready) {return;}
+    if (!ready) { return; }
     channel = config["channels"][channel]
-    bot.channels.get(channel).sendMessage(message);
+    try {
+      channel = bot.channels.get(channel);
+    } finally {
+      channel.sendMessage(message);
+    }
   }
 }
 
@@ -492,10 +685,10 @@ bot.on("channelCreate", (channel) => {
 
 bot.on("guildCreate", (guild) => {
   var guild_id = guild.id
-  var path = "./oxylfiles/" + guild_id + ".json";
-  fs.writeFileSync(path, "[]");
-  consoleLog("Created JSON server config file for " + guild + "(`" + path + "`)", "debug");
-  guild.owner.sendMessage("Thank you for adding Oxyl to your server **(**" + guild.name + "**)**.\n\n" +
+  var path = "./oxylfiles/" + guild_id + ".yml";
+  fs.writeFileSync(path, defaultConfig);
+  consoleLog("Created YML guild config file for " + guild + "(`" + path + "`)", "debug");
+  guild.owner.sendMessage("Thank you for adding Oxyl to your guild **(**" + guild.name + "**)**.\n\n" +
                            "Oxyl will be using the default configuration values. For more info, or to customly" +
                            "configure the options, run `:config " + guild.id + "` or `config: " + guild.id + "`");
 });
@@ -507,9 +700,9 @@ bot.on("debug", (info) => {
 
 bot.on("guildDelete", (guild) => {
   var guild_id = guild.id
-  var path = "./oxylfiles/" + guild + ".json";
-  fs.unlinkSync(path);
-  consoleLog("Deleted JSON server config file for " + guild + "(`" + path + "`)", "debug");
+  var path = "./oxylfiles/" + guild + ".yml";
+  try {fs.unlinkSync(path)} catch(e) {}
+  consoleLog("Deleted YML guild config file for " + guild + "(`" + path + "`)", "debug");
 });
 
 bot.on("message", (message) => {
@@ -519,8 +712,6 @@ bot.on("message", (message) => {
 		return;
   } else if (message.author.bot) {
     return;
-  } else if (message.channel.type == "dm") {
-		consoleLog("**" + message.author.username + "** - " + message.content, "dm");
 	} else {
     for (var cmd_type in commands) {
       for (var loop_cmd in commands[cmd_type]) {
@@ -565,16 +756,26 @@ bot.on("message", (message) => {
           message.reply(config["messages"]["notMod"]);
           return;
         }
+      } else if (cmdtype == "dm") {
+        if (message.channel.type == "dm") {
+      		consoleLog("**" + message.author.username + "** - " + message.content, "dm");
+        } else {
+          return;
+        }
       }
       try {
         var result = commands[cmdtype][cmd].process(message);
-        console.log("Result for " + cmd + " by " + message.author.username + ": " + result);
+        consoleLog("Result for " + cmd + " by " + message.author.username + ":\n\n " + result, "cmd");
       } catch(error) {
         consoleLog("Failed a " + cmdtype + " command (" + cmd + ")\n" +
         "**Error:**\n```" + error.stack + "\n```", "cmd");
       }
-      if (result != null) {
-        message.reply(result);
+      if (result) {
+        if (cmdtype == "dm") {
+          message.author.sendMessage(result);
+        } else {
+          message.reply(result);
+        }
       }
     }
   }
