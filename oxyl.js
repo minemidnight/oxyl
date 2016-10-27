@@ -378,16 +378,6 @@ var commands = {
   			}
       }
     },
-    restart: {
-      aliases: ["refresh", "reload"],
-      description: "Restart Oxyl",
-      usage: "[]",
-      process: function(message) {
-  		  bot.user.setStatus("idle", config["messages"]["restartingGame"]);
-  			return "restarting Oxyl.";
-  			process.exit(1);
-      }
-    }
   }
 }
 
@@ -439,8 +429,15 @@ bot.on("ready", () => {
   "\n* Text Channels: " + bot.channels.filter(c=>c.type === "text").size +
   "\n* Users: " + bot.users.size +
   "```", "important")
-	bot.user.setStatus("online", config["messages"]["onlineGame"]);
+  bot.user.setGame(config["messages"]["onlineGame"]);
+  bot.user.setStatus("online");
 	console.log("Oxyl has finished booting up and is now ready!");
+});
+
+bot.on("reconnecting", () => {
+  bot.user.setGame(config["messages"]["onlineGame"]);
+  bot.user.setStatus("online");
+  console.log("Oxyl has reconnected to Discord");
 });
 
 String.prototype.inList = function(list) {
