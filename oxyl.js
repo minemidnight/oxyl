@@ -174,7 +174,8 @@ var commands = {
       description: "Test the bot's responsiveness",
       usage: "[]",
       process: function(message) {
-        message.channel.sendMessage("Pong!").then(m => m.edit("Pong! `" + (m.createdTimestamp - Date.now()) + "ms`"));
+        var time = Date.now()
+        message.channel.sendMessage("Pong!").then(m => m.edit("Pong! `" + (Date.now() - time) + "ms`"));
       }
     },
     youtube: {
@@ -249,17 +250,16 @@ var commands = {
       usage: "<mention>",
       process: function(message) {
         var mention = message.mentions.users.array()[0];
-        var banPerms = message.guild.member(bot.user.id).hasPermission("BAN_MEMBERS");
-        var botPos = message.guild.member(bot.user).highestRole.position;
+        var banPerms = message.guild.member(bot.user).hasPermission("BAN_MEMBERS");
         if (mention == null) {
           return "please mention the user you would like banned."
         } else {
           if (!banPerms) {
             return "Oxyl does not have permissions to ban any user."
           } else {
-            var userPos = message.guild.member(mention).highestRole.position;
-            if (userPos >= botPos) {
-              return mention + " could not be banned due to permissions.";
+            var bannable = message.guild.member(mention).bannable;
+            if (!bannable) {
+              return mention + " could not ban be banned because they have a higher role.";
             } else {
               message.guild.ban(mention);
               return mention + " has been banned.";
@@ -274,32 +274,30 @@ var commands = {
       usage: "<mention>",
       process: function(message) {
         var mention = message.mentions.users.array()[0];
-        var mutedRole = message.guild.roles.find("name", "Muted");
         var isMuted = message.guild.member("155112606661607425").roles.find("name", "Muted");
-        var rolePerms = message.guild.member(bot.user.id).hasPermission("MANAGE_ROLES_OR_PERMISSIONS");
-        var botPos = message.guild.member(bot.user).highestRole.position;
+        var rolePerms = message.guild.member(bot.user).hasPermission("MANAGE_ROLES_OR_PERMISSIONS");
         if (mention == null) {
           return "please mention the user you would like muted."
         } else {
           if (!mutedRole && !rolePerms) {
             return "Oxyl does not have the permission to create and configure the muted role.";
-          } else if (!mutedRole) {
-            message.guild.createRole({name: "Muted", color: "#DF4242", permissions: []});
-            var channels = message.guild.channels.filter(c=>c.type === "text").array();
-            for (var i = 0; i < channels.length; i++) {
-              channels[i].overwritePermissions("Muted", {SEND_MESSAGES: false});
-            }
+          } else if (!message.guild.roles.find("name", "Muted")) {
+            message.guild.createRole({name: "Muted", color: "#DF4242", permissions: []})
+              .then(function(role) {
+                      var channels = message.guild.channels.filter(c=>c.type === "text").array()
+                      for (var i = 0; i < channels.length; i++) {
+                        channels[i].overwritePermissions(role, {SEND_MESSAGES: false});
+                      }
+                    });
           } if (!rolePerms) {
             return "Oxyl does not have permissions to mute any user."
           } else {
-            var userPos = message.guild.member(mention).highestRole.position;
-            if (userPos >= botPos) {
-              return mention + " could not be muted due to permissions.";
-            } else if (isMuted) {
-              message.guild.member(mention).removeRole(message.guild.roles.find("name", "Muted"));
+            var mutedRole = message.guild.roles.find("name", "Muted");
+            if (isMuted) {
+              message.guild.member(mention).removeRole(mutedRole);
               return mention + " has been unmuted.";
             } else {
-              message.guild.member(mention).addRole(message.guild.roles.find("name", "Muted"));
+              message.guild.member(mention).addRole(mutedRole);
               return mention + " has been muted.";
             }
           }
@@ -311,7 +309,7 @@ var commands = {
       description: "Delete any amount of messages by all users or a list of users (only 100 at a time)",
       usage: "<amount> [mentions]",
       process: function(message) {
-        var deletePerms = message.guild.member(bot.user.id).hasPermission("MANAGE_MESSAGES"),
+        var deletePerms = message.guild.member(bot.user).hasPermission("MANAGE_MESSAGES"),
             args = message.content.split(" "),
             amt = parseInt(args[0]),
             mentions = message.mentions.users.array();
@@ -343,21 +341,20 @@ var commands = {
     },
     kick: {
       aliases: [],
-      description: "Kick a user from your guild",
+      description: "Kick a user from the guild",
       usage: "<mention>",
       process: function(message) {
         var mention = message.mentions.users.array()[0];
-        var kickPerms = message.guild.member(bot.user.id).hasPermission("KICK_MEMBERS");
-        var botPos = message.guild.member(bot.user).highestRole.position;
+        var kickPerms = message.guild.member(bot.user).hasPermission("KICK_MEMBERS");
         if (mention == null) {
           return "please mention the user you would like kicked."
         } else {
           if (!kickPerms) {
             return "Oxyl does not have permissions to kick any user."
           } else {
-            var userPos = message.guild.member(mention).highestRole.position;
-            if (userPos >= botPos) {
-              return mention + " could not be kicked due to permissions.";
+            var kickable = message.guild.member(mention).kickable;
+            if (!kickable) {
+              return mention + " could not ban be kicked because they have a higher role.";
             } else {
               message.guild.member(mention).kick();
               return mention + " has been kicked.";
