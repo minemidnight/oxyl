@@ -101,8 +101,8 @@ bot.on("guildCreate", (guild) => {
   fs.writeFileSync(path, defaultConfig);
   consoleLog("Created YML guild config file for " + guild + "(`" + path + "`)", "debug");
   guild.owner.sendMessage("Thank you for adding Oxyl to your guild **(**" + guild.name + "**)**.\n\n" +
-                           "Oxyl will be using the default configuration values. For more info, or to customly" +
-                           "configure the options, run `:config " + guild.id + "` or `config: " + guild.id + "`");
+                           "Oxyl will be using the default configuration values. For more info, or to customize" +
+                           "configuration options, run `:config " + guild.id + "` or `config: " + guild.id + "`");
 });
 
 bot.on("guildDelete", (guild) => {
