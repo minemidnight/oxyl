@@ -1,11 +1,12 @@
 const Discord = require("discord.js"),
       Oxyl = require("../oxyl.js"),
       https = require("https");
+const config = Oxyl.config;
 
 Oxyl.registerCommand("youtube", "default", (message, bot) => {
   var options = {
     host: "www.googleapis.com",
-    path: "/youtube/v3/search?part=snippet&maxResults=1&type=video&q=" + escape(message.content) + "&key=" + Oxyl.config["googleKey"]
+    path: "/youtube/v3/search?part=snippet&maxResults=1&type=video&q=" + escape(message.content) + "&key=" + config["googleKey"]
   }
   var request = https.request(options, function (res) {
     var data = "";
