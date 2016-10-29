@@ -23,15 +23,15 @@ Oxyl.registerCommand("serverinfo", "default", (message, bot) => {
     return `info on **${guild.name}** (ID: ${guild.id})` +
            `\n\n**Channels:**` +
            `\n **╠** Text: ${guild.channels.filter(c => c.type == "text").size}` +
-           `\n **║  ╚** Default Channel: ${guild.defaultChannel} (ID: ${guild.defaultChannel.id})` +
+           `\n **║ ╚** Default Channel: ${guild.defaultChannel} (ID: ${guild.defaultChannel.id})` +
            `\n **╚** Voice: ${guild.channels.filter(c => c.type == "voice").size}` +
            `\n     **╠** AFK Channel: ${afkChannel}` +
            `\n     **╚** AFK Timeout: ${guild.afkTimeout}` +
            `\n\n**Members:**` +
            `\n **╠** Online: ${guild.memberCount - offlineMembers}` +
-           `\n **║  ╠** DND: ${dndMembers}` +
-           `\n **║  ╠** Idle: ${idleMembers}` +
-           `\n **║  ╚** Online: ${onlineMembers}` +
+           `\n **║ ╠** DND: ${dndMembers}` +
+           `\n **║ ╠** Idle: ${idleMembers}` +
+           `\n **║ ╚** Online: ${onlineMembers}` +
            `\n **╠** Offline: ${offlineMembers}` +
            `\n **╚** Total: ${guild.memberCount}` +
            `\n\n**Emojis:**` +
