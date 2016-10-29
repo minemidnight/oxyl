@@ -2,7 +2,7 @@ const Discord = require("discord.js"),
       Oxyl = require("../oxyl.js");
 
 Oxyl.registerCommand("cmdinfo", "default", (message, bot) => {
-  var helpinfo = "", cmd = message.content.split(" ")[0], realCmd, cmdType, commands = Oxyl.commands;
+  var helpInfo = "", cmd = message.content.split(" ")[0], realCmd, cmdType, commands = Oxyl.commands;
   if (!cmd) { return "Please provide a command to get the information of."; }
   for (var cmd_type in commands) {
     for (var loop_cmd in commands[cmd_type]) {
@@ -14,27 +14,28 @@ Oxyl.registerCommand("cmdinfo", "default", (message, bot) => {
   }
 
   if (realCmd) {
-    helpinfo += "info on `" + cmd + "`:\n```" +
-                "\nCommand: " + realCmd;
-    helpinfo += "\nCommand Type: " + cmdType;
+    helpInfo += "info on `" + cmd + "`:\n```";
+    helpInfo += `\nCommand: ${realCmd}`;
+    helpInfo += `\nCommand Type: ${cmdType}`;
     if (commands[cmdType][realCmd].aliases.length > 0) {
-      helpinfo += "\nAliases: " + commands[cmdType][realCmd].aliases.join(", ");
+      helpInfo += `\nAliases: ${commands[cmdType][realCmd].aliases.join(", ")}`;
     } else {
-      helpinfo += "\nAliases: N/A";
+      helpInfo += "\nAliases: N/A";
     }
     if (commands[cmdType][realCmd].description) {
-      helpinfo += "\nDescription: " + commands[cmdType][realCmd].description;
+      helpInfo += `\nDescription: ${commands[cmdType][realCmd].description}`;
     } else {
-      helpinfo += "\nDescription: N/A";
+      helpInfo += "\nDescription: N/A";
     }
     if (commands[cmdType][realCmd].usage) {
-      helpinfo += "\nUsage: " + commands[cmdType][realCmd].usage;
+      helpInfo += `\nUsage: ${commands[cmdType][realCmd].usage}`;
     } else {
-      helpinfo += "\nUsage: N/A";
+      helpInfo += "\nUsage: N/A";
     }
-    helpinfo += "\n```";
+    helpInfo += "\n```";
   } else {
-    helpinfo = "Command not found - `" + cmd + "`";
+    helpInfo = "Command not found - `" + cmd + "`";
+    helpInfo = `Command not found - \`${cmd}\``
   }
-  return helpinfo;
+  return helpInfo;
 }, ["cmdhelp"], "List detailed information about a command", "<command>");

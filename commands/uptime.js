@@ -24,5 +24,5 @@ Oxyl.registerCommand("uptime", "default", (message, bot) => {
   if (secs > 0) {
     timestr += secs + "s ";
   }
-  return "**Uptime:** " + timestr;
+  return `**Uptime:** ${timestr}`;
 }, [], "View the current uptime of Oxyl", "[]");

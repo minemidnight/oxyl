@@ -13,7 +13,7 @@ Oxyl.registerCommand("math", "default", (message, bot) => {
     if (isNaN(parseFloat(result))) {
       return "Invalid Calculation Expression";
     } else {
-      return "**Result:** " + result;
+      return `**Result:** ${result}`;
     }
   }
 }, ["calc", "calculate"], "Calculate a math expression", "<expression>");

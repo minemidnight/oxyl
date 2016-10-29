@@ -24,7 +24,7 @@ Oxyl.registerCommand("shorten", "default", (message, bot) => {
   } else {
     googl.shorten(message.content, {quotaUser: message.author.id})
       .then((shortUrl) => {
-          message.reply("shortened link: " + shortUrl);
+          return `shortened link: ${shortUrl}`;
       })
   }
 }, ["shortenlink", "googl", "shortlink"], "Shorten a link using goo.gl", "<link>");

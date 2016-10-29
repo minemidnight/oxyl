@@ -10,12 +10,12 @@ Oxyl.registerCommand("ban", "moderator", (message, bot) => {
     if (!banPerms) {
       return "Oxyl does not have permissions to ban any user."
     } else {
-      var bannable = message.guild.member(mention).bannable;
+      var bannable = message.member.bannable;
       if (!bannable) {
-        return mention + " could not ban be banned because they have a higher role.";
+        return `${mention} could not ban be banned because they have a higher role`;
       } else {
         message.guild.ban(mention);
-        return mention + " has been banned.";
+        return `${mention} has been banned`;
       }
     }
   }

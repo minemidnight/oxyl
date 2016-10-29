@@ -3,7 +3,7 @@ const Discord = require("discord.js"),
 
 Oxyl.registerCommand("mute", "moderator", (message, bot) => {
   var mention = message.mentions.users.array()[0];
-  var isMuted = message.guild.member("155112606661607425").roles.find("name", "Muted");
+  var isMuted = message.guild.roles.find("name", "Muted");
   var rolePerms = message.guild.member(bot.user).hasPermission("MANAGE_ROLES_OR_PERMISSIONS");
   if (mention == null) {
     return "please mention the user you would like muted."
@@ -24,10 +24,10 @@ Oxyl.registerCommand("mute", "moderator", (message, bot) => {
       var mutedRole = message.guild.roles.find("name", "Muted");
       if (isMuted) {
         message.guild.member(mention).removeRole(mutedRole);
-        return mention + " has been unmuted.";
+        return `${mention} has been muted`;
       } else {
         message.guild.member(mention).addRole(mutedRole);
-        return mention + " has been muted.";
+        return `${mention} has been unmuted`;
       }
     }
   }

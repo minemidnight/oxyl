@@ -4,8 +4,8 @@ const Discord = require("discord.js"),
 Oxyl.registerCommand("eval", "creator", (message, bot) => {
   try {
     var output = eval(message.content);
-    return "**Output:** " + output;
-  } catch (e) {
-    return "**Error:** " + e;
+    return `**Output:** ${output}`;
+  } catch (err) {
+    return `**Error:** ${err}`;
   }
 }, [], "Execute code", "<code>");

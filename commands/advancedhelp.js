@@ -1,23 +1,24 @@
 const Discord = require("discord.js"),
       Oxyl = require("../oxyl.js");
+const commands = Oxyl.commands;
 
 Oxyl.registerCommand("advancedhelp", "default", (message, bot) => {
-  var helpMsg = "", commands = Oxyl.commands;
+  var helpMsg = "";
 
-  for (var cmd_type in commands) {
-    helpMsg += "**~~——————~~** __" + cmd_type.toUpperCase() + " COMMANDS__ **~~——————~~**";
-    for (var loop_cmd in commands[cmd_type]) {
-      helpMsg += "```\nCommand: " + loop_cmd;
-      if (commands[cmd_type][loop_cmd].aliases.length > 0) {
-        helpMsg += "\nAliases: " + commands[cmd_type][loop_cmd].aliases.join(", ");
+  for (var cmdType in commands) {
+    helpMsg += `**~~——————~~** __${cmdType.toUpperCase()} COMMANDS__ **~~——————~~**`;
+    for (var loopCmd in commands[cmdType]) {
+      helpMsg += "```\nCommand: " + loopCmd;
+      if (commands[cmdType][loopCmd].aliases.length > 0) {
+        helpMsg += `\nAliases: ${commands[cmdType][loopCmd].aliases.join(", ")}`;
       } else {
         helpMsg += "\nAliases: N/A";
-      } if (commands[cmd_type][loop_cmd].description) {
-        helpMsg += "\nDescription: " + commands[cmd_type][loop_cmd].description;
+      } if (commands[cmdType][loopCmd].description) {
+        helpMsg += `\nDescription: ${commands[cmdType][loopCmd].description}`;
       } else {
         helpMsg += "\nDescription: N/A";
-      } if (commands[cmd_type][loop_cmd].usage) {
-        helpMsg += "\nUsage: " + commands[cmd_type][loop_cmd].usage;
+      } if (commands[cmdType][loopCmd].usage) {
+        helpMsg += `\nUsage: ${commands[cmdType][loopCmd].usage}`;
       } else {
         helpMsg += "\nUsage: N/A";
       } helpMsg += "\n```";

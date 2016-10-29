@@ -6,7 +6,7 @@ const config = Oxyl.config;
 Oxyl.registerCommand("youtube", "default", (message, bot) => {
   var options = {
     host: "www.googleapis.com",
-    path: "/youtube/v3/search?part=snippet&maxResults=1&type=video&q=" + escape(message.content) + "&key=" + config["googleKey"]
+    path: `/youtube/v3/search?part=snippet&maxResults=1&type=video&q=${escape(message.content)}&key=${config["googleKey"]}`
   }
   var request = https.request(options, function (res) {
     var data = "";
@@ -16,7 +16,7 @@ Oxyl.registerCommand("youtube", "default", (message, bot) => {
     res.on("end", function () {
       if (data.indexOf('videoId') >= 0) {
         data = JSON.parse(data)["items"][0]["id"]["videoId"];
-        message.reply("here is the video you searched for: http://youtube.com/watch?v=" + data); // Manually do it because callbacks are async
+        message.reply(`here is the video you searched for: http://youtube.com/watch?v=${data}`); // Manually do it because callbacks are async
       } else {
         message.reply("no results found.");
       }});
