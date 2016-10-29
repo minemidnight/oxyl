@@ -63,7 +63,7 @@ bot.on("message", (message) => {
       try {
         var result = commands[type][cmd].process(message, bot);
         message.content = message.content == "" ? message.content = " " : message.content; //To make logging actually show a codeblock
-        consoleLog("[" + new Date().toTimeString() + "] " + message.author.username +
+        consoleLog("[" + Oxyl.formatDate(new Date()) + "] " + message.author.username +
                     "#" + message.author.discriminator + " ran `" + cmd + "` with arguments `" + message.content + "`", "cmd");
       } catch(error) {
         consoleLog("Failed a " + type + " command (" + cmd + ")\n" +

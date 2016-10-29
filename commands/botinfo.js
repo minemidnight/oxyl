@@ -8,8 +8,8 @@ Oxyl.registerCommand("botinfo", "default", (message, bot) => {
 	"\nUsers: " + bot.users.size +
 	"\n```\n```" +
 	"\nCreator: minemidnight & TonyMaster21" +
-	"\nPrefix/Suffix: " + Oxyl.config["prefix"] +
-	"\nGithub: https://github.com/minemidnight/oxyl" +
+	"\nPrefix/Suffix (works as either) - `" + Oxyl.config["options"]["prefix"] +
+	"`\nGithub: https://github.com/minemidnight/oxyl" +
 	"\nLibrary: discord.js" +
 	"```";
 }, [], "View lots of information about Oxyl", "[]");

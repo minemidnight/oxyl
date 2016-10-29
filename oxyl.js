@@ -13,6 +13,27 @@ exports.commands = {
   moderator: {}
 };
 
+var formatDate = (date) => {
+    var date = new Date(date);
+    var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November"];
+    var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+    var month = months[date.getMonth()];
+    var day = date.getDate();
+    var weekday = weekdays[date.getDay()];
+    var hour = date.getHours();
+    var min = date.getMinutes();
+    var sec = date.getSeconds();
+    var year = date.getFullYear()
+
+    day = (day < 10 ? "0" : "") + day;
+    hour = (hour < 10 ? "0" : "") + hour;
+    min = (min < 10 ? "0" : "") + min;
+    sec = (sec < 10 ? "0" : "") + sec;
+
+    return `${weekday}, ${month} ${day} ${year}, ${hour}:${min}:${sec}`;
+}
+
 registerCommand = function(name, type, callback, aliases, description, usage) {
   exports.commands[type][name] = {};
   exports.commands[type][name]["aliases"] = aliases;
@@ -70,6 +91,7 @@ var consoleLog = (message, type) => {
   }
 }
 
+exports.formatDate = formatDate;
 exports.registerCommand = registerCommand;
 exports.loadScript = loadScript;
 exports.changeConfig = changeConfig;

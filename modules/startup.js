@@ -6,7 +6,7 @@ const bot = Oxyl.bot,
 bot.on("ready", () => {
   ready = true;
 	Oxyl.consoleLog("```" +
-  "\n* Timestamp: " + Date() +
+  "\n* Timestamp: " + Oxyl.formatDate(new Date()) +
   "\n* Guilds: " + bot.guilds.size +
   "\n* Text Channels: " + bot.channels.filter(c=>c.type === "text").size +
   "\n* Users: " + bot.users.size +
