@@ -1,7 +1,7 @@
 const Discord = require("discord.js"),
       Oxyl = require("../oxyl.js");
 
-Oxyl.registerCommand("config", "dm", (message) => {
+Oxyl.registerCommand("config", "dm", (message, bot) => {
   var args = message.content.split(" ");
   var guild = bot.guilds.get(args[0]);
   if (!guild) {

@@ -1,7 +1,7 @@
 const Discord = require("discord.js"),
       Oxyl = require("../oxyl.js");
 
-Oxyl.registerCommand("advancedhelp", "default", (message) => {
+Oxyl.registerCommand("advancedhelp", "default", (message, bot) => {
   var helpMsg = "", commands = Oxyl.commands;
 
   for (var cmd_type in commands) {

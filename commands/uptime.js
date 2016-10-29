@@ -1,9 +1,9 @@
 const Discord = require("discord.js"),
       Oxyl = require("../oxyl.js");
 
-Oxyl.registerCommand("uptime", "default", (message) => {
+Oxyl.registerCommand("uptime", "default", (message, bot) => {
   var now = Date.now();
-  var msec = now - Oxyl.bot.readyTime;
+  var msec = now - bot.readyTime;
   var days = Math.floor(msec / 1000 / 60 / 60 / 24);
   msec -= days * 1000 * 60 * 60 * 24;
   var hours = Math.floor(msec / 1000 / 60 / 60);

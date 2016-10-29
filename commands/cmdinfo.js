@@ -34,7 +34,7 @@ Oxyl.registerCommand("cmdinfo", "default", (message, bot) => {
     }
     helpinfo += "\n```";
   } else {
-    helpinfo = "Command not found - `" + cmd + "`";
+    helpinfo = "command not found - `" + cmd + "`";
   }
   return helpinfo;
-}, ["cmdhelp"], "List detailed information about a command", "<command>");
+}, ["cmdinfo"], "List detailed information about a command", "<command>");

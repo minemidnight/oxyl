@@ -2,7 +2,7 @@ const Discord = require("discord.js"),
       Oxyl = require("../oxyl.js"),
       https = require("https");
 
-Oxyl.registerCommand("shorten", "default", (message) => {
+Oxyl.registerCommand("shorten", "default", (message, bot) => {
   var options = {
     host: "www.emerialnetwork.net",
     path: "/bot/shortenapi.php?q=" + message.content

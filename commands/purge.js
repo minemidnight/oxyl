@@ -1,7 +1,7 @@
 const Discord = require("discord.js"),
       Oxyl = require("../oxyl.js");
 
-Oxyl.registerCommand("purge", "moderator", (message) => {
+Oxyl.registerCommand("purge", "moderator", (message, bot) => {
   var deletePerms = message.guild.member(bot.user).hasPermission("MANAGE_MESSAGES"),
       args = message.content.split(" "),
       amt = parseInt(args[0]),
@@ -14,11 +14,9 @@ Oxyl.registerCommand("purge", "moderator", (message) => {
     return "Please provide an amount of messages to delete above 0."
   } else if (mentions.length == 0) {
     message.delete();
-    message.channel.sendMessage("Purging " + amt + " messages by all users");
     message.channel.fetchMessages({limit: amt}).then(deleteMsgs => message.channel.bulkDelete(deleteMsgs));
   } else {
     message.delete();
-    message.channel.sendMessage("Purging " + amt + " messages by " + mentions);
     var deleteMessages = [];
     message.channel.fetchMessages({limit: amt}).then(function(value) {
       value = value.array();

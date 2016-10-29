@@ -1,7 +1,7 @@
 const Discord = require("discord.js"),
       Oxyl = require("../oxyl.js");
 
-Oxyl.registerCommand("mute", "moderator", (message) => {
+Oxyl.registerCommand("mute", "moderator", (message, bot) => {
   var mention = message.mentions.users.array()[0];
   var isMuted = message.guild.member("155112606661607425").roles.find("name", "Muted");
   var rolePerms = message.guild.member(bot.user).hasPermission("MANAGE_ROLES_OR_PERMISSIONS");
@@ -32,3 +32,8 @@ Oxyl.registerCommand("mute", "moderator", (message) => {
     }
   }
 }, [], "Toggle a person's mute state in the guild (for text chat)", "<mention>");
+
+Oxyl.bot.on("channelCreate", (channel) => {
+  const mutedRole = channel.guild.roles.find("name", "Muted");
+  if (mutedRole) { channel.overwritePermissions(mutedRole, {SEND_MESSAGES: false}); }
+});

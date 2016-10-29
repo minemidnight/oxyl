@@ -1,7 +1,7 @@
 const Discord = require("discord.js"),
       Oxyl = require("../oxyl.js");
 
-Oxyl.registerCommand("ban", "moderator", (message) => {
+Oxyl.registerCommand("ban", "moderator", (message, bot) => {
   var mention = message.mentions.users.array()[0];
   var banPerms = message.guild.member(bot.user).hasPermission("BAN_MEMBERS");
   if (mention == null) {

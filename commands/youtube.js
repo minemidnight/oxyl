@@ -2,7 +2,7 @@ const Discord = require("discord.js"),
       Oxyl = require("../oxyl.js"),
       https = require("https");
 
-Oxyl.registerCommand("youtube", "default", (message) => {
+Oxyl.registerCommand("youtube", "default", (message, bot) => {
   var options = {
     host: "www.googleapis.com",
     path: "/youtube/v3/search?part=snippet&maxResults=1&type=video&q=" + escape(message.content) + "&key=" + Oxyl.config["googleKey"]

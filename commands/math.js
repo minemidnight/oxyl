@@ -2,7 +2,7 @@ const Discord = require("discord.js"),
       Oxyl = require("../oxyl.js"),
       math = require("mathjs");
 
-Oxyl.registerCommand("math", "default", (message) => {
+Oxyl.registerCommand("math", "default", (message, bot) => {
   var result;
   try {
     result = math.eval(message.content);
