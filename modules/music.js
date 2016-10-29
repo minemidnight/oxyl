@@ -4,8 +4,11 @@ const Discord = require("discord.js"),
 const bot = Oxyl.bot;
 
 var playVideo = (url, connection) => {
-  let audio = yt(url, {audioonly: true});
-  const dispatcher = connnection.playStream(audio);
+  let stream = yt(url, {audioonly: true});
+  const dispatcher = connnection.playStream(stream);
+  dispatcher.on("end", () => {
+    voiceChannel.leave();
+  });
 }
 
 exports.playVideo = playVideo;
