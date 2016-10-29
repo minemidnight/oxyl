@@ -9,6 +9,7 @@ Oxyl.registerCommand("botinfo", "default", (message, bot) => {
    "\n" +
    "\nCreator: minemidnight#1537 & TonyMaster21#8175" + 
    "\nWebsite: **N/A**" +
+   "\nGithub: https://github.com/minemidnight/oxyl" +
    "\nCommands: **N/A**" +
    "\nLibrary: Discord.JS" +
    "\nUptime: **N/A**" +
