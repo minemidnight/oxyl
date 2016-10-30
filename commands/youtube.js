@@ -4,6 +4,11 @@ const Discord = require("discord.js"),
 const config = Oxyl.config;
 
 Oxyl.registerCommand("youtube", "default", (message, bot) => {
+  if (!message.content) {
+    return "please provide a query to search for";
+  } else {
+
+  }
   var options = {
     host: "www.googleapis.com",
     path: `/youtube/v3/search?part=snippet&maxResults=1&type=video&q=${escape(message.content)}&key=${config["googleKey"]}`

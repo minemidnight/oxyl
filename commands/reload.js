@@ -7,7 +7,7 @@ Oxyl.registerCommand("reload", "creator", (message, bot) => {
   message.content = message.content.toLowerCase();
   var args = message.content.split(" ");
   if (!args[0]) {
-    return "Please provide a module or command to reload";
+    return "please provide a module or command to reload";
   } else {
     var reload;
     if (!reload) {

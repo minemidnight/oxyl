@@ -101,16 +101,16 @@ exports.consoleLog = consoleLog;
 // Thanks to nfell2009 for having a repo that helped me with splitting files
 // https://github.com/TheDuckyProject/DuckyJS
 
-var commands = fs.readdirSync("./commands/");
-commands.forEach(script => {
-  if (script.substring(script.length - 3, script.length) == ".js") {
-    exports.loadScript("./commands/" + script);
-  }
-});
-
 var modules = fs.readdirSync("./modules/");
 modules.forEach(script => {
   if (script.substring(script.length - 3, script.length) == ".js") {
     loadScript("./modules/" + script);
+  }
+});
+
+var commands = fs.readdirSync("./commands/");
+commands.forEach(script => {
+  if (script.substring(script.length - 3, script.length) == ".js") {
+    exports.loadScript("./commands/" + script);
   }
 });
