@@ -67,7 +67,7 @@ bot.on("message", (message) => {
                     "#" + message.author.discriminator + " ran `" + cmd + "` with arguments `" + message.content + "`", "cmd");
       } catch(error) {
         consoleLog("Failed a " + type + " command (" + cmd + ")\n" +
-        "**Error:**\n```" + error.stack + "\n```", "cmd");
+        "**Error:**\n```" + error.stack + "\n```", "debug");
       }
       if (result) {
         if (type == "dm") {

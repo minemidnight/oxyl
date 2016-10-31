@@ -14,27 +14,27 @@ Oxyl.registerCommand("cmdinfo", "default", (message, bot) => {
   }
 
   if (realCmd) {
-    helpInfo += "info on `" + cmd + "`:\n```" +
-                "\nCommand: " + realCmd;
-    helpInfo += `\nCommand Type: ${cmdType}`;
+    helpInfo += `info on ${cmd}` +
+                `\nCommand: ${realCmd}` +
+                `\n **╠** Command Type: ${cmdType}`;
     if (commands[cmdType][realCmd].aliases.length > 0) {
-      helpInfo += `\nAliases: ${commands[cmdType][realCmd].aliases.join(", ")}`;
+      helpInfo += `\n **╠** Aliases: ${commands[cmdType][realCmd].aliases.join(", ")}`;
     } else {
-      helpInfo += "\nAliases: N/A";
+      helpInfo += "\n **╠** Aliases: N/A";
     }
     if (commands[cmdType][realCmd].description) {
-      helpInfo += `\nDescription: ${commands[cmdType][realCmd].description}`;
+      helpInfo += `\n **╠** Description: ${commands[cmdType][realCmd].description}`;
     } else {
-      helpInfo += "\nDescription: N/A";
+      helpInfo += "\n **╠** Description: N/A";
     }
     if (commands[cmdType][realCmd].usage) {
-      helpInfo += `\nUsage: ${commands[cmdType][realCmd].usage}`;
+      helpInfo += `\n **╚** Usage: ${commands[cmdType][realCmd].usage}`;
     } else {
-      helpInfo += "\nUsage: N/A";
+      helpInfo += "\n **╚** Usage: N/A";
     }
-    helpInfo += "\n```";
   } else {
+    helpInfo = "Command not found - `" + cmd + "`";
     helpInfo = `Command not found - \`${cmd}\``
   }
   return helpInfo;
-}, ["cmdinfo"], "List detailed information about a command", "<command>");
+}, ["cmdhelp"], "List detailed information about a command", "<command>");

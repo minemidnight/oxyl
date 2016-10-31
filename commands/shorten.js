@@ -16,7 +16,7 @@ Oxyl.registerCommand("shorten", "default", (message, bot) => {
     + "(:[0-9]{1,4})?" // 端口- :80
     + "((/?)|" // a slash isn't required if there is no file name
     + "(/[0-9a-z_!~*'().;?:@&=+$,%#-]+)+/?)$";
-  var filter = new RegExp(filter);
+  filter = new RegExp(filter);
   if (!message.content) {
     return "please provide a link to shorten";
   } else if (!filter.test(message.content)) {
