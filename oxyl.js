@@ -13,6 +13,10 @@ exports.commands = {
   moderator: {}
 };
 
+bot.on("unhandledRejection", (err) => {
+  consoleLog("Uncaught Promise Error: \n```\n" + err.stack + "\n```", "debug");
+});
+
 var formatDate = (date) => {
     var date = new Date(date);
     var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November"];

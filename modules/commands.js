@@ -73,7 +73,7 @@ bot.on("message", (message) => {
         if (type == "dm") {
           message.author.sendMessage(result);
         } else {
-          message.reply(result);
+          message.reply(result, {split: true});
         }
       }
     }

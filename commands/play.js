@@ -1,7 +1,6 @@
 const Discord = require("discord.js"),
       music = require("../modules/music.js"),
       Oxyl = require("../oxyl.js");
-const commands = Oxyl.commands;
 
 Oxyl.registerCommand("play", "default", (message, bot) => {
   var filter = "(?:http://)?(?:www.)?(?:youtube.com|youtu.be)/(?:watch\?)?([^\s]+?)";
