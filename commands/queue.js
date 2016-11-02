@@ -29,12 +29,12 @@ Oxyl.registerCommand("queue", "default", (message, bot) => {
 
     msg += `\n\n**Volume:** ${volume[guild.id]}`;
 
-    var videoTitle, videoDuration;
-    var info = music.getInfo(music.data.current[guild.id]).then((info) => {
-      console.log(info);
+    var videoTitle, videoDuration
+    music.getInfo(music.data.current[guild.id]).then((info) => {
       videoTitle = info.title;
       videoDuration = getDuration(info.duration);
     });
+
     var playTime = music.getPlayTime(message.guild);
     playTime = Math.floor(playTime / 1000);
     playTime = getDuration(playTime);

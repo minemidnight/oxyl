@@ -18,15 +18,17 @@ var getInfo = (videoId) => {
         data += chunk;
       });
       res.on("end", function () {
-        console.log(data);
-        var info = JSON.parse(data)["items"];
-        var returnData = {};
-        returnData.push(info["contentDetails"]["duration"]);
-        returnData.push(info["snippet"]["title"]);
+        var info = JSON.parse(data)["items"][0], durationParsed = 0;
+        var dur = info["contentDetails"]["duration"];
+        durationParsed += parseInt(dur.substring(dur.indexOf("T") + 1, dur.indexOf("M"))) * 60;
+        durationParsed += parseInt(dur.substring(dur.indexOf("M") + 1, dur.length - 1));
+        var returnData = {title: info["snippet"]["title"],
+                          duration: durationParsed};
         resolve(returnData);
       });
-      res.on("error", function () {
+      res.on("error", function (err) {
         reject("Error during https request");
+        Oxyl.consoleLog("Error while contacting Youtube API:\n```\n" + err.stack + "\n```", "debug");
       });
     });
     request.end();
