@@ -18,6 +18,8 @@ Oxyl.registerCommand("play", "default", (message, bot) => {
     voiceChannel.join().then(connection => {
       music.addQueue(message.content, message.guild, connection);
     });
-    return `Added \`${message.content}\` to **${message.guild.name}**'s queue`;
+    music.addInfo(music.getVideoId(message.content), message.guild).then((info) => {
+      message.reply(`Added \`${info.title}\` to **${message.guild.name}**'s queue`);
+    });
   }
 }, [], "Add a youtube video to the music queue", "<yt link>");

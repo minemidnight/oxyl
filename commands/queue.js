@@ -14,26 +14,32 @@ function getDuration(number) {
 
 Oxyl.registerCommand("queue", "default", (message, bot) => {
   var guild = message.guild;
-  if (!queue[guild.id]) {
-    return `there is no queue for **${guild.name}**`;
+  var ytInfo = music.data.ytinfo[guild.id];
+  if (!music.data.current[guild.id]) {
+    return `there is no music playing for **${guild.name}**`;
   } else {
     var msg = "";
     msg += `Music Info for **${guild.name}**\n`
 
-    msg += `\n**Queue (${queue[guild.id].length})**`
-    for(var i = 0; i < (queue[guild.id].length - 1); i++) {
-      msg += `\n **╠** **[${i + 1}]** ${queue[guild.id][i]}`;
-    } if (queue[guild.id].length > 0) {
-      msg += `\n **╚** **[${queue[guild.id].length}]** ${queue[guild.id][queue[guild.id].length - 1]}`;
+    var queueSize = queue[guild.id].length;
+    if (queueSize > 0) {
+      msg += `\n**Queue (${queueSize})**`;
+      for(var i = 0; i < (queueSize - 1); i++) {
+        var videoId = music.getVideoId(queue[guild.id][i]);
+        msg += `\n **╠** **[${i + 1}]** ${ytInfo[videoId]["title"]}`;
+      }
+      var videoId = music.getVideoId(queue[guild.id][queueSize - 1]);
+      msg += `\n **╚** **[${queueSize}]** ${ytInfo[videoId]["title"]}`;
+    } else {
+      msg += `\n**Queue (0)**`;
+      msg += `\nN/A`;
     }
 
     msg += `\n\n**Volume:** ${volume[guild.id]}`;
 
-    var videoTitle, videoDuration
-    music.getInfo(music.data.current[guild.id]).then((info) => {
-      videoTitle = info.title;
-      videoDuration = getDuration(info.duration);
-    });
+    var infoCurrent = ytInfo[music.data.current[guild.id]];
+    var videoTitle = infoCurrent.title;
+    var videoDuration = getDuration(infoCurrent.duration);
 
     var playTime = music.getPlayTime(message.guild);
     playTime = Math.floor(playTime / 1000);

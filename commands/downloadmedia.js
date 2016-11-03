@@ -36,7 +36,7 @@ Oxyl.registerCommand("downloadmedia", "creator", (message, bot) => {
       download(url).then(data => {
         fs.writeFileSync(`${mediaPath}${name}${ext}`, data);
       })
-      message.reply(`downloaded ${url} to \`${mediaPath}${name}${ext}\``);
+      message.reply(`downloaded \`${url}\` to \`${mediaPath}${name}${ext}\``);
     }
   }, 1000);
 }, ["mediadownload"], "Download a piece of media for the media command", "<name> <attachment/embed image>");
