@@ -16,4 +16,4 @@ Oxyl.registerCommand("listmedia", "default", (message, bot) => {
          "\n```\n" +
          `${mediaList.join(", ")}` +
          "\n```";
-}, ["sharelist"], "List all shareable media", "[]");
+}, ["medialist"], "List all shareable media", "[]");

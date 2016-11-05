@@ -3,7 +3,7 @@ const Discord = require("discord.js"),
       https = require("https"),
       yt = require("ytdl-core");
 const bot = Oxyl.bot, config = Oxyl.config;
-var defaultVolume = 15;
+var defaultVolume = config["options"]["commands"]["defaultVolume"];
 var data = {queue: {}, current: {}, volume: {}, ytinfo: {}};
 
 var getVideoId = (url) => {
@@ -50,7 +50,7 @@ var addInfo = (videoId, guild) => {
 
 var voiceCheck = (guildMember) => { //Use to assure user is in channel
   var guild = guildMember.guild;
-  if (guild.voiceConnection.channel.id !== guildMember.voiceChannel.id) {
+  if (guild.voiceConnection.channel.id !== guildMember.voiceChannel.channel.id) {
     return false;
   } else {
     return guildMember.voiceChannel;
