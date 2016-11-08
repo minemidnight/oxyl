@@ -1,46 +1,56 @@
 const Discord = require("discord.js"),
-      music = require("../modules/music.js"),
-      ytinfo = require("youtube-video-info"),
-      Oxyl = require("../oxyl.js");
-const queue = music.data.queue, volume = music.data.volume;
+	music = require("../modules/music.js"),
+	Oxyl = require("../oxyl.js");
 
 function getDuration(number) {
-  var mins = Math.floor(number / 60);
-  var secs = Math.floor(number % 60);
-  mins = mins < 10 ? mins = `0${mins}` : mins = mins;
-  secs = secs < 10 ? secs = `0${secs}` : secs = secs;
-  return `${mins}:${secs}`
+	var mins = Math.floor(number / 60);
+	var secs = Math.floor(number % 60);
+	if(mins < 10) {
+		mins = `0${mins}`;
+	} if(secs < 10) {
+		secs = `0${secs}`;
+	}
+	return `${mins}:${secs}`;
 }
 
 Oxyl.registerCommand("queue", "default", (message, bot) => {
-  var guild = message.guild;
-  if (!queue[guild.id]) {
-    return `there is no queue for **${guild.name}**`;
-  } else {
-    var msg = "";
-    msg += `Music Info for **${guild.name}**\n`
+	var guild = message.guild;
+	const ytInfo = music.data.ytinfo[guild.id];
+	const queue = music.data.queue[guild.id];
+	const current = music.data.current[guild.id];
+	const volume = music.data.volume[guild.id];
+	if(!current) {
+		return `there is no music playing for **${guild.name}**`;
+	} else {
+		var msg = "";
+		msg += `Music Info for **${guild.name}**\n`;
 
-    msg += `\n**Queue (${queue[guild.id].length})**`
-    for(var i = 0; i < (queue[guild.id].length - 1); i++) {
-      msg += `\n **╠** **[${i + 1}]** ${queue[guild.id][i]}`;
-    } if (queue[guild.id].length > 0) {
-      msg += `\n **╚** **[${queue[guild.id].length}]** ${queue[guild.id][queue[guild.id].length - 1]}`;
-    }
+		var queueSize = queue.length;
+		if(queueSize > 0) {
+			msg += `\n**Queue (${queueSize})**`;
+			for(var i = 0; i < (queueSize - 1); i++) {
+				var videoId = music.getVideoId(queue[i]);
+				msg += `\n **╠** **[${i + 1}]** ${ytInfo[videoId].title}`;
+			}
+			var lastVideoId = music.getVideoId(queue[queueSize - 1]);
+			msg += `\n **╚** **[${queueSize}]** ${ytInfo[lastVideoId].title}`;
+		} else {
+			msg += `\n**Queue (0)**`;
+			msg += `\nN/A`;
+		}
 
-    msg += `\n\n**Volume:** ${volume[guild.id]}`;
+		msg += `\n\n**Volume:** ${volume}`;
 
-    var videoTitle, videoDuration
-    music.getInfo(music.data.current[guild.id]).then((info) => {
-      videoTitle = info.title;
-      videoDuration = getDuration(info.duration);
-    });
+		var infoCurrent = ytInfo[current];
+		var videoTitle = infoCurrent.title;
+		var videoDuration = getDuration(infoCurrent.duration);
 
-    var playTime = music.getPlayTime(message.guild);
-    playTime = Math.floor(playTime / 1000);
-    playTime = getDuration(playTime);
+		var playTime = music.getPlayTime(message.guild);
+		playTime = Math.floor(playTime / 1000);
+		playTime = getDuration(playTime);
 
-    msg += `\n\n**Currently Playing:** ${videoTitle} **(**${playTime}/${videoDuration}**)**`
+		msg += `\n\n**Currently Playing:** ${videoTitle} **(**${playTime}/${videoDuration}**)**`;
 
-    return msg;
-  }
+		return msg;
+	}
 }, ["playing", "musicinfo"], "List the current guild music queue", "[]");
