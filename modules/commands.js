@@ -37,46 +37,47 @@ bot.on("message", (message) => {
 		}
 		message.content = message.content.startsWith(" ") ? message.content.substring(1) : message.content;
     // remove space after command to split for args
-		if(cmd !== null) {
-			if(type === "creator") {
-				if(!config.creators.includes(message.author.id)) {
-					message.reply(config.messages.notCreator);
-					return;
-				}
-			} else if(type === "moderator") {
-				var accepted = ["bot commander"], isMod;
-				var roles = message.member.roles.array();
-				for(var index = 0; index < roles.length; index++) {
-					if(accepted.includes(roles[index].name.toLowerCase())) {
-						isMod = true;
-						break;
-					}
-				}
-				if(!isMod) {
-					message.reply(config.messages.notMod);
-					return;
-				}
-			} else if(type === "dm") {
-				if(message.channel.type === "dm") {
-					consoleLog(`**${message.author.username}** - ${message.content}`, "dm");
-				} else {
-					return;
+		if(!cmd) {
+			return;
+		}
+		if(type === "creator") {
+			if(!config.creators.includes(message.author.id)) {
+				message.reply(config.messages.notCreator);
+				return;
+			}
+		} else if(type === "moderator") {
+			var accepted = ["bot commander"], isMod;
+			var roles = message.member.roles.array();
+			for(var index = 0; index < roles.length; index++) {
+				if(accepted.includes(roles[index].name.toLowerCase())) {
+					isMod = true;
+					break;
 				}
 			}
-			try {
-				var result = commands[type][cmd].process(message, bot);
-				message.content = message.content === "" ? message.content = " " : message.content;
-        // To make logging actually show a codeblock
-				consoleLog(`[${Oxyl.formatDate(new Date())}]
-          ${message.author.username}#${message.author.discriminator} ran \`${cmd}\`
-          with arguments \`${message.content}\``, "cmd");
-			} catch(error) {
-				consoleLog(`Failed a ${type} command (${cmd})\n` +
-          `**Error:** ${Oxyl.codeBlock(error.stack)}`, "debug");
+			if(!isMod) {
+				message.reply(config.messages.notMod);
+				return;
 			}
-			if(result) {
-				message.reply(result, { split: true });
+		} else if(type === "dm") {
+			if(message.channel.type === "dm") {
+				consoleLog(`**${message.author.username}** - ${message.content}`, "dm");
+			} else {
+				return;
 			}
+		}
+		try {
+			var result = commands[type][cmd].process(message, bot);
+			message.content = message.content === "" ? message.content = " " : message.content;
+      // To make logging actually show a codeblock
+			consoleLog(`[${Oxyl.formatDate(new Date())}]
+        ${message.author.username}#${message.author.discriminator} ran \`${cmd}\`
+        with arguments \`${message.content}\``, "cmd");
+		} catch(error) {
+			consoleLog(`Failed a ${type} command (${cmd})\n` +
+        `**Error:** ${Oxyl.codeBlock(error.stack)}`, "debug");
+		}
+		if(result) {
+			message.reply(result, { split: true });
 		}
 	}
 });
