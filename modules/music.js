@@ -3,6 +3,7 @@ const Discord = require("discord.js"),
 	https = require("https"),
 	yt = require("ytdl-core");
 const bot = Oxyl.bot, config = Oxyl.config;
+<<<<<<< HEAD
 var defaultVolume = config.options.commands.defaultVolume;
 var data = { queue: {}, current: {}, volume: {}, ytinfo: {} };
 
@@ -64,6 +65,65 @@ var voiceCheck = (guildMember) => {
 var getPlayTime = (guild) =>
 	getDispatcher(guild).time
 ;
+=======
+var defaultVolume = config["options"]["commands"]["defaultVolume"];
+var data = {queue: {}, current: {}, volume: {}, ytinfo: {}};
+
+var getVideoId = (url) => {
+  var videoId = url.split("v=")[1];
+  var ampersandPosition = videoId.indexOf("&");
+  if (ampersandPosition != -1) {
+    videoId = videoId.substring(0, ampersandPosition);
+  }
+  return videoId;
+}
+
+var addInfo = (videoId, guild) => {
+  var ytInfo = data.ytinfo
+  var options = {
+    host: "www.googleapis.com",
+    path: `/youtube/v3/videos?id=${videoId}&part=snippet,contentDetails&fields=items(snippet(title),contentDetails(duration))&key=${config["googleKey"]}`
+  }
+  return new Promise((resolve, reject) => { //Return a promise for a then in play.js command
+    var request = https.request(options, function (res) {
+      var data = "";
+      res.on("data", function (chunk) {
+        data += chunk;
+      });
+      res.on("end", function () {
+        var info = JSON.parse(data)["items"][0], durationParsed = 0;
+        var dur = info["contentDetails"]["duration"];
+        durationParsed += parseInt(dur.substring(dur.indexOf("T") + 1, dur.indexOf("M"))) * 60;
+        durationParsed += parseInt(dur.substring(dur.indexOf("M") + 1, dur.length - 1));
+        if (!ytInfo[guild.id]) {
+          ytInfo[guild.id] = [];
+        }
+        ytInfo[guild.id][videoId] = {title: info["snippet"]["title"],
+                                          duration: durationParsed};
+        resolve(ytInfo[guild.id][videoId]);
+      });
+      res.on("error", function (err) {
+        Oxyl.consoleLog("Error while contacting Youtube API:\n```\n" + err.stack + "\n```", "debug");
+        reject("Error contacting Youtube API");
+      });
+    });
+    request.end();
+  });
+}
+
+var voiceCheck = (guildMember) => { //Use to assure user is in channel
+  var guild = guildMember.guild;
+  if (guild.voiceConnection.channel.id !== guildMember.voiceChannel.channel.id) {
+    return false;
+  } else {
+    return guildMember.voiceChannel;
+  }
+}
+
+var getPlayTime = (guild) => {
+  return getDispatcher(guild).time;
+}
+>>>>>>> origin/master
 
 var processQueue = (guild, connection) => {
 	var dispatcher = getDispatcher(guild);
@@ -135,6 +195,7 @@ var getDispatcher = (guild) =>
 ;
 
 var playVideo = (url, guild, connection) => {
+<<<<<<< HEAD
 	var queue = data.queue;
 	var volume = data.volume;
 	var current = data.current;
@@ -155,6 +216,28 @@ var playVideo = (url, guild, connection) => {
 		setTimeout(() => { processQueue(guild, connection); }, 100);
 	});
 };
+=======
+  var queue = data.queue;
+  var volume = data.volume;
+  var current = data.current;
+  var ytInfo = data.ytinfo;
+  if (!volume[guild.id]) {
+    volume[guild.id] = defaultVolume;
+  }
+  var playVolume = volume[guild.id]/250;
+
+  let stream = yt(url, {audioonly: true});
+  var videoId = getVideoId(url);
+
+  current[guild.id] = videoId;
+  const dispatcher = connection.playStream(stream, {volume: playVolume});
+  dispatcher.on("end", () => {
+    delete(current[guild.id]);
+    delete(ytInfo[guild.id][videoId]);
+    setTimeout(() => {processQueue(guild, connection);}, 100);
+  });
+}
+>>>>>>> origin/master
 
 exports.getVideoId = getVideoId;
 exports.addInfo = addInfo;
