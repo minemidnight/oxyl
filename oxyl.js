@@ -108,12 +108,17 @@ exports.getConfigValue = getConfigValue;
 exports.consoleLog = consoleLog;
 
 var loadDirectory = (path) => {
-	var dirFiles = fs.readdirSync(path);
-	dirFiles.forEach(script => {
-		if(script.substring(script.length - 3, script.length) === ".js") {
-			loadScript(`${path}${script}`);
-		}
-	});
+	var stats = fs.lstatSync(path);
+	if(stats.isDirectory()) {
+		loadDirectory(path);
+	} else {
+		var dirFiles = fs.readdirSync(path);
+		dirFiles.forEach(script => {
+			if(script.substring(script.length - 3, script.length) === ".js") {
+				loadScript(`${path}${script}`);
+			}
+		});
+	}
 };
 
 loadDirectory("./modules/");
