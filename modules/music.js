@@ -91,9 +91,7 @@ var voiceCheck = (guildMember) => {
 	}
 };
 
-var getPlayTime = (guild) =>
-	getDispatcher(guild).time
-;
+var getPlayTime = (guild) => getDispatcher(guild).time;
 
 var processQueue = (guild, connection) => {
 	var queue = data.queue;
@@ -101,7 +99,7 @@ var processQueue = (guild, connection) => {
 	var volume = data.volume;
 	if(!current[guild.id] && queue[guild.id].length > 0) {
 		playVideo(queue[guild.id][0], guild, connection);
-		queue[guild.id].slice(1);
+		queue[guild.id] = queue[guild.id].slice(1);
 	} else if(queue[guild.id].length <= 0) {
 		connection.disconnect();
 		delete queue[guild.id];

@@ -5,7 +5,7 @@ Oxyl.registerCommand("purge", "moderator", (message, bot) => {
 	var deletePerms = message.guild.member(bot.user).hasPermission("MANAGE_MESSAGES"),
 		args = message.content.split(" "),
 		amt = parseInt(args[0]),
-		mentions = message.mentions.users.array();
+		mentions = message.mentions.users;
 	if(!deletePerms) {
 		return "Oxyl does not have permissions to delete messages.";
 	} else if(isNaN(amt)) {
@@ -28,5 +28,5 @@ Oxyl.registerCommand("purge", "moderator", (message, bot) => {
 			}
 		});
 	}
-  return false;
+	return false;
 }, ["deletemessages"], "Delete up to messages by all users or a list of users", "<amount> [mentions]");

@@ -2,7 +2,7 @@ const Discord = require("discord.js"),
 	Oxyl = require("../oxyl.js");
 
 Oxyl.registerCommand("mute", "moderator", (message, bot) => {
-	var mention = message.mentions.users.array()[0];
+	var mention = message.mentions.users.first();
 	var isMuted = message.guild.roles.find("name", "Muted");
 	var rolePerms = message.guild.member(bot.user).hasPermission("MANAGE_ROLES_OR_PERMISSIONS");
 	if(mention === null) {

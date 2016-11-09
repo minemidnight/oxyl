@@ -2,7 +2,7 @@ const Discord = require("discord.js"),
 	Oxyl = require("../oxyl.js");
 
 Oxyl.registerCommand("kick", "moderator", (message, bot) => {
-	var mention = message.mentions.users.array()[0];
+	var mention = message.mentions.users.first();
 	var kickPerms = message.guild.member(bot.user).hasPermission("KICK_MEMBERS");
 	if(mention === null) {
 		return "please mention the user you would like kicked";

@@ -10,6 +10,6 @@ Oxyl.registerCommand("pause", "default", (message, bot) => {
 		return "the music is already paused";
 	} else {
 		music.pauseStream(message.guild);
-		return `paused the music in ${voice.name}`;
+		return `paused the music in ${voice.name} :mute:`;
 	}
 }, [], "Pause the music in your channel", "[]");
