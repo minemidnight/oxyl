@@ -1,6 +1,6 @@
 const Discord = require("discord.js"),
 	music = require("../modules/music.js"),
-	Oxyl = require("../oxyl.js");
+	Oxyl = require("./../oxyl.js");
 
 Oxyl.registerCommand("skip", "default", (message, bot) => {
 	let guild = message.guild;

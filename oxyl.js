@@ -106,20 +106,19 @@ exports.loadScript = loadScript;
 exports.changeConfig = changeConfig;
 exports.getConfigValue = getConfigValue;
 exports.consoleLog = consoleLog;
+exports.loadScripts = loadScripts;
 
-var loadDirectory = (path) => {
-	var stats = fs.lstatSync(path);
-	if(stats.isDirectory()) {
-		loadDirectory(path);
-	} else {
-		var dirFiles = fs.readdirSync(path);
-		dirFiles.forEach(script => {
-			if(script.substring(script.length - 3, script.length) === ".js") {
-				loadScript(`${path}${script}`);
-			}
-		});
-	}
+var loadScripts = (path) => {
+	var dirFiles = fs.readdirSync(path);
+	dirFiles.forEach(script => {
+		var stats = fs.lstatSync(`${path}${script}`);
+		if(stats.isDirectory()) {
+			loadScripts(`${path}${script}/`);
+		} else if(script.endsWith(".js")) {
+			loadScript(`${path}${script}`);
+		}
+	});
 };
 
-loadDirectory("./modules/");
-loadDirectory("./commands/");
+loadScripts("./commands/");
+loadScripts("./modules/");
