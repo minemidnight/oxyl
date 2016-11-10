@@ -1,6 +1,6 @@
 const Discord = require("discord.js"),
-	music = require("../modules/music.js"),
-	Oxyl = require("./../oxyl.js");
+	music = require("../../modules/music.js"),
+	Oxyl = require("../../oxyl.js");
 
 function getDuration(number) {
 	var mins = Math.floor(number / 60);
@@ -13,7 +13,7 @@ function getDuration(number) {
 	return `${mins}:${secs}`;
 }
 
-Oxyl.registerCommand("queue", "default", (message, bot) => {
+Oxyl.registerCommand("queue", "music", (message, bot) => {
 	var guild = message.guild;
 	const ytInfo = music.data.ytinfo[guild.id];
 	const queue = music.data.queue[guild.id];

@@ -45,6 +45,35 @@ var searchVideo = (query) => {
 	});
 };
 
+var addPlaylist = (playlistId, guild, connection) => {
+	var options = {
+		host: "www.googleapis.com",
+		path: `/youtube/v3/playlistItems?playlistId=${playlistId}&maxResults=50&part=snippet` +
+					`&fields=items(snippet(resourceId(videoId)))&key=${config.googleKey}`
+	};
+	var request = https.request(options, (res) => {
+		var ytData = "";
+		res.on("data", (chunk) => {
+			ytData += chunk;
+		});
+		res.on("end", () => {
+			var info = JSON.parse(ytData).items;
+			for(var i = 0; i < info.length; i++) {
+				let videoId = info[i].snippet.resourceId.videoId;
+				let url = `http://youtube.com/watch?v=${videoId}`;
+				setTimeout(() => {
+					addInfo(videoId, guild);
+					addQueue(url, guild, connection);
+				}, i * 100);
+			}
+		});
+		res.on("error", (err) => {
+			Oxyl.consoleLog(`Error while contacting Youtube API: ${Oxyl.codeBlock(err.stack)}`, "debug");
+		});
+	});
+	request.end();
+};
+
 var addInfo = (videoId, guild) => {
 	var ytInfo = data.ytinfo;
 	var options = {
@@ -73,7 +102,7 @@ var addInfo = (videoId, guild) => {
 				resolve(ytInfo[guild.id][videoId]);
 			});
 			res.on("error", (err) => {
-				Oxyl.consoleLog(`Error while contacting Youtube API:\n\`\`\`\n${err.stack}\n\`\`\``, "debug");
+				Oxyl.consoleLog(`Error while contacting Youtube API: ${Oxyl.codeBlock(err.stack)}`, "debug");
 				reject("Error contacting Youtube API");
 			});
 		});
@@ -191,6 +220,7 @@ var playVideo = (url, guild, connection) => {
 
 exports.getVideoId = getVideoId;
 exports.searchVideo = searchVideo;
+exports.addPlaylist = addPlaylist;
 exports.addInfo = addInfo;
 exports.voiceCheck = voiceCheck;
 exports.getPlayTime = getPlayTime;

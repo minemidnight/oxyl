@@ -1,13 +1,15 @@
 const Discord = require("discord.js"),
-	music = require("../modules/music.js"),
-	Oxyl = require("./../oxyl.js");
+	music = require("../../modules/music.js"),
+	Oxyl = require("../../oxyl.js");
 
 function playCmdProcess(message) {
 	let editMsg;
-	var filter = "(?:http://)?(?:www.)?(?:youtube.com|youtu.be)/(?:watch\?)?([^\s]+?)";
-	filter = new RegExp(filter);
+	var videoFilter = "(?:http://)?(?:www.)?(?:youtube.com|youtu.be)/(?:watch\?)?([^\s]+?)";
+	videoFilter = new RegExp(videoFilter);
+	var playlistFilter = /^.*(youtu.be\/|list=)([^#\&\?]*).*/;
+	var match = message.content.match(playlistFilter);
 	return new Promise((resolve, reject) => {
-		if(message.content.substring(0, 1) === "!") {
+		if(message.content.charAt(0) === "!") {
 			message.content = message.content.slice(1);
 			editMsg = message.reply(`searching \`${message.content}\` then playing result`);
 			music.searchVideo(message.content).then(res => {
@@ -31,8 +33,12 @@ function playCmdProcess(message) {
 					});
 				});
 			});
-		} else if(!filter.test(message.content)) {
-			message.reply("invalid link given, please only use youtube links").then(msg => {
+		} else if(!videoFilter.test(message.content) || !match) {
+			message.reply("invalid link given, please only use youtube links (videos or playlists)").then(msg => {
+				resolve(msg);
+			});
+		} else if(match[2]) {
+			message.reply(`adding playlist id \`${message.content}\` to the queue`).then(msg => {
 				resolve(msg);
 			});
 		} else {
@@ -43,7 +49,7 @@ function playCmdProcess(message) {
 	});
 }
 
-Oxyl.registerCommand("play", "default", (message, bot) => {
+Oxyl.registerCommand("play", "music", (message, bot) => {
 	let editMsg;
 	var voiceChannel = message.member.voiceChannel;
 	if(!message.content) {
@@ -54,17 +60,25 @@ Oxyl.registerCommand("play", "default", (message, bot) => {
 		return "I cannot join that voice channel due to permissions";
 	} else {
 		playCmdProcess(message).then(msg => {
-			let videoId = music.getVideoId(msg.content);
-			if(videoId === "INVALID_URL") {
-				return;
-			} else {
-				let url = `http://youtube.com/watch?v=${videoId}`;
-				music.addInfo(videoId, message.guild).then((info) => {
-					msg.edit(`${message.author}, added \`${info.title}\` to the **${message.guild.name}**'s queue.`);
-				});
+			if(msg.content.includes("adding playlist")) {
+				var playlistFilter = /^.*(youtu.be\/|list=)([^#\&\?]*).*/;
+				var playlistId = msg.content.match(playlistFilter)[2];
 				voiceChannel.join().then(connection => {
-					music.addQueue(url, message.guild, connection);
+					music.addPlaylist(playlistId, message.guild, connection);
 				});
+			} else {
+				let videoId = music.getVideoId(msg.content);
+				if(videoId === "INVALID_URL") {
+					return;
+				} else {
+					let url = `http://youtube.com/watch?v=${videoId}`;
+					music.addInfo(videoId, message.guild).then((info) => {
+						msg.edit(`${message.author}, added \`${info.title}\` to the **${message.guild.name}**'s queue.`);
+					});
+					voiceChannel.join().then(connection => {
+						music.addQueue(url, message.guild, connection);
+					});
+				}
 			}
 		});
 	}

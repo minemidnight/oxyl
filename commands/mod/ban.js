@@ -1,5 +1,5 @@
 const Discord = require("discord.js"),
-	Oxyl = require("./../oxyl.js");
+	Oxyl = require("../../oxyl.js");
 
 Oxyl.registerCommand("ban", "moderator", (message, bot) => {
 	var mention = message.mentions.users.first();

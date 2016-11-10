@@ -1,5 +1,5 @@
 const Discord = require("discord.js"),
-	Oxyl = require("../oxyl.js"),
+	Oxyl = require("../../oxyl.js"),
 	https = require("https"),
 	googl = require("goo.gl");
 const config = Oxyl.config;

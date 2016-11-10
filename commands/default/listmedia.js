@@ -1,5 +1,5 @@
 const Discord = require("discord.js"),
-	Oxyl = require("./../oxyl.js"),
+	Oxyl = require("../../oxyl.js"),
 	fs = require("fs");
 
 var mediaPath = "./media/";

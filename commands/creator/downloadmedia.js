@@ -5,8 +5,6 @@ const Discord = require("discord.js"),
 
 // Uses message.reply because it must wait for Discord to load embeds
 
-// console.log(require('path').relative("./commands/creator/downloadmedia.js", "./oxyl.js"));
-
 var mediaPath = "./media/";
 
 Oxyl.registerCommand("downloadmedia", "creator", (message, bot) => {

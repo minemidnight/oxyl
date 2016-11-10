@@ -1,6 +1,6 @@
 const Discord = require("discord.js"),
-	Oxyl = require("./../oxyl.js"),
-	music = require("../modules/music.js"),
+	Oxyl = require("../../oxyl.js"),
+	music = require("../../modules/music.js"),
 	https = require("https");
 const config = Oxyl.config;
 

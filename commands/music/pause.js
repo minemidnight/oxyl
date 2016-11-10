@@ -1,8 +1,8 @@
 const Discord = require("discord.js"),
-	music = require("../modules/music.js"),
-	Oxyl = require("./../oxyl.js");
+	music = require("../../modules/music.js"),
+	Oxyl = require("../../oxyl.js");
 
-Oxyl.registerCommand("pause", "default", (message, bot) => {
+Oxyl.registerCommand("pause", "music", (message, bot) => {
 	var voice = music.voiceCheck(message.member);
 	if(!voice) {
 		return "you and Oxyl must both be in the same channel to pause the music";

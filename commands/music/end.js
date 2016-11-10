@@ -1,8 +1,8 @@
 const Discord = require("discord.js"),
-	music = require("../modules/music.js"),
-	Oxyl = require("./../oxyl.js");
+	music = require("../../modules/music.js"),
+	Oxyl = require("../../oxyl.js");
 
-Oxyl.registerCommand("stop", "default", (message, bot) => {
+Oxyl.registerCommand("stop", "music", (message, bot) => {
 	var voice = music.voiceCheck(message.member);
 	var guild = message.guild;
 	if(!voice) {

@@ -1,7 +1,7 @@
 const Discord = require("discord.js"),
 	yaml = require("js-yaml"),
 	fs = require("fs"),
-	Oxyl = require("./../oxyl.js");
+	Oxyl = require("../../oxyl.js");
 const changeConfig = Oxyl.changeConfig;
 
 Oxyl.registerCommand("config", "dm", (message, bot) => {

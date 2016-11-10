@@ -1,6 +1,6 @@
 const Discord = require("discord.js"),
 	util = require("util"),
-	Oxyl = require("./../oxyl.js");
+	Oxyl = require("../../oxyl.js");
 
 Oxyl.registerCommand("eval", "creator", (message, bot) => {
 	var guild = message.guild, channel = message.channel;

@@ -1,5 +1,5 @@
 const Discord = require("discord.js"),
-	Oxyl = require("./../oxyl.js");
+	Oxyl = require("../../oxyl.js");
 
 Oxyl.registerCommand("help", "default", (message, bot) => {
 	var commands = Oxyl.commands;
@@ -17,17 +17,18 @@ Oxyl.registerCommand("help", "default", (message, bot) => {
 		}
 	}
 
-	for(var toSort in cmds) { cmds[toSort].sort(); }
+	var helpMsg = "", totalAmt = 0;
 
-	var defaultcmds = Object.keys(cmds.default).length;
-	var modcmds = Object.keys(cmds.moderator).length;
-	var creatorcmds = Object.keys(cmds.creator).length;
-	var dmcmds = Object.keys(cmds.dm).length;
+	for(var loopType in cmds) {
+		cmds[loopType] = cmds[loopType].sort();
+		var length = Object.keys(cmds[loopType]).length;
+		totalAmt += length;
+		helpMsg += `${loopType.charAt(0).toUpperCase() + loopType.slice(1)} Commands **(${length}):** `;
+		helpMsg += `\`${cmds[loopType].join("`**,** `")}\`\n\n`;
+	}
 
-	return `__Default Commands **(${defaultcmds}):**__ \`${cmds.default.join("`**,** `")
-  }\`\n__Moderator Commands **(${modcmds}):**__ \`${cmds.moderator.join("`**,** `")
-  }\`\n__Creator Commands **(${creatorcmds}):**__ \`${cmds.creator.join("`**,** `")
-  }\`\n__DM Commands **(${dmcmds}):**__ \`${cmds.dm.join("`**,** `")
-  }\`\nAll Commands - **${defaultcmds + modcmds + creatorcmds + dmcmds}**` +
-  `\nUse \`advancedhelp\` to get a advanced list of commands, or cmdinfo for a detailed description of one.`;
+	helpMsg += `All Commands - **${totalAmt}**`;
+	helpMsg += `\nUse \`advancedhelp\` to get a advanced list of commands, or \`cmdinfo\` to get a detailed description of one`;
+
+	return helpMsg;
 }, ["cmds", "commandlist", "commands"], "List all registered commands", "[]");

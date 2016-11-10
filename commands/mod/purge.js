@@ -1,5 +1,5 @@
 const Discord = require("discord.js"),
-	Oxyl = require("./../oxyl.js");
+	Oxyl = require("../../oxyl.js");
 
 Oxyl.registerCommand("purge", "moderator", (message, bot) => {
 	var deletePerms = message.guild.member(bot.user).hasPermission("MANAGE_MESSAGES"),
