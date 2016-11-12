@@ -4,19 +4,27 @@ const Discord = require("discord.js"),
 	yt = require("ytdl-core");
 const bot = Oxyl.bot, config = Oxyl.config;
 var defaultVolume = config.options.commands.defaultVolume;
-var data = { queue: {}, current: {}, volume: {}, ytinfo: {} };
+var data = { queue: {}, current: {}, volume: {}, ytinfo: {}, options: {} };
+
+var setRepeat = (guild, repeat) => {
+	var options = data.options;
+	if(!options[guild.id]) {
+		options[guild.id] = [];
+	} if(repeat) {
+		options[guild.id].repeat = true;
+	} else {
+		delete options[guild.id].repeat;
+	}
+};
 
 var getVideoId = (url) => {
-	var videoId = url.split("v=")[1];
-	if(!videoId) {
+	var videoFilter = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i;
+	var match = url.match(videoFilter);
+	if(match && match[1]) {
+		return match[1];
+	} else {
 		return "INVALID_URL";
 	}
-	videoId = videoId.replace("`", "");
-	var ampersandPosition = videoId.indexOf("&");
-	if(ampersandPosition !== -1) {
-		videoId = videoId.substring(0, ampersandPosition);
-	}
-	return videoId;
 };
 
 var searchVideo = (query) => {
@@ -49,7 +57,7 @@ var addPlaylist = (playlistId, guild, connection) => {
 	var options = {
 		host: "www.googleapis.com",
 		path: `/youtube/v3/playlistItems?playlistId=${playlistId}&maxResults=50&part=snippet` +
-					`&fields=items(snippet(resourceId(videoId)))&key=${config.googleKey}`
+				`&fields=items(snippet(resourceId(videoId)))&key=${config.googleKey}`
 	};
 	var request = https.request(options, (res) => {
 		var ytData = "";
@@ -60,11 +68,11 @@ var addPlaylist = (playlistId, guild, connection) => {
 			var info = JSON.parse(ytData).items;
 			for(var i = 0; i < info.length; i++) {
 				let videoId = info[i].snippet.resourceId.videoId;
-				let url = `http://youtube.com/watch?v=${videoId}`;
+
 				setTimeout(() => {
 					addInfo(videoId, guild);
-					addQueue(url, guild, connection);
-				}, i * 100);
+					addQueue(videoId, guild, connection);
+				}, i * 25);
 			}
 		});
 		res.on("error", (err) => {
@@ -113,7 +121,11 @@ var addInfo = (videoId, guild) => {
 // Use to assure user is in channel
 var voiceCheck = (guildMember) => {
 	var guild = guildMember.guild;
-	if(guild.voiceConnection.channel.id !== guildMember.voiceChannel.id) {
+	var channelMember = guildMember.voiceChannel;
+	var channelBot = guild.voiceConnection;
+	if(!channelMember || !channelBot) {
+		return false;
+	} else if(channelBot.channel.id !== channelMember.id) {
 		return false;
 	} else {
 		return guildMember.voiceChannel;
@@ -126,10 +138,14 @@ var processQueue = (guild, connection) => {
 	var queue = data.queue;
 	var current = data.current;
 	var volume = data.volume;
-	if(!current[guild.id] && queue[guild.id].length > 0) {
+	if(!queue[guild.id]) {
+		queue[guild.id] = [];
+	}
+	var queueLength = queue[guild.id].length;
+	if(!current[guild.id] && queueLength > 0) {
 		playVideo(queue[guild.id][0], guild, connection);
 		queue[guild.id] = queue[guild.id].slice(1);
-	} else if(queue[guild.id].length <= 0) {
+	} else if(queueLength <= 0) {
 		connection.disconnect();
 		delete queue[guild.id];
 		delete volume[guild.id];
@@ -137,13 +153,13 @@ var processQueue = (guild, connection) => {
 	}
 };
 
-var addQueue = (url, guild, connection) => {
+var addQueue = (videoId, guild, connection) => {
 	if(!connection) { connection = guild.voiceConnection; }
 	var queue = data.queue;
 	if(!queue[guild.id]) {
 		queue[guild.id] = [];
 	}
-	queue[guild.id].push(url);
+	queue[guild.id].push(videoId);
 	processQueue(guild, connection);
 };
 
@@ -178,7 +194,7 @@ var setVolume = (guild, newVolume) => {
 	}
 	if(!connection) { return; }
 
-	connection.setVolume(newVolume / 250);
+	connection.setVolume(newVolume / 200);
 	volume[guild.id] = newVolume;
 };
 
@@ -196,28 +212,45 @@ var getDispatcher = (guild) => {
 	}
 };
 
-var playVideo = (url, guild, connection) => {
-	var queue = data.queue;
+var playVideo = (videoId, guild, connection) => {
 	var volume = data.volume;
 	var current = data.current;
 	var ytInfo = data.ytinfo;
+	var options = data.options;
 	if(!volume[guild.id]) {
 		volume[guild.id] = defaultVolume;
 	}
-	var playVolume = volume[guild.id] / 250;
-
-	let stream = yt(url, { audioonly: true });
-	var videoId = getVideoId(url);
-
+	var playVolume = volume[guild.id] / 200;
 	current[guild.id] = videoId;
-	const dispatcher = connection.playStream(stream, { volume: playVolume });
+
+	let url = `http://youtube.com/watch?v=${videoId}`;
+	let stream = yt(url, { audioonly: true });
+
+	var dispatcher = connection.playStream(stream, { volume: playVolume });
 	dispatcher.on("end", () => {
+		if(options[guild.id] && options[guild.id].repeat) {
+			addInfo(videoId, guild);
+			addQueue(videoId, guild, connection);
+		} else if(ytInfo[guild.id] && ytInfo[guild.id][videoId]) {
+			delete ytInfo[guild.id][videoId];
+		}
 		delete current[guild.id];
-		delete ytInfo[guild.id][videoId];
 		processQueue(guild, connection);
 	});
 };
 
+var getDuration = (number) => {
+	var mins = Math.floor(number / 60);
+	var secs = Math.floor(number % 60);
+	if(mins < 10) {
+		mins = `0${mins}`;
+	} if(secs < 10) {
+		secs = `0${secs}`;
+	}
+	return `${mins}:${secs}`;
+};
+
+exports.setRepeat = setRepeat;
 exports.getVideoId = getVideoId;
 exports.searchVideo = searchVideo;
 exports.addPlaylist = addPlaylist;
@@ -234,3 +267,4 @@ exports.setVolume = setVolume;
 exports.leaveVoice = leaveVoice;
 exports.getDispatcher = getDispatcher;
 exports.playVideo = playVideo;
+exports.getDuration = getDuration;

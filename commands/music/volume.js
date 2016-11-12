@@ -13,6 +13,6 @@ Oxyl.registerCommand("volume", "music", (message, bot) => {
 		return "you and Oxyl must be in the same voice channel to set the volume";
 	} else {
 		music.setVolume(message.guild, volume);
-		return `set the volume to ${volume}`;
+		return `set the volume to ${volume} `;
 	}
 }, ["vol"], "Change the volume of music being played", "<volume>");

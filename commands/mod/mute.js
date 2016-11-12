@@ -16,7 +16,7 @@ Oxyl.registerCommand("mute", "moderator", (message, bot) => {
 				for(var i = 0; i < channels.length; i++) {
 					channels[i].overwritePermissions(role, { SEND_MESSAGES: false });
 				}
-			});
+});
 		} if(!rolePerms) {
 			return "Oxyl does not have permissions to mute any user.";
 		} else {

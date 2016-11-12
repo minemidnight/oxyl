@@ -10,6 +10,6 @@ Oxyl.registerCommand("resume", "music", (message, bot) => {
 		return "the music is not paused";
 	} else {
 		music.resumeStream(message.guild);
-		return `resumed the music in ${voice.name}`;
+		return `resumed the music in ${voice.name} :arrow_forward:`;
 	}
 }, [], "Resume the music in your channel", "[]");

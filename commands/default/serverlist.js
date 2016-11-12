@@ -12,7 +12,7 @@ Oxyl.registerCommand("serverlist", "default", (message, bot) => {
 			return `invalid page number (between 1 and ${pageAmount})`;
 		}
 	}
-	listMsg += `**Server List**`;
+	listMsg += `Server List`;
 	for(var i = 0; i < perPage; i++) {
 		var index = ((page - 1) * perPage) + i;
 		var guild = guilds[index];
@@ -23,6 +23,6 @@ Oxyl.registerCommand("serverlist", "default", (message, bot) => {
 			listMsg += `\n **╠ ${index + 1})** ${guild.name} - ${guild.memberCount} members`;
 		}
 	}
-	listMsg += `\n**Page ${page}/${pageAmount}**`;
+	listMsg += `\nPage ${page} of ${pageAmount}`;
 	return listMsg;
 }, [], `List all servers of Oxyl (${perPage}/page)`, "[page]");

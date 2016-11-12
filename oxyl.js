@@ -99,15 +99,6 @@ var consoleLog = (message, type) => {
 	}
 };
 
-exports.formatDate = formatDate;
-exports.codeBlock = codeBlock;
-exports.registerCommand = registerCommand;
-exports.loadScript = loadScript;
-exports.changeConfig = changeConfig;
-exports.getConfigValue = getConfigValue;
-exports.consoleLog = consoleLog;
-exports.loadScripts = loadScripts;
-
 var loadScripts = (path) => {
 	var dirFiles = fs.readdirSync(path);
 	dirFiles.forEach(script => {
@@ -119,6 +110,15 @@ var loadScripts = (path) => {
 		}
 	});
 };
+
+exports.formatDate = formatDate;
+exports.codeBlock = codeBlock;
+exports.registerCommand = registerCommand;
+exports.loadScript = loadScript;
+exports.changeConfig = changeConfig;
+exports.getConfigValue = getConfigValue;
+exports.consoleLog = consoleLog;
+exports.loadScripts = loadScripts;
 
 loadScripts("./commands/");
 loadScripts("./modules/");

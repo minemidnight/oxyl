@@ -52,7 +52,7 @@
 		"no-console": "off",
 		"no-useless-call": "error",
 		"no-useless-concat": "error",
-		"no-useless-escape": "error",
+		"no-useless-escape": "off",
 		"no-void": "error",
 		"no-warning-comments": "warn",
 		"wrap-iife": "error",
