@@ -4,7 +4,8 @@ const Discord = require("discord.js"),
 const commands = framework.commands;
 
 Oxyl.registerCommand("cmdinfo", "default", (message, bot) => {
-	var helpInfo = "", cmd = message.content.split(" ")[0], realCmd, cmdType;
+	var helpMsg = "", cmd = message.content.toLowerCase().split(" ")[0];
+	let realCmd, cmdType, helpInfo = [];
 	if(!cmd) { return "Please provide a command to get the information of."; }
 	for(var typeOf in commands) {
 		for(var loopCmd in commands[typeOf]) {
@@ -17,27 +18,31 @@ Oxyl.registerCommand("cmdinfo", "default", (message, bot) => {
 	}
 
 	if(realCmd) {
-		helpInfo += `info on ${cmd}` +
-                `\nCommand: ${realCmd}` +
-                `\n **╠** Command Type: ${cmdType}`;
+		helpMsg += `info on ${cmd}\nCommand: ${realCmd}`;
+		helpInfo.push(`Command Type: ${cmdType}`);
+
 		if(commands[cmdType][realCmd].aliases.length > 0) {
-			helpInfo += `\n **╠** Aliases: ${commands[cmdType][realCmd].aliases.join(", ")}`;
+			helpInfo.push(`Aliases: ${commands[cmdType][realCmd].aliases.join(", ")}`);
 		} else {
-			helpInfo += "\n **╠** Aliases: N/A";
+			helpInfo.push(`Aliases: N/A`);
 		}
+
 		if(commands[cmdType][realCmd].description) {
-			helpInfo += `\n **╠** Description: ${commands[cmdType][realCmd].description}`;
+			helpInfo.push(`Description: ${commands[cmdType][realCmd].description}`);
 		} else {
-			helpInfo += "\n **╠** Description: N/A";
+			helpInfo.push(`Description: N/A`);
 		}
+
 		if(commands[cmdType][realCmd].usage) {
-			helpInfo += `\n **╚** Usage: ${commands[cmdType][realCmd].usage}`;
+			helpInfo.push(`Usage: ${commands[cmdType][realCmd].usage}`);
 		} else {
-			helpInfo += "\n **╚** Usage: N/A";
+			helpInfo.push(`Usage: N/A`);
 		}
+		helpInfo = framework.listConstructor(helpInfo);
+		helpMsg += helpInfo;
 	} else {
-		helpInfo = `Command not found - \`${cmd}\``;
-		helpInfo = `Command not found - \`${cmd}\``;
+		helpMsg = `Command not found - \`${cmd}\``;
+		helpMsg = `Command not found - \`${cmd}\``;
 	}
-	return helpInfo;
+	return helpMsg;
 }, [], "List detailed information about a command", "<command>");

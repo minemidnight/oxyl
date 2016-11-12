@@ -117,7 +117,7 @@ exports.listConstructor = (obj, index, follower) => {
 		}
 
 		if(Array.isArray(value)) {
-			toAdd = exports.createList(value, index + 1, addFollower);
+			toAdd = exports.listConstructor(value, index + 1, addFollower);
 		} else {
 			constructor = constructor.split("").join(" ");
 			toAdd = `\n **${constructor}** ${value}`;

@@ -26,24 +26,25 @@ Oxyl.registerCommand("queue", "music", (message, bot) => {
 		}
 
 		var queueMsg = `Music Info for **${guild.name}**\n`;
-
 		queueMsg += `\nQueue **(${queueSize})**`;
+
 		if(queueSize > 0) {
+			let queueSongs = [];
 			for(var i = 0; i < perPage; i++) {
 				let index = ((page - 1) * perPage) + i;
 				let videoId = queue[index];
 				let title = ytInfo[videoId].title;
+
 				if(title.length > 75) {
 					title = `${title.substring(0, 72)}...`;
 				}
-				if(queueSize - 1 === index || i === perPage - 1) {
-					queueMsg += `\n **╚ [${index + 1}]** ${title}`;
-					break;
-				} else {
-					queueMsg += `\n **╠ [${index + 1}]** ${title}`;
-				}
+
+				queueSongs.push(`[${index + 1}]** ${title}`);
+
+				if(queueSize - 1 === index || i === perPage - 1) break;
 			}
-			queueMsg += `\nPage ${page} of ${pageAmount}`;
+			queueSongs = framework.listConstructor(queueSongs);
+			queueMsg += `${queueSongs}\nPage ${page} of ${pageAmount}`;
 		} else {
 			queueMsg += `\nN/A`;
 		}

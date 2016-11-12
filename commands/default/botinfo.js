@@ -16,26 +16,44 @@ Oxyl.registerCommand("botinfo", "default", (message, bot) => {
 	var dmChannels = channels.filter(dmc => dmc.type === "dm").size;
 	var textChannels = channels.filter(tc => tc.type === "text").size;
 
+	var channelsInfo = [
+		`Voice: ${voiceChannels}`,
+		`Text: ${textChannels}`,
+		`DM: ${dmChannels}`,
+		`Total: ${channels.size}`
+	];
+
+	var guildsInfo = [
+		`Large (over 250 members): ${largeGuilds}`,
+		`Other: ${guilds.size - largeGuilds}`,
+		`Total: ${guilds.size}`
+	];
+
+	var usersInfo = [
+		`Online: ${users.size - offlineUsers}`, [
+			`DND: ${dndUsers}`,
+			`Idle: ${idleUsers}`,
+			`Online: ${onlineUsers}`
+		],
+		`Offline: ${offlineUsers}`,
+		`Total: ${users.size}`
+	];
+
+	var otherInfo = [
+		`Creators: minemidnight & TonyMaster21`,
+		`Library: discord.js`,
+		`GitHub: http://github.com/minemidnight/oxyl`,
+		`Prefix/Suffix (either) - \`${config.options.prefix}\``
+	];
+
+	channelsInfo = framework.listConstructor(channelsInfo);
+	guildsInfo = framework.listConstructor(guildsInfo);
+	usersInfo = framework.listConstructor(usersInfo);
+	otherInfo = framework.listConstructor(otherInfo);
+
 	return `information about ${bot.user.username} (ID: ${bot.user.id})` +
-				`\n**Channels:**` +
-				`\n **╠** Voice: ${voiceChannels}` +
-				`\n **╠** Text: ${textChannels}` +
-				`\n **╠** DM: ${dmChannels}` +
-				`\n **╚** Total: ${channels.size}` +
-				`\n\n**Guilds:**` +
-				`\n **╠** Large (over 250 members): ${largeGuilds}` +
-				`\n **╠** Other: ${guilds.size - largeGuilds}` +
-				`\n **╚** Total: ${guilds.size}` +
-				`\n\n**Users:**` +
-				`\n **╠** Online: ${users.size - offlineUsers}` +
-				`\n **║ ╠** DND: ${dndUsers}` +
-				`\n **║ ╠** Idle: ${idleUsers}` +
-				`\n **║ ╚** Online: ${onlineUsers}` +
-				`\n **╠** Offline: ${offlineUsers}` +
-				`\n **╚** Total: ${users.size}` +
-				`\n\n**Other:**` +
-				`\n **╠** Creators: minemidnight & TonyMaster21` +
-				`\n **╠** Library: discord.js` +
-				`\n **╠** GitHub: http://github.com/minemidnight/oxyl` +
-				`\n **╚** Prefix/Suffix (either) - \`${config.options.prefix}\``;
+				`\n\n**Channels:** ${channelsInfo}` +
+				`\n\n**Guilds:** ${guildsInfo}` +
+				`\n\n**Users:** ${usersInfo}` +
+				`\n\n**Other:** ${otherInfo}`;
 }, [], "View lots of information about Oxyl", "[]");

@@ -19,14 +19,18 @@ Oxyl.registerCommand("userinfo", "default", (message, bot) => {
 		let discriminator = mention.discriminator;
 		let game = mention.presence.game;
 		let status = mention.presence.status.toUpperCase();
-		if(!game) {	game = "N/A"; }
+		if(!game) game = "N/A";
 
-		return `info on ${username}` +
-           `\n **╠** ID: ${id}` +
-           `\n **╠** Discriminator: #${discriminator}` +
-           `\n **╠** Game: ${game}` +
-           `\n **╠** Status: ${status}` +
-           `\n **╠** Avatar: \`${avatarUrl}\`` +
-           `\n **╚** Join Date: ${joinDate}`;
+		let userInfo = [
+			`ID: ${id}`,
+			`Discriminator: #${discriminator}`,
+			`Game: ${game}`,
+			`Status: ${status}`,
+			`Avatar: \`${avatarUrl}\``,
+			`Join Date: ${joinDate}`
+		];
+
+		userInfo = framework.listConstructor(userInfo);
+		return `info on ${username}: ${userInfo}`;
 	}
 }, [], "View tons of detailed information about a user", "");

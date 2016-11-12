@@ -9,20 +9,22 @@ Oxyl.registerCommand("advancedhelp", "default", (message, bot) => {
 	for(var cmdType in commands) {
 		helpMsg += `newmsg\n\n**~~——————~~** __${cmdType.toUpperCase()} COMMANDS__ **~~——————~~**`;
 		for(var loopCmd in commands[cmdType]) {
+			let cmdInfo = [];
 			helpMsg += `\nCommand: ${loopCmd}`;
 			if(commands[cmdType][loopCmd].aliases.length > 0) {
-				helpMsg += `\n **╠** Aliases: ${commands[cmdType][loopCmd].aliases.join(", ")}`;
+				cmdInfo.push(`Aliases: ${commands[cmdType][loopCmd].aliases.join(", ")}`);
 			} else {
-				helpMsg += "\n **╠** Aliases: N/A";
+				cmdInfo.push(`Aliases: N/A`);
 			} if(commands[cmdType][loopCmd].description) {
-				helpMsg += `\n **╠** Description: ${commands[cmdType][loopCmd].description}`;
+				cmdInfo.push(`Description: ${commands[cmdType][loopCmd].description}`);
 			} else {
-				helpMsg += "\n **╠** Description: N/A";
+				cmdInfo.push(`Description: N/A`);
 			} if(commands[cmdType][loopCmd].usage) {
-				helpMsg += `\n **╚** Usage: ${commands[cmdType][loopCmd].usage}`;
+				cmdInfo.push(`Usage: ${commands[cmdType][loopCmd].usage}`);
 			} else {
-				helpMsg += "\n **╚** Usage: N/A";
+				cmdInfo.push(`Usage: N/A`);
 			}
+			helpMsg += framework.listConstructor(cmdInfo);
 		}
 	}
 	message.author.sendMessage(`${"**Advanced Help**\n\n" +
