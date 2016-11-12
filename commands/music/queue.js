@@ -36,10 +36,10 @@ Oxyl.registerCommand("queue", "music", (message, bot) => {
 				let title = ytInfo[videoId].title;
 
 				if(title.length > 75) {
-					title = `${title.substring(0, 72)}...`;
+					title = `${title.substring(0, 71)} __**...**__`;
 				}
 
-				queueSongs.push(`[${index + 1}]** ${title}`);
+				queueSongs.push(`**[${index + 1}]** ${title}`);
 
 				if(queueSize - 1 === index || i === perPage - 1) break;
 			}
