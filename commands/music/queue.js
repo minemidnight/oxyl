@@ -1,7 +1,8 @@
 const Discord = require("discord.js"),
 	music = require("../../modules/music.js"),
-	Oxyl = require("../../oxyl.js");
-const perPage = Oxyl.config.options.commands.queueListPerPage;
+	Oxyl = require("../../oxyl.js"),
+	framework = require("../../framework.js");
+const perPage = framework.config.options.commands.queueListPerPage;
 
 Oxyl.registerCommand("queue", "music", (message, bot) => {
 	var guild = message.guild;

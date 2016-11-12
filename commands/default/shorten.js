@@ -1,8 +1,9 @@
 const Discord = require("discord.js"),
 	Oxyl = require("../../oxyl.js"),
+	framework = require("../../framework.js"),
 	https = require("https"),
 	googl = require("goo.gl");
-const config = Oxyl.config;
+const config = framework.config;
 googl.setKey(config.googleKey);
 
 Oxyl.registerCommand("shorten", "default", (message, bot) => {

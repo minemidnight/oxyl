@@ -1,5 +1,6 @@
 const Discord = require("discord.js"),
-	Oxyl = require("../../oxyl.js");
+	Oxyl = require("../../oxyl.js"),
+	framework = require("../../framework.js");
 
 Oxyl.registerCommand("purge", "moderator", (message, bot) => {
 	var deletePerms = message.guild.member(bot.user).hasPermission("MANAGE_MESSAGES"),
@@ -17,15 +18,11 @@ Oxyl.registerCommand("purge", "moderator", (message, bot) => {
 		message.channel.fetchMessages({ limit: amt }).then(deleteMsgs => message.channel.bulkDelete(deleteMsgs));
 	} else {
 		message.delete();
-		var deleteMessages = [];
-		message.channel.fetchMessages({ limit: amt }).then((value) => {
-			value = value.array();
-			for(var i = 0; i < value.length; i++) {
-				if(mentions.includes(value[i].author)) {
-					deleteMessages.push(value[i]);
-				}
-				message.channel.bulkDelete(deleteMessages);
+		message.channel.fetchMessages({ limit: amt }).then(messages => {
+			if(mentions) {
+				messages = messages.filter(msg => mentions.includes(msg.author));
 			}
+			message.channel.bulkDelete(messages);
 		});
 	}
 	return false;

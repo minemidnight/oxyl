@@ -1,8 +1,8 @@
 const Discord = require("discord.js"),
-	Oxyl = require("../../oxyl.js"),
 	music = require("../../modules/music.js"),
-	https = require("https");
-const config = Oxyl.config;
+	https = require("https"),
+	Oxyl = require("../../oxyl.js"),
+	framework = require("../../framework.js");
 
 Oxyl.registerCommand("youtube", "default", (message, bot) => {
 	if(!message.content) {

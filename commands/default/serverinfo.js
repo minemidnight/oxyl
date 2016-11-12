@@ -1,5 +1,6 @@
 const Discord = require("discord.js"),
-	Oxyl = require("../../oxyl.js");
+	Oxyl = require("../../oxyl.js"),
+	framework = require("../../framework.js");
 
 Oxyl.registerCommand("serverinfo", "default", (message, bot) => {
 	if(!message.guild) {
@@ -37,7 +38,7 @@ Oxyl.registerCommand("serverinfo", "default", (message, bot) => {
            `\n **╠** Amount: ${guild.emojis.size}` +
            `\n **╚** Emojis: ${guild.emojis.array().join("")}` +
            `\n\n**Other:**` +
-           `\n **╠** Created: ${Oxyl.formatDate(guild.createdAt)}` +
+           `\n **╠** Created: ${framework.formatDate(guild.createdAt)}` +
            `\n **╠** Owner: ${guild.owner.user.username}#${guild.owner.user.discriminator} (ID: ${guild.ownerID})` +
            `\n **╠** Roles: ${guild.roles.size}` +
            `\n **╠** Region: ${guild.region}` +

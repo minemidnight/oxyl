@@ -1,5 +1,6 @@
 const Discord = require("discord.js"),
 	Oxyl = require("../../oxyl.js"),
+	framework = require("../../framework.js"),
 	download = require("download"),
 	fs = require("fs");
 

@@ -1,6 +1,7 @@
 const Discord = require("discord.js"),
 	music = require("../../modules/music.js"),
-	Oxyl = require("../../oxyl.js");
+	Oxyl = require("../../oxyl.js"),
+	framework = require("../../framework.js");
 
 Oxyl.registerCommand("skip", "music", (message, bot) => {
 	let guild = message.guild;
@@ -15,6 +16,10 @@ Oxyl.registerCommand("skip", "music", (message, bot) => {
 		const queue = music.data.queue[guild.id];
 		var videoId = queue[0];
 		music.endStream(guild);
-		return `now playing \`${ytInfo[videoId].title}\``;
+		if(queue && videoId) {
+			return `now playing \`${ytInfo[videoId].title}\``;
+		} else {
+			return `no more songs in queue`;
+		}
 	}
 }, [], "Skip a song in your channel");

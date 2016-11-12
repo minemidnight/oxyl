@@ -1,7 +1,8 @@
 const Discord = require("discord.js"),
-	Oxyl = require("../oxyl.js");
-const bot = Oxyl.bot, config = Oxyl.config,
-	commands = Oxyl.commands, consoleLog = Oxyl.consoleLog;
+	Oxyl = require("../oxyl.js"),
+	framework = require("../framework.js");
+const bot = Oxyl.bot, config = framework.config,
+	commands = framework.commands, consoleLog = framework.consoleLog;
 
 bot.on("message", (message) => {
 	var cmd, type;
@@ -14,9 +15,7 @@ bot.on("message", (message) => {
 		for(var cmdType in commands) {
 			for(var loopCmd in commands[cmdType]) {
 				if(msg.startsWith(prefix + loopCmd) || msg.startsWith(loopCmd + suffix)) {
-					message.content = message.content.replace(prefix + loopCmd, "");
-					message.content = message.content.replace(loopCmd + suffix, "");
-          // remove the command from the passed message
+					message.content = message.content.substring(loopCmd.length + 1, message.content.length);
 					cmd = loopCmd;
 					type = cmdType;
 					break;
@@ -25,8 +24,7 @@ bot.on("message", (message) => {
 					for(var i = 0; i < aliases.length; i++) {
 						var alias = aliases[i];
 						if(msg.startsWith(prefix + alias) || msg.startsWith(alias + suffix)) {
-							message.content = message.content.replace(prefix + alias, "");
-							message.content = message.content.replace(alias + suffix, "");
+							message.content = message.content.substring(alias.length + 1, message.content.length);
 							cmd = loopCmd;
 							type = cmdType;
 							break;
@@ -69,12 +67,12 @@ bot.on("message", (message) => {
 			var result = commands[type][cmd].process(message, bot);
 			message.content = message.content === "" ? message.content = " " : message.content;
       // To make logging actually show a codeblock
-			consoleLog(`[${Oxyl.formatDate(new Date())}]
+			consoleLog(`[${framework.formatDate(new Date())}]
         ${message.author.username}#${message.author.discriminator} ran \`${cmd}\`
         with arguments \`${message.content}\``, "cmd");
 		} catch(error) {
 			consoleLog(`Failed a ${type} command (${cmd})\n` +
-        `**Error:** ${Oxyl.codeBlock(error.stack)}`, "debug");
+        `**Error:** ${framework.codeBlock(error.stack)}`, "debug");
 		}
 		if(result) {
 			message.reply(result, { split: true });

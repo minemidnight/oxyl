@@ -1,6 +1,7 @@
 const Discord = require("discord.js"),
-	Oxyl = require("../../oxyl.js");
-const perPage = Oxyl.config.options.commands.serverListPerPage;
+	Oxyl = require("../../oxyl.js"),
+	framework = require("../../framework.js");
+const perPage = framework.config.options.commands.serverListPerPage;
 
 Oxyl.registerCommand("serverlist", "default", (message, bot) => {
 	var guilds = bot.guilds.array();

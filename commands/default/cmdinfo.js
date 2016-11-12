@@ -1,8 +1,10 @@
 const Discord = require("discord.js"),
-	Oxyl = require("../../oxyl.js");
+	Oxyl = require("../../oxyl.js"),
+	framework = require("../../framework.js");
+const commands = framework.commands;
 
 Oxyl.registerCommand("cmdinfo", "default", (message, bot) => {
-	var helpInfo = "", cmd = message.content.split(" ")[0], realCmd, cmdType, commands = Oxyl.commands;
+	var helpInfo = "", cmd = message.content.split(" ")[0], realCmd, cmdType;
 	if(!cmd) { return "Please provide a command to get the information of."; }
 	for(var typeOf in commands) {
 		for(var loopCmd in commands[typeOf]) {

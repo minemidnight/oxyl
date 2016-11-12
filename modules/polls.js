@@ -1,9 +1,9 @@
 const Discord = require("discord.js"),
 	Duration = require("duration-js"),
-	Oxyl = require("../oxyl.js");
-const bot = Oxyl.bot;
+	Oxyl = require("../oxyl.js"),
+	framework = require("../framework.js");
 
-var newPoll = (message, time, topic) => {
+exports.newPoll = (message, time, topic) => {
 	var channel = message.channel;
 	var author = message.author;
 	var timeMs = time.minutes() * 60000;
@@ -44,5 +44,3 @@ var newPoll = (message, time, topic) => {
 	}, 30000);
 	// 150000);
 };
-
-exports.newPoll = newPoll;

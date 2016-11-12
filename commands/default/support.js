@@ -1,5 +1,6 @@
 const Discord = require("discord.js"),
-	Oxyl = require("../../oxyl.js");
+	Oxyl = require("../../oxyl.js"),
+	framework = require("../../framework.js");
 
 Oxyl.registerCommand("support", "default", (message) =>
    "Support Guild: https://discord.gg/KtyNPcE" +

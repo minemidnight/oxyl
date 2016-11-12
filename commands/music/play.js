@@ -1,6 +1,7 @@
 const Discord = require("discord.js"),
 	music = require("../../modules/music.js"),
-	Oxyl = require("../../oxyl.js");
+	Oxyl = require("../../oxyl.js"),
+	framework = require("../../framework.js");
 
 var cancelFilter = (newMsg, oldMsg) => {
 	if(newMsg.author.id === oldMsg.author.id && newMsg.content.toLowerCase() === "cancel") {

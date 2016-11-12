@@ -1,23 +1,21 @@
 const Discord = require("discord.js"),
 	Oxyl = require("../oxyl.js"),
+	framework = require("../framework.js"),
 	https = require("https"),
 	yt = require("ytdl-core");
-const bot = Oxyl.bot, config = Oxyl.config;
+const config = framework.config;
 var defaultVolume = config.options.commands.defaultVolume;
 var data = { queue: {}, current: {}, volume: {}, ytinfo: {}, options: {} };
 
-var setRepeat = (guild, repeat) => {
+exports.setRepeat = (guild, value) => {
 	var options = data.options;
 	if(!options[guild.id]) {
 		options[guild.id] = [];
-	} if(repeat) {
-		options[guild.id].repeat = true;
-	} else {
-		delete options[guild.id].repeat;
 	}
+	options[guild.id].repeat = value;
 };
 
-var getVideoId = (url) => {
+exports.getVideoId = (url) => {
 	var videoFilter = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i;
 	var match = url.match(videoFilter);
 	if(match && match[1]) {
@@ -27,7 +25,7 @@ var getVideoId = (url) => {
 	}
 };
 
-var searchVideo = (query) => {
+exports.searchVideo = (query) => {
 	var ytData = "";
 	var options = {
 		host: "www.googleapis.com",
@@ -53,7 +51,7 @@ var searchVideo = (query) => {
 	});
 };
 
-var addPlaylist = (playlistId, guild, connection) => {
+exports.addPlaylist = (playlistId, guild, connection) => {
 	var options = {
 		host: "www.googleapis.com",
 		path: `/youtube/v3/playlistItems?playlistId=${playlistId}&maxResults=50&part=snippet` +
@@ -70,19 +68,19 @@ var addPlaylist = (playlistId, guild, connection) => {
 				let videoId = info[i].snippet.resourceId.videoId;
 
 				setTimeout(() => {
-					addInfo(videoId, guild);
-					addQueue(videoId, guild, connection);
+					exports.addInfo(videoId, guild);
+					exports.addQueue(videoId, guild, connection);
 				}, i * 25);
 			}
 		});
 		res.on("error", (err) => {
-			Oxyl.consoleLog(`Error while contacting Youtube API: ${Oxyl.codeBlock(err.stack)}`, "debug");
+			framework.consoleLog(`Error while contacting Youtube API: ${framework.codeBlock(err.stack)}`, "debug");
 		});
 	});
 	request.end();
 };
 
-var addInfo = (videoId, guild) => {
+exports.addInfo = (videoId, guild) => {
 	var ytInfo = data.ytinfo;
 	var options = {
 		host: "www.googleapis.com",
@@ -110,7 +108,7 @@ var addInfo = (videoId, guild) => {
 				resolve(ytInfo[guild.id][videoId]);
 			});
 			res.on("error", (err) => {
-				Oxyl.consoleLog(`Error while contacting Youtube API: ${Oxyl.codeBlock(err.stack)}`, "debug");
+				framework.consoleLog(`Error while contacting Youtube API: ${framework.codeBlock(err.stack)}`, "debug");
 				reject("Error contacting Youtube API");
 			});
 		});
@@ -119,7 +117,7 @@ var addInfo = (videoId, guild) => {
 };
 
 // Use to assure user is in channel
-var voiceCheck = (guildMember) => {
+exports.voiceCheck = (guildMember) => {
 	var guild = guildMember.guild;
 	var channelMember = guildMember.voiceChannel;
 	var channelBot = guild.voiceConnection;
@@ -132,9 +130,9 @@ var voiceCheck = (guildMember) => {
 	}
 };
 
-var getPlayTime = (guild) => getDispatcher(guild).time;
+exports.getPlayTime = (guild) => exports.getDispatcher(guild).time;
 
-var processQueue = (guild, connection) => {
+exports.processQueue = (guild, connection) => {
 	var queue = data.queue;
 	var current = data.current;
 	var volume = data.volume;
@@ -143,7 +141,7 @@ var processQueue = (guild, connection) => {
 	}
 	var queueLength = queue[guild.id].length;
 	if(!current[guild.id] && queueLength > 0) {
-		playVideo(queue[guild.id][0], guild, connection);
+		exports.playVideo(queue[guild.id][0], guild, connection);
 		queue[guild.id] = queue[guild.id].slice(1);
 	} else if(queueLength <= 0) {
 		connection.disconnect();
@@ -153,39 +151,39 @@ var processQueue = (guild, connection) => {
 	}
 };
 
-var addQueue = (videoId, guild, connection) => {
+exports.addQueue = (videoId, guild, connection) => {
 	if(!connection) { connection = guild.voiceConnection; }
 	var queue = data.queue;
 	if(!queue[guild.id]) {
 		queue[guild.id] = [];
 	}
 	queue[guild.id].push(videoId);
-	processQueue(guild, connection);
+	exports.processQueue(guild, connection);
 };
 
-var endStream = (guild) => {
-	var connection = getDispatcher(guild);
+exports.endStream = (guild) => {
+	var connection = exports.getDispatcher(guild);
 	if(!connection) { return; }
 
 	connection.end();
 };
 
-var pauseStream = (guild) => {
-	var connection = getDispatcher(guild);
+exports.pauseStream = (guild) => {
+	var connection = exports.getDispatcher(guild);
 	if(!connection) { return; }
 
 	connection.pause();
 };
 
-var resumeStream = (guild) => {
-	var connection = getDispatcher(guild);
+exports.resumeStream = (guild) => {
+	var connection = exports.getDispatcher(guild);
 	if(!connection) { return; }
 
 	connection.resume();
 };
 
-var setVolume = (guild, newVolume) => {
-	var connection = getDispatcher(guild);
+exports.setVolume = (guild, newVolume) => {
+	var connection = exports.getDispatcher(guild);
 	var volume = data.volume;
 	if(newVolume > 100) {
 		newVolume = 100;
@@ -198,11 +196,11 @@ var setVolume = (guild, newVolume) => {
 	volume[guild.id] = newVolume;
 };
 
-var leaveVoice = (guild) => {
+exports.leaveVoice = (guild) => {
 	guild.voiceConnection.disconnect();
 };
 
-var getDispatcher = (guild) => {
+exports.getDispatcher = (guild) => {
 	if(!guild.voiceConnection) {
 		return false;
 	} else if(!guild.voiceConnection.player.dispatcher) {
@@ -212,7 +210,7 @@ var getDispatcher = (guild) => {
 	}
 };
 
-var playVideo = (videoId, guild, connection) => {
+exports.playVideo = (videoId, guild, connection) => {
 	var volume = data.volume;
 	var current = data.current;
 	var ytInfo = data.ytinfo;
@@ -228,18 +226,18 @@ var playVideo = (videoId, guild, connection) => {
 
 	var dispatcher = connection.playStream(stream, { volume: playVolume });
 	dispatcher.on("end", () => {
+		delete current[guild.id];
+		exports.processQueue(guild, connection);
+
 		if(options[guild.id] && options[guild.id].repeat) {
-			addInfo(videoId, guild);
-			addQueue(videoId, guild, connection);
+			exports.addQueue(videoId, guild, connection);
 		} else if(ytInfo[guild.id] && ytInfo[guild.id][videoId]) {
 			delete ytInfo[guild.id][videoId];
 		}
-		delete current[guild.id];
-		processQueue(guild, connection);
 	});
 };
 
-var getDuration = (number) => {
+exports.getDuration = (number) => {
 	var mins = Math.floor(number / 60);
 	var secs = Math.floor(number % 60);
 	if(mins < 10) {
@@ -250,21 +248,4 @@ var getDuration = (number) => {
 	return `${mins}:${secs}`;
 };
 
-exports.setRepeat = setRepeat;
-exports.getVideoId = getVideoId;
-exports.searchVideo = searchVideo;
-exports.addPlaylist = addPlaylist;
-exports.addInfo = addInfo;
-exports.voiceCheck = voiceCheck;
-exports.getPlayTime = getPlayTime;
-exports.processQueue = processQueue;
 exports.data = data;
-exports.addQueue = addQueue;
-exports.endStream = endStream;
-exports.pauseStream = pauseStream;
-exports.resumeStream = resumeStream;
-exports.setVolume = setVolume;
-exports.leaveVoice = leaveVoice;
-exports.getDispatcher = getDispatcher;
-exports.playVideo = playVideo;
-exports.getDuration = getDuration;

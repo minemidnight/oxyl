@@ -1,10 +1,11 @@
 const Discord = require("discord.js"),
 	yaml = require("js-yaml"),
 	fs = require("fs"),
-	Oxyl = require("../../oxyl.js");
-const changeConfig = Oxyl.changeConfig;
+	Oxyl = require("../../oxyl.js"),
+	framework = require("../../framework.js");
+const changeConfig = framework.changeConfig;
 
-Oxyl.registerCommand("config", "dm", (message, bot) => {
+Oxyl.registerCommand("config", "guild owner", (message, bot) => {
 	message.content = message.content.toLowerCase();
 	var args = message.content.split(" ");
 	var guild = bot.guilds.get(args[0]);

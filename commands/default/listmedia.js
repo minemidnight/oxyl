@@ -1,5 +1,6 @@
 const Discord = require("discord.js"),
 	Oxyl = require("../../oxyl.js"),
+	framework = require("../../framework.js"),
 	fs = require("fs");
 
 var mediaPath = "./media/";
@@ -12,8 +13,5 @@ Oxyl.registerCommand("listmedia", "default", (message, bot) => {
 		mediaList.push(baseName);
 	});
 	mediaList = mediaList.sort();
-	return `all media **(**${mediaList.length}**)**:` +
-         "\n```\n" +
-         `${mediaList.join(", ")}` +
-         "\n```";
+	return `all media **(**${mediaList.length}**)**: ${framework.codeBlock(mediaList.join(", "))}`;
 }, ["medialist"], "List all shareable media", "[]");

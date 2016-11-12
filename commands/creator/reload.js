@@ -1,7 +1,8 @@
 const Discord = require("discord.js"),
 	Oxyl = require("../../oxyl.js"),
+	framework = require("../../framework.js"),
 	fs = require("fs");
-const loadScript = Oxyl.loadScript;
+const loadScript = framework.loadScript;
 
 Oxyl.registerCommand("reload", "creator", (message, bot) => {
 	message.content = message.content.toLowerCase();

@@ -1,5 +1,6 @@
 const Discord = require("discord.js"),
-	Oxyl = require("../../oxyl.js");
+	Oxyl = require("../../oxyl.js"),
+	framework = require("../../framework.js");
 
 Oxyl.registerCommand("userinfo", "default", (message, bot) => {
 	var mention = message.mentions.users.first();
@@ -13,13 +14,13 @@ Oxyl.registerCommand("userinfo", "default", (message, bot) => {
 		avatarUrl = avatarUrl.replace("avatars/", "");
 		avatarUrl = avatarUrl.replace("api/v6/users", "avatars");
 		avatarUrl = avatarUrl.replace("https://discordapp.com", "cdn.discordapp.com");
-		let joinDate = Oxyl.formatDate(mention.createdAt);
+		let joinDate = framework.formatDate(mention.createdAt);
 		let username = mention.username;
 		let discriminator = mention.discriminator;
 		let game = mention.presence.game;
 		let status = mention.presence.status.toUpperCase();
 		if(!game) {	game = "N/A"; }
-		
+
 		return `info on ${username}` +
            `\n **╠** ID: ${id}` +
            `\n **╠** Discriminator: #${discriminator}` +

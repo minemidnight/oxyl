@@ -1,11 +1,12 @@
 const Discord = require("discord.js"),
-	Oxyl = require("../oxyl.js");
+	Oxyl = require("../oxyl.js"),
+	framework = require("../framework.js");
 const bot = Oxyl.bot,
-	config = Oxyl.config;
+	config = framework.config;
 
 bot.on("ready", () => {
-	Oxyl.consoleLog(`Oxyl has started and is now ready.
-	\nTimestamp: ${Oxyl.formatDate(new Date())}`, "important");
+	framework.consoleLog(`Oxyl has started and is now ready.
+	\nTimestamp: ${framework.formatDate(new Date())}`, "important");
 	bot.user.setGame(config.messages.onlineGame);
 	bot.user.setStatus("online");
 });
@@ -13,8 +14,8 @@ bot.on("ready", () => {
 bot.on("reconnecting", () => {
 	bot.user.setGame(config.messages.onlineGame);
 	bot.user.setStatus("online");
-	Oxyl.consoleLog(`Oxyl has reconnected to discord.
-	\nTimestamp: ${Oxyl.formatDate(new Date())}`, "important");
+	framework.consoleLog(`Oxyl has reconnected to discord.
+	\nTimestamp: ${framework.formatDate(new Date())}`, "important");
 });
 
 bot.login(config.token);

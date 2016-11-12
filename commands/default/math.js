@@ -1,5 +1,6 @@
 const Discord = require("discord.js"),
 	Oxyl = require("../../oxyl.js"),
+	framework = require("../../framework.js"),
 	math = require("mathjs");
 
 Oxyl.registerCommand("math", "default", (message, bot) => {
@@ -7,7 +8,7 @@ Oxyl.registerCommand("math", "default", (message, bot) => {
 	try {
 		result = math.eval(message.content);
 	} catch(error) {
-		Oxyl.consoleLog(`**Math Evaluation Error:** ${Oxyl.codeBlock(error.stack)}`);
+		framework.consoleLog(`**Math Evaluation Error:** ${framework.codeBlock(error.stack)}`);
 	}
 	if(isNaN(parseFloat(result))) {
 		return "Invalid Calculation Expression";
