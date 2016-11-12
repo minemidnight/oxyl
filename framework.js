@@ -92,24 +92,32 @@ exports.getConfigValue = (guildId, name) => {
 	return data[name];
 };
 
-exports.createList = (obj, index) => {
-	var msg = "";
-	for(var i = 0; i < obj.length; i++) {
+exports.listConstructor = (obj, index, follower) => {
+	var msg = "", objSize = obj.length - 1;
+	for(var i = 0; i <= objSize; i++) {
 		var value = obj[i];
-		var toAdd = "", constructor = "";
+		let addFollower = true;
+		let toAdd = "", constructor = "";
 
 		if(index && index > 0) {
-			constructor = "║".repeat(index);
+			if(follower) {
+				constructor = "  ".repeat(index);
+				// Gets the perfect spacing
+			} else {
+				constructor = "║".repeat(index);
+				addFollower = false;
+			}
 		} else {
 			index = 0;
-		} if(i === obj.length - 1) {
+		} if(i === objSize || (Array.isArray(obj[objSize]) && i === objSize - 1)) {
 			constructor += "╚";
 		} else {
 			constructor += "╠";
+			addFollower = false;
 		}
 
 		if(Array.isArray(value)) {
-			toAdd = exports.createList(value, index + 1);
+			toAdd = exports.createList(value, index + 1, addFollower);
 		} else {
 			constructor = constructor.split("").join(" ");
 			toAdd = `\n **${constructor}** ${value}`;

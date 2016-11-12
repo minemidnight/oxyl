@@ -1,7 +1,7 @@
 const Discord = require("discord.js"),
 	Oxyl = require("../../oxyl.js"),
 	framework = require("../../framework.js");
-const config = Oxyl.config;
+const config = framework.config;
 
 Oxyl.registerCommand("botinfo", "default", (message, bot) => {
 	var users = bot.users;
