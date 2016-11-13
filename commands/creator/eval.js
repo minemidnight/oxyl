@@ -5,10 +5,11 @@ const Discord = require("discord.js"),
 
 Oxyl.registerCommand("eval", "creator", (message, bot) => {
 	var guild = message.guild, channel = message.channel;
+	var editMsg = message.reply("executing code...");
 	try {
 		var output = util.inspect(eval(message.content), { depth: 0 });
-		return `**Output:** ${framework.codeBlock(output)}`;
+		Promise.resolve(editMsg).then(msg => msg.edit(`**Output:** ${framework.codeBlock(output)}`));
 	} catch(error) {
-		return `**Error:** ${framework.codeBlock(error)}`;
+		Promise.resolve(editMsg).then(msg => msg.edit(`**Error:** ${framework.codeBlock(error)}`));
 	}
 }, [], "Execute code", "<code>");

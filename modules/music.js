@@ -4,29 +4,42 @@ const Discord = require("discord.js"),
 	https = require("https"),
 	yt = require("ytdl-core");
 const config = framework.config;
-var defaultVolume = config.options.commands.defaultVolume;
+var defaultVolume = config.options.music.defaultVolume;
+var ytReg = config.options.music.youtubeRegex;
 var data = { queue: {}, current: {}, volume: {}, ytinfo: {}, options: {} };
 
 exports.setRepeat = (guild, value) => {
 	var options = data.options;
-	if(!options[guild.id]) {
+	if(options[guild.id] === null) {
 		options[guild.id] = [];
 	}
 	options[guild.id].repeat = value;
 };
 
+exports.getUrlType = (url) => {
+	var match = url.match(ytReg);
+	if(!match || !match[1]) {
+		return "NONE";
+	} else if(match[1].length === 11) {
+		return "VIDEO";
+	} else {
+		return "PLAYLIST";
+	}
+};
+
 exports.getVideoId = (url) => {
-	var videoFilter = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i;
-	var match = url.match(videoFilter);
+	var match = url.match(ytReg);
 	if(match && match[1]) {
 		return match[1];
 	} else {
 		return "INVALID_URL";
 	}
 };
+exports.getPlaylistId = exports.getVideoId;
 
 exports.searchVideo = (query) => {
 	var ytData = "";
+
 	var options = {
 		host: "www.googleapis.com",
 		path: `/youtube/v3/search?part=snippet&maxResults=1&type=video&q=${escape(query)}&key=${config.googleKey}`
@@ -51,19 +64,34 @@ exports.searchVideo = (query) => {
 	});
 };
 
-exports.addPlaylist = (playlistId, guild, connection) => {
+exports.addPlaylist = (playlistId, guild, connection, page) => {
+	if(!page) {
+		page = "";
+	}
+
 	var options = {
 		host: "www.googleapis.com",
 		path: `/youtube/v3/playlistItems?playlistId=${playlistId}&maxResults=50&part=snippet` +
-				`&fields=items(snippet(resourceId(videoId)))&key=${config.googleKey}`
+				`&nextPageToken&pageToken=${page}&fields=items(snippet(resourceId(videoId)))&key=${config.googleKey}`
 	};
+
 	var request = https.request(options, (res) => {
 		var ytData = "";
 		res.on("data", (chunk) => {
 			ytData += chunk;
 		});
 		res.on("end", () => {
-			var info = JSON.parse(ytData).items;
+			var info = JSON.parse(ytData);
+
+
+			if(info.nextPageToken) {
+				page = info.nextPageToken;
+				exports.addPlaylist(playlistId, guild, connection, page);
+			}
+
+			console.log(info);
+			info = info.items;
+			console.log(info);
 			for(var i = 0; i < info.length; i++) {
 				let videoId = info[i].snippet.resourceId.videoId;
 
@@ -96,8 +124,14 @@ exports.addInfo = (videoId, guild) => {
 			res.on("end", () => {
 				var info = JSON.parse(ytData).items[0], durationParsed = 0;
 				var dur = info.contentDetails.duration;
-				durationParsed += parseInt(dur.substring(dur.indexOf("T") + 1, dur.indexOf("M"))) * 60;
-				durationParsed += parseInt(dur.substring(dur.indexOf("M") + 1, dur.length - 1));
+				if(dur.includes("H")) {
+					durationParsed += parseInt(dur.substring(dur.indexOf("T") + 1, dur.indexOf("H"))) * 3600;
+					durationParsed += parseInt(dur.substring(dur.indexOf("H") + 1, dur.indexOf("M"))) * 60;
+				} else if(dur.includes("M")) {
+					durationParsed += parseInt(dur.substring(dur.indexOf("T") + 1, dur.indexOf("M"))) * 60;
+				}
+				durationParsed += parseInt(dur.substring(dur.indexOf("M") + 1, dur.indexOf("S")));
+
 				if(!ytInfo[guild.id]) {
 					ytInfo[guild.id] = [];
 				}
@@ -238,14 +272,22 @@ exports.playVideo = (videoId, guild, connection) => {
 };
 
 exports.getDuration = (number) => {
-	var mins = Math.floor(number / 60);
+	if(number >= 3600) {
+		var hours = Math.floor(number / 3600);
+	}
+	var mins = Math.floor(number % 3600 / 60);
 	var secs = Math.floor(number % 60);
 	if(mins < 10) {
 		mins = `0${mins}`;
 	} if(secs < 10) {
 		secs = `0${secs}`;
 	}
-	return `${mins}:${secs}`;
+
+	if(hours) {
+		return `${hours}:${mins}:${secs}`;
+	} else {
+		return `${mins}:${secs}`;
+	}
 };
 
 exports.data = data;
