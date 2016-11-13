@@ -8,12 +8,15 @@ var defaultVolume = config.options.music.defaultVolume;
 var ytReg = config.options.music.youtubeRegex;
 var data = { queue: {}, current: {}, volume: {}, ytinfo: {}, options: {} };
 
-exports.setRepeat = (guild, value) => {
+exports.toggleRepeat = (guild) => {
 	var options = data.options;
-	if(options[guild.id] === null) {
+	if(!options[guild.id]) {
 		options[guild.id] = [];
+		options[guild.id].repeat = false;
 	}
-	options[guild.id].repeat = value;
+	console.log(options[guild.id]);
+
+	options[guild.id].repeat = !options[guild.id].repeat;
 };
 
 exports.getUrlType = (url) => {

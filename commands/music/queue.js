@@ -10,6 +10,7 @@ Oxyl.registerCommand("queue", "music", (message, bot) => {
 	const queue = music.data.queue[guild.id];
 	const current = music.data.current[guild.id];
 	const volume = music.data.volume[guild.id];
+	const options = music.data.volume[guild.id];
 
 	if(!current) {
 		return `there is no music playing for **${guild.name}**`;
@@ -40,7 +41,6 @@ Oxyl.registerCommand("queue", "music", (message, bot) => {
 				}
 
 				queueSongs.push(`**[${index + 1}]** ${title}`);
-
 				if(queueSize - 1 === index || i === perPage - 1) break;
 			}
 			queueSongs = framework.listConstructor(queueSongs);
@@ -49,17 +49,18 @@ Oxyl.registerCommand("queue", "music", (message, bot) => {
 			queueMsg += `\nN/A`;
 		}
 
-		queueMsg += `\n\n**Volume:** ${volume}`;
-
 		var infoCurrent = ytInfo[current];
 		var videoTitle = infoCurrent.title;
 		var videoDuration = music.getDuration(infoCurrent.duration);
+		let repeat = options.repeat ? "off" : "on";
 
 		var playTime = music.getPlayTime(message.guild);
 		playTime = Math.floor(playTime / 1000);
 		playTime = music.getDuration(playTime);
 
-		queueMsg += `\n\n**Currently Playing:** ${videoTitle} **(**${playTime}/${videoDuration}**)**`;
+		queueMsg += `\n\nVolume: ${volume}`;
+		queueMsg += `\nRepeat: ${repeat}`;
+		queueMsg += `\n\nPlaying: ${videoTitle} **(**${playTime}/${videoDuration}**)**`;
 
 		return queueMsg;
 	}
