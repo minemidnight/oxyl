@@ -11,7 +11,7 @@ Oxyl.registerCommand("repeat", "music", (message, bot) => {
 		return "you and Oxyl must be in the same voice channel to toggle repeating";
 	} else {
 		var newValue;
-		if(!options[guild.id] || options[guild.id].repeat === null) {
+		if(options[guild.id] === null) {
 			music.setRepeat(guild, true);
 			newValue = "on";
 		} else {

@@ -72,7 +72,7 @@ exports.addPlaylist = (playlistId, guild, connection, page) => {
 	var options = {
 		host: "www.googleapis.com",
 		path: `/youtube/v3/playlistItems?playlistId=${playlistId}&maxResults=50&part=snippet` +
-				`&nextPageToken&pageToken=${page}&fields=items(snippet(resourceId(videoId)))&key=${config.googleKey}`
+				`&nextPageToken&pageToken=${page}&fields=nextPageToken,items(snippet(resourceId(videoId)))&key=${config.googleKey}`
 	};
 
 	var request = https.request(options, (res) => {
@@ -83,15 +83,12 @@ exports.addPlaylist = (playlistId, guild, connection, page) => {
 		res.on("end", () => {
 			var info = JSON.parse(ytData);
 
-
 			if(info.nextPageToken) {
 				page = info.nextPageToken;
 				exports.addPlaylist(playlistId, guild, connection, page);
 			}
 
-			console.log(info);
 			info = info.items;
-			console.log(info);
 			for(var i = 0; i < info.length; i++) {
 				let videoId = info[i].snippet.resourceId.videoId;
 

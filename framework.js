@@ -28,15 +28,6 @@ exports.formatDate = (toFormat) => {
 	return `${weekday}, ${month} ${day} ${year}, ${hour}:${min}:${sec}`;
 };
 
-exports.loadScript = (path, reload) => {
-	require(path);
-	if(reload) {
-		exports.consoleLog(`Reloaded script at ${path}`, "debug");
-	} else {
-		exports.consoleLog(`Loaded script at ${path}`, "debug");
-	}
-};
-
 exports.codeBlock = (content) => {
 	let returnVal = "\n```\n";
 	returnVal += content;
@@ -66,29 +57,72 @@ exports.consoleLog = (message, type) => {
 	}
 };
 
-exports.loadScripts = (path) => {
-	var dirFiles = fs.readdirSync(path);
-	dirFiles.forEach(script => {
-		var stats = fs.lstatSync(`${path}${script}`);
+exports.findFile = (dirs, name, ext) => {
+	let fileName, dirName;
+	for(var i = 0; i < dirs.length; i++) {
+		var files = exports.getFiles(dirs[i]);
+
+		if(ext) {
+			fileName = files.find(file => file.substring(file.lastIndexOf("/") + 1).toLowerCase() === `${name}.${ext}`);
+		} else {
+			fileName = files.find(file => file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".")).toLowerCase() === `${name}`);
+		}
+
+		if(fileName) {
+			dirName = fileName.substring(0, fileName.lastIndexOf("/") + 1);
+			fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
+			break;
+		}
+	}
+	if(!dirName && !fileName) {
+		return false;
+	} else {
+		return [dirName, fileName];
+	}
+};
+
+exports.getFiles = (filePath) => {
+	var dirFiles = fs.readdirSync(filePath);
+	let fullFiles = [];
+	dirFiles.forEach(file => {
+		var stats = fs.lstatSync(`${filePath}${file}`);
 		if(stats.isDirectory()) {
-			exports.loadScripts(`${path}${script}/`);
-		} else if(script.endsWith(".js")) {
-			exports.loadScript(`${path}${script}`);
+			let toAdd = exports.getFiles(`${filePath}${file}/`);
+			fullFiles = fullFiles.concat(toAdd);
+		} else {
+			fullFiles.push(`${filePath}${file}`);
 		}
 	});
+	return fullFiles;
+};
+
+exports.loadScripts = (filePath) => {
+	var dirFiles = exports.getFiles(filePath);
+	for(var i = 0; i < dirFiles.length; i++) {
+		exports.loadScript(dirFiles[i]);
+	}
+};
+
+exports.loadScript = (scriptPath, reload) => {
+	require(scriptPath);
+	if(reload) {
+		exports.consoleLog(`Reloaded script at ${scriptPath}`, "debug");
+	} else {
+		exports.consoleLog(`Loaded script at ${scriptPath}`, "debug");
+	}
 };
 
 exports.changeConfig = (guildId, callback) => {
-	var path = `./server-configs/${guildId}.yml`;
-	var data = yaml.safeLoad(fs.readFileSync(path));
-	fs.writeFileSync(path, yaml.safeDump(data));
-	exports.consoleLog(`Edited config in \`${path}\`\n\n\`\`\`\n${callback}\n\`\`\``, "debug");
+	var filePath = `./server-configs/${guildId}.yml`;
+	var data = yaml.safeLoad(fs.readFileSync(filePath));
+	fs.writeFileSync(filePath, yaml.safeDump(data));
+	exports.consoleLog(`Edited config in \`${filePath}\`\n\n\`\`\`\n${callback}\n\`\`\``, "debug");
 	return callback();
 };
 
 exports.getConfigValue = (guildId, name) => {
-	var path = `./server-configs/${guildId}.yml`;
-	var data = yaml.safeLoad(fs.readFileSync(path));
+	var filePath = `./server-configs/${guildId}.yml`;
+	var data = yaml.safeLoad(fs.readFileSync(filePath));
 	return data[name];
 };
 
