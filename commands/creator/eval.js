@@ -8,8 +8,8 @@ Oxyl.registerCommand("eval", "creator", (message, bot) => {
 	var editMsg = message.reply("executing code...");
 	try {
 		var output = util.inspect(eval(message.content), { depth: 0 });
-		Promise.resolve(editMsg).then(msg => msg.edit(`**Output:** ${framework.codeBlock(output)}`));
+		Promise.resolve(editMsg).then(msg => msg.edit(`:white_check_mark: **Output:** ${framework.codeBlock(output)}`));
 	} catch(error) {
-		Promise.resolve(editMsg).then(msg => msg.edit(`**Error:** ${framework.codeBlock(error)}`));
+		Promise.resolve(editMsg).then(msg => msg.edit(`:x: **Error:** ${framework.codeBlock(error)}`));
 	}
 }, [], "Execute code", "<code>");

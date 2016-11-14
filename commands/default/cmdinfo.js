@@ -19,7 +19,7 @@ Oxyl.registerCommand("cmdinfo", "default", (message, bot) => {
 
 	if(realCmd) {
 		helpMsg += `info on ${cmd}\nCommand: ${realCmd}`;
-		helpInfo.push(`Command Type: ${cmdType}`);
+		helpInfo.push(`Command Type: ${framework.capitalizeEveryFirst(cmdType)}`);
 
 		if(commands[cmdType][realCmd].aliases.length > 0) {
 			helpInfo.push(`Aliases: ${commands[cmdType][realCmd].aliases.join(", ")}`);
@@ -41,7 +41,6 @@ Oxyl.registerCommand("cmdinfo", "default", (message, bot) => {
 		helpInfo = framework.listConstructor(helpInfo);
 		helpMsg += helpInfo;
 	} else {
-		helpMsg = `Command not found - \`${cmd}\``;
 		helpMsg = `Command not found - \`${cmd}\``;
 	}
 	return helpMsg;

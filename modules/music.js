@@ -8,6 +8,14 @@ var defaultVolume = config.options.music.defaultVolume;
 var ytReg = config.options.music.youtubeRegex;
 var data = { queue: {}, current: {}, volume: {}, ytinfo: {}, options: {} };
 
+exports.clearData = (guild) => {
+	delete data.queue[guild.id];
+	delete data.volume[guild.id];
+	delete data.current[guild.id];
+	delete data.options[guild.id];
+	delete data.ytinfo[guild.id];
+};
+
 exports.toggleRepeat = (guild) => {
 	var options = data.options;
 	if(!options[guild.id]) {
@@ -179,9 +187,7 @@ exports.processQueue = (guild, connection) => {
 		queue[guild.id] = queue[guild.id].slice(1);
 	} else if(queueLength <= 0) {
 		connection.disconnect();
-		delete queue[guild.id];
-		delete volume[guild.id];
-		delete current[guild.id];
+		exports.clearData(guild);
 	}
 };
 

@@ -28,6 +28,27 @@ exports.formatDate = (toFormat) => {
 	return `${weekday}, ${month} ${day} ${year}, ${hour}:${min}:${sec}`;
 };
 
+exports.capitalizeEveryFirst = (string) => string.split(" ").map(str => str.charAt(0).toUpperCase() + str.slice(1)).join(" ");
+
+exports.getFullKeys = (obj, prepend) => {
+	var keys = Object.keys(obj);
+	var fullKeys = [];
+	if(!prepend) prepend = "";
+
+	for(var i = 0; i < keys.length; i++) {
+		var key = keys[i];
+
+		if(typeof obj[key] === "object" && obj[key] && typeof obj[key][0] === "undefined") {
+			fullKeys = fullKeys.concat(exports.getFullKeys(obj[key], `${prepend}${key}.`));
+		} else {
+			fullKeys.push(`${prepend}${key}`);
+			break;
+		}
+	}
+
+	return fullKeys;
+};
+
 exports.codeBlock = (content) => {
 	let returnVal = "\n```\n";
 	returnVal += content;
@@ -38,23 +59,18 @@ exports.codeBlock = (content) => {
 exports.consoleLog = (message, type) => {
 	var channel;
 	if(type === "important") {
-		console.log(`[!] ${message}`);
+		type = "!";
 		channel = "important";
-	} else if(type === "dm") {
-		console.log(`[DM] ${message}`);
-		channel = "dm";
 	} else if(type === "command" || type === "cmd") {
-		console.log(`[CMD] ${message}`);
 		channel = "commands";
+		type = "cmds";
 	} else if(type === "debug") {
-		console.log(`[DEBUG] ${message}`);
 		channel = "debug";
 	}
 	channel = exports.config.channels[channel];
-	channel = Oxyl.bot.channels.get(channel);
-	if(channel) {
-		channel.sendMessage(message);
-	}
+	channel = Oxyl.bot.channels.find("id", channel);
+	console.log(`[${type.toUpperCase()}] ${message}`);
+	if(channel) channel.sendMessage(message);
 };
 
 exports.findFile = (dirs, name, ext) => {
@@ -110,20 +126,6 @@ exports.loadScript = (scriptPath, reload) => {
 	} else {
 		exports.consoleLog(`Loaded script at ${scriptPath}`, "debug");
 	}
-};
-
-exports.changeConfig = (guildId, callback) => {
-	var filePath = `./server-configs/${guildId}.yml`;
-	var data = yaml.safeLoad(fs.readFileSync(filePath));
-	fs.writeFileSync(filePath, yaml.safeDump(data));
-	exports.consoleLog(`Edited config in \`${filePath}\`\n\n\`\`\`\n${callback}\n\`\`\``, "debug");
-	return callback();
-};
-
-exports.getConfigValue = (guildId, name) => {
-	var filePath = `./server-configs/${guildId}.yml`;
-	var data = yaml.safeLoad(fs.readFileSync(filePath));
-	return data[name];
 };
 
 exports.listConstructor = (obj, index, follower) => {

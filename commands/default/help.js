@@ -24,7 +24,7 @@ Oxyl.registerCommand("help", "default", (message, bot) => {
 		cmds[loopType] = cmds[loopType].sort();
 		var length = Object.keys(cmds[loopType]).length;
 		totalAmt += length;
-		helpMsg += `${loopType.charAt(0).toUpperCase() + loopType.slice(1)} Commands **(${length}):** `;
+		helpMsg += `${framework.capitalizeEveryFirst(loopType)} Commands **(${length}):** `;
 		helpMsg += `\`${cmds[loopType].join("`**,** `")}\`\n\n`;
 	}
 

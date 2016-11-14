@@ -54,7 +54,7 @@ function playCmdProcess(message) {
 			message.reply(`getting video title of: \`${message.content}\``).then(msg => {
 				let videoId = music.getVideoId(msg.content);
 				music.addInfo(videoId, message.guild).then((info) => {
-					msg.edit(`${message.author}, adding __${info.title}__\n(\`http://youtube.com/watch?v=${videoId}\`) to the **${message.guild.name}**'s queue.`)
+					msg.edit(`${message.author}, adding __${info.title}__ (\`http://youtube.com/watch?v=${videoId}\`) to the **${message.guild.name}**'s queue.`)
 					.then(editedMsg => resolve(editedMsg));
 				});
 			});
@@ -73,7 +73,7 @@ Oxyl.registerCommand("play", "music", (message, bot) => {
 		return "I cannot join that voice channel due to permissions";
 	} else {
 		playCmdProcess(message).then(msg => {
-			var type = music.getUrlType(message.content);
+			var type = music.getUrlType(msg.content);
 			let id = music.getVideoId(msg.content);
 			if(id === "INVALID_URL" || type === "NONE") {
 				return;
@@ -88,7 +88,7 @@ Oxyl.registerCommand("play", "music", (message, bot) => {
 				} else if(type === "PLAYLIST") {
 					voiceChannel.join().then(connection => {
 						music.addPlaylist(id, message.guild, connection);
-						msg.edit(`${message.author}, adding playlist \`${id}\` to **${message.guild.name}**'s queue.`);
+						msg.edit(`${message.author}, added playlist \`${id}\` to **${message.guild.name}**'s queue.`);
 					});
 				} else if(type === "VIDEO") {
 					var info = music.data.ytinfo[msg.guild.id][id];

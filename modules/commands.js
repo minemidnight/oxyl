@@ -10,6 +10,8 @@ bot.on("message", (message) => {
 	var suffix = config.options.suffix;
 	if(message.author.bot) {
 		return;
+	} else if(message.channel.type === "dm") {
+		message.reply("Oxyl does not support DM's");
 	} else {
 		var msg = message.content.toLowerCase();
 		for(var cmdType in commands) {
@@ -35,17 +37,16 @@ bot.on("message", (message) => {
 		}
 		message.content = message.content.startsWith(" ") ? message.content.substring(1) : message.content;
     // remove space after command to split for args
-		if(!cmd) {
-			return;
-		}
+		if(!cmd) 	return;
 		if(type === "creator") {
 			if(!config.creators.includes(message.author.id)) {
 				message.reply(config.messages.notCreator);
 				return;
 			}
 		} else if(type === "moderator") {
-			var accepted = ["bot commander"], isMod;
-			var roles = message.member.roles.array();
+			let accepted = ["bot commander"];
+			let isMod;
+			let roles = message.member.roles.array();
 			for(var index = 0; index < roles.length; index++) {
 				if(accepted.includes(roles[index].name.toLowerCase())) {
 					isMod = true;
@@ -56,26 +57,21 @@ bot.on("message", (message) => {
 				message.reply(config.messages.notMod);
 				return;
 			}
-		} else if(type === "dm") {
-			if(message.channel.type === "dm") {
-				consoleLog(`**${message.author.username}** - ${message.content}`, "dm");
-			} else {
-				return;
-			}
 		}
+
 		try {
 			var result = commands[type][cmd].process(message, bot);
-			message.content = message.content === "" ? message.content = " " : message.content;
-      // To make logging actually show a codeblock
+			message.content = message.content === "" ? message.content = "no args" : `\`${message.content}\``;
 			consoleLog(`[${framework.formatDate(new Date())}]
         ${message.author.username}#${message.author.discriminator} ran \`${cmd}\`
         with arguments \`${message.content}\``, "cmd");
 		} catch(error) {
-			consoleLog(`Failed a ${type} command (${cmd})\n` +
+			consoleLog(`Failed command ${cmd} (${type})\n` +
         `**Error:** ${framework.codeBlock(error.stack)}`, "debug");
-		}
-		if(result) {
-			message.reply(result, { split: true });
+		} finally {
+			if(result) {
+				message.reply(result, { split: true });
+			}
 		}
 	}
 });

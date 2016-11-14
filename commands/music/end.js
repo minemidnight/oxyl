@@ -9,10 +9,8 @@ Oxyl.registerCommand("stop", "music", (message, bot) => {
 	if(!voice) {
 		return "you and Oxyl must both be in the same channel to stop the music";
 	} else {
-		delete music.data.queue[guild.id];
-		delete music.data.volume[guild.id];
-		delete music.data.current[guild.id];
 		voice.leave();
+		music.clearData(guild);
 		return `Stopped the music in ${voice.name}`;
 	}
 }, ["end"], "Stop the music in your channel", "[]");
