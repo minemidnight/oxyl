@@ -30,30 +30,9 @@ exports.formatDate = (toFormat) => {
 
 exports.capitalizeEveryFirst = (string) => string.split(" ").map(str => str.charAt(0).toUpperCase() + str.slice(1)).join(" ");
 
-exports.getFullKeys = (obj, prepend) => {
-	var keys = Object.keys(obj);
-	var fullKeys = [];
-	if(!prepend) prepend = "";
-
-	for(var i = 0; i < keys.length; i++) {
-		var key = keys[i];
-
-		if(typeof obj[key] === "object" && obj[key] && typeof obj[key][0] === "undefined") {
-			fullKeys = fullKeys.concat(exports.getFullKeys(obj[key], `${prepend}${key}.`));
-		} else {
-			fullKeys.push(`${prepend}${key}`);
-			break;
-		}
-	}
-
-	return fullKeys;
-};
-
-exports.codeBlock = (content) => {
-	let returnVal = "\n```\n";
-	returnVal += content;
-	returnVal += "\n```";
-	return returnVal;
+exports.codeBlock = (content, lang) => {
+	if(!lang) lang = "";
+	return `\n\`\`\`${lang}\n${content}\n\`\`\``;
 };
 
 exports.consoleLog = (message, type) => {

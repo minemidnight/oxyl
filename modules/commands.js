@@ -11,7 +11,7 @@ bot.on("message", (message) => {
 	if(message.author.bot) {
 		return;
 	} else if(message.channel.type === "dm") {
-		message.reply("Oxyl does not support DM's");
+		message.reply("Oxyl does not support commands within DM's");
 	} else {
 		var msg = message.content.toLowerCase();
 		for(var cmdType in commands) {
@@ -55,6 +55,11 @@ bot.on("message", (message) => {
 			}
 			if(!isMod) {
 				message.reply(config.messages.notMod);
+				return;
+			}
+		} else if(type === "guild owner") {
+			if(message.author.id !== message.guild.owner.id) {
+				message.reply(config.messages.notGuildOwner);
 				return;
 			}
 		}
