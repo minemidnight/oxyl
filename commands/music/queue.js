@@ -52,7 +52,7 @@ Oxyl.registerCommand("queue", "music", (message, bot) => {
 		var infoCurrent = ytInfo[current];
 		var videoTitle = infoCurrent.title;
 		var videoDuration = music.getDuration(infoCurrent.duration);
-		let repeat = options.repeat ? "off" : "on";
+		let repeat = options.repeat ? "on" : "off";
 
 		var playTime = music.getPlayTime(message.guild);
 		playTime = Math.floor(playTime / 1000);

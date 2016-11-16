@@ -8,7 +8,7 @@ Oxyl.registerCommand("shuffle", "music", (message, bot) => {
 	var guild = message.guild;
 	var queue = music.data.queue[guild.id];
 	if(!voice) {
-		return "you and Oxyl must be in the same voice channel to toggle repeating";
+		return "you and Oxyl must be in the same voice channel to shuffle songs";
 	} else if(!queue) {
 		return "there is currently no queue";
 	} else if(queue.length < 1) {

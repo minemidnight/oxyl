@@ -3,7 +3,7 @@ const Discord = require("discord.js"),
 	framework = require("../../framework.js");
 const bot = Oxyl.bot;
 
-Oxyl.registerCommand("mute", "moderator", (message, bot) => {
+Oxyl.registerCommand("mute", "moderator", (message) => {
 	let guild = message.guild;
 	let mention = message.mentions.users.first();
 
@@ -25,7 +25,7 @@ Oxyl.registerCommand("mute", "moderator", (message, bot) => {
 			return "Oxyl does not have permissions to mute any user.";
 		} else {
 			var addRole = guild.roles.find(role => role.name.toLowerCase() === "muted");
-			var isMuted = mention.roles.find(role => role.name.toLowerCase() === "muted");
+			var isMuted = message.guild.member(mention).roles.find(role => role.name.toLowerCase() === "muted");
 			if(isMuted) {
 				message.guild.member(mention).removeRole(addRole);
 				return `${mention} has been muted`;

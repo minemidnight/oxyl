@@ -172,9 +172,9 @@ const configTypes = {
 		validate: (guild, value) => {
 			let trueWords = ["true", "yes", "enable"];
 			let falseWords = ["false", "no", "disable"];
-			if(trueWords[value]) {
+			if(trueWords.includes(value)) {
 				return true;
-			} else if(falseWords[value]) {
+			} else if(falseWords.includes(value)) {
 				return false;
 			} else {
 				return null;
