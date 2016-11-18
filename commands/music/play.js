@@ -93,7 +93,7 @@ Oxyl.registerCommand("play", "music", (message, bot) => {
 				} else if(type === "VIDEO") {
 					var info = music.data.ytinfo[msg.guild.id][id];
 
-					msg.edit(`${message.author}, added video __${info.title}__ to **${message.guild.name}**'s queue.`);
+					msg.edit(`${message.author}, added __${info.title}__ to **${message.guild.name}**'s queue.`);
 					voiceChannel.join().then(connection => {
 						music.addQueue(id, message.guild, connection);
 					});

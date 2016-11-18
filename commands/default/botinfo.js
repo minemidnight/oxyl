@@ -1,45 +1,59 @@
 const Discord = require("discord.js"),
 	Oxyl = require("../../oxyl.js"),
-	framework = require("../../framework.js");
+	framework = require("../../framework.js"),
+	os = require("os");
 const config = framework.config;
 
 Oxyl.registerCommand("botinfo", "default", (message, bot) => {
-	var users = bot.users;
-	var onlineUsers = users.filter(user => user.presence.status === "online").size;
-	var offlineUsers = users.filter(user => user.presence.status === "offline").size;
-	var dndUsers = users.filter(user => user.presence.status === "dnd").size;
-	var idleUsers = users.filter(user => user.presence.status === "idle").size;
-	var guilds = bot.guilds;
-	var largeGuilds = guilds.filter(guild => guild.large === true).size;
-	var channels = bot.channels;
-	var voiceChannels = channels.filter(vc => vc.type === "voice").size;
-	var dmChannels = channels.filter(dmc => dmc.type === "dm").size;
-	var textChannels = channels.filter(tc => tc.type === "text").size;
+	let users = bot.users;
+	let onlineUsers = users.filter(user => user.presence.status === "online").size;
+	let offlineUsers = users.filter(user => user.presence.status === "offline").size;
+	let dndUsers = users.filter(user => user.presence.status === "dnd").size;
+	let idleUsers = users.filter(user => user.presence.status === "idle").size;
+	let guilds = bot.guilds;
+	let largeGuilds = guilds.filter(guild => guild.large === true).size;
+	let channels = bot.channels;
+	let voiceChannels = channels.filter(vc => vc.type === "voice").size;
+	let dmChannels = channels.filter(dmc => dmc.type === "dm").size;
+	let textChannels = channels.filter(tc => tc.type === "text").size;
+	let usedMemory = process.memoryUsage().heapUsed;
+	let totalMemory = os.totalmem();
 
-	var channelsInfo = [
+	let channelsInfo = [
 		`Voice: ${voiceChannels}`,
 		`Text: ${textChannels}`,
 		`DM: ${dmChannels}`,
 		`Total: ${channels.size}`
 	];
 
-	var guildsInfo = [
+	let guildsInfo = [
 		`Large (over 250 members): ${largeGuilds}`,
 		`Other: ${guilds.size - largeGuilds}`,
 		`Total: ${guilds.size}`
 	];
 
-	var usersInfo = [
-		`Online: ${users.size - offlineUsers}`, [
-			`DND: ${dndUsers}`,
-			`Idle: ${idleUsers}`,
-			`Online: ${onlineUsers}`
+	let totalUsers = 0;
+	guilds.forEach((guild) => {
+		totalUsers += guild.memberCount;
+	});
+
+	let usersInfo = [
+		`Cached Users:`, [
+			`Online: ${users.size - offlineUsers}`, [
+				`DND: ${dndUsers}`,
+				`Idle: ${idleUsers}`,
+				`Online: ${onlineUsers}`
+			],
+			`Offline: ${offlineUsers}`,
+			`Total: ${users.size}`
 		],
-		`Offline: ${offlineUsers}`,
-		`Total: ${users.size}`
+		`Total Users: ${totalUsers}`
 	];
 
-	var otherInfo = [
+	let memoryInfo = `${((usedMemory / totalMemory) * 100).toFixed(2)}%, `;
+	memoryInfo += `${(usedMemory / Math.pow(1024, 2)).toFixed(2)} MB / ${(totalMemory / Math.pow(1024, 3)).toFixed(2)} GB`;
+	let otherInfo = [
+		`Memory Usage: ${memoryInfo}`,
 		`Creators: minemidnight & TonyMaster21`,
 		`Library: discord.js`,
 		`GitHub: http://github.com/minemidnight/oxyl`,

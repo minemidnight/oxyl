@@ -1,11 +1,15 @@
-const Discord = require("discord.js");
-const	bot = new Discord.Client();
+const Discord = require("discord.js"),
+	path = require("path"),
+	framework = require(path.resolve(__dirname, "./framework.js"));
+const bot = new Discord.Client();
 exports.bot = bot;
-const path = require("path");
-const framework = require(path.resolve(__dirname, "./framework.js"));
 
 process.on("unhandledRejection", (err) => {
-	framework.consoleLog(`Uncaught Promise Error: ${framework.codeBlock(err.stack)}`, "debug");
+	framework.consoleLog(`Unhandled Rejection: ${framework.codeBlock(err.stack)}`, "debug");
+});
+
+process.on('uncaughtException', (err) => {
+	framework.consoleLog(`Uncaught Exception: ${framework.codeBlock(err.stack)}`, "debug");
 });
 
 exports.registerCommand = (name, type, callback, aliases, description, usage) => {

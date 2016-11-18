@@ -47,7 +47,7 @@ exports.consoleLog = (message, type) => {
 		channel = "debug";
 	}
 	channel = exports.config.channels[channel];
-	channel = Oxyl.bot.channels.find("id", channel);
+	channel = Oxyl.bot.channels.get(channel);
 	console.log(`[${type.toUpperCase()}] ${message}`);
 	if(channel) channel.sendMessage(message);
 };

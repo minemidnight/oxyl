@@ -189,6 +189,15 @@ exports.processQueue = (guild, connection) => {
 		connection.disconnect();
 		exports.clearData(guild);
 	}
+
+	// exports.sendMusicEmbed({
+	// 	title: "Now Playing :arrow_forward:",
+	// 	description: `**${info.title}** (${music.getDuration(info.duration)})`,
+	// 	url: "http://google.com/embedLink",
+	// 	timestamp: new Date(),
+	// 	color: parseInt("FF0000", 16),
+	// 	image: { url: `https://i.ytimg.com/vi/${id}/hqdefault.jpg` }
+	// });
 };
 
 exports.addQueue = (videoId, guild, connection) => {

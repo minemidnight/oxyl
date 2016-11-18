@@ -31,14 +31,17 @@ Oxyl.registerCommand("serverinfo", "default", (message, bot) => {
 		];
 
 		var memberInfo = [
-			`Online: ${guild.memberCount - offlineMembers}`,
-			[
-				`DND: ${dndMembers}`,
-				`Idle: ${idleMembers}`,
-				`Online: ${onlineMembers}`
+			`Cached Users:`, [
+				`Online: ${onlineMembers + idleMembers + dndMembers}`,
+				[
+					`DND: ${dndMembers}`,
+					`Idle: ${idleMembers}`,
+					`Online: ${onlineMembers}`
+				],
+				`Offline: ${offlineMembers}`,
+				`Total: ${guild.memberCount}`
 			],
-			`Offline: ${offlineMembers}`,
-			`Total: ${guild.memberCount}`
+			`Total Users: ${guild.memberCount}`
 		];
 
 		var emojiInfo = [
