@@ -19,12 +19,16 @@ Oxyl.registerCommand("userinfo", "default", (message, bot) => {
 		let discriminator = mention.discriminator;
 		let game = mention.presence.game;
 		let status = mention.presence.status.toUpperCase();
-		if(!game || !game.name) game = "N/A";
+		if(game === null) {
+			game = "N/A";
+		} else {
+			game = game.name;
+		}
 
 		let userInfo = [
 			`ID: ${id}`,
 			`Discriminator: #${discriminator}`,
-			`Game: ${game.name}`,
+			`Game: ${game}`,
 			`Status: ${status}`,
 			`Avatar: \`${avatarUrl}\``,
 			`Join Date: ${joinDate}`

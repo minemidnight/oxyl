@@ -6,6 +6,35 @@ exports.config = yaml.safeLoad(fs.readFileSync("./private/config.yml"));
 exports.defaultConfig = fs.readFileSync("./private/default-config.yml");
 exports.commands = {};
 
+exports.getCmd = (msgCase) => {
+	let msg = msgCase.toLowerCase();
+	let commands = exports.commands;
+	let prefix = exports.config.options.prefixRegex;
+	let returnData = {};
+	for(var cmdType in commands) {
+		for(var loopCmd in commands[cmdType]) {
+			if(msg.startsWith(loopCmd)) {
+				returnData.newContent = msgCase.substring(loopCmd.length, msg.length).trim();
+				returnData.cmd = loopCmd;
+				returnData.type = cmdType;
+				break;
+			} else {
+				let aliases = commands[cmdType][loopCmd].aliases;
+				for(let i in aliases) {
+					var alias = aliases[i];
+					if(msg.startsWith(alias)) {
+						returnData.newContent = msgCase.substring(alias.length, msg.length).trim();
+						returnData.cmd = loopCmd;
+						returnData.type = cmdType;
+						break;
+					}
+				}
+			}
+		}
+	}
+	return returnData;
+};
+
 exports.formatDate = (toFormat) => {
 	var date = new Date(toFormat);
 	var months = ["January", "February", "March", "April", "May", "June", "July",

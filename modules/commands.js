@@ -7,14 +7,12 @@ const bot = Oxyl.bot,
 	config = framework.config,
 	commands = framework.commands,
 	consoleLog = framework.consoleLog,
-	prefix = config.options.prefix,
-	suffix = config.options.suffix;
+	prefix = new RegExp(config.options.prefixRegex, "i");
 
 const spamData = {};
 
 bot.on("message", (message) => {
 	var cmd, type;
-	let roles = message.member.roles;
 	let guild = message.guild;
 	let guildConfig = configs.getConfig(guild);
 	let msg = message.content.toLowerCase();
@@ -26,29 +24,18 @@ bot.on("message", (message) => {
 	} else if(message.channel.type === "dm") {
 		message.reply("Oxyl does not support commands within DM's");
 	} else {
-		for(var cmdType in commands) {
-			for(var loopCmd in commands[cmdType]) {
-				if(msg.startsWith(prefix + loopCmd) || msg.startsWith(loopCmd + suffix)) {
-					message.content = message.content.substring(loopCmd.length + 1, message.content.length);
-					cmd = loopCmd;
-					type = cmdType;
-					break;
-				} else {
-					var aliases = commands[cmdType][loopCmd].aliases;
-					for(let i = 0; i < aliases.length; i++) {
-						var alias = aliases[i];
-						if(msg.startsWith(prefix + alias) || msg.startsWith(alias + suffix)) {
-							message.content = message.content.substring(alias.length + 1, message.content.length);
-							cmd = loopCmd;
-							type = cmdType;
-							break;
-						}
-					}
-				}
-			}
+		let roles = message.member.roles;
+		if(msg.match(prefix) && msg.match(prefix)[2]) {
+			message.content = message.content.match(prefix)[2];
+
+			let cmdInfo = framework.getCmd(message.content);
+			cmd = cmdInfo.cmd;
+			type = cmdInfo.type;
+
+			message.contentPreserved = cmdInfo.newContent;
+			msg = message.contentPreserved.toLowerCase();
+			message.content = msg;
 		}
-		message.content = message.content.startsWith(" ") ? message.content.substring(1) : message.content;
-    // remove space after command to split for args
 
 		if(!cmd) {
 			let whitelisted = guildConfig.roles.whitelist.value;
@@ -68,7 +55,7 @@ bot.on("message", (message) => {
 					let linkFilter = new RegExp(config.options.linkFilter);
 					if(linkFilter.test(message.content)) {
 						message.delete();
-						message.author.sendMessage(`Please do not send links in **${guild}**, it is not allowed.`);
+						message.author.sendMessage(`Please do not send links in **${guild.name}**, it is not allowed.`);
 					}
 				}
 
@@ -80,8 +67,8 @@ bot.on("message", (message) => {
 					let lastMessage = spamData[guild.id][message.author.id];
 
 					if(lastMessage && lastMessage.length > 7 &&
-						Math.abs(lastMessage.length - msg.length) < 5 &&
-						lastMessage.substring(0, msg.length) === lastMessage) {
+             Math.abs(lastMessage.length - msg.length) < 5 &&
+             lastMessage.substring(0, msg.length) === lastMessage) {
 						message.delete();
 						message.author.sendMessage(`Please do not spam in **${guild}**, it is not allowed.`);
 					}
@@ -127,9 +114,9 @@ bot.on("message", (message) => {
 		try {
 			var result = commands[type][cmd].process(message, bot);
 			message.content = message.content === "" ? message.content = "no args" : `\`${message.content}\``;
-			consoleLog(`[${framework.formatDate(new Date())}]
-        ${message.author.username}#${message.author.discriminator} ran \`${cmd}\`
-        with arguments \`${message.content}\``, "cmd");
+			consoleLog(`[${framework.formatDate(new Date())}] ` +
+        `${message.author.username}#${message.author.discriminator} ran \`${cmd}\`
+        in **${guild.name}**`, "cmd");
 		} catch(error) {
 			consoleLog(`Failed command ${cmd} (${type})\n` +
         `**Error:** ${framework.codeBlock(error.stack)}`, "debug");

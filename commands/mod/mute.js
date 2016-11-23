@@ -8,7 +8,7 @@ Oxyl.registerCommand("mute", "moderator", (message) => {
 	let mention = message.mentions.users.first();
 
 	var rolePerms = message.guild.member(bot.user).hasPermission("MANAGE_ROLES_OR_PERMISSIONS");
-	if(mention === null) {
+	if(!mention) {
 		return "please mention the user you would like muted.";
 	} else {
 		var checkRole = guild.roles.find(role => role.name.toLowerCase() === "muted");

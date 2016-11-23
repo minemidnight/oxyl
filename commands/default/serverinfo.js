@@ -6,15 +6,23 @@ Oxyl.registerCommand("serverinfo", "default", (message, bot) => {
 	if(!message.guild) {
 		return "this only works in guilds";
 	} else {
-		var guild = message.guild;
-		var afkChannel = guild.afkChannelID;
-		var members = guild.members;
-		var onlineMembers = members.filter(gM => gM.presence.status === "online").size;
-		var offlineMembers = members.filter(gM => gM.presence.status === "offline").size;
-		var dndMembers = members.filter(gM => gM.presence.status === "dnd").size;
-		var idleMembers = members.filter(gM => gM.presence.status === "idle").size;
-		var textChannels = guild.channels.filter(ch => ch.type === "text").size;
-		var voiceChannels = guild.channels.filter(ch => ch.type === "voice").size;
+		let guild;
+		if(message.content && bot.guilds.get(message.content)) {
+			guild = bot.guilds.get(message.content);
+			// hidden feature
+		} else {
+			guild = message.guild;
+		}
+
+		let afkChannel = guild.afkChannelID;
+		let members = guild.members;
+		let onlineMembers = members.filter(gM => gM.presence.status === "online").size;
+		let offlineMembers = members.filter(gM => gM.presence.status === "offline").size;
+		let dndMembers = members.filter(gM => gM.presence.status === "dnd").size;
+		let idleMembers = members.filter(gM => gM.presence.status === "idle").size;
+		let bots = members.filter(gM => gM.user.bot).size;
+		let textChannels = guild.channels.filter(ch => ch.type === "text").size;
+		let voiceChannels = guild.channels.filter(ch => ch.type === "voice").size;
 		if(!afkChannel) {
 			afkChannel = "N/A";
 		} else {
@@ -31,17 +39,15 @@ Oxyl.registerCommand("serverinfo", "default", (message, bot) => {
 		];
 
 		var memberInfo = [
-			`Cached Users:`, [
-				`Online: ${onlineMembers + idleMembers + dndMembers}`,
-				[
-					`DND: ${dndMembers}`,
-					`Idle: ${idleMembers}`,
-					`Online: ${onlineMembers}`
-				],
-				`Offline: ${offlineMembers}`,
-				`Total: ${guild.memberCount}`
+			`Online: ${onlineMembers + idleMembers + dndMembers}`,
+			[
+				`DND: ${dndMembers}`,
+				`Idle: ${idleMembers}`,
+				`Online: ${onlineMembers}`
 			],
-			`Total Users: ${guild.memberCount}`
+			`Offline: ${offlineMembers}`,
+			`Bots: ${bots}`,
+			`Total: ${guild.memberCount}`
 		];
 
 		var emojiInfo = [

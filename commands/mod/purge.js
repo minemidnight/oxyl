@@ -24,7 +24,7 @@ Oxyl.registerCommand("purge", "moderator", (message, bot) => {
 			if(mentions && mentions.size > 0) {
 				messages = messages.filter(msg => mentions.array().includes(msg.author));
 			}
-			message.channel.bulkDelete(messages);
+			message.channel.bulkDelete(messages)
 		});
 	}
 	return false;

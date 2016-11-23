@@ -10,14 +10,14 @@ var mediaPath = "./media/";
 
 Oxyl.registerCommand("downloadmedia", "creator", (message, bot) => {
   // Wrap it in a timeout to wait for embeds to load
+	var embeds = message.embeds, attachments = message.attachments, url,
+		name = message.content.split(" ")[0];
 	setTimeout(() => {
-		var embeds = message.embeds, attachments = message.attachments, url,
-			name = message.content.split(" ")[0];
 		if(!name) {
 			message.reply("please provide a name for the media");
 		} else if(attachments.size === 0 && embeds.length === 0) {
 			message.reply("please attach a picture or provide a embed image");
-		} else if(attachments.size) {
+		} else if(attachments && attachments.size > 0) {
 			var attachment = attachments.first();
 			if(!attachment.height) {
 				message.reply("make sure that your attachment is a image");

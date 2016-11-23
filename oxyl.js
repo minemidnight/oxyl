@@ -10,6 +10,7 @@ process.on("unhandledRejection", (err) => {
 
 process.on('uncaughtException', (err) => {
 	framework.consoleLog(`Uncaught Exception: ${framework.codeBlock(err.stack)}`, "debug");
+	process.exit();
 });
 
 exports.registerCommand = (name, type, callback, aliases, description, usage) => {

@@ -35,16 +35,12 @@ function playCmdProcess(message) {
 	let editMsg;
 	var type = music.getUrlType(message.content);
 	return new Promise((resolve, reject) => {
-		if(message.content.charAt(0) === "!") {
+		if(type === "NONE") {
 			message.content = message.content.slice(1);
 			editMsg = message.reply(`searching \`${message.content}\` then playing result`);
 			music.searchVideo(message.content).then(res => {
 				handleInlineSearch(message, editMsg, res)
 				.then(value => resolve(value));
-			});
-		} else if(type === "NONE") {
-			message.reply("invalid link given, please only use youtube links (videos or playlists)").then(msg => {
-				resolve(msg);
 			});
 		} else if(type === "PLAYLIST") {
 			message.reply(`adding playlist to queue: \`${message.content}\``).then(msg => {
@@ -53,9 +49,12 @@ function playCmdProcess(message) {
 		} else if(type === "VIDEO") {
 			message.reply(`getting video title of: \`${message.content}\``).then(msg => {
 				let videoId = music.getVideoId(msg.content);
-				music.addInfo(videoId, message.guild).then((info) => {
+				console.log(videoId);
+				music.addInfo(videoId, message.guild).then(info => {
 					msg.edit(`${message.author}, adding __${info.title}__ (\`http://youtube.com/watch?v=${videoId}\`) to the **${message.guild.name}**'s queue.`)
 					.then(editedMsg => resolve(editedMsg));
+				}).catch(reason => {
+					msg.edit(`${message.author}, ${reason}`);
 				});
 			});
 		}

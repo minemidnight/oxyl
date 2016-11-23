@@ -131,23 +131,27 @@ exports.addInfo = (videoId, guild) => {
 			});
 			res.on("end", () => {
 				var info = JSON.parse(ytData).items[0], durationParsed = 0;
-				var dur = info.contentDetails.duration;
-				if(dur.includes("H")) {
-					durationParsed += parseInt(dur.substring(dur.indexOf("T") + 1, dur.indexOf("H"))) * 3600;
-					durationParsed += parseInt(dur.substring(dur.indexOf("H") + 1, dur.indexOf("M"))) * 60;
-				} else if(dur.includes("M")) {
-					durationParsed += parseInt(dur.substring(dur.indexOf("T") + 1, dur.indexOf("M"))) * 60;
-				}
-				durationParsed += parseInt(dur.substring(dur.indexOf("M") + 1, dur.indexOf("S")));
+				if(!info) {
+					reject("couldn't get youtube data.");
+				} else {
+					let dur = info.contentDetails.duration;
+					if(dur.includes("H")) {
+						durationParsed += parseInt(dur.substring(dur.indexOf("T") + 1, dur.indexOf("H"))) * 3600;
+						durationParsed += parseInt(dur.substring(dur.indexOf("H") + 1, dur.indexOf("M"))) * 60;
+					} else if(dur.includes("M")) {
+						durationParsed += parseInt(dur.substring(dur.indexOf("T") + 1, dur.indexOf("M"))) * 60;
+					}
+					durationParsed += parseInt(dur.substring(dur.indexOf("M") + 1, dur.indexOf("S")));
 
-				if(!ytInfo[guild.id]) {
-					ytInfo[guild.id] = [];
+					if(!ytInfo[guild.id]) {
+						ytInfo[guild.id] = [];
+					}
+					ytInfo[guild.id][videoId] = {
+						title: info.snippet.title,
+						duration: durationParsed
+					};
+					resolve(ytInfo[guild.id][videoId]);
 				}
-				ytInfo[guild.id][videoId] = {
-					title: info.snippet.title,
-					duration: durationParsed
-				};
-				resolve(ytInfo[guild.id][videoId]);
 			});
 			res.on("error", (err) => {
 				framework.consoleLog(`Error while contacting Youtube API: ${framework.codeBlock(err.stack)}`, "debug");

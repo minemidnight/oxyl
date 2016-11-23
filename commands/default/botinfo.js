@@ -5,11 +5,6 @@ const Discord = require("discord.js"),
 const config = framework.config;
 
 Oxyl.registerCommand("botinfo", "default", (message, bot) => {
-	let users = bot.users;
-	let onlineUsers = users.filter(user => user.presence.status === "online").size;
-	let offlineUsers = users.filter(user => user.presence.status === "offline").size;
-	let dndUsers = users.filter(user => user.presence.status === "dnd").size;
-	let idleUsers = users.filter(user => user.presence.status === "idle").size;
 	let guilds = bot.guilds;
 	let largeGuilds = guilds.filter(guild => guild.large === true).size;
 	let channels = bot.channels;
@@ -38,15 +33,6 @@ Oxyl.registerCommand("botinfo", "default", (message, bot) => {
 	});
 
 	let usersInfo = [
-		`Cached Users:`, [
-			`Online: ${users.size - offlineUsers}`, [
-				`DND: ${dndUsers}`,
-				`Idle: ${idleUsers}`,
-				`Online: ${onlineUsers}`
-			],
-			`Offline: ${offlineUsers}`,
-			`Total: ${users.size}`
-		],
 		`Total Users: ${totalUsers}`
 	];
 
