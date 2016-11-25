@@ -21,20 +21,31 @@ bot.on("message", (message) => {
 		return;
 	} else if(message.author.bot) {
 		return;
-	} else if(message.channel.type === "dm") {
-		message.reply("Oxyl does not support commands within DM's");
+	} else if(!message.channel.type === "text") {
+		message.reply("Oxyl only supports commands within guilds");
 	} else {
-		let roles = message.member.roles;
+		if(!message.member) {
+			guild.fetchMember(message.author);
+			return;
+		} else {
+			var roles = message.member.roles;
+		}
+
 		if(msg.match(prefix) && msg.match(prefix)[2]) {
 			message.content = message.content.match(prefix)[2];
 
 			let cmdInfo = framework.getCmd(message.content);
-			cmd = cmdInfo.cmd;
-			type = cmdInfo.type;
+			if(cmdInfo.cmd) {
+				cmd = cmdInfo.cmd;
+				type = cmdInfo.type;
 
-			message.contentPreserved = cmdInfo.newContent;
-			msg = message.contentPreserved.toLowerCase();
-			message.content = msg;
+				message.contentPreserved = cmdInfo.newContent;
+				msg = message.contentPreserved.toLowerCase();
+				message.content = msg;
+			} else {
+				message.contentPreserved = message.content;
+				message.content = msg;
+			}
 		}
 
 		if(!cmd) {

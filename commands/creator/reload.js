@@ -1,7 +1,6 @@
 const Discord = require("discord.js"),
 	Oxyl = require("../../oxyl.js"),
 	framework = require("../../framework.js"),
-	path = require("path"),
 	fs = require("fs");
 const loadScript = framework.loadScript;
 
@@ -16,8 +15,6 @@ Oxyl.registerCommand("reload", "creator", (message, bot) => {
 		if(!reload) {
 			return `invalid file: ${args[0]}`;
 		} else {
-			let script = path.resolve(reload[0] + reload[1]);
-			delete require.cache[require.resolve(script)];
 			loadScript(reload[0] + reload[1], true);
 			return `reloaded script \`${reload[1]}\` **(**${reload[0]}${reload[1]}**)**`;
 		}

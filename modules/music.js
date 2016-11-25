@@ -2,6 +2,7 @@ const Discord = require("discord.js"),
 	Oxyl = require("../oxyl.js"),
 	framework = require("../framework.js"),
 	https = require("https"),
+	configs = require("../modules/serverconfigs.js"),
 	yt = require("ytdl-core");
 const config = framework.config;
 var defaultVolume = config.options.music.defaultVolume;
@@ -103,10 +104,9 @@ exports.addPlaylist = (playlistId, guild, connection, page) => {
 			for(var i = 0; i < info.length; i++) {
 				let videoId = info[i].snippet.resourceId.videoId;
 
-				setTimeout(() => {
-					exports.addInfo(videoId, guild);
+				exports.addInfo(videoId, guild).then(() => {
 					exports.addQueue(videoId, guild, connection);
-				}, i * 25);
+				});
 			}
 		});
 		res.on("error", (err) => {
@@ -193,15 +193,22 @@ exports.processQueue = (guild, connection) => {
 		connection.disconnect();
 		exports.clearData(guild);
 	}
+};
 
-	// exports.sendMusicEmbed({
-	// 	title: "Now Playing :arrow_forward:",
-	// 	description: `**${info.title}** (${music.getDuration(info.duration)})`,
-	// 	url: "http://google.com/embedLink",
-	// 	timestamp: new Date(),
-	// 	color: parseInt("FF0000", 16),
-	// 	image: { url: `https://i.ytimg.com/vi/${id}/hqdefault.jpg` }
-	// });
+exports.sendEmbed = (guild, type, info) => {
+	let channel = exports.getMusicChannel(guild), embed;
+	if(!channel) return;
+	if(type === "playing") {
+		embed = {
+			title: "Now Playing :arrow_forward:",
+			description: `**${info.title}** (${exports.getDuration(info.duration)})`,
+			url: `http://youtube.com/watch?v=${info.id}`,
+			timestamp: new Date(),
+			color: 0xFF0000,
+			image: { url: `https://i.ytimg.com/vi/${info.id}/hqdefault.jpg` }
+		};
+	}
+	channel.sendMessage("", { embed: embed });
 };
 
 exports.addQueue = (videoId, guild, connection) => {
@@ -263,6 +270,16 @@ exports.getDispatcher = (guild) => {
 	}
 };
 
+exports.getMusicChannel = (guild) => {
+	let guildConfig = configs.getConfig(guild);
+	let musicText = guildConfig.channels.musicText.value;
+	if(musicText && guild.channels.get(musicText)) {
+		return guild.channels.get(musicText);
+	} else {
+		return undefined;
+	}
+};
+
 exports.playVideo = (videoId, guild, connection) => {
 	var volume = data.volume;
 	var current = data.current;
@@ -276,6 +293,12 @@ exports.playVideo = (videoId, guild, connection) => {
 
 	let url = `http://youtube.com/watch?v=${videoId}`;
 	let stream = yt(url, { audioonly: true });
+
+	exports.sendEmbed(guild, "playing", {
+		id: videoId,
+		title: ytInfo[guild.id][videoId].title,
+		duration: ytInfo[guild.id][videoId].duration
+	});
 
 	var dispatcher = connection.playStream(stream, { volume: playVolume });
 	dispatcher.on("end", () => {

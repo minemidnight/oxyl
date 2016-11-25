@@ -36,20 +36,18 @@ function playCmdProcess(message) {
 	var type = music.getUrlType(message.content);
 	return new Promise((resolve, reject) => {
 		if(type === "NONE") {
-			message.content = message.content.slice(1);
 			editMsg = message.reply(`searching \`${message.content}\` then playing result`);
 			music.searchVideo(message.content).then(res => {
 				handleInlineSearch(message, editMsg, res)
 				.then(value => resolve(value));
 			});
 		} else if(type === "PLAYLIST") {
-			message.reply(`adding playlist to queue: \`${message.content}\``).then(msg => {
+			message.reply(`adding playlist to queue: \`${message.contentPreserved}\``).then(msg => {
 				resolve(msg);
 			});
 		} else if(type === "VIDEO") {
-			message.reply(`getting video title of: \`${message.content}\``).then(msg => {
+			message.reply(`getting video title of: \`${message.contentPreserved}\``).then(msg => {
 				let videoId = music.getVideoId(msg.content);
-				console.log(videoId);
 				music.addInfo(videoId, message.guild).then(info => {
 					msg.edit(`${message.author}, adding __${info.title}__ (\`http://youtube.com/watch?v=${videoId}\`) to the **${message.guild.name}**'s queue.`)
 					.then(editedMsg => resolve(editedMsg));

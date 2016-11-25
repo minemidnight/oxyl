@@ -40,7 +40,7 @@ Oxyl.registerCommand("queue", "music", (message, bot) => {
 					title = `${title.substring(0, 71)} __**...**__`;
 				}
 
-				queueSongs.push(`**[${index + 1}]** ${title}`);
+				queueSongs.push(`[${index + 1}] ${title}`);
 				if(queueSize - 1 === index || i === perPage - 1) break;
 			}
 			queueSongs = framework.listConstructor(queueSongs);

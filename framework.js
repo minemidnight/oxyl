@@ -1,6 +1,7 @@
-const Oxyl = require("./oxyl.js");
-const	fs = require("fs");
-const	yaml = require("js-yaml");
+const Oxyl = require("./oxyl.js"),
+	fs = require("fs"),
+	yaml = require("js-yaml"),
+	path = require("path");
 
 exports.config = yaml.safeLoad(fs.readFileSync("./private/config.yml"));
 exports.defaultConfig = fs.readFileSync("./private/default-config.yml");
@@ -121,19 +122,21 @@ exports.getFiles = (filePath) => {
 };
 
 exports.loadScripts = (filePath) => {
+	exports.consoleLog(`Loading all scripts at ${filePath}`, "debug");
 	var dirFiles = exports.getFiles(filePath);
-	for(var i = 0; i < dirFiles.length; i++) {
+	for(var i in dirFiles) {
 		exports.loadScript(dirFiles[i]);
 	}
 };
 
 exports.loadScript = (scriptPath, reload) => {
-	require(scriptPath);
 	if(reload) {
+		let script = path.resolve(scriptPath);
+		delete require.cache[require.resolve(script)];
+
 		exports.consoleLog(`Reloaded script at ${scriptPath}`, "debug");
-	} else {
-		exports.consoleLog(`Loaded script at ${scriptPath}`, "debug");
 	}
+	require(scriptPath);
 };
 
 exports.listConstructor = (obj, index, follower) => {

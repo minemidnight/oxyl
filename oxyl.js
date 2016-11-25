@@ -10,18 +10,20 @@ process.on("unhandledRejection", (err) => {
 
 process.on('uncaughtException', (err) => {
 	framework.consoleLog(`Uncaught Exception: ${framework.codeBlock(err.stack)}`, "debug");
-	process.exit();
+	setTimeout(() => { process.exit(0); }, 2500);
 });
 
 exports.registerCommand = (name, type, callback, aliases, description, usage) => {
 	if(!exports.commands[type]) {
 		framework.commands[type] = {};
 	}
-	framework.commands[type][name] = {};
-	framework.commands[type][name].aliases = aliases;
-	framework.commands[type][name].description = description;
-	framework.commands[type][name].usage = usage;
-	framework.commands[type][name].process = callback;
+
+	framework.commands[type][name] = {
+		aliases: aliases,
+		description: description,
+		usage: usage,
+		process: callback
+	};
 };
 
 exports.commands = framework.commands;

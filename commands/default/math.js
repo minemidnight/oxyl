@@ -8,9 +8,9 @@ Oxyl.registerCommand("math", "default", (message, bot) => {
 	try {
 		result = math.eval(message.content);
 	} catch(error) {
-		framework.consoleLog(`**Math Evaluation Error:** ${framework.codeBlock(error.stack)}`);
+		result = undefined;
 	}
-	if(isNaN(parseFloat(result))) {
+	if(isNaN(result)) {
 		return "Invalid Calculation Expression";
 	} else {
 		return `**Result:** ${result}`;
