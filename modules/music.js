@@ -3,7 +3,8 @@ const Oxyl = require("../oxyl.js"),
 	https = require("https"),
 	configs = require("../modules/serverconfigs.js"),
 	yt = require("ytdl-core");
-const config = framework.config;
+const config = framework.config,
+	bot = Oxyl.bot;
 var defaultVolume = config.options.music.defaultVolume;
 var ytReg = config.options.music.youtubeRegex;
 var data = { queue: {}, current: {}, volume: {}, ytinfo: {}, options: {} };
@@ -16,15 +17,33 @@ exports.clearData = (guild) => {
 	delete data.ytinfo[guild.id];
 };
 
+exports.createOptions = (guild) => {
+	var options = data.options;
+	options[guild.id] = [];
+	options[guild.id].repeat = false;
+	options[guild.id].dimmer = true;
+	options[guild.id].dimmerSpeakers = 0;
+};
+
 exports.toggleRepeat = (guild) => {
 	var options = data.options;
-	if(!options[guild.id]) {
-		options[guild.id] = [];
-		options[guild.id].repeat = false;
-	}
-	console.log(options[guild.id]);
+	if(!options[guild.id]) exports.createOptions(guild);
 
 	options[guild.id].repeat = !options[guild.id].repeat;
+};
+
+exports.toggleDimmer = (guild) => {
+	var options = data.options;
+	if(!options[guild.id]) exports.createOptions(guild);
+
+	options[guild.id].dimmer = !options[guild.id].dimmer;
+	options[guild.id].dimmerSpeakers = 0;
+
+	let connection = exports.getDispatcher(guild);
+	if(connection && data.current[guild.id]) {
+		let volume = data.volume[guild.id];
+		if(data.options[guild.id].dimmerSpeakers <= 0) connection.setVolume(volume / 200);
+	}
 };
 
 exports.getUrlType = (url) => {
@@ -249,7 +268,7 @@ exports.setVolume = (guild, newVolume) => {
 	} else if(newVolume < 0) {
 		newVolume = 0;
 	}
-	if(!connection) { return; }
+	if(!connection) return;
 
 	connection.setVolume(newVolume / 200);
 	volume[guild.id] = newVolume;
@@ -330,5 +349,27 @@ exports.getDuration = (number) => {
 		return `${mins}:${secs}`;
 	}
 };
+
+bot.on("guildMemberSpeaking", (member, speaking) => {
+	let guild = member.guild;
+	let current = data.current[guild.id];
+	if(!current) return;
+	if(!data.options[guild.id]) exports.createOptions(guild);
+	if(!data.options[guild.id].dimmer) return;
+	let connection = exports.getDispatcher(guild);
+
+	if(speaking) {
+		data.options[guild.id].dimmerSpeakers += 1;
+	} else {
+		data.options[guild.id].dimmerSpeakers -= 1;
+	}
+
+	let volume = data.volume[guild.id];
+	if(data.options[guild.id].dimmerSpeakers <= 0) {
+		connection.setVolume(volume / 200);
+	} else {
+		connection.setVolume((volume / 1.3) / 200);
+	}
+});
 
 exports.data = data;

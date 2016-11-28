@@ -7,6 +7,8 @@ const ytReg = framework.config.options.music.youtubeRegex;
 var cancelFilter = (newMsg, oldMsg) => {
 	if(newMsg.author.id === oldMsg.author.id && newMsg.content.toLowerCase() === "cancel") {
 		return true;
+	} else if(newMsg.author.id === oldMsg.author.id && newMsg.content.toLowerCase() === "continue") {
+		return true;
 	} else {
 		return false;
 	}
@@ -76,7 +78,7 @@ var command = new Command("play", (message, bot) => {
 				return;
 			}
 
-			msg.edit(`${msg.content}\n\n*Reply with cancel in the next 10 seconds or the command will be processed*`);
+			msg.edit(`${msg.content}\n\n*Reply with cancel in the next 10 seconds or the command will be processed, or continue to play now*`);
 			msg.channel.awaitMessages(newMsg => cancelFilter(newMsg, message), { maxMatches: 1, time: 10000 })
 			.then((responses) => {
 				if(responses && responses.size === 1 && responses.first().content.toLowerCase() === "cancel") {
