@@ -117,14 +117,66 @@ bot.on("message", (message) => {
 			}
 		}
 
-		try {
-			var result = command.run(message);
-			consoleLog(`[${framework.formatDate(new Date())}] ${framework.unmention(message.author)} ran \`${command.name}\` in **${guild.name}**`, "cmd");
-		} catch(error) {
-			consoleLog(`Failed command ${command.name} (${command.type})\n` +
-        `**Error:** ${framework.codeBlock(error.stack)}`, "debug");
-		} finally {
-			if(result) message.reply(result, { split: true });
+
+		let args = command.args;
+		let arguments = message.content.split(" ", args.length);
+		let argCheck = 0;
+
+		let i = -1, nth = args.length;
+		while(nth-- && i++ < message.content.length) {
+			i = message.content.indexOf(" ", i);
+			if(i < 0) break;
 		}
+		arguments.push(message.content.substring(i));
+		message.argsPreserved = arguments;
+		message.args = arguments.map(ele => ele.toLowerCase());
+
+		validateArgs(message, command)
+		.then(() => {
+			try {
+				var result = command.run(message);
+				consoleLog(`[${framework.formatDate(new Date())}] ${framework.unmention(message.author)} ran \`${command.name}\` in **${guild.name}**`, "cmd");
+			} catch(error) {
+				consoleLog(`Failed command ${command.name} (${command.type})\n` +
+				`**Error:** ${framework.codeBlock(error.stack)}`, "debug");
+			} finally {
+				if(result) message.reply(result, { split: true });
+			}
+		}).catch(reason => {
+			message.reply(reason);
+		});
 	}
 });
+
+function checkArg(input, arg) {
+	return new Promise((resolve, reject) => {
+		if(!arg) reject(`No input given for ${arg.label} (${arg.type})`);
+	});
+}
+
+function validateArgs(message, command, index) {
+	if(index === undefined) index = 0;
+	return new Promise((resolve, reject) => {
+		if(index === command.args.length) resolve("Finished checking successfully");
+		checkArg(message.args[index], command.args[index]).then(() => {
+			validateArgs(message, command, index + 1);
+		}).catch(reason => {
+			message.reply(`${reason}\nYou have 15 seconds to supply another argument, or it will time out`);
+			let await = message.channel.awaitMessage(newMsg => {
+				if(newMsg.author.id === message.author.id) {
+					return true;
+				} else {
+					return false;
+				}
+			}, { maxMatches: 1, time: 15000 })
+			.then(responses => {
+				if(!responses || responses.size === 0) reject("Command timed out");
+				checkArg(message.args[index], command.args[index]).then(() => {
+					message.argsCase[index] = responses.first();
+					message.args[index] = responses.first().toLowerCase();
+					validateArgs(message, command, index + 1);
+				}).catch(reason2 => { reject(reason2); });
+			});
+		});
+	});
+}

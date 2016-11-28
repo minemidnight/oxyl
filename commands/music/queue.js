@@ -53,13 +53,14 @@ var command = new Command("queue", (message, bot) => {
 		var videoTitle = infoCurrent.title;
 		var videoDuration = music.getDuration(infoCurrent.duration);
 		let repeat = options.repeat ? "on" : "off";
+		let dimmer = options.dimmer ? "on" : "off";
 
 		var playTime = music.getPlayTime(message.guild);
 		playTime = Math.floor(playTime / 1000);
 		playTime = music.getDuration(playTime);
 
 		queueMsg += `\n\nVolume: ${volume}`;
-		queueMsg += `\nRepeat: ${repeat}`;
+		queueMsg += `\nDimmer: ${dimmer}\nRepeat: ${repeat}`;
 		queueMsg += `\n\nPlaying: ${videoTitle} **(**${playTime}/${videoDuration}**)**`;
 
 		return queueMsg;
