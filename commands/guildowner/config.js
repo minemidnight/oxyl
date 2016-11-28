@@ -1,7 +1,7 @@
-const Discord = require("discord.js"),
-	yaml = require("js-yaml"),
+const yaml = require("js-yaml"),
 	fs = require("fs"),
 	Oxyl = require("../../oxyl.js"),
+	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js"),
 	configs = require("../../modules/serverconfigs.js");
 const changeConfig = framework.changeConfig;
@@ -42,11 +42,22 @@ function handleConfig(message, args) {
 	}
 }
 
-Oxyl.registerCommand("config", "guild owner", (message, bot) => {
+var command = new Command("config", (message, bot) => {
 	var args = message.content.split(" ");
 	if(!message.content) {
 		return `please provide an argument (\`values\` or \`<value>\`)`;
 	} else {
 		return handleConfig(message, args);
 	}
-}, [], "Configurate Oxyl and his settings per guild", "<get/set> [options]");
+}, {
+	type: "guild owner",
+	description: "Configurate Oxyl and his settings per guild",
+	args: [{
+		type: "type",
+		label: "get/set"
+	}, {
+		type: "custom",
+		label: "options",
+		optional: true
+	}]
+});

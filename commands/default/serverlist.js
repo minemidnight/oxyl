@@ -1,9 +1,9 @@
-const Discord = require("discord.js"),
-	Oxyl = require("../../oxyl.js"),
+const Oxyl = require("../../oxyl.js"),
+	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
 const perPage = framework.config.options.commands.serverListPerPage;
 
-Oxyl.registerCommand("serverlist", "default", (message, bot) => {
+var command = new Command("serverlist", (message, bot) => {
 	var guilds = bot.guilds.array();
 	var page = 1;
 	var pageAmount = Math.ceil(guilds.length / perPage);
@@ -26,4 +26,13 @@ Oxyl.registerCommand("serverlist", "default", (message, bot) => {
 	listMsg += guildsPage;
 	listMsg += `\nPage ${page} of ${pageAmount}`;
 	return listMsg;
-}, [], `List all servers of Oxyl (${perPage}/page)`, "[page]");
+}, {
+	type: "default",
+	description: "List all servers of Oxyl",
+	args: [{
+		type: "int",
+		label: "page",
+		min: 1,
+		optional: true
+	}]
+});

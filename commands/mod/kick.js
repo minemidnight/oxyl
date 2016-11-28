@@ -1,8 +1,8 @@
-const Discord = require("discord.js"),
-	Oxyl = require("../../oxyl.js"),
+const Oxyl = require("../../oxyl.js"),
+	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
 
-Oxyl.registerCommand("kick", "moderator", (message, bot) => {
+var command = new Command("kick", (message, bot) => {
 	var mention = message.mentions.users.first();
 	var kickPerms = message.guild.member(bot.user).hasPermission("KICK_MEMBERS");
 	if(!mention) {
@@ -18,4 +18,8 @@ Oxyl.registerCommand("kick", "moderator", (message, bot) => {
 			return `${mention} has been kicked`;
 		}
 	}
-}, [], "Kick a user from the guild", "<mention>");
+}, {
+	type: "moderator",
+	description: "Kick a user from the guild",
+	args: [{ type: "mention" }]
+});

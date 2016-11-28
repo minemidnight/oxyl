@@ -1,5 +1,4 @@
-const Discord = require("discord.js"),
-	Duration = require("duration-js"),
+const Duration = require("duration-js"),
 	Oxyl = require("../oxyl.js"),
 	framework = require("../framework.js");
 
@@ -19,8 +18,8 @@ exports.newPoll = (message, time, topic) => {
 	var durString = new Duration(timeMs).toString();
 	const pollMsg = channel.sendMessage(mainMsg + timeMsg + durString);
 	Promise.resolve(pollMsg).then(msg => {
-		msg.addReaction("✅");
-		msg.addReaction("❌");
+		msg.react("✅");
+		msg.react("❌");
 		id = msg.id;
 	});
 

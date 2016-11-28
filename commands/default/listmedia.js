@@ -1,11 +1,10 @@
-const Discord = require("discord.js"),
-	Oxyl = require("../../oxyl.js"),
+const Oxyl = require("../../oxyl.js"),
+	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js"),
 	fs = require("fs");
+const mediaPath = "./media/";
 
-var mediaPath = "./media/";
-
-Oxyl.registerCommand("listmedia", "default", (message, bot) => {
+var command = new Command("listmedia", (message, bot) => {
 	var media = fs.readdirSync(`${mediaPath}`), mediaList = [];
 	media.forEach(medFile => {
 		var extIndex = medFile.lastIndexOf(".");
@@ -14,4 +13,8 @@ Oxyl.registerCommand("listmedia", "default", (message, bot) => {
 	});
 	mediaList = mediaList.sort();
 	return `all media **(**${mediaList.length}**)**: ${framework.codeBlock(mediaList.join(", "))}`;
-}, ["medialist"], "List all shareable media", "[]");
+}, {
+	type: "default",
+	aliases: ["medialist"],
+	description: "List all shareable media"
+});

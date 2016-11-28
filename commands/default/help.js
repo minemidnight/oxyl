@@ -1,20 +1,17 @@
-const Discord = require("discord.js"),
-	Oxyl = require("../../oxyl.js"),
+const Oxyl = require("../../oxyl.js"),
+	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
-const commands = framework.commands;
+const commands = Oxyl.commands;
 
-Oxyl.registerCommand("help", "default", (message, bot) => {
+var command = new Command("help", (message, bot) => {
 	var cmds = {};
 
 	for(var cmdType in commands) {
 		cmds[cmdType] = [];
-		for(var loopCmd in commands[cmdType]) {
-			cmds[cmdType].push(loopCmd);
-			var aliases = commands[cmdType][loopCmd].aliases;
-			for(var i = 0; i < aliases.length; i++) {
-				var alias = aliases[i];
-				cmds[cmdType].push(alias);
-			}
+		for(var cmd in commands[cmdType]) {
+			cmd = commands[cmdType][cmd];
+			cmds[cmdType].push(cmd.name);
+			cmds[cmdType].concat(cmd.aliases);
 		}
 	}
 
@@ -32,4 +29,8 @@ Oxyl.registerCommand("help", "default", (message, bot) => {
 	helpMsg += `\nUse \`advancedhelp\` to get a advanced list of commands, or \`cmdinfo\` to get a detailed description of one`;
 
 	return helpMsg;
-}, ["cmds", "commandlist", "commands"], "List all registered commands", "[]");
+}, {
+	type: "default",
+	aliases: ["cmds", "commandlist", "commands"],
+	description: "List all registered commands"
+});

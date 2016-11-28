@@ -1,8 +1,8 @@
-const Discord = require("discord.js"),
-	music = require("../../modules/music.js"),
+const music = require("../../modules/music.js"),
 	Oxyl = require("../../oxyl.js"),
+	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
-var ytReg = framework.config.options.music.youtubeRegex;
+const ytReg = framework.config.options.music.youtubeRegex;
 
 var cancelFilter = (newMsg, oldMsg) => {
 	if(newMsg.author.id === oldMsg.author.id && newMsg.content.toLowerCase() === "cancel") {
@@ -59,7 +59,7 @@ function playCmdProcess(message) {
 	});
 }
 
-Oxyl.registerCommand("play", "music", (message, bot) => {
+var command = new Command("play", (message, bot) => {
 	let editMsg;
 	var voiceChannel = message.member.voiceChannel;
 	if(!message.content) {
@@ -99,4 +99,11 @@ Oxyl.registerCommand("play", "music", (message, bot) => {
 		});
 	}
 	return false;
-}, [], "Add a youtube video to the music queue", "<yt link/playlist link/!query>");
+}, {
+	type: "music",
+	description: "Add a youtube video to the music queue",
+	args: [{
+		type: "text",
+		label: "yt video link/yt playlist link/search query"
+	}]
+});

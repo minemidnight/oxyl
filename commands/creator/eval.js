@@ -1,9 +1,9 @@
-const Discord = require("discord.js"),
-	util = require("util"),
+const util = require("util"),
 	Oxyl = require("../../oxyl.js"),
+	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
 
-Oxyl.registerCommand("eval", "creator", (message, bot) => {
+var command = new Command("eval", (message, bot) => {
 	var guild = message.guild, channel = message.channel;
 	var editMsg = message.reply("executing code...");
 	try {
@@ -12,4 +12,11 @@ Oxyl.registerCommand("eval", "creator", (message, bot) => {
 	} catch(error) {
 		Promise.resolve(editMsg).then(msg => msg.edit(`:x: **Error:** ${framework.codeBlock(error)}`));
 	}
-}, [], "Execute code", "<code>");
+}, {
+	type: "creator",
+	description: "Execute code",
+	args: [{
+		type: "text",
+		label: "code"
+	}]
+});

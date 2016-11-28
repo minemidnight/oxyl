@@ -1,12 +1,12 @@
-const Discord = require("discord.js"),
-	Oxyl = require("../../oxyl.js"),
+const Oxyl = require("../../oxyl.js"),
+	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js"),
 	https = require("https"),
 	googl = require("goo.gl");
 const config = framework.config;
 googl.setKey(config.googleKey);
 
-Oxyl.registerCommand("shorten", "default", (message, bot) => {
+var command = new Command("shorten", (message, bot) => {
 	var filter = config.options.linkFilter;
 	filter = new RegExp(filter);
 	if(!message.content) {
@@ -22,4 +22,9 @@ Oxyl.registerCommand("shorten", "default", (message, bot) => {
 		});
 		return false;
 	}
-}, ["shortenlink", "googl", "shortlink"], "Shorten a link using goo.gl", "<link>");
+}, {
+	type: "default",
+	description: "Shorten a link using goo.gl",
+	aliases: ["shortenlink", "googl", "shortlink"],
+	args: [{ type: "link" }]
+});

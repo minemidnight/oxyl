@@ -1,10 +1,10 @@
-const Discord = require("discord.js"),
-	Oxyl = require("../../oxyl.js"),
+const Oxyl = require("../../oxyl.js"),
+	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js"),
 	os = require("os");
 const config = framework.config;
 
-Oxyl.registerCommand("botinfo", "default", (message, bot) => {
+var command = new Command("botinfo", (message, bot) => {
 	let guilds = bot.guilds;
 	let largeGuilds = guilds.filter(guild => guild.large === true).size;
 	let channels = bot.channels;
@@ -56,4 +56,7 @@ Oxyl.registerCommand("botinfo", "default", (message, bot) => {
 				`\n\n**Guilds:** ${guildsInfo}` +
 				`\n\n**Users:** ${usersInfo}` +
 				`\n\n**Other:** ${otherInfo}`;
-}, [], "View lots of information about Oxyl", "[]");
+}, {
+	type: "default",
+	description: "View information about Oxyl"
+});

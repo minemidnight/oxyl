@@ -1,9 +1,14 @@
-const Discord = require("discord.js"),
-	Oxyl = require("../../oxyl.js"),
+const Oxyl = require("../../oxyl.js"),
+	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
 const bot = Oxyl.bot;
 
-Oxyl.registerCommand("mute", "moderator", (message) => {
+bot.on("channelCreate", (channel) => {
+	const mutedRole = channel.guild.roles.find("name", "Muted");
+	if(mutedRole) { channel.overwritePermissions(mutedRole, { SEND_MESSAGES: false }); }
+});
+
+var command = new Command("mute", (message) => {
 	let guild = message.guild;
 	let mention = message.mentions.users.first();
 
@@ -35,9 +40,8 @@ Oxyl.registerCommand("mute", "moderator", (message) => {
 			}
 		}
 	}
-}, [], "Toggle a person's mute state in the guild (for text chat)", "<mention>");
-
-bot.on("channelCreate", (channel) => {
-	const mutedRole = channel.guild.roles.find("name", "Muted");
-	if(mutedRole) { channel.overwritePermissions(mutedRole, { SEND_MESSAGES: false }); }
+}, {
+	type: "moderator",
+	description: "Toggle a person's mute state in the guild (for text chat)",
+	args: [{ type: "mention" }]
 });

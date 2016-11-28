@@ -1,10 +1,10 @@
-const Discord = require("discord.js"),
-	music = require("../../modules/music.js"),
+const music = require("../../modules/music.js"),
 	Oxyl = require("../../oxyl.js"),
+	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
 const perPage = framework.config.options.commands.queueListPerPage;
 
-Oxyl.registerCommand("queue", "music", (message, bot) => {
+var command = new Command("queue", (message, bot) => {
 	var guild = message.guild;
 	const ytInfo = music.data.ytinfo[guild.id];
 	const queue = music.data.queue[guild.id];
@@ -64,4 +64,14 @@ Oxyl.registerCommand("queue", "music", (message, bot) => {
 
 		return queueMsg;
 	}
-}, ["playing", "current"], "List the current guild music queue", "[page]");
+}, {
+	type: "music",
+	description: "List the current guild music queue",
+	aliases: ["playing", "current"],
+	args: [{
+		type: "int",
+		label: "page",
+		optional: true,
+		min: 1
+	}]
+});

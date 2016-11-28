@@ -1,9 +1,9 @@
-const Discord = require("discord.js"),
-	music = require("../../modules/music.js"),
+const music = require("../../modules/music.js"),
 	Oxyl = require("../../oxyl.js"),
+	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
 
-Oxyl.registerCommand("repeat", "music", (message, bot) => {
+var command = new Command("repeat", (message, bot) => {
 	var voice = music.voiceCheck(message.member);
 	var guild = message.guild;
 	var options = music.data.options;
@@ -15,4 +15,8 @@ Oxyl.registerCommand("repeat", "music", (message, bot) => {
 
 		return `turned ${newValue} repeat for **${guild.name}**`;
 	}
-}, ["loop"], "Toggle repeating of songs", "[]");
+}, {
+	type: "music",
+	description: "Toggle repeating of songs",
+	aliases: ["loop"]
+});

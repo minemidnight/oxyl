@@ -1,34 +1,39 @@
-const Discord = require("discord.js"),
-	Oxyl = require("../../oxyl.js"),
+const Oxyl = require("../../oxyl.js"),
+	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
-const commands = framework.commands;
+const commands = Oxyl.commands;
 
-Oxyl.registerCommand("advancedhelp", "default", (message, bot) => {
-	var helpMsg = "";
+var command = new Command("advancedhelp", (message, bot) => {
+	let helpMsg = "**Advanced Help**\nPrefix: @oxyl or oxyl";
 
-	for(var cmdType in commands) {
-		helpMsg += `newmsg\n\n**~~——————~~** __${cmdType.toUpperCase()} COMMANDS__ **~~——————~~**`;
-		for(var loopCmd in commands[cmdType]) {
+	for(let cmdType in commands) {
+		helpMsg += `\n\n**~~——————~~** __${cmdType.toUpperCase()} COMMANDS__ **~~——————~~**`;
+		for(let cmd in commands[cmdType]) {
+			cmd = commands[cmdType][cmd];
 			let cmdInfo = [];
-			helpMsg += `\nCommand: ${loopCmd}`;
-			if(commands[cmdType][loopCmd].aliases.length > 0) {
-				cmdInfo.push(`Aliases: ${commands[cmdType][loopCmd].aliases.join(", ")}`);
+			helpMsg += `\nCommand: ${cmd.name}`;
+
+			if(cmd.aliases.length > 0) {
+				cmdInfo.push(`Aliases: ${cmd.aliases.join(", ")}`);
 			} else {
 				cmdInfo.push(`Aliases: N/A`);
-			} if(commands[cmdType][loopCmd].description) {
-				cmdInfo.push(`Description: ${commands[cmdType][loopCmd].description}`);
+			}
+
+			if(cmd.description) {
+				cmdInfo.push(`Description: ${cmd.description}`);
 			} else {
 				cmdInfo.push(`Description: N/A`);
-			} if(commands[cmdType][loopCmd].usage) {
-				cmdInfo.push(`Usage: ${commands[cmdType][loopCmd].usage}`);
-			} else {
-				cmdInfo.push(`Usage: N/A`);
 			}
+
+			cmdInfo.push(`Usage: ${cmd.usage}`);
+			cmdInfo.push(`Uses (resets on restart): ${cmd.uses}`);
 			helpMsg += framework.listConstructor(cmdInfo);
 		}
 	}
-	message.author.sendMessage(`${"**Advanced Help**\n\n" +
-  "Command Prefix/Suffix (Works as either, but not both) - `:`\n"}${
-  helpMsg}`, { split: true });
+
+	message.author.sendMessage(helpMsg, { split: true });
 	return "messaging you Oxyl's Advanced Help!";
-}, [], "List advanced information about every registered command", "[]");
+}, {
+	type: "default",
+	description: "List advanced information about every registered command"
+});

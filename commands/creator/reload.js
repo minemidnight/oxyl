@@ -1,10 +1,10 @@
-const Discord = require("discord.js"),
-	Oxyl = require("../../oxyl.js"),
+const Oxyl = require("../../oxyl.js"),
 	framework = require("../../framework.js"),
+	Command = require("../../modules/commandCreator.js"),
 	fs = require("fs");
 const loadScript = framework.loadScript;
 
-Oxyl.registerCommand("reload", "creator", (message, bot) => {
+var command = new Command("reload", (message, bot) => {
 	message.content = message.content.toLowerCase();
 	var args = message.content.split(" ");
 	if(!args[0]) {
@@ -19,4 +19,11 @@ Oxyl.registerCommand("reload", "creator", (message, bot) => {
 			return `reloaded script \`${reload[1]}\` **(**${reload[0]}${reload[1]}**)**`;
 		}
 	}
-}, [], "Reload commands or modules", "<command/module name>");
+}, {
+	type: "creator",
+	description: "Reload commands or modules",
+	args: [{
+		type: "text",
+		label: "command/module name"
+	}]
+});

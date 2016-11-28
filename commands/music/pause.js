@@ -1,9 +1,9 @@
-const Discord = require("discord.js"),
-	music = require("../../modules/music.js"),
+const music = require("../../modules/music.js"),
 	Oxyl = require("../../oxyl.js"),
+	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
 
-Oxyl.registerCommand("pause", "music", (message, bot) => {
+var command = new Command("pause", (message, bot) => {
 	var voice = music.voiceCheck(message.member);
 	if(!voice) {
 		return "you and Oxyl must both be in the same channel to pause the music";
@@ -13,4 +13,7 @@ Oxyl.registerCommand("pause", "music", (message, bot) => {
 		music.pauseStream(message.guild);
 		return `paused the music in ${voice.name} :pause_button:`;
 	}
-}, [], "Pause the music in your channel", "[]");
+}, {
+	type: "music",
+	description: "Pause the music in your channel"
+});

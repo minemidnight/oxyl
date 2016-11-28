@@ -1,8 +1,10 @@
-const Discord = require("discord.js"),
-	Oxyl = require("../../oxyl.js"),
+const Oxyl = require("../../oxyl.js"),
+	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
+const config = framework.config;
 
-Oxyl.registerCommand("support", "default", (message) =>
-   "Support Guild: https://discord.gg/KtyNPcE" +
-  "\nInvite Link: https://goo.gl/9tHfuB"
-, ["invite"], "Get invite link to the support guild, aswell as Oxyl's invite link", "[]");
+var command = new Command("support", () => `Support Guild: https://discord.gg/KtyNPcE\nInvite Link: ${config.options.inviteLink}`, {
+	type: "default",
+	description: "Get invite link to the support guild, aswell as Oxyl's invite link",
+	aliases: ["invite"]
+});

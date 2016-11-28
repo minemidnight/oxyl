@@ -1,8 +1,8 @@
-const Discord = require("discord.js"),
-	Oxyl = require("../../oxyl.js"),
+const Oxyl = require("../../oxyl.js"),
+	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
 
-Oxyl.registerCommand("ban", "moderator", (message, bot) => {
+var command = new Command("ban", (message, bot) => {
 	var mention = message.mentions.users.first();
 	var banPerms = message.guild.member(bot.user).hasPermission("BAN_MEMBERS");
 	if(!mention) {
@@ -18,4 +18,8 @@ Oxyl.registerCommand("ban", "moderator", (message, bot) => {
 			return `${mention} has been banned`;
 		}
 	}
-}, [], "Ban a user from the guild", "<mention>");
+}, {
+	type: "moderator",
+	description: "Ban a user from the guild",
+	args: [{ type: "mention" }]
+});

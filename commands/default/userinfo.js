@@ -1,8 +1,8 @@
-const Discord = require("discord.js"),
-	Oxyl = require("../../oxyl.js"),
+const Oxyl = require("../../oxyl.js"),
+	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
 
-Oxyl.registerCommand("userinfo", "default", (message, bot) => {
+var command = new Command("userinfo", (message, bot) => {
 	var mention = message.mentions.users.first();
 	const guild = message.guild;
 
@@ -37,4 +37,8 @@ Oxyl.registerCommand("userinfo", "default", (message, bot) => {
 		userInfo = framework.listConstructor(userInfo);
 		return `info on ${username}: ${userInfo}`;
 	}
-}, [], "View tons of detailed information about a user", "");
+}, {
+	type: "default",
+	description: "View tons of detailed information about a user",
+	args: [{ type: "mention" }]
+});

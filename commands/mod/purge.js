@@ -1,8 +1,8 @@
-const Discord = require("discord.js"),
-	Oxyl = require("../../oxyl.js"),
+const Oxyl = require("../../oxyl.js"),
+	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
 
-Oxyl.registerCommand("purge", "moderator", (message, bot) => {
+var command = new Command("purge", (message, bot) => {
 	var deletePerms = message.guild.member(bot.user).hasPermission("MANAGE_MESSAGES"),
 		args = message.content.split(" "),
 		amt = parseInt(args[0]),
@@ -24,8 +24,23 @@ Oxyl.registerCommand("purge", "moderator", (message, bot) => {
 			if(mentions && mentions.size > 0) {
 				messages = messages.filter(msg => mentions.array().includes(msg.author));
 			}
-			message.channel.bulkDelete(messages)
+			message.channel.bulkDelete(messages);
 		});
 	}
 	return false;
-}, ["deletemessages"], "Delete up to messages by all users or a list of users", "<amount> [mentions]");
+}, {
+	type: "moderator",
+	aliases: ["deletemessages"],
+	description: "Delete up to 100 messages by all users or a list of users",
+	args: [{
+		type: "int",
+		min: 1,
+		max: 100,
+		label: "amount"
+	}, {
+		type: "mention",
+		infinite: true,
+		optional: true,
+		label: "mentions"
+	}]
+});

@@ -1,9 +1,9 @@
-const Discord = require("discord.js"),
-	Oxyl = require("../../oxyl.js"),
+const Oxyl = require("../../oxyl.js"),
+	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js"),
 	fs = require("fs");
 
-Oxyl.registerCommand("media", "default", (message, bot) => {
+var command = new Command("media", (message, bot) => {
 	if(!message.content) {
 		return "please provide a media to share, run listmedia to list all media";
 	} else {
@@ -15,4 +15,12 @@ Oxyl.registerCommand("media", "default", (message, bot) => {
 		}
 	}
 	return false;
-}, ["share"], "Share a peice of media", "<media name>");
+}, {
+	type: "default",
+	aliases: ["share"],
+	description: "Share a peice of media",
+	args: [{
+		type: "text",
+		label: "media name"
+	}]
+});

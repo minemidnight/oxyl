@@ -1,47 +1,42 @@
-const Discord = require("discord.js"),
-	Oxyl = require("../../oxyl.js"),
+const Oxyl = require("../../oxyl.js"),
+	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
-const commands = framework.commands;
+const commands = Oxyl.commands;
 
-Oxyl.registerCommand("cmdinfo", "default", (message, bot) => {
-	var helpMsg = "", cmd = message.content.toLowerCase().split(" ")[0];
-	let realCmd, cmdType, helpInfo = [];
-	if(!cmd) { return "Please provide a command to get the information of."; }
-	for(var typeOf in commands) {
-		for(var loopCmd in commands[typeOf]) {
-			if(loopCmd === cmd || commands[typeOf][loopCmd].aliases.includes(cmd)) {
-				realCmd = loopCmd;
-				cmdType = typeOf;
-				break;
-			}
-		}
-	}
-
-	if(realCmd) {
-		helpMsg += `info on ${cmd}\nCommand: ${realCmd}`;
-		helpInfo.push(`Command Type: ${framework.capitalizeEveryFirst(cmdType)}`);
-
-		if(commands[cmdType][realCmd].aliases.length > 0) {
-			helpInfo.push(`Aliases: ${commands[cmdType][realCmd].aliases.join(", ")}`);
-		} else {
-			helpInfo.push(`Aliases: N/A`);
-		}
-
-		if(commands[cmdType][realCmd].description) {
-			helpInfo.push(`Description: ${commands[cmdType][realCmd].description}`);
-		} else {
-			helpInfo.push(`Description: N/A`);
-		}
-
-		if(commands[cmdType][realCmd].usage) {
-			helpInfo.push(`Usage: ${commands[cmdType][realCmd].usage}`);
-		} else {
-			helpInfo.push(`Usage: N/A`);
-		}
-		helpInfo = framework.listConstructor(helpInfo);
-		helpMsg += helpInfo;
+var command = new Command("cmdinfo", (message, bot) => {
+	if(!message.content) {
+		return "please provide a command to get the information of";
 	} else {
-		helpMsg = `Command not found - \`${cmd}\``;
+		var cmd = framework.findCommand(message.content);
+		if(!cmd) return "command not found";
 	}
+
+	let helpMsg = "", helpInfo = [];
+	helpMsg += `info on ${message.content}\n`;
+	helpMsg += `Command: ${cmd.name}`;
+	helpInfo.push(`Command Type: ${framework.capitalizeEveryFirst(cmd.type)}`);
+
+	if(cmd.aliases.length > 0) {
+		helpInfo.push(`Aliases: ${cmd.aliases.join(", ")}`);
+	} else {
+		helpInfo.push(`Aliases: N/A`);
+	}
+
+	if(cmd.description) {
+		helpInfo.push(`Description: ${cmd.description}`);
+	} else {
+		helpInfo.push(`Description: N/A`);
+	}
+
+	helpInfo.push(`Usage: ${cmd.usage}`);
+	helpInfo.push(`Uses (resets on restart): ${cmd.uses}`);
+	helpMsg += framework.listConstructor(helpInfo);
 	return helpMsg;
-}, [], "List detailed information about a command", "<command>");
+}, {
+	type: "default",
+	description: "List detailed information about a command",
+	args: [{
+		type: "text",
+		label: "command"
+	}]
+});

@@ -1,9 +1,9 @@
-const Discord = require("discord.js"),
-	music = require("../../modules/music.js"),
+const music = require("../../modules/music.js"),
 	Oxyl = require("../../oxyl.js"),
+	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
 
-Oxyl.registerCommand("shuffle", "music", (message, bot) => {
+var command = new Command("shuffle", (message, bot) => {
 	var voice = music.voiceCheck(message.member);
 	var guild = message.guild;
 	var queue = music.data.queue[guild.id];
@@ -17,4 +17,7 @@ Oxyl.registerCommand("shuffle", "music", (message, bot) => {
 		queue = queue.sort(() => 0.5 - Math.random());
 		return "queue shuffled";
 	}
-}, [], "Shuffle the songs in queue", "[]");
+}, {
+	type: "music",
+	description: "Shuffle the songs in queue"
+});

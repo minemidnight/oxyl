@@ -1,10 +1,13 @@
-const Discord = require("discord.js"),
-	Oxyl = require("../../oxyl.js"),
+const Oxyl = require("../../oxyl.js"),
+	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
 
-Oxyl.registerCommand("ping", "default", (message, bot) => {
+var command = new Command("ping", (message, bot) => {
 	var time = Date.now();
 	message.channel.sendMessage("Pong!").then(msg => {
 		msg.edit(`Pong! \`${Date.now() - time}ms\``);
 	});
-}, [], "Test the bot's responsiveness", "[]");
+}, {
+	type: "default",
+	description: "Test the bot's responsiveness"
+});

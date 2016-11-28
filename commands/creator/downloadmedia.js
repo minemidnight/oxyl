@@ -1,14 +1,11 @@
-const Discord = require("discord.js"),
-	Oxyl = require("../../oxyl.js"),
+const Oxyl = require("../../oxyl.js"),
 	framework = require("../../framework.js"),
+	Command = require("../../modules/commandCreator.js"),
 	download = require("download"),
 	fs = require("fs");
+const mediaPath = "./media/";
 
-// Uses message.reply because it must wait for Discord to load embeds
-
-var mediaPath = "./media/";
-
-Oxyl.registerCommand("downloadmedia", "creator", (message, bot) => {
+var command = new Command("downloadmedia", (message, bot) => {
   // Wrap it in a timeout to wait for embeds to load
 	var embeds = message.embeds, attachments = message.attachments, url,
 		name = message.content.split(" ")[0];
@@ -44,4 +41,12 @@ Oxyl.registerCommand("downloadmedia", "creator", (message, bot) => {
 			});
 		}
 	}, 1000);
-}, [], "Download a piece of media for the media command", "<name> <attachment/embed image>");
+}, {
+	args: [{
+		type: "text",
+		label: "name"
+	}, {
+		type: "custom",
+		label: "attachment/embed image"
+	}]
+});

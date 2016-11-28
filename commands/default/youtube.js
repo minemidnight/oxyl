@@ -1,10 +1,10 @@
-const Discord = require("discord.js"),
-	music = require("../../modules/music.js"),
+const music = require("../../modules/music.js"),
 	https = require("https"),
 	Oxyl = require("../../oxyl.js"),
+	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
 
-Oxyl.registerCommand("youtube", "default", (message, bot) => {
+var command = new Command("youtube", (message, bot) => {
 	if(!message.content) {
 		return "please provide a query to search for";
 	}
@@ -25,4 +25,12 @@ Oxyl.registerCommand("youtube", "default", (message, bot) => {
 		});
 	});
 	return false;
-}, ["yt"], "Search a youtube query", "<query>");
+}, {
+	type: "default",
+	aliases: ["yt"],
+	description: "Search a youtube query",
+	args: [{
+		type: "text",
+		label: "query"
+	}]
+});

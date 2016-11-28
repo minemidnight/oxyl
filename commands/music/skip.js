@@ -1,9 +1,9 @@
-const Discord = require("discord.js"),
-	music = require("../../modules/music.js"),
+const music = require("../../modules/music.js"),
 	Oxyl = require("../../oxyl.js"),
+	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
 
-Oxyl.registerCommand("skip", "music", (message, bot) => {
+var command = new Command("skip", (message, bot) => {
 	let guild = message.guild;
 	let voice = music.voiceCheck(message.member);
 	let connection = voice.connection;
@@ -22,4 +22,7 @@ Oxyl.registerCommand("skip", "music", (message, bot) => {
 			return `no more songs in queue`;
 		}
 	}
-}, [], "Skip a song in your channel");
+}, {
+	type: "music",
+	description: "Skip a song in your channel"
+});

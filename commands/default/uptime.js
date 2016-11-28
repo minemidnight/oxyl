@@ -1,8 +1,8 @@
-const Discord = require("discord.js"),
-	Oxyl = require("../../oxyl.js"),
+const Oxyl = require("../../oxyl.js"),
+	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
 
-Oxyl.registerCommand("uptime", "default", (message, bot) => {
+var command = new Command("uptime", (message, bot) => {
 	var now = Date.now();
 	var msec = now - bot.readyAt;
 	var days = Math.floor(msec / 1000 / 60 / 60 / 24);
@@ -26,4 +26,7 @@ Oxyl.registerCommand("uptime", "default", (message, bot) => {
 		timestr += `${secs}s `;
 	}
 	return `**Uptime:** ${timestr}`;
-}, [], "View the current uptime of Oxyl", "[]");
+}, {
+	type: "default",
+	description: "View the current uptime of Oxyl"
+});

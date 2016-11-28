@@ -1,5 +1,4 @@
-const Discord = require("discord.js"),
-	fs = require("fs"),
+const fs = require("fs"),
 	yaml = require("js-yaml"),
 	Oxyl = require("../oxyl.js"),
 	framework = require("../framework.js");

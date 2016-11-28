@@ -1,8 +1,8 @@
-const Discord = require("discord.js"),
-	Oxyl = require("../../oxyl.js"),
+const Oxyl = require("../../oxyl.js"),
+	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
 
-Oxyl.registerCommand("serverinfo", "default", (message, bot) => {
+var command = new Command("serverinfo", (message, bot) => {
 	if(!message.guild) {
 		return "this only works in guilds";
 	} else {
@@ -75,4 +75,8 @@ Oxyl.registerCommand("serverinfo", "default", (message, bot) => {
            `\n\n**Emojis:** ${emojiInfo}` +
            `\n\n**Other:** ${otherInfo}`;
 	}
-}, ["guildinfo"], "Get detailed description about the guild you messaged in", "[]");
+}, {
+	type: "default",
+	aliases: ["guildinfo"],
+	description: "Get detailed description about the guild in which the message was recieved"
+});

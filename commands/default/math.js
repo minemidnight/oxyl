@@ -1,9 +1,9 @@
-const Discord = require("discord.js"),
-	Oxyl = require("../../oxyl.js"),
+const Oxyl = require("../../oxyl.js"),
+	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js"),
 	math = require("mathjs");
 
-Oxyl.registerCommand("math", "default", (message, bot) => {
+var command = new Command("math", (message, bot) => {
 	var result;
 	try {
 		result = math.eval(message.content);
@@ -15,4 +15,12 @@ Oxyl.registerCommand("math", "default", (message, bot) => {
 	} else {
 		return `**Result:** ${result}`;
 	}
-}, ["calc", "calculate"], "Calculate a math expression", "<expression>");
+}, {
+	type: "default",
+	aliases: ["calc", "calculate"],
+	description: "Calculate a math expression",
+	args: [{
+		type: "text",
+		label: "expression"
+	}]
+});

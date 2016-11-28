@@ -1,9 +1,9 @@
-const Discord = require("discord.js"),
-	music = require("../../modules/music.js"),
+const music = require("../../modules/music.js"),
 	Oxyl = require("../../oxyl.js"),
+	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
 
-Oxyl.registerCommand("stop", "music", (message, bot) => {
+var command = new Command("stop", (message, bot) => {
 	var voice = music.voiceCheck(message.member);
 	var guild = message.guild;
 	if(!voice) {
@@ -13,4 +13,8 @@ Oxyl.registerCommand("stop", "music", (message, bot) => {
 		music.clearData(guild);
 		return `Stopped the music in ${voice.name}`;
 	}
-}, ["end"], "Stop the music in your channel", "[]");
+}, {
+	type: "music",
+	aliases: ["end"],
+	description: "Stop the music in your channel"
+});

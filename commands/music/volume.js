@@ -1,9 +1,9 @@
-const Discord = require("discord.js"),
-	music = require("../../modules/music.js"),
+const music = require("../../modules/music.js"),
 	Oxyl = require("../../oxyl.js"),
+	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
 
-Oxyl.registerCommand("volume", "music", (message, bot) => {
+var command = new Command("volume", (message, bot) => {
 	var voice = music.voiceCheck(message.member);
 	var volume = parseInt(message.content);
 	if(!message.content) {
@@ -16,4 +16,14 @@ Oxyl.registerCommand("volume", "music", (message, bot) => {
 		music.setVolume(message.guild, volume);
 		return `set the volume to ${volume} :sound:`;
 	}
-}, ["vol"], "Change the volume of music being played", "<volume>");
+}, {
+	aliases: ["vol"],
+	type: "music",
+	description: "Change the volume of music being played",
+	args: [{
+		type: "int",
+		label: "volume",
+		min: 0,
+		max: 100
+	}]
+});

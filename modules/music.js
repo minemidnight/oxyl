@@ -1,5 +1,4 @@
-const Discord = require("discord.js"),
-	Oxyl = require("../oxyl.js"),
+const Oxyl = require("../oxyl.js"),
 	framework = require("../framework.js"),
 	https = require("https"),
 	configs = require("../modules/serverconfigs.js"),

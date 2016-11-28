@@ -1,5 +1,4 @@
-const Discord = require("discord.js"),
-	configs = require("../modules/serverconfigs.js"),
+const configs = require("../modules/serverconfigs.js"),
 	Oxyl = require("../oxyl.js"),
 	framework = require("../framework.js");
 
@@ -7,23 +6,21 @@ const bot = Oxyl.bot,
 	config = framework.config,
 	commands = framework.commands,
 	consoleLog = framework.consoleLog,
-	prefix = new RegExp(config.options.prefixRegex, "i");
+	prefix = new RegExp(config.options.prefixRegex, "im");
 
 const spamData = {};
 
 bot.on("message", (message) => {
-	var cmd, type;
 	let guild = message.guild;
-	let guildConfig = configs.getConfig(guild);
 	let msg = message.content.toLowerCase();
 
-	if(guildConfig.channels.ignored.value.includes(message.channel.id)) {
-		return;
-	} else if(message.author.bot) {
+	if(message.author.bot) {
 		return;
 	} else if(!message.channel.type === "text") {
 		message.reply("Oxyl only supports commands within guilds");
 	} else {
+		let guildConfig = configs.getConfig(guild);
+		if(guildConfig.channels.ignored.value.includes(message.channel.id)) return;
 		if(!message.member) {
 			guild.fetchMember(message.author);
 			return;
@@ -35,10 +32,8 @@ bot.on("message", (message) => {
 			message.content = message.content.match(prefix)[2];
 
 			let cmdInfo = framework.getCmd(message.content);
-			if(cmdInfo.cmd) {
-				cmd = cmdInfo.cmd;
-				type = cmdInfo.type;
-
+			var command = cmdInfo.cmd;
+			if(command) {
 				message.contentPreserved = cmdInfo.newContent;
 				msg = message.contentPreserved.toLowerCase();
 				message.content = msg;
@@ -48,7 +43,7 @@ bot.on("message", (message) => {
 			}
 		}
 
-		if(!cmd) {
+		if(!command) {
 			let whitelisted = guildConfig.roles.whitelist.value;
 			let whitelistedRole = roles.find(role => {
 				if(whitelisted.includes(role.id)) {
@@ -90,12 +85,12 @@ bot.on("message", (message) => {
 
 			return;
 		}
-		if(type === "creator") {
+		if(command.type === "creator") {
 			if(!config.creators.includes(message.author.id)) {
 				message.reply(config.messages.notCreator);
 				return;
 			}
-		} else if(type === "moderator") {
+		} else if(command.type === "moderator") {
 			let accepted = guildConfig.roles.mod.value;
 			let modRole = roles.find(role => {
 				if(accepted.includes(role.id) || role.name.toLowerCase() === "bot commander") {
@@ -109,12 +104,12 @@ bot.on("message", (message) => {
 				message.reply(config.messages.notMod);
 				return;
 			}
-		} else if(type === "guild owner") {
+		} else if(command.type === "guild owner") {
 			if(message.author.id !== guild.owner.id) {
 				message.reply(config.messages.notGuildOwner);
 				return;
 			}
-		} else if(type === "music") {
+		} else if(command.type === "music") {
 			let musicText = guildConfig.channels.musicText.value;
 			if(musicText && musicText !== message.channel.id) {
 				message.reply(config.messages.notMusicChannel);
@@ -123,18 +118,13 @@ bot.on("message", (message) => {
 		}
 
 		try {
-			var result = commands[type][cmd].process(message, bot);
-			message.content = message.content === "" ? message.content = "no args" : `\`${message.content}\``;
-			consoleLog(`[${framework.formatDate(new Date())}] ` +
-        `${message.author.username}#${message.author.discriminator} ran \`${cmd}\`
-        in **${guild.name}**`, "cmd");
+			var result = command.run(message);
+			consoleLog(`[${framework.formatDate(new Date())}] ${framework.unmention(message.author)} ran \`${command.name}\` in **${guild.name}**`, "cmd");
 		} catch(error) {
-			consoleLog(`Failed command ${cmd} (${type})\n` +
+			consoleLog(`Failed command ${command.name} (${command.type})\n` +
         `**Error:** ${framework.codeBlock(error.stack)}`, "debug");
 		} finally {
-			if(result) {
-				message.reply(result, { split: true });
-			}
+			if(result) message.reply(result, { split: true });
 		}
 	}
 });
