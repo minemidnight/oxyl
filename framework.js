@@ -5,35 +5,46 @@ const Oxyl = require("./oxyl.js"),
 
 exports.config = yaml.safeLoad(fs.readFileSync("./private/config.yml"));
 exports.defaultConfig = fs.readFileSync("./private/default-config.yml");
-exports.commands = {};
+exports.commands = Oxyl.commands;
+exports.registerCommand = Oxyl.registerCommand;
 
 exports.getCmd = (msgCase) => {
 	let msg = msgCase.toLowerCase();
-	let commands = exports.commands;
+	let commands = Oxyl.commands;
 	let prefix = exports.config.options.prefixRegex;
 	let returnData = {};
-	for(var cmdType in commands) {
-		for(var loopCmd in commands[cmdType]) {
-			if(msg.startsWith(loopCmd)) {
-				returnData.newContent = msgCase.substring(loopCmd.length, msg.length).trim();
-				returnData.cmd = loopCmd;
-				returnData.type = cmdType;
-				break;
-			} else {
-				let aliases = commands[cmdType][loopCmd].aliases;
-				for(let i in aliases) {
-					var alias = aliases[i];
-					if(msg.startsWith(alias)) {
-						returnData.newContent = msgCase.substring(alias.length, msg.length).trim();
-						returnData.cmd = loopCmd;
-						returnData.type = cmdType;
-						break;
-					}
+	for(let cmdType in commands) {
+		for(let cmd in commands[cmdType]) {
+			cmd = commands[cmdType][cmd];
+			let possibleStarts = cmd.aliases.slice(0);
+			possibleStarts.push(cmd.name);
+
+			for(let i in possibleStarts) {
+				let loopCmd = possibleStarts[i];
+				if(msg.startsWith(loopCmd)) {
+					returnData = {
+						newContent: msgCase.substring(loopCmd.length, msg.length).trim(),
+						cmd: cmd
+					};
 				}
 			}
 		}
 	}
 	return returnData;
+};
+
+exports.findCommand = (cmdSearch) => {
+	let commands = Oxyl.commands;
+	for(let cmdType in commands) {
+		for(let cmd in commands[cmdType]) {
+			cmd = commands[cmdType][cmd];
+			let possibleStarts = cmd.aliases.slice(0);
+			possibleStarts.push(cmd.name);
+
+			if(possibleStarts.includes(cmdSearch)) return cmd;
+		}
+	}
+	return false;
 };
 
 exports.formatDate = (toFormat) => {
@@ -64,6 +75,8 @@ exports.codeBlock = (content, lang) => {
 	if(!lang) lang = "";
 	return `\n\`\`\`${lang}\n${content}\n\`\`\``;
 };
+
+exports.unmention = (user) => `${user.username}#${user.discriminator}`;
 
 exports.consoleLog = (message, type) => {
 	var channel;
@@ -174,5 +187,3 @@ exports.listConstructor = (obj, index, follower) => {
 	}
 	return msg;
 };
-
-exports.registerCommand = Oxyl.registerCommand;

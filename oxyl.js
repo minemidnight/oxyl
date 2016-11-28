@@ -1,32 +1,17 @@
 const Discord = require("discord.js"),
-	path = require("path"),
-	framework = require(path.resolve(__dirname, "./framework.js"));
+	framework = require("./framework.js");
 const bot = new Discord.Client();
 exports.bot = bot;
+exports.commands = {};
 
 process.on("unhandledRejection", (err) => {
 	framework.consoleLog(`Unhandled Rejection: ${framework.codeBlock(err.stack)}`, "debug");
 });
 
-process.on('uncaughtException', (err) => {
-	framework.consoleLog(`Uncaught Exception: ${framework.codeBlock(err.stack)}`, "debug");
-	setTimeout(() => { process.exit(0); }, 2500);
-});
-
-exports.registerCommand = (name, type, callback, aliases, description, usage) => {
-	if(!exports.commands[type]) {
-		framework.commands[type] = {};
-	}
-
-	framework.commands[type][name] = {
-		aliases: aliases,
-		description: description,
-		usage: usage,
-		process: callback
-	};
+exports.addCommand = (command) => {
+	if(!exports.commands[command.type]) exports.commands[command.type] = {};
+	exports.commands[command.type][command.name] = command;
 };
-
-exports.commands = framework.commands;
 
 framework.loadScripts("./commands/");
 framework.loadScripts("./modules/");

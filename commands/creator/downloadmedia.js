@@ -42,6 +42,8 @@ var command = new Command("downloadmedia", (message, bot) => {
 		}
 	}, 1000);
 }, {
+	type: "creator",
+	description: "Download a peice of media for the media command",
 	args: [{
 		type: "text",
 		label: "name"
