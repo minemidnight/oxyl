@@ -21,5 +21,8 @@ var command = new Command("kick", (message, bot) => {
 }, {
 	type: "moderator",
 	description: "Kick a user from the guild",
-	args: [{ type: "mention" }]
+	args: [{
+		type: "user",
+		label: "user"
+	}]
 });

@@ -53,7 +53,7 @@ var command = new Command("config", (message, bot) => {
 	type: "guild owner",
 	description: "Configurate Oxyl and his settings per guild",
 	args: [{
-		type: "type",
+		type: "text",
 		label: "get/set"
 	}, {
 		type: "custom",

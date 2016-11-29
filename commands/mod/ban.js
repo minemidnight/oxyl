@@ -21,5 +21,8 @@ var command = new Command("ban", (message, bot) => {
 }, {
 	type: "moderator",
 	description: "Ban a user from the guild",
-	args: [{ type: "mention" }]
+	args: [{
+		type: "user",
+		label: "user"
+	}]
 });

@@ -1,4 +1,5 @@
 const configs = require("../modules/serverconfigs.js"),
+	validator = require("../moudles/commandArgs.js"),
 	Oxyl = require("../oxyl.js"),
 	framework = require("../framework.js");
 
@@ -117,7 +118,6 @@ bot.on("message", (message) => {
 			}
 		}
 
-
 		let args = command.args;
 		let arguments = message.content.split(" ", args.length);
 		let argCheck = 0;
@@ -132,7 +132,8 @@ bot.on("message", (message) => {
 		message.args = arguments.map(ele => ele.toLowerCase());
 
 		validateArgs(message, command)
-		.then(() => {
+		.then(newMsg => {
+			message = newMsg;
 			try {
 				var result = command.run(message);
 				consoleLog(`[${framework.formatDate(new Date())}] ${framework.unmention(message.author)} ran \`${command.name}\` in **${guild.name}**`, "cmd");
@@ -142,23 +143,26 @@ bot.on("message", (message) => {
 			} finally {
 				if(result) message.reply(result, { split: true });
 			}
-		}).catch(reason => {
-			message.reply(reason);
-		});
+		}).catch(reason => message.reply(reason));
 	}
 });
 
 function checkArg(input, arg) {
 	return new Promise((resolve, reject) => {
-		if(!arg) reject(`No input given for ${arg.label} (${arg.type})`);
+		if(!arg && !arg.optional && arg.type !== "custom") reject(`No input given for ${arg.label} (${arg.type})`);
+		validator.test(input, arg)
+		.then(value => resolve(value))
+		.catch(reason => reject(reason));
 	});
 }
 
 function validateArgs(message, command, index) {
 	if(index === undefined) index = 0;
 	return new Promise((resolve, reject) => {
-		if(index === command.args.length) resolve("Finished checking successfully");
-		checkArg(message.args[index], command.args[index]).then(() => {
+		if(index === command.args.length) resolve(message);
+		checkArg(message.args[index], command.args[index]).then(newArg => {
+			message.args[index] = newArg;
+			message.argsCase[index] = newArg.toLowerCase();
 			validateArgs(message, command, index + 1);
 		}).catch(reason => {
 			message.reply(`${reason}\nYou have 15 seconds to supply another argument, or it will time out`);
@@ -171,11 +175,11 @@ function validateArgs(message, command, index) {
 			}, { maxMatches: 1, time: 15000 })
 			.then(responses => {
 				if(!responses || responses.size === 0) reject("Command timed out");
-				checkArg(message.args[index], command.args[index]).then(() => {
-					message.argsCase[index] = responses.first();
-					message.args[index] = responses.first().toLowerCase();
+				checkArg(message.args[index], command.args[index]).then(newArg => {
+					message.args[index] = newArg;
+					message.argsCase[index] = newArg.toLowerCase();
 					validateArgs(message, command, index + 1);
-				}).catch(reason2 => { reject(reason2); });
+				}).catch(reason2 => reject(reason2));
 			});
 		});
 	});

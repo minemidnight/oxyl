@@ -40,5 +40,8 @@ var command = new Command("userinfo", (message, bot) => {
 }, {
 	type: "default",
 	description: "View tons of detailed information about a user",
-	args: [{ type: "mention" }]
+	args: [{
+		type: "user",
+		label: "user"
+	}]
 });

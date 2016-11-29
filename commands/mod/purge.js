@@ -38,8 +38,7 @@ var command = new Command("purge", (message, bot) => {
 		max: 100,
 		label: "amount"
 	}, {
-		type: "mention",
-		infinite: true,
+		type: "custom",
 		optional: true,
 		label: "mentions"
 	}]

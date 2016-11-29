@@ -43,5 +43,8 @@ var command = new Command("mute", (message) => {
 }, {
 	type: "moderator",
 	description: "Toggle a person's mute state in the guild (for text chat)",
-	args: [{ type: "mention" }]
+	args: [{
+		type: "user",
+		label: "user"
+	}]
 });
