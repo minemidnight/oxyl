@@ -8,20 +8,6 @@ const Oxyl = require("./oxyl.js"),
 exports.config = yaml.safeLoad(fs.readFileSync("./private/config.yml"));
 exports.defaultConfig = fs.readFileSync("./private/default-config.yml");
 
-exports.reactionCount = (message, reactionUnicode) => {
-	let reaction = message.reactions.find(reac => {
-		if(!reac || !reac.emoji) {
-			return false;
-		} else if(reac.emoji.name === reactionUnicode) {
-			return true;
-		} else {
-			return false;
-		}
-	});
-	if(!reaction) return 0;
-	return reaction.count;
-};
-
 exports.nthIndex = (string, pattern, nth) => {
 	let len = string.length, i = -1;
 	while(nth-- && i++ < len) {
@@ -209,8 +195,6 @@ exports.loadScript = (scriptPath, reload) => {
 	if(reload) {
 		let script = path.resolve(scriptPath);
 		delete require.cache[require.resolve(script)];
-
-		exports.consoleLog(`Reloaded script at ${scriptPath}`, "debug");
 	}
 	require(scriptPath);
 };

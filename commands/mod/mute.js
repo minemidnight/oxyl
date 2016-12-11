@@ -4,12 +4,15 @@ const Oxyl = require("../../oxyl.js"),
 const bot = Oxyl.bot;
 
 bot.on("channelCreate", (channel) => {
+	if(channel.type !== "text") return;
 	const mutedRole = channel.guild.roles.find("name", "Muted");
-	if(mutedRole) { channel.overwritePermissions(mutedRole, { SEND_MESSAGES: false }); }
+	let rolePerms = channel.guild.member(bot.user).hasPermission("MANAGE_ROLES_OR_PERMISSIONS");
+	if(mutedRole && rolePerms) { channel.overwritePermissions(mutedRole, { SEND_MESSAGES: false }); }
 });
 
 var command = new Command("mute", (message) => {
 	let guild = message.guild;
+	if(!guild) return "This command can only be used in guilds";
 
 	let rolePerms = message.guild.member(bot.user).hasPermission("MANAGE_ROLES_OR_PERMISSIONS");
 	let checkRole = guild.roles.find(role => role.name.toLowerCase() === "muted");
