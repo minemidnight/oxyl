@@ -37,7 +37,7 @@ var command = new Command("botinfo", (message, bot) => {
 	memoryInfo += `${(usedMemory / Math.pow(1024, 2)).toFixed(2)} MB / ${(totalMemory / Math.pow(1024, 3)).toFixed(2)} GB`;
 	let otherInfo = [
 		`Memory Usage: ${memoryInfo}`,
-		`Creators: minemidnight & TonyMaster21`,
+		`Creator: minemidnight`,
 		`Library: discord.js`,
 		`GitHub: http://github.com/minemidnight/oxyl`,
 		`Prefix - \`${config.options.prefixText}\``

@@ -11,18 +11,18 @@ function handleConfig(message, args) {
 	var keys = configs.getConfigKeys(config);
 	var configPath = args[0];
 	if(!configPath) {
-		return `you must provide what value to set! (\`values\` or \`<value>\`)`;
+		return `You must provide what value to set! (\`values\` or \`<value>\`)`;
 	} else if(configPath === "values") {
-		return `paths usable (use this as a argument to see the value): ${framework.codeBlock(keys.join(", "))}`;
+		return `Paths usable (use this as a argument to see the value): ${framework.codeBlock(keys.join(", "))}`;
 	} else if(keys.indexOf(configPath) === -1) {
-		return `invalid config path: \`${configPath}\`, view "values" to see what you can set`;
+		return `Invalid config path: \`${configPath}\`, view "values" to see what you can set`;
 	} else {
 		let value = configs.getValue(message.guild, configPath);
 		if(!args[1]) {
 			if(value === null || value.length === 0) {
-				return `current value of \`${configPath}\` **-** No value set\nEnter a value, or "help" to see what type of value to enter`;
+				return `Current value of \`${configPath}\` **-** No value set\nRetry with a value, or "help" to see what type of value to enter`;
 			} else {
-				return `current value of \`${configPath}\` **-** ${value}\nEnter a value, or "help" to see what type of value to enter`;
+				return `Current value of \`${configPath}\` **-** ${value}\nRetry with a value, or "help" to see what type of value to enter`;
 			}
 		} else if(args[1] === "help") {
 			configPath = configPath.split(".");
@@ -35,7 +35,7 @@ function handleConfig(message, args) {
 				`Info: ${configs.configTypes[config.type].info}`,
 				`Note: You can reset a value using "reset" if necessary`
 			]);
-			return `help for \`${configPath.join(".")}\`: ${helpInfo}`;
+			return `Help for \`${configPath.join(".")}\`: ${helpInfo}`;
 		} else {
 			return configs.setValue(message.guild, configPath, args[1]);
 		}
@@ -43,10 +43,10 @@ function handleConfig(message, args) {
 }
 
 var command = new Command("config", (message, bot) => {
-	let args = Array.concat(message.args, message.argsPreserved[1].split(" "));
-	if(!message.content) {
-		return `please provide an argument (\`values\` or \`<value>\`)`;
+	if(!message.argsPreserved[0]) {
+		return `Please provide an argument (\`values\` or \`<value>\`)`;
 	} else {
+		let args = message.argsPreserved[0].split(" ");
 		return handleConfig(message, args);
 	}
 }, {
@@ -54,10 +54,6 @@ var command = new Command("config", (message, bot) => {
 	description: "Configurate Oxyl and his settings per guild",
 	args: [{
 		type: "text",
-		label: "get/set"
-	}, {
-		type: "custom",
-		label: "options",
-		optional: true
+		label: "options"
 	}]
 });

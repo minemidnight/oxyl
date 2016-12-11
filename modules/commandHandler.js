@@ -110,7 +110,7 @@ bot.on("message", (message) => {
 
 	let arguments = message.contentPreserved.split(" ", command.args.length);
 	let spaceCount = message.contentPreserved.match(/ /g);
-	if(spaceCount && arguments && arguments.length < spaceCount.length) {
+	if(spaceCount && arguments && arguments.length <= spaceCount.length) {
 		let i = framework.nthIndex(message.contentPreserved, " ", arguments.length);
 		arguments[arguments.length - 1] += message.contentPreserved.substring(i);
 	}
@@ -130,8 +130,8 @@ bot.on("message", (message) => {
 			});
 
 			try {
-				var result = command.run(message);
 				consoleLog(`[${framework.formatDate(new Date())}] ${framework.unmention(message.author)} ran \`${command.name}\` in **${guild.name}**`, "cmd");
+				var result = command.run(message);
 			} catch(error) {
 				consoleLog(`Failed command ${command.name} (${command.type})\n` +
 				`**Error:** ${framework.codeBlock(error.stack)}`, "debug");

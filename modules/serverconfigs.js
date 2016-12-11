@@ -38,18 +38,18 @@ exports.setValue = (guild, path, newValue) => {
 		}
 
 		data.value = defaultConfig.value;
-		resultMsg = `reset value of \`${path.join(".")}\` (command successfully executed)`;
+		resultMsg = `Reset value of \`${path.join(".")}\` (command successfully executed)`;
 	} else {
 		var dataType = data.type;
 		var parsed = configTypes[dataType].validate(guild, newValue);
 		if(parsed === null) {
-			return `invalid value given, view "help" for help on what to enter`;
+			return `Invalid value given, view "help" for help on what to enter`;
 		} else if(Array.isArray(data.value)) {
 			data.value.push(parsed);
-			resultMsg = `added \`${parsed}\` to value of \`${path.join(".")}\` (command successfully executed)`;
+			resultMsg = `Added \`${parsed}\` to value of \`${path.join(".")}\` (command successfully executed)`;
 		} else {
 			data.value = parsed;
-			resultMsg = `changed value of \`${path.join(".")}\` to \`${parsed}\` (command successfully executed)`;
+			resultMsg = `Changed value of \`${path.join(".")}\` to \`${parsed}\` (command successfully executed)`;
 		}
 	}
 
