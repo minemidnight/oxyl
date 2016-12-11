@@ -1,47 +1,44 @@
 const Oxyl = require("../../oxyl.js"),
 	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js");
+	framework = require("../../framework.js"),
+	googl = require("goo.gl");
+const config = framework.config;
+googl.setKey(config.private.googleKey);
 
 var command = new Command("userinfo", (message, bot) => {
-	var mention = message.mentions.users.first();
-	const guild = message.guild;
+	let user = message.author;
+	if(message.args[0]) user = message.args[0];
 
-	if(!mention) {
-		return "please mention the user you would like banned.";
-	} else {
-		let id = mention.id;
-		let avatarUrl = mention.avatarURL;
-		avatarUrl = avatarUrl.replace("avatars/", "");
-		avatarUrl = avatarUrl.replace("api/v6/users", "avatars");
-		avatarUrl = avatarUrl.replace("https://discordapp.com", "cdn.discordapp.com");
-		let joinDate = framework.formatDate(mention.createdAt);
-		let username = mention.username;
-		let discriminator = mention.discriminator;
-		let game = mention.presence.game;
-		let status = mention.presence.status.toUpperCase();
-		if(game === null) {
-			game = "N/A";
-		} else {
-			game = game.name;
-		}
+	var info = {
+		ID: user.id,
+		Discriminator: user.discriminator,
+		Avatar: user.avatarURL ? "Shortening Link..." : "No Avatar",
+		Game: user.presence.game === null ? "Nothing" : user.presence.game.name,
+		Status: user.presence.status.toUpperCase(),
+		"Join Date": framework.formatDate(user.createdAt)
+	};
 
-		let userInfo = [
-			`ID: ${id}`,
-			`Discriminator: #${discriminator}`,
-			`Game: ${game}`,
-			`Status: ${status}`,
-			`Avatar: \`${avatarUrl}\``,
-			`Join Date: ${joinDate}`
-		];
+	if(message.guild) info["Guild Join Date"] = framework.formatDate(message.guild.member(user).joinedAt);
 
-		userInfo = framework.listConstructor(userInfo);
-		return `info on ${username}: ${userInfo}`;
+	let constructorData = [];
+	for(var i in info) {
+		constructorData.push(`${i}: ${info[i]}`);
 	}
+
+	constructorData = framework.listConstructor(constructorData);
+	message.channel.sendMessage(`Info on ${user.username}: ${constructorData}`)
+	.then(msg => {
+		if(!user.avatarURL) return;
+		googl.shorten(user.avatarURL, { quotaUser: message.author.id }).then((shortUrl) => {
+			msg.content = msg.content.replace("Shortening Link...", `<${shortUrl}>`);
+			msg.edit(msg.content);
+		});
+	});
 }, {
 	type: "default",
 	description: "View tons of detailed information about a user",
 	args: [{
 		type: "user",
-		label: "user"
+		optional: true
 	}]
 });

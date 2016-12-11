@@ -4,15 +4,11 @@ const Oxyl = require("../../oxyl.js"),
 const commands = Oxyl.commands;
 
 var command = new Command("cmdinfo", (message, bot) => {
-	if(!message.content) {
-		return "please provide a command to get the information of";
-	} else {
-		var cmd = framework.findCommand(message.content);
-		if(!cmd) return "command not found";
-	}
+	let cmd = framework.findCommand(message.args[0]);
+	if(!cmd) return "command not found";
 
 	let helpMsg = "", helpInfo = [];
-	helpMsg += `info on ${message.content}\n`;
+	helpMsg += `Info on ${message.args[0]}\n`;
 	helpMsg += `Command: ${cmd.name}`;
 	helpInfo.push(`Command Type: ${framework.capitalizeEveryFirst(cmd.type)}`);
 

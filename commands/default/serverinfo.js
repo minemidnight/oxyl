@@ -4,7 +4,7 @@ const Oxyl = require("../../oxyl.js"),
 
 var command = new Command("serverinfo", (message, bot) => {
 	if(!message.guild) {
-		return "this only works in guilds";
+		return "This command only works in guilds";
 	} else {
 		let guild;
 		if(message.content && bot.guilds.get(message.content)) {
@@ -69,7 +69,7 @@ var command = new Command("serverinfo", (message, bot) => {
 		emojiInfo = framework.listConstructor(emojiInfo);
 		otherInfo = framework.listConstructor(otherInfo);
 
-		return `info on **${guild.name}** (ID: ${guild.id})` +
+		return `Info on **${guild.name}** (ID: ${guild.id})` +
            `\n\n**Channels:** ${channelInfo}` +
            `\n\n**Members:** ${memberInfo}` +
            `\n\n**Emojis:** ${emojiInfo}` +

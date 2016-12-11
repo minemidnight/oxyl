@@ -5,16 +5,12 @@ const music = require("../../modules/music.js"),
 
 var command = new Command("volume", (message, bot) => {
 	var voice = music.voiceCheck(message.member);
-	var volume = parseInt(message.content);
-	if(!message.content) {
-		return `current volume: ${music.data.volume[message.guild.id]}, please provide a new volume (0-100)`;
-	} else if(isNaN(volume)) {
-		return "please provide a number between 0 and 100 for the volume";
-	} else if(!voice) {
-		return "you and Oxyl must be in the same voice channel to set the volume";
+
+	if(!voice) {
+		return "You and Oxyl must be in the same voice channel to set the volume";
 	} else {
-		music.setVolume(message.guild, volume);
-		return `set the volume to ${volume} :sound:`;
+		music.setVolume(message.guild, message.args[0]);
+		return `Set the volume to ${message.args[0]} :sound:`;
 	}
 }, {
 	aliases: ["vol"],

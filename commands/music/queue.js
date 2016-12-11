@@ -13,7 +13,7 @@ var command = new Command("queue", (message, bot) => {
 	const options = music.data.volume[guild.id];
 
 	if(!current) {
-		return `there is no music playing for **${guild.name}**`;
+		return `There is no music playing for **${guild.name}**`;
 	} else {
 		var queueSize = queue.length;
 		var page = 1;
@@ -21,8 +21,8 @@ var command = new Command("queue", (message, bot) => {
 
 		if(message.content) {
 			page = parseInt(message.content);
-			if(isNaN(page) || page < 1 || page > pageAmount) {
-				return `invalid page number (between 1 and ${pageAmount})`;
+			if(page > pageAmount) {
+				return `Invalid page number (between 1 and ${pageAmount})`;
 			}
 		}
 

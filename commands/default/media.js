@@ -4,17 +4,13 @@ const Oxyl = require("../../oxyl.js"),
 	fs = require("fs");
 
 var command = new Command("media", (message, bot) => {
-	if(!message.content) {
-		return "please provide a media to share, run listmedia to list all media";
+	var file = framework.findFile(["./media/"], message.args[0]);
+	if(!file) {
+		return `Invalid media: \`${message.content}\`, run listmedia to list all media`;
 	} else {
-		var file = framework.findFile(["./media/"], message.content);
-		if(!file) {
-			return `invalid media: \`${message.content}\`, run listmedia to list all media`;
-		} else {
-			message.channel.sendFile(file.join(""), file[1]);
-		}
+		message.channel.sendFile(file.join(""), file[1]);
+		return false;
 	}
-	return false;
 }, {
 	type: "default",
 	aliases: ["share"],

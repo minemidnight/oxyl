@@ -4,16 +4,11 @@ const Oxyl = require("../../oxyl.js"),
 const perPage = framework.config.options.commands.serverListPerPage;
 
 var command = new Command("serverlist", (message, bot) => {
-	var guilds = bot.guilds.array();
-	var page = 1;
-	var pageAmount = Math.ceil(guilds.length / perPage);
-	if(message.content) {
-		page = parseInt(message.content);
-		if(isNaN(page) || page < 1 || page > pageAmount) {
-			return `invalid page number (between 1 and ${pageAmount})`;
-		}
-	}
-	let listMsg = `\n**Server List:**`, guildsPage = [];
+	let guilds = bot.guilds.array().sort((a, b) => b.memberCount - a.memberCount);
+	let page = 1;
+	let pageAmount = Math.ceil(guilds.length / perPage);
+	if(page && page > pageAmount) page = pageAmount;
+	let listMsg = `**Server List:**`, guildsPage = [];
 
 	for(var i = 0; i < perPage; i++) {
 		var index = ((page - 1) * perPage) + i;

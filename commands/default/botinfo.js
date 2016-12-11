@@ -7,18 +7,15 @@ const config = framework.config;
 var command = new Command("botinfo", (message, bot) => {
 	let guilds = bot.guilds;
 	let largeGuilds = guilds.filter(guild => guild.large === true).size;
-	let channels = bot.channels;
-	let voiceChannels = channels.filter(vc => vc.type === "voice").size;
-	let dmChannels = channels.filter(dmc => dmc.type === "dm").size;
-	let textChannels = channels.filter(tc => tc.type === "text").size;
+	let voiceChannels = bot.channels.filter(vc => vc.type === "voice").size;
+	let textChannels = bot.channels.filter(tc => tc.type === "text").size;
 	let usedMemory = process.memoryUsage().heapUsed;
 	let totalMemory = os.totalmem();
 
 	let channelsInfo = [
 		`Voice: ${voiceChannels}`,
 		`Text: ${textChannels}`,
-		`DM: ${dmChannels}`,
-		`Total: ${channels.size}`
+		`Total: ${voiceChannels + textChannels}`
 	];
 
 	let guildsInfo = [
@@ -43,7 +40,7 @@ var command = new Command("botinfo", (message, bot) => {
 		`Creators: minemidnight & TonyMaster21`,
 		`Library: discord.js`,
 		`GitHub: http://github.com/minemidnight/oxyl`,
-		`Prefix/Suffix (either) - \`${config.options.prefix}\``
+		`Prefix - \`${config.options.prefixText}\``
 	];
 
 	channelsInfo = framework.listConstructor(channelsInfo);
@@ -51,12 +48,13 @@ var command = new Command("botinfo", (message, bot) => {
 	usersInfo = framework.listConstructor(usersInfo);
 	otherInfo = framework.listConstructor(otherInfo);
 
-	return `information about ${bot.user.username} (ID: ${bot.user.id})` +
+	return `Information about ${bot.user.username} (ID: ${bot.user.id})` +
 				`\n\n**Channels:** ${channelsInfo}` +
 				`\n\n**Guilds:** ${guildsInfo}` +
 				`\n\n**Users:** ${usersInfo}` +
 				`\n\n**Other:** ${otherInfo}`;
 }, {
 	type: "default",
-	description: "View information about Oxyl"
+	description: "View information about Oxyl",
+	aliases: ["info"]
 });

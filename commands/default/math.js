@@ -4,12 +4,14 @@ const Oxyl = require("../../oxyl.js"),
 	math = require("mathjs");
 
 var command = new Command("math", (message, bot) => {
-	var result;
+	let result;
+
 	try {
 		result = math.eval(message.content);
 	} catch(error) {
 		result = undefined;
 	}
+
 	if(isNaN(result)) {
 		return "Invalid Calculation Expression";
 	} else {

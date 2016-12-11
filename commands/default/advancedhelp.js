@@ -32,7 +32,7 @@ var command = new Command("advancedhelp", (message, bot) => {
 	}
 
 	message.author.sendMessage(helpMsg, { split: true });
-	return "messaging you Oxyl's Advanced Help!";
+	return "Messaging you Oxyl's Advanced Help!";
 }, {
 	type: "default",
 	description: "List advanced information about every registered command"

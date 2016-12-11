@@ -1,12 +1,78 @@
 const Oxyl = require("./oxyl.js"),
 	fs = require("fs"),
+	https = require("https"),
+	http = require("http"),
 	yaml = require("js-yaml"),
 	path = require("path");
 
 exports.config = yaml.safeLoad(fs.readFileSync("./private/config.yml"));
 exports.defaultConfig = fs.readFileSync("./private/default-config.yml");
-exports.commands = Oxyl.commands;
-exports.registerCommand = Oxyl.registerCommand;
+
+exports.reactionCount = (message, reactionUnicode) => {
+	let reaction = message.reactions.find(reac => {
+		if(!reac || !reac.emoji) {
+			return false;
+		} else if(reac.emoji.name === reactionUnicode) {
+			return true;
+		} else {
+			return false;
+		}
+	});
+	if(!reaction) return 0;
+	return reaction.count;
+};
+
+exports.nthIndex = (string, pattern, nth) => {
+	let len = string.length, i = -1;
+	while(nth-- && i++ < len) {
+		i = string.indexOf(pattern, i);
+		if(i < 0) break;
+	}
+	return i;
+};
+
+exports.getHTTP = (link) => {
+	if(!link) return undefined;
+	return new Promise((resolve, reject) => {
+		let data = "";
+		let request = http.request(link, res => {
+			res.on("data", chunk => {
+				data += chunk;
+			});
+
+			res.on("end", () => {
+				resolve(data);
+			});
+
+			res.on("error", err => {
+				reject(err);
+			});
+		});
+		request.end();
+	});
+};
+
+
+exports.getContent = (link) => {
+	if(!link) return undefined;
+	return new Promise((resolve, reject) => {
+		let data = "";
+		let request = https.request(link, res => {
+			res.on("data", chunk => {
+				data += chunk;
+			});
+
+			res.on("end", () => {
+				resolve(data);
+			});
+
+			res.on("error", err => {
+				reject(err);
+			});
+		});
+		request.end();
+	});
+};
 
 exports.getCmd = (msgCase) => {
 	let msg = msgCase.toLowerCase();
@@ -79,16 +145,13 @@ exports.codeBlock = (content, lang) => {
 exports.unmention = (user) => `${user.username}#${user.discriminator}`;
 
 exports.consoleLog = (message, type) => {
-	var channel;
-	if(type === "important") {
-		type = "!";
-		channel = "important";
-	} else if(type === "command" || type === "cmd") {
+	let channel;
+	if(type === "command" || type === "cmd") {
 		channel = "commands";
-		type = "cmds";
-	} else if(type === "debug") {
-		channel = "debug";
+	} else {
+		channel = type;
 	}
+
 	channel = exports.config.channels[channel];
 	channel = Oxyl.bot.channels.get(channel);
 	console.log(`[${type.toUpperCase()}] ${message}`);

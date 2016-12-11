@@ -3,19 +3,17 @@ const Oxyl = require("../../oxyl.js"),
 	framework = require("../../framework.js");
 
 var command = new Command("kick", (message, bot) => {
-	var mention = message.mentions.users.first();
 	var kickPerms = message.guild.member(bot.user).hasPermission("KICK_MEMBERS");
-	if(!mention) {
-		return "please mention the user you would like kicked";
-	} else if(!kickPerms) {
+
+	if(!kickPerms) {
 		return "Oxyl does not have permissions to kick any user";
 	} else {
-		var kickable = message.guild.member(mention).kickable;
+		let kickable = message.guild.member(message.args[0]).kickable;
 		if(!kickable) {
-			return `${mention} could not be kicked because they have a higher role`;
+			return `${message.args[0]} could not be kicked because they have a higher role`;
 		} else {
-			message.guild.member(mention).kick();
-			return `${mention} has been kicked`;
+			message.guild.member(message.args[0]).kick();
+			return `${message.args[0]} has been kicked`;
 		}
 	}
 }, {

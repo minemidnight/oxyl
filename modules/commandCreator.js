@@ -14,7 +14,7 @@ class Command {
 		this.aliases = options.aliases || [];
 		this.type = options.type || "default";
 		this.description = options.description || undefined;
-		this.args = options.args || undefined;
+		this.args = options.args || [];
 		this.enabled = !!options.defaultEnabled || true;
 		this.uses = 0;
 
@@ -22,14 +22,13 @@ class Command {
 			this.usage = "[]";
 		} else {
 			let usage = [];
-			for(let i in this.args) {
-				let arg = this.args[i];
-				let label = arg.label || arg.type;
+			for(let arg of this.args) {
+				arg.label = arg.label || arg.type;
 
 				if(arg.optional) {
-					usage.push(`[${label}]`);
+					usage.push(`[${arg.label}]`);
 				} else {
-					usage.push(`<${label}>`);
+					usage.push(`<${arg.label}>`);
 				}
 			}
 			this.usage = usage.join(" ");

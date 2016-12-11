@@ -6,18 +6,13 @@ const loadScript = framework.loadScript;
 
 var command = new Command("reload", (message, bot) => {
 	message.content = message.content.toLowerCase();
-	var args = message.content.split(" ");
-	if(!args[0]) {
-		return "please provide a module or command to reload";
-	} else {
-		var reload = framework.findFile(["./commands/", "./modules/"], args[0], "js");
+	var reload = framework.findFile(["./commands/", "./modules/"], message.args[0], "js");
 
-		if(!reload) {
-			return `invalid file: ${args[0]}`;
-		} else {
-			loadScript(reload[0] + reload[1], true);
-			return `reloaded script \`${reload[1]}\` **(**${reload[0]}${reload[1]}**)**`;
-		}
+	if(!reload) {
+		return `Invalid file: ${message.args[0]}`;
+	} else {
+		loadScript(reload[0] + reload[1], true);
+		return `Reloaded script \`${reload[1]}\` **(**${reload[0]}${reload[1]}**)**`;
 	}
 }, {
 	type: "creator",

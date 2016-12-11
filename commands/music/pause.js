@@ -5,13 +5,14 @@ const music = require("../../modules/music.js"),
 
 var command = new Command("pause", (message, bot) => {
 	var voice = music.voiceCheck(message.member);
+
 	if(!voice) {
-		return "you and Oxyl must both be in the same channel to pause the music";
+		return "You and Oxyl must both be in the same channel to pause the music";
 	} else if(music.getDispatcher(message.guild).paused) {
-		return "the music is already paused";
+		return "The music is already paused";
 	} else {
 		music.pauseStream(message.guild);
-		return `paused the music in ${voice.name} :pause_button:`;
+		return `Paused the music in ${voice.name} :pause_button:`;
 	}
 }, {
 	type: "music",

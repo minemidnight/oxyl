@@ -43,7 +43,7 @@ function handleConfig(message, args) {
 }
 
 var command = new Command("config", (message, bot) => {
-	var args = message.content.split(" ");
+	let args = Array.concat(message.args, message.argsPreserved[1].split(" "));
 	if(!message.content) {
 		return `please provide an argument (\`values\` or \`<value>\`)`;
 	} else {

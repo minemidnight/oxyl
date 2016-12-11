@@ -7,13 +7,13 @@ var command = new Command("dimmer", (message, bot) => {
 	var voice = music.voiceCheck(message.member);
 	var guild = message.guild;
 	var options = music.data.options;
-	if(!voice) {
-		return "you and Oxyl must be in the same voice channel to toggle the dimmer";
-	} else {
-		music.toggleDimmer(guild);
-		let newValue = options[guild.id].dimmer ? "on" : "off";
 
-		return `turned ${newValue} dimmer for **${guild.name}**`;
+	if(!voice) {
+		return "You and Oxyl must be in the same voice channel to toggle the dimmer";
+	} else {
+		let newValue = music.toggleDimmer(guild);
+		newValue = newValue ? "on" : "off";
+		return `Turned ${newValue} dimmer for **${guild.name}**`;
 	}
 }, {
 	type: "music",

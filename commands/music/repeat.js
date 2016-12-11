@@ -7,13 +7,13 @@ var command = new Command("repeat", (message, bot) => {
 	var voice = music.voiceCheck(message.member);
 	var guild = message.guild;
 	var options = music.data.options;
-	if(!voice) {
-		return "you and Oxyl must be in the same voice channel to toggle repeating";
-	} else {
-		music.toggleRepeat(guild);
-		let newValue = options[guild.id].repeat ? "on" : "off";
 
-		return `turned ${newValue} repeat for **${guild.name}**`;
+	if(!voice) {
+		return "You and Oxyl must be in the same voice channel to toggle repeating";
+	} else {
+		let newValue = music.toggleRepeat(guild);
+		newValue = newValue ? "on" : "off";
+		return `Turned ${newValue} repeat for **${guild.name}**`;
 	}
 }, {
 	type: "music",

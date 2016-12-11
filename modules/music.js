@@ -1,10 +1,10 @@
 const Oxyl = require("../oxyl.js"),
 	framework = require("../framework.js"),
-	https = require("https"),
 	configs = require("../modules/serverconfigs.js"),
 	yt = require("ytdl-core");
 const config = framework.config,
 	bot = Oxyl.bot;
+const ytKey = config.private.googleKey;
 var defaultVolume = config.options.music.defaultVolume;
 var ytReg = config.options.music.youtubeRegex;
 var data = { queue: {}, current: {}, volume: {}, ytinfo: {}, options: {} };
@@ -30,6 +30,7 @@ exports.toggleRepeat = (guild) => {
 	if(!options[guild.id]) exports.createOptions(guild);
 
 	options[guild.id].repeat = !options[guild.id].repeat;
+	return options[guild.id].repeat;
 };
 
 exports.toggleDimmer = (guild) => {
@@ -44,6 +45,7 @@ exports.toggleDimmer = (guild) => {
 		let volume = data.volume[guild.id];
 		if(data.options[guild.id].dimmerSpeakers <= 0) connection.setVolume(volume / 200);
 	}
+	return options[guild.id].dimmer;
 };
 
 exports.getUrlType = (url) => {
@@ -68,29 +70,20 @@ exports.getVideoId = (url) => {
 exports.getPlaylistId = exports.getVideoId;
 
 exports.searchVideo = (query) => {
-	var ytData = "";
-
-	var options = {
+	let options = {
 		host: "www.googleapis.com",
-		path: `/youtube/v3/search?part=snippet&maxResults=1&type=video&q=${escape(query)}&key=${config.googleKey}`
+		path: `/youtube/v3/search?part=snippet&maxResults=1&type=video&q=${escape(query)}&key=${ytKey}`
 	};
+
 	return new Promise((resolve, reject) => {
-		var request = https.request(options, (res) => {
-			res.on("data", (chunk) => {
-				ytData += chunk;
-			});
-			res.on("end", () => {
-				if(ytData.indexOf('videoId') >= 0) {
-					ytData = JSON.parse(ytData).items[0].id.videoId;
-					resolve(ytData);
-				} else {
-					resolve("NO_RESULTS");
-				} });
-			res.on("error", () => {
-				reject("Error contacting Youtube API");
-			});
+		framework.getContent(options).then(body => {
+			if(body.indexOf("videoId") >= 0) {
+				body = JSON.parse(body).items[0].id.videoId;
+				resolve(body);
+			} else {
+				resolve("NO_RESULTS");
+			}
 		});
-		request.end();
 	});
 };
 
@@ -99,84 +92,63 @@ exports.addPlaylist = (playlistId, guild, connection, page) => {
 		page = "";
 	}
 
-	var options = {
+	let options = {
 		host: "www.googleapis.com",
 		path: `/youtube/v3/playlistItems?playlistId=${playlistId}&maxResults=50&part=snippet` +
-				`&nextPageToken&pageToken=${page}&fields=nextPageToken,items(snippet(resourceId(videoId)))&key=${config.googleKey}`
+				`&nextPageToken&pageToken=${page}&fields=nextPageToken,items(snippet(resourceId(videoId)))&key=${ytKey}`
 	};
 
-	var request = https.request(options, (res) => {
-		var ytData = "";
-		res.on("data", (chunk) => {
-			ytData += chunk;
-		});
-		res.on("end", () => {
-			var info = JSON.parse(ytData);
+	framework.getContent(options).then(body => {
+		body = JSON.parse(body);
 
-			if(info.nextPageToken) {
-				page = info.nextPageToken;
-				exports.addPlaylist(playlistId, guild, connection, page);
-			}
+		if(body.nextPageToken) {
+			page = body.nextPageToken;
+			exports.addPlaylist(playlistId, guild, connection, page);
+		}
 
-			info = info.items;
-			for(var i = 0; i < info.length; i++) {
-				let videoId = info[i].snippet.resourceId.videoId;
+		body = body.items;
+		for(var i = 0; i < body.length; i++) {
+			let videoId = body[i].snippet.resourceId.videoId;
 
-				exports.addInfo(videoId, guild).then(() => {
-					exports.addQueue(videoId, guild, connection);
-				});
-			}
-		});
-		res.on("error", (err) => {
-			framework.consoleLog(`Error while contacting Youtube API: ${framework.codeBlock(err.stack)}`, "debug");
-		});
+			exports.addInfo(videoId, guild).then(() => {
+				exports.addQueue(videoId, guild, connection);
+			});
+		}
 	});
-	request.end();
 };
 
 exports.addInfo = (videoId, guild) => {
-	var ytInfo = data.ytinfo;
-	var options = {
+	let ytInfo = data.ytinfo;
+	let options = {
 		host: "www.googleapis.com",
-		path: `/youtube/v3/videos?id=${videoId}&part=snippet,contentDetails&fields=items(snippet(title),contentDetails(duration))&key=${config.googleKey}`
+		path: `/youtube/v3/videos?id=${videoId}&part=snippet,contentDetails&fields=items(snippet(title),contentDetails(duration))&key=${ytKey}`
 	};
   // Return a promise for a then in play.js command
 	return new Promise((resolve, reject) => {
-		var request = https.request(options, (res) => {
-			var ytData = "";
-			res.on("data", (chunk) => {
-				ytData += chunk;
-			});
-			res.on("end", () => {
-				var info = JSON.parse(ytData).items[0], durationParsed = 0;
-				if(!info) {
-					reject("couldn't get youtube data.");
-				} else {
-					let dur = info.contentDetails.duration;
-					if(dur.includes("H")) {
-						durationParsed += parseInt(dur.substring(dur.indexOf("T") + 1, dur.indexOf("H"))) * 3600;
-						durationParsed += parseInt(dur.substring(dur.indexOf("H") + 1, dur.indexOf("M"))) * 60;
-					} else if(dur.includes("M")) {
-						durationParsed += parseInt(dur.substring(dur.indexOf("T") + 1, dur.indexOf("M"))) * 60;
-					}
-					durationParsed += parseInt(dur.substring(dur.indexOf("M") + 1, dur.indexOf("S")));
+		framework.getContent(options).then(body => {
+			body = JSON.parse(body).items[0];
 
-					if(!ytInfo[guild.id]) {
-						ytInfo[guild.id] = [];
-					}
-					ytInfo[guild.id][videoId] = {
-						title: info.snippet.title,
-						duration: durationParsed
-					};
-					resolve(ytInfo[guild.id][videoId]);
+			if(!body) {
+				reject("couldn't get youtube data.");
+			} else {
+				let durationParsed = 0;
+				let dur = body.contentDetails.duration;
+				if(dur.includes("H")) {
+					durationParsed += parseInt(dur.substring(dur.indexOf("T") + 1, dur.indexOf("H"))) * 3600;
+					durationParsed += parseInt(dur.substring(dur.indexOf("H") + 1, dur.indexOf("M"))) * 60;
+				} else if(dur.includes("M")) {
+					durationParsed += parseInt(dur.substring(dur.indexOf("T") + 1, dur.indexOf("M"))) * 60;
 				}
-			});
-			res.on("error", (err) => {
-				framework.consoleLog(`Error while contacting Youtube API: ${framework.codeBlock(err.stack)}`, "debug");
-				reject("Error contacting Youtube API");
-			});
+				durationParsed += parseInt(dur.substring(dur.indexOf("M") + 1, dur.indexOf("S")));
+
+				if(!ytInfo[guild.id]) ytInfo[guild.id] = [];
+				ytInfo[guild.id][videoId] = {
+					title: body.snippet.title,
+					duration: durationParsed
+				};
+				resolve(ytInfo[guild.id][videoId]);
+			}
 		});
-		request.end();
 	});
 };
 
@@ -368,7 +340,7 @@ bot.on("guildMemberSpeaking", (member, speaking) => {
 	if(data.options[guild.id].dimmerSpeakers <= 0) {
 		connection.setVolume(volume / 200);
 	} else {
-		connection.setVolume((volume / 1.3) / 200);
+		connection.setVolume((volume * 0.75) / 175);
 	}
 });
 

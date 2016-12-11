@@ -4,7 +4,7 @@ const Oxyl = require("../../oxyl.js"),
 const commands = Oxyl.commands;
 
 var command = new Command("help", (message, bot) => {
-	var cmds = {};
+	let cmds = {};
 
 	for(var cmdType in commands) {
 		cmds[cmdType] = [];
@@ -31,6 +31,6 @@ var command = new Command("help", (message, bot) => {
 	return helpMsg;
 }, {
 	type: "default",
-	aliases: ["cmds", "commandlist", "commands"],
+	aliases: ["cmds", "commands"],
 	description: "List all registered commands"
 });

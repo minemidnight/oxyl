@@ -3,7 +3,10 @@ const Oxyl = require("../../oxyl.js"),
 	framework = require("../../framework.js");
 const config = framework.config;
 
-var command = new Command("support", () => `Support Guild: https://discord.gg/KtyNPcE\nInvite Link: ${config.options.inviteLink}`, {
+var command = new Command("support", () => {
+	let inviteLink = config.options.inviteLink;
+	return `Support Guild: https://discord.gg/9wkTDcE\nInvite Link: ${inviteLink}`;
+}, {
 	type: "default",
 	description: "Get invite link to the support guild, aswell as Oxyl's invite link",
 	aliases: ["invite"]

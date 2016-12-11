@@ -3,7 +3,7 @@ const Oxyl = require("../oxyl.js"),
 const config = framework.config,
 	bot = Oxyl.bot;
 
-exports.test = (input, arg) => {
+exports.test = (input, arg, message) => {
 	let type = arg.type;
 	return new Promise((resolve, reject) => {
 		if(type === "text" || type === "custom") {
@@ -41,8 +41,8 @@ exports.test = (input, arg) => {
 				resolve(input);
 			}
 		} else if(type === "mention" || type === "user") {
-			let match = input.match(/<@!?([0-9]+)>/g);
-			if(match || match[1]) {
+			let match = /<@!?(\d{14,20})>/.exec(input);
+			if(match && match[1]) {
 				let user = bot.users.get(match[1]);
 				if(user) {
 					resolve(user);
@@ -56,24 +56,74 @@ exports.test = (input, arg) => {
 					});
 				}
 			} else {
-				bot.users.filter(user => {
-					if(user.username.toLowerCase() === input.toLowerCase()) {
-						return true;
-					} else if(user.id === input) {
-						return true;
-					} else if(user.username.substring(0, input.length).toLowerCase === input.toLowerCase) {
-						return true;
-					} else {
-						return false;
-					}
+				let members = bot.users, usersFound;
+				if(message.guild)	members = message.guild.members;
+
+				usersFound = members.filter(member => {
+					if(member.user) member = member.user;
+
+					if(member.username.toLowerCase() === input.toLowerCase()) return true;
+					return false;
 				});
 
-				if(!bot.users || bot.users.size <= 0) {
+				if(!usersFound || usersFound.size === 0) {
+					usersFound = members.filter(member => {
+						if(member.user) member = member.user;
+
+						if(member.id === input) {
+							return true;
+						} else if(member.username.substring(0, input.length).toLowerCase() === input.toLowerCase()) {
+							return true;
+						} else {
+							return false;
+						}
+					});
+				}
+
+				usersFound = usersFound.array();
+				let i = 0;
+				usersFound.forEach(user => {
+					if(user.user) {
+						usersFound[i] = user.user;
+					} else {
+						usersFound[i] = user;
+					}
+					i++;
+				});
+
+				if(!usersFound || usersFound.length === 0) {
 					reject("No mentions found or users with that username");
-				} else if(bot.users.size === 1) {
-					resolve(bot.users.first());
+				} else if(usersFound.length === 1) {
+					resolve(usersFound[0]);
 				} else {
-					reject("Multiple users found, please mention them, type their full name, or give a user id");
+					i = 0;
+					let map = usersFound.slice(0, 15).map(user => {
+						i++;
+						return `[${i}] ${framework.unmention(user)}`;
+					}).join("\n");
+					if(usersFound.length > 15) map += `\n... and ${usersFound.length - 15} more`;
+					let selectUser = message.channel.sendMessage(`Multiple users found. Please say a number` +
+						`below to choose one in the next 10 seconds: ${framework.codeBlock(map, "ini")}`);
+
+					message.channel.awaitMessages(newMsg => {
+						if(newMsg.author.id === message.author.id) {
+							return true;
+						} else {
+							return false;
+						}
+					}, { maxMatches: 1, time: 10000 })
+						.then(responses => {
+							if(!responses || responses.size === 0 || !responses.first()) {
+								reject("No user given");
+							} else {
+								let int = parseInt(responses.first().content);
+								if(isNaN(int) || int > 15 || int < 1 || int > usersFound.length) {
+									reject("Invalid user number");
+								} else {
+									resolve(usersFound[int - 1]);
+								}
+							}
+						});
 				}
 			}
 		} else {

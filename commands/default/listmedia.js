@@ -12,7 +12,7 @@ var command = new Command("listmedia", (message, bot) => {
 		mediaList.push(baseName);
 	});
 	mediaList = mediaList.sort();
-	return `all media **(**${mediaList.length}**)**: ${framework.codeBlock(mediaList.join(", "))}`;
+	return `All media **(**${mediaList.length}**)**: ${framework.codeBlock(mediaList.join(", "))}`;
 }, {
 	type: "default",
 	aliases: ["medialist"],
