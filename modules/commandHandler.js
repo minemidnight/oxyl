@@ -17,16 +17,14 @@ bot.on("message", (message) => {
 
 	if(message.author.bot) {
 		return;
-	} else if(!message.channel.type === "text") {
+	} else if(message.channel.type !== "text") {
 		message.channel.sendMessage("Oxyl only supports commands within guilds");
 		return;
 	}
-	let guildConfig = configs.getConfig(guild);
-	if(guildConfig.channels.ignored.value.includes(message.channel.id)) return;
-	if(!message.member) {
-		guild.fetchMember(message.author);
-		return;
-	} else {
+
+	if(guild) {
+		var guildConfig = configs.getConfig(guild);
+		if(guildConfig.channels.ignored.value.includes(message.channel.id)) return;
 		var roles = message.member.roles;
 	}
 
