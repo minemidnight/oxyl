@@ -134,7 +134,8 @@ bot.on("message", (message) => {
 				consoleLog(`Failed command ${command.name} (${command.type})\n` +
 				`**Error:** ${framework.codeBlock(error.stack)}`, "debug");
 			} finally {
-				if(result) message.channel.sendMessage(result, { split: true });
+				if(result && result.length > 2000 && !result.includes("\n")) message.channel.sendMessage("Message exceeds 2000 characters :(");
+				else if(result) message.channel.sendMessage(result, { split: true });
 			}
 		}).catch(reason => message.channel.sendMessage(reason));
 });
@@ -176,7 +177,10 @@ function validateArgs(message, command, index) {
 				}
 			}, { maxMatches: 1, time: 15000 })
 			.then(responses => {
-				if(!responses || responses.size === 0 || !responses.first()) reject("Command timed out");
+				if(!responses || responses.size === 0 || !responses.first()) {
+					reject("Command timed out");
+					return;
+				}
 
 				checkArg(responses.first().content, command.args[index], message)
 				.then(newArg => {
