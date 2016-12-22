@@ -6,17 +6,10 @@ const config = framework.config;
 
 var command = new Command("botinfo", (message, bot) => {
 	let guilds = bot.guilds;
-	let largeGuilds = guilds.filter(guild => guild.large === true).size;
-	let voiceChannels = bot.channels.filter(vc => vc.type === "voice").size;
-	let textChannels = bot.channels.filter(tc => tc.type === "text").size;
+	let largeGuilds = guilds.filter(guild => guild.large === true).length;
+	let channels = Object.keys(bot.channelGuildMap).length;
 	let usedMemory = process.memoryUsage().heapUsed;
 	let totalMemory = os.totalmem();
-
-	let channelsInfo = [
-		`Voice: ${voiceChannels}`,
-		`Text: ${textChannels}`,
-		`Total: ${voiceChannels + textChannels}`
-	];
 
 	let guildsInfo = [
 		`Large (over 250 members): ${largeGuilds}`,
@@ -29,8 +22,9 @@ var command = new Command("botinfo", (message, bot) => {
 		totalUsers += guild.memberCount;
 	});
 
-	let usersInfo = [
-		`Total Users: ${totalUsers}`
+	let extraInfo = [
+		`Chnannels: ${channels}`,
+		`Users: ${totalUsers}`
 	];
 
 	let memoryInfo = `${((usedMemory / totalMemory) * 100).toFixed(2)}%, `;
@@ -38,23 +32,21 @@ var command = new Command("botinfo", (message, bot) => {
 	let otherInfo = [
 		`Memory Usage: ${memoryInfo}`,
 		`Creator: minemidnight`,
-		`Library: discord.js`,
+		`Library: Eris`,
 		`GitHub: http://github.com/minemidnight/oxyl`,
 		`Prefix - \`${config.options.prefixText}\``
 	];
 
-	channelsInfo = framework.listConstructor(channelsInfo);
 	guildsInfo = framework.listConstructor(guildsInfo);
-	usersInfo = framework.listConstructor(usersInfo);
+	extraInfo = framework.listConstructor(extraInfo);
 	otherInfo = framework.listConstructor(otherInfo);
 
 	return `Information about ${bot.user.username} (ID: ${bot.user.id})` +
-				`\n\n**Channels:** ${channelsInfo}` +
+				`\n\n**Channels/Users:** ${extraInfo}` +
 				`\n\n**Guilds:** ${guildsInfo}` +
-				`\n\n**Users:** ${usersInfo}` +
 				`\n\n**Other:** ${otherInfo}`;
 }, {
 	type: "default",
-	description: "View information about Oxyl",
-	aliases: ["info"]
+	description: "View information and statistics about Oxyl",
+	aliases: ["info", "stats"]
 });

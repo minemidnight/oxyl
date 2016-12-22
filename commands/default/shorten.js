@@ -6,7 +6,7 @@ const config = framework.config;
 googl.setKey(config.private.googleKey);
 
 var command = new Command("shorten", (message, bot) => {
-	var editMsg = message.channel.sendMessage("`Shortening Link...`");
+	var editMsg = message.channel.createMessage("`Shortening Link...`");
 	googl.shorten(message.args[0], { quotaUser: message.author.id }).then((shortUrl) => {
 		Promise.resolve(editMsg).then(msg => {
 			msg.edit(`Shortened link: ${shortUrl}`);

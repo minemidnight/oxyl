@@ -8,7 +8,13 @@ var command = new Command("media", (message, bot) => {
 	if(!file) {
 		return `Invalid media: \`${message.content}\`, run listmedia to list all media`;
 	} else {
-		message.channel.sendFile(file.join(""), file[1]);
+		fs.readFile(file.join(""), (err, data) => {
+			if(err) throw err;
+			message.channel.createMessage("", {
+				file: data,
+				name: file[1]
+			});
+		});
 		return false;
 	}
 }, {

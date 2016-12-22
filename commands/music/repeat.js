@@ -4,16 +4,15 @@ const music = require("../../modules/music.js"),
 	framework = require("../../framework.js");
 
 var command = new Command("repeat", (message, bot) => {
-	var voice = music.voiceCheck(message.member);
-	var guild = message.guild;
-	var options = music.data.options;
-
-	if(!voice) {
-		return "You and Oxyl must be in the same voice channel to toggle repeating";
+	let manager = music.getManager(message.guild);
+	if(!manager) {
+		return "There is currently no music playing";
+	} else if(!manager.voiceCheck(message.member)) {
+		return "You must be in the music channel to run this command";
 	} else {
-		let newValue = music.toggleRepeat(guild);
+		let newValue = manager.toggleOption("repeat");
 		newValue = newValue ? "on" : "off";
-		return `Turned ${newValue} repeat for **${guild.name}**`;
+		return `Repeat has been turned ${newValue}`;
 	}
 }, {
 	type: "music",

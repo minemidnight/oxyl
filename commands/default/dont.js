@@ -9,7 +9,7 @@ var command = new Command("dont", (message, bot) => {
 	if(message.args[0]) user = message.args[0];
 	if(message.args[1]) user2 = message.args[1];
 	if(!user.avatarURL || !user2.avatarURL) return "A 'pls dont' can't be made without a avatar";
-	message.channel.startTyping();
+	message.channel.sendTyping();
 
 	let image = new Jimp(192, 192);
 	Jimp.read(user.avatarURL).then(avatar1 => {
@@ -23,8 +23,10 @@ var command = new Command("dont", (message, bot) => {
 				image.print(font, 8, 154, "don't talk to me or my son ever again", 184);
 
 				image.getBuffer(Jimp.MIME_PNG, (error, buffer) => {
-					message.channel.sendFile(buffer)
-					.then(message.channel.stopTyping());
+					message.channel.createMessage("", {
+						file: buffer,
+						name: "dont.png"
+					});
 				});
 			});
 		});

@@ -66,7 +66,7 @@ exports.test = (input, arg, message) => {
 					return false;
 				});
 
-				if(!usersFound || usersFound.size === 0) {
+				if(!usersFound || usersFound.length === 0) {
 					usersFound = members.filter(member => {
 						if(member.user) member = member.user;
 
@@ -80,7 +80,6 @@ exports.test = (input, arg, message) => {
 					});
 				}
 
-				usersFound = usersFound.array();
 				let i = 0;
 				usersFound.forEach(user => {
 					if(user.user) {
@@ -92,7 +91,7 @@ exports.test = (input, arg, message) => {
 				});
 
 				if(!usersFound || usersFound.length === 0) {
-					reject("No mentions found or users with that username");
+					reject("No mention or user found");
 				} else if(usersFound.length === 1) {
 					resolve(usersFound[0]);
 				} else {
@@ -105,25 +104,24 @@ exports.test = (input, arg, message) => {
 					let selectUser = message.channel.sendMessage(`Multiple users found. Please say a number` +
 						`below to choose one in the next 10 seconds: ${framework.codeBlock(map, "ini")}`);
 
-					message.channel.awaitMessages(newMsg => {
+					framework.awaitMessages(message.channel, newMsg => {
 						if(newMsg.author.id === message.author.id) {
 							return true;
 						} else {
 							return false;
 						}
-					}, { maxMatches: 1, time: 10000 })
-						.then(responses => {
-							if(!responses || responses.size === 0 || !responses.first()) {
-								reject("No user given");
+					}, { maxMatches: 1, time: 10000 }).then(responses => {
+						if(!responses || responses.size === 0 || !responses[0]) {
+							reject("No user given");
+						} else {
+							let int = parseInt(responses.first().content);
+							if(isNaN(int) || int > 15 || int < 1 || int > usersFound.length) {
+								reject("Invalid user number");
 							} else {
-								let int = parseInt(responses.first().content);
-								if(isNaN(int) || int > 15 || int < 1 || int > usersFound.length) {
-									reject("Invalid user number");
-								} else {
-									resolve(usersFound[int - 1]);
-								}
+								resolve(usersFound[int - 1]);
 							}
-						});
+						}
+					});
 				}
 			}
 		} else {

@@ -4,7 +4,7 @@ const Oxyl = require("../../oxyl.js"),
 
 var command = new Command("ping", (message, bot) => {
 	let time = Date.now();
-	message.channel.sendMessage("Pong!").then(msg => {
+	message.channel.createMessage("Pong!").then(msg => {
 		msg.edit(`Pong! \`${Date.now() - time}ms\``);
 	});
 }, {

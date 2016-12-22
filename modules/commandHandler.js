@@ -11,14 +11,14 @@ const bot = Oxyl.bot,
 
 const spamData = {};
 
-bot.on("message", (message) => {
+bot.on("messageCreate", (message) => {
 	let guild = message.guild;
 	let msg = message.content.toLowerCase();
 
 	if(message.author.bot) {
 		return;
-	} else if(message.channel.type !== "text") {
-		message.channel.sendMessage("Oxyl only supports commands within guilds");
+	} else if(!message.guild) {
+		message.channel.createMessage("Oxyl only supports commands within guilds");
 		return;
 	}
 
@@ -55,7 +55,7 @@ bot.on("message", (message) => {
 				let linkFilter = new RegExp(config.options.linkFilter);
 				if(linkFilter.test(message.content)) {
 					message.delete();
-					message.author.sendMessage(`Please do not send links in **${guild.name}**, it is not allowed.`);
+					message.author.createMessage(`Please do not send links in **${guild.name}**, it is not allowed.`);
 				}
 			}
 
@@ -70,7 +70,7 @@ bot.on("message", (message) => {
              Math.abs(lastMessage.length - msg.length) < 5 &&
              lastMessage.substring(0, msg.length) === lastMessage) {
 					message.delete();
-					message.author.sendMessage(`Please do not spam in **${guild}**, it is not allowed.`);
+					message.author.createMessage(`Please do not spam in **${guild}**, it is not allowed.`);
 				}
 
 				spamData[guild.id][message.author.id] = msg;
@@ -82,7 +82,7 @@ bot.on("message", (message) => {
 
 	if(command.type === "creator") {
 		if(!config.creators.includes(message.author.id)) {
-			message.channel.sendMessage(config.messages.notCreator);
+			message.channel.createMessage(config.messages.notCreator);
 			return;
 		}
 	} else if(command.type === "moderator") {
@@ -90,18 +90,18 @@ bot.on("message", (message) => {
 		let isMod = roles.some(role => accepted.includes(role.id) || role.name.toLowerCase() === "bot commander");
 
 		if(!isMod) {
-			message.channel.sendMessage(config.messages.notMod);
+			message.channel.createMessage(config.messages.notMod);
 			return;
 		}
 	} else if(command.type === "guild owner") {
 		if(message.author.id !== guild.owner.id) {
-			message.channel.sendMessage(config.messages.notGuildOwner);
+			message.channel.createMessage(config.messages.notGuildOwner);
 			return;
 		}
 	} else if(command.type === "music") {
 		let musicText = guildConfig.channels.musicText.value;
 		if(musicText && musicText !== message.channel.id) {
-			message.channel.sendMessage(config.messages.notMusicChannel);
+			message.channel.createMessage(config.messages.notMusicChannel);
 			return;
 		}
 	}
@@ -128,15 +128,23 @@ bot.on("message", (message) => {
 			});
 
 			try {
-				consoleLog(`[${framework.formatDate(new Date())}] ${framework.unmention(message.author)} ran \`${command.name}\` in **${guild.name}**`, "cmd");
+				let startText = `[${framework.formatDate(new Date())}] ${framework.unmention(message.author)} ran \`${command.name}\` in`;
+				let argsText = `\n      Args: ${message.args}`;
+				if(guild) {
+					consoleLog(`${startText} **${guild.name}**${argsText}`, "cmd");
+				} else {
+					consoleLog(`${startText} **DM**${argsText}`, "cmd");
+				}
+
 				var result = command.run(message);
 			} catch(error) {
 				consoleLog(`Failed command ${command.name} (${command.type})\n` +
 				`**Error:** ${framework.codeBlock(error.stack)}`, "debug");
 			} finally {
-				if(result) message.channel.sendMessage(result, { split: true });
+				if(result && result.length > 2000 && !result.includes("\n")) message.channel.createMessage("Message exceeds 2000 characters :(");
+				else if(result) message.channel.createMessage(result, { split: true });
 			}
-		}).catch(reason => message.channel.sendMessage(reason));
+		}).catch(reason => message.channel.createMessage(reason));
 });
 
 function checkArg(input, arg, message) {
@@ -167,8 +175,8 @@ function validateArgs(message, command, index) {
 			.then(res => resolve(res))
 			.catch(err => reject(err));
 		}).catch(reason => {
-			message.channel.sendMessage(`${reason}\nYou have 15 seconds to supply another argument, or it will time out`);
-			message.channel.awaitMessages(newMsg => {
+			message.channel.createMessage(`${reason}\nYou have 15 seconds to supply another argument, or it will time out`);
+			framework.awaitMessages(message.channel, newMsg => {
 				if(newMsg.author.id === message.author.id) {
 					return true;
 				} else {
@@ -176,15 +184,19 @@ function validateArgs(message, command, index) {
 				}
 			}, { maxMatches: 1, time: 15000 })
 			.then(responses => {
-				if(!responses || responses.size === 0 || !responses.first()) reject("Command timed out");
+				if(!responses || responses.size === 0 || !responses[0]) {
+					reject("Command timed out");
+					return;
+				}
 
-				checkArg(responses.first().content, command.args[index], message)
+				checkArg(responses[0].content, command.args[index], message)
 				.then(newArg => {
 					message.argsPreserved[index] = newArg;
 					validateArgs(message, command, index + 1, message)
 					.then(res => resolve(res))
 					.catch(err => reject(err));
-				}).catch(reason2 => reject(`${reason2}\nCommand cancelled`));
+				})
+				.catch(reason2 => reject(`${reason2}\nCommand cancelled`));
 			});
 		});
 	});

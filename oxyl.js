@@ -1,9 +1,7 @@
-const Discord = require("discord.js"),
+const Eris = require("eris"),
 	framework = require("./framework.js");
-const bot = new Discord.Client({ fetchAllMembers: true });
 
-exports.bot = bot;
-exports.commands = {};
+const bot = new Eris(framework.config.private.token);
 
 process.on("unhandledRejection", (err) => {
 	if(!err.stack) {
@@ -17,6 +15,9 @@ exports.addCommand = (command) => {
 	if(!exports.commands[command.type]) exports.commands[command.type] = {};
 	exports.commands[command.type][command.name] = command;
 };
+
+exports.bot = bot;
+exports.commands = {};
 
 framework.loadScripts("./commands/");
 framework.loadScripts("./modules/");

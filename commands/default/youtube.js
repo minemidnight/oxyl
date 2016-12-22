@@ -4,7 +4,7 @@ const music = require("../../modules/music.js"),
 	framework = require("../../framework.js");
 
 var command = new Command("youtube", (message, bot) => {
-	let editMsg = message.channel.sendMessage("`Searching...`");
+	let editMsg = message.channel.createMessage("`Searching...`");
 	music.searchVideo(message.argsPreserved[0]).then(res => {
 		if(res === "NO_RESULTS") {
 			Promise.resolve(editMsg).then(msg => {

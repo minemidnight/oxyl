@@ -18,15 +18,14 @@ function handleInlineSearch(message, editMsg, res) {
 	return new Promise((resolve, reject) => {
 		if(res === "NO_RESULTS") {
 			Promise.resolve(editMsg).then(msg => {
-				msg.edit(`No results found`).then(() => {
-					resolve(editMsg);
-				});
+				msg.edit(`No results found`)
+				.then(value => resolve(value));
 			});
 		} else {
 			Promise.resolve(editMsg).then(msg => {
-				music.addInfo(res, message.guild).then((info) => {
-					msg.edit(`Adding __${info.title}__ (\`http://youtube.com/watch?v=${res}\`) to the **${message.guild.name}**'s queue.`)
-					.then(editedMsg => resolve(editedMsg));
+				music.videoInfo(res).then(info => {
+					msg.edit(`Adding __${info.title}__ (<http://youtube.com/watch?v=${info.id}>) to **${message.guild.name}**'s queue.`)
+					.then(value => resolve(value));
 				});
 			});
 		}
@@ -36,61 +35,73 @@ function handleInlineSearch(message, editMsg, res) {
 function playCmdProcess(message) {
 	let editMsg, query = message.argsPreserved[0];
 
-	let type = music.getUrlType(query);
+	let type = music.ytType(query);
 	return new Promise((resolve, reject) => {
 		if(type === "NONE") {
-			editMsg = message.channel.sendMessage(`Searching \`${query}\` then playing result`);
+			editMsg = message.channel.createMessage(`Searching \`${query}\` then playing result`);
 			music.searchVideo(query).then(res => {
 				handleInlineSearch(message, editMsg, res)
 				.then(value => resolve(value));
 			});
 		} else if(type === "PLAYLIST") {
-			message.channel.sendMessage(`Adding playlist to queue: \`${query}\``)
-			.then(msg => resolve(msg));
+			message.channel.createMessage(`Adding playlist to queue: \`${query}\``)
+			.then(value => resolve(value));
 		} else if(type === "VIDEO") {
-			message.reply(`getting video title of: \`${query}\``).then(msg => {
-				let videoId = music.getVideoId(msg.content);
-				music.addInfo(videoId, message.guild).then(info => {
-					msg.edit(`Adding __${info.title}__ (\`http://youtube.com/watch?v=${videoId}\`) to the **${message.guild.name}**'s queue.`)
-					.then(editedMsg => resolve(editedMsg));
-				}).catch(reason => msg.edit(reason));
+			message.channel.createMessage(`Getting video title of: \`${query}\``).then(msg => {
+				music.videoInfo(query).then(info => {
+					msg.edit(`Adding __${info.title}__ (<http://youtube.com/watch?v=${info.id}>) to **${message.guild.name}**'s queue.`)
+					.then(value => resolve(value));
+				}).catch(reason => "Failed to get video info");
 			});
 		}
 	});
 }
 
 var command = new Command("play", (message, bot) => {
-	let editMsg;
-	var voiceChannel = message.member.voiceChannel;
+	let voiceChannel, editMsg, manager = music.getManager(message.guild);
+	if(message.member && message.member.voiceState && message.member.voiceState.channelID) {
+		voiceChannel = message.guild.channels.get(message.member.voiceState.channelID);
+	} else {
+		voiceChannel = undefined;
+	}
 
-	if(!voiceChannel) {
-		return "please be in a voice channel";
-	} else if(!voiceChannel.joinable) {
-		return "I cannot join that voice channel due to permissions";
+	if(!voiceChannel && !(!manager || !manager.connection)) {
+		return "You are not in a voice channel";
+	} else if(!manager) {
+		manager = new music.Manager(message.guild);
+	}
+
+	if(manager && manager.connection && !manager.voiceCheck(message.member)) {
+		return "You must be in the music channel to run this command";
+	} else if(!voiceChannel.permissionsOf(bot.user.id).has("voiceConnect")) {
+		return "I cannot join that channel";
+	} else if(!voiceChannel.permissionsOf(bot.user.id).has("voiceSpeak")) {
+		return "I cannot speak in that channel";
 	} else {
 		playCmdProcess(message).then(msg => {
-			var type = music.getUrlType(msg.content);
-			let id = music.getVideoId(msg.content);
+			var type = music.ytType(msg.content);
+			let id = music.ytID(msg.content);
 			if(id === "INVALID_URL" || type === "NONE") return;
 
 			msg.edit(`${msg.content}\n\n*Reply with cancel in the next 10 seconds or the command will be processed, or continue to play now*`);
-			msg.channel.awaitMessages(newMsg => cancelFilter(newMsg, message), { maxMatches: 1, time: 10000 })
-			.then((responses) => {
-				if(responses && responses.size === 1 && responses.first().content.toLowerCase() === "cancel") {
-					msg.edit(`${message.author}, cancelled play command`);
-					delete music.data.ytinfo[msg.guild.id][id];
-				} else if(type === "PLAYLIST") {
-					voiceChannel.join().then(connection => {
-						music.addPlaylist(id, message.guild, connection);
-						msg.edit(`${message.author}, added playlist \`${id}\` to **${message.guild.name}**'s queue.`);
-					});
-				} else if(type === "VIDEO") {
-					var info = music.data.ytinfo[msg.guild.id][id];
+			framework.awaitMessages(msg.channel, newMsg => cancelFilter(newMsg, message), { maxMatches: 1, time: 10000 })
+			.then(responses => {
+				if(responses && responses.length >= 1 && responses[0].content.toLowerCase() === "cancel") {
+					msg.edit(`Cancelled play command`);
+				} else {
+					if(!manager.connection) {
+						manager.connect(voiceChannel).then(connection => manager.addQueue(id));
+					} else {
+						manager.addQueue(id);
+					}
 
-					msg.edit(`${message.author}, added __${info.title}__ to **${message.guild.name}**'s queue.`);
-					voiceChannel.join().then(connection => {
-						music.addQueue(id, message.guild, connection);
-					});
+					if(type === "PLAYLIST") {
+						msg.edit(`Added playlist to **${message.guild.name}**'s queue`);
+					} else if(type === "VIDEO") {
+						music.videoInfo(id).then(info => {
+							msg.edit(`Added __${info.title}__ to **${message.guild.name}**'s queue`);
+						});
+					}
 				}
 			});
 		});

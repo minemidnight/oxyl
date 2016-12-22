@@ -8,7 +8,7 @@ var command = new Command("eval", (message, bot) => {
 	let guild = message.guild, channel = message.channel, author = message.author;
 	// So the executor can use in eval
 
-	let editMsg = message.channel.sendMessage("Executing code...");
+	let editMsg = message.channel.createMessage("Executing code...");
 	try {
 		var output = util.inspect(eval(message.argsPreserved[0]), { depth: 0 });
 		for(var i in config.private) {

@@ -4,23 +4,20 @@ const music = require("../../modules/music.js"),
 	framework = require("../../framework.js");
 
 var command = new Command("skip", (message, bot) => {
-	let guild = message.guild;
-	let voice = music.voiceCheck(message.member);
-	let connection = voice.connection;
-
-	if(!voice) {
-		return "You and Oxyl must both be in the same channel to skip the song";
-	} else if(!music.data.current[guild.id]) {
-		return "There is no song currently playing";
+	let manager = music.getManager(message.guild);
+	if(!manager) {
+		return "There is currently no music playing";
+	} else if(!manager.voiceCheck(message.member)) {
+		return "You must be in the music channel to run this command";
 	} else {
-		const ytInfo = music.data.ytinfo[guild.id];
-		const queue = music.data.queue[guild.id];
-		var videoId = queue[0];
-		music.endStream(guild);
-		if(queue && videoId) {
-			return `Now playing \`${ytInfo[videoId].title}\``;
+		let next = manager.data.queue[0];
+
+		if(next) {
+			manager.play();
+			return `Now playing __${next.title}__ :arrow_forward:`;
 		} else {
-			return `No more songs in queue`;
+			manager.end();
+			return "No songs in queue";
 		}
 	}
 }, {

@@ -3,17 +3,16 @@ const Oxyl = require("../../oxyl.js"),
 	framework = require("../../framework.js");
 
 var command = new Command("cat", (message, bot) => {
-	message.channel.startTyping();
+	message.channel.sendTyping();
 
-	let options = {
-		host: "random.cat",
-		path: "/meow"
-	};
-
-	framework.getHTTP(options).then(body => {
+	framework.getContent("http://random.cat/meow").then(body => {
 		body = JSON.parse(body);
-		message.channel.sendFile(body.file)
-		.then(msg => message.channel.stopTyping());
+		framework.getContent(body.file, { encoding: null }).then(buffer => {
+			message.channel.createMessage("", {
+				file: buffer,
+				name: body.file.substring(body.file.lastIndexOf("/") + 1)
+			});
+		});
 	});
 }, {
 	type: "default",

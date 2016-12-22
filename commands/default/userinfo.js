@@ -6,19 +6,20 @@ const config = framework.config;
 googl.setKey(config.private.googleKey);
 
 var command = new Command("userinfo", (message, bot) => {
+	if(!message.guild) return "This command only works in guilds";
 	let user = message.author;
 	if(message.args[0]) user = message.args[0];
+	user = message.guild.members.get(user.id);
 
 	var info = {
 		ID: user.id,
-		Discriminator: user.discriminator,
-		Avatar: user.avatarURL ? "Shortening Link..." : "No Avatar",
-		Game: user.presence.game === null ? "Nothing" : user.presence.game.name,
-		Status: user.presence.status.toUpperCase(),
-		"Join Date": framework.formatDate(user.createdAt)
+		Discriminator: user.user.discriminator,
+		Avatar: user.user.avatarURL ? "Shortening Link..." : "No Avatar",
+		Game: user.game === null ? "Nothing" : user.game.name,
+		Status: user.status.toUpperCase(),
+		"Join Date": framework.formatDate(user.user.createdAt),
+		"Guild Join Date": framework.formatDate(user.joinedAt)
 	};
-
-	if(message.guild) info["Guild Join Date"] = framework.formatDate(message.guild.member(user).joinedAt);
 
 	let constructorData = [];
 	for(var i in info) {
@@ -26,14 +27,15 @@ var command = new Command("userinfo", (message, bot) => {
 	}
 
 	constructorData = framework.listConstructor(constructorData);
-	message.channel.sendMessage(`Info on ${user.username}: ${constructorData}`)
+	message.channel.createMessage(`Info on ${user.user.username}: ${constructorData}`)
 	.then(msg => {
-		if(!user.avatarURL) return;
-		googl.shorten(user.avatarURL, { quotaUser: message.author.id }).then((shortUrl) => {
+		if(!user.user.avatarURL) return;
+		googl.shorten(user.user.avatarURL, { quotaUser: user.id }).then((shortUrl) => {
 			msg.content = msg.content.replace("Shortening Link...", `<${shortUrl}>`);
 			msg.edit(msg.content);
 		});
 	});
+	return undefined;
 }, {
 	type: "default",
 	description: "View tons of detailed information about a user",

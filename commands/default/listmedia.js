@@ -12,9 +12,8 @@ var command = new Command("listmedia", (message, bot) => {
 		mediaList.push(baseName);
 	});
 	mediaList = mediaList.sort();
-	return `All media **(**${mediaList.length}**)**: ${framework.codeBlock(mediaList.join(", "))}`;
+	return `Media List (${mediaList.length}): ${framework.codeBlock(mediaList.join(", "))}`;
 }, {
 	type: "default",
-	aliases: ["medialist"],
 	description: "List all shareable media"
 });

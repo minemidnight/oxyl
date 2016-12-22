@@ -12,26 +12,18 @@ var command = new Command("advancedhelp", (message, bot) => {
 			cmd = commands[cmdType][cmd];
 			let cmdInfo = [];
 			helpMsg += `\nCommand: ${cmd.name}`;
-
-			if(cmd.aliases.length > 0) {
-				cmdInfo.push(`Aliases: ${cmd.aliases.join(", ")}`);
-			} else {
-				cmdInfo.push(`Aliases: N/A`);
-			}
-
-			if(cmd.description) {
-				cmdInfo.push(`Description: ${cmd.description}`);
-			} else {
-				cmdInfo.push(`Description: N/A`);
-			}
-
+			if(cmd.aliases.length > 0) cmdInfo.push(`Aliases: ${cmd.aliases.join(", ")}`);
+			if(cmd.description) cmdInfo.push(`Description: ${cmd.description}`);
 			cmdInfo.push(`Usage: ${cmd.usage}`);
-			cmdInfo.push(`Uses (resets on restart): ${cmd.uses}`);
 			helpMsg += framework.listConstructor(cmdInfo);
 		}
 	}
 
-	message.author.sendMessage(helpMsg, { split: true });
+	message.author.getDMChannel().then(channel => {
+		framework.splitParts(helpMsg).forEach(msg => {
+			channel.createMessage(msg);
+		});
+	});
 	return "Messaging you Oxyl's Advanced Help!";
 }, {
 	type: "default",

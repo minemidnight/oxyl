@@ -4,12 +4,13 @@ const music = require("../../modules/music.js"),
 	framework = require("../../framework.js");
 
 var command = new Command("volume", (message, bot) => {
-	var voice = music.voiceCheck(message.member);
-
-	if(!voice) {
-		return "You and Oxyl must be in the same voice channel to set the volume";
+	let manager = music.getManager(message.guild);
+	if(!manager) {
+		return "There is currently no music playing";
+	} else if(!manager.voiceCheck(message.member)) {
+		return "You must be in the music channel to run this command";
 	} else {
-		music.setVolume(message.guild, message.args[0]);
+		manager.updateVolume(message.args[0]);
 		return `Set the volume to ${message.args[0]} :sound:`;
 	}
 }, {

@@ -99,13 +99,11 @@ exports.getValue = (guild, path) => {
 bot.on("guildCreate", (guild) => {
 	var path = exports.getPath(guild);
 	exports.createConfig(guild);
-	framework.consoleLog(`Created YML guild config file for ${guild} (\`${path}\`)`, "debug");
 });
 
 bot.on("guildDelete", (guild) => {
 	var path = exports.getPath(guild);
 	exports.deleteConfig(guild);
-	framework.consoleLog(`Deleted YML guild config file for ${guild} (\`${path}\`)`, "debug");
 });
 
 const configTypes = {

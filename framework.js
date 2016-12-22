@@ -1,12 +1,34 @@
 const Oxyl = require("./oxyl.js"),
 	fs = require("fs"),
-	https = require("https"),
-	http = require("http"),
+	request = require("request"),
 	yaml = require("js-yaml"),
-	path = require("path");
+	path = require("path"),
+	EventEmitter = require("events").EventEmitter;
 
 exports.config = yaml.safeLoad(fs.readFileSync("./private/config.yml"));
 exports.defaultConfig = fs.readFileSync("./private/default-config.yml");
+
+exports.splitParts = (message) => {
+	if(message.length < 2000) {
+		return [message];
+	} else if(message.indexOf("\n") === -1 || message.indexOf("\n") > 2000) {
+		return new Error("!! Invalid message split attempt -- no new line found or new line past 2000th character");
+	} else {
+		let returnData = [], nth = 1, splitTimes = Math.floor(message.length / 2000);
+		while(returnData.length < splitTimes) {
+			if(exports.nthIndex(message, "\n", nth) > 2000) {
+				let grabFrom = exports.nthIndex(message, "\n", nth - 1);
+				returnData.push(message.substring(0, grabFrom));
+				message = message.substring(grabFrom);
+				nth = 1;
+			} else {
+				nth++;
+			}
+		}
+
+		return returnData;
+	}
+};
 
 exports.nthIndex = (string, pattern, nth) => {
 	let len = string.length, i = -1;
@@ -17,46 +39,16 @@ exports.nthIndex = (string, pattern, nth) => {
 	return i;
 };
 
-exports.getHTTP = (link) => {
-	if(!link) return undefined;
+exports.getContent = (link, options = {}) => {
+	options.url = link;
 	return new Promise((resolve, reject) => {
-		let data = "";
-		let request = http.request(link, res => {
-			res.on("data", chunk => {
-				data += chunk;
-			});
-
-			res.on("end", () => {
-				resolve(data);
-			});
-
-			res.on("error", err => {
-				reject(err);
-			});
+		request(options, (error, response, body) => {
+			if(!error && response.statusCode === 200) {
+				resolve(body);
+			} else {
+				reject(error);
+			}
 		});
-		request.end();
-	});
-};
-
-
-exports.getContent = (link) => {
-	if(!link) return undefined;
-	return new Promise((resolve, reject) => {
-		let data = "";
-		let request = https.request(link, res => {
-			res.on("data", chunk => {
-				data += chunk;
-			});
-
-			res.on("end", () => {
-				resolve(data);
-			});
-
-			res.on("error", err => {
-				reject(err);
-			});
-		});
-		request.end();
 	});
 };
 
@@ -139,9 +131,56 @@ exports.consoleLog = (message, type) => {
 	}
 
 	channel = exports.config.channels[channel];
-	channel = Oxyl.bot.channels.get(channel);
 	console.log(`[${type.toUpperCase()}] ${message}`);
-	if(channel) channel.sendMessage(message);
+	if(channel && Oxyl.bot.uptime > 0) Oxyl.bot.createMessage(channel, message);
+};
+
+class MessageCollector extends EventEmitter {
+	constructor(channel, filter, options = {}) {
+		super();
+		this.filter = filter;
+		this.channel = channel;
+		this.options = options;
+		this.ended = false;
+		this.collected = [];
+
+		this.listener = message => this.verify(message);
+		Oxyl.bot.on("messageCreate", this.listener);
+		if(options.time) setTimeout(() => this.stop("time"), options.time);
+	}
+
+	verify(message) {
+		if(this.channel.id !== message.channel.id) return false;
+		if(this.filter(message)) {
+			this.collected.push(message);
+
+			this.emit("message", message);
+			if(this.collected.length >= this.options.maxMatches) this.stop("maxMatches");
+			return true;
+		}
+		return false;
+	}
+
+	stop(reason) {
+		if(this.ended) return;
+		this.ended = true;
+		Oxyl.bot.removeListener("messageCreate", this.listener);
+
+		this.emit("end", this.collected, reason);
+	}
+}
+
+exports.awaitMessages = (channel, filter, options) => {
+	const collector = new MessageCollector(channel, filter, options);
+	return new Promise((resolve, reject) => {
+		collector.on("end", (collection, reason) => {
+			if(!collection || collection.size === 0) {
+				resolve(collection, reason);
+			} else {
+				resolve(collection, reason);
+			}
+		});
+	});
 };
 
 exports.findFile = (dirs, name, ext) => {

@@ -4,19 +4,15 @@ const music = require("../../modules/music.js"),
 	framework = require("../../framework.js");
 
 var command = new Command("shuffle", (message, bot) => {
-	var voice = music.voiceCheck(message.member);
-	var guild = message.guild;
-	var queue = music.data.queue[guild.id];
-
-	if(!voice) {
-		return "You and Oxyl must be in the same voice channel to shuffle songs";
-	} else if(!queue) {
-		return "There is currently no queue";
-	} else if(queue.length < 1) {
-		return "There are not enough songs to shuffle";
+	let manager = music.getManager(message.guild);
+	if(!manager) {
+		return "There is currently no music playing";
+	} else if(!manager.voiceCheck(message.member)) {
+		return "You must be in the music channel to run this command";
 	} else {
+		let queue = manager.data.queue;
 		queue = queue.sort(() => 0.5 - Math.random());
-		return "Queue shuffled";
+		return "Queue shuffled :arrows_counterclockwise:";
 	}
 }, {
 	type: "music",

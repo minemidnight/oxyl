@@ -4,15 +4,16 @@ const music = require("../../modules/music.js"),
 	framework = require("../../framework.js");
 
 var command = new Command("resume", (message, bot) => {
-	var voice = music.voiceCheck(message.member);
-
-	if(!voice) {
-		return "You and Oxyl must both be in the same channel to resume the music";
-	} else if(!music.getDispatcher(message.guild).paused) {
+	let manager = music.getManager(message.guild);
+	if(!manager) {
+		return "There is currently no music playing";
+	} else if(!manager.voiceCheck(message.member)) {
+		return "You must be in the music channel to run this command";
+	} else if(!manager.connection.paused) {
 		return "The music is not paused";
 	} else {
-		music.resumeStream(message.guild);
-		return `Resumed the music in ${voice.name} :arrow_forward:`;
+		manager.pause();
+		return "Music resumed :play_pause:";
 	}
 }, {
 	type: "music",

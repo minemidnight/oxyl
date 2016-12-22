@@ -7,7 +7,7 @@ var command = new Command("hat", (message, bot) => {
 	let user = message.author;
 	if(message.args[0]) user = message.args[0];
 	if(!user.avatarURL) return "A hat cannot be added to someone with no avatar";
-	message.channel.startTyping();
+	message.channel.sendTyping();
 
 	Jimp.read(user.avatarURL).then(img => {
 		Jimp.read("./media/santahat.png").then(hat => {
@@ -16,8 +16,10 @@ var command = new Command("hat", (message, bot) => {
 			img.resize(200, Jimp.AUTO);
 
 			img.getBuffer(Jimp.MIME_PNG, (error, buffer) => {
-				message.channel.sendFile(buffer)
-				.then(message.channel.stopTyping());
+				message.channel.createMessage("", {
+					file: buffer,
+					name: "hat.png"
+				});
 			});
 		});
 	});

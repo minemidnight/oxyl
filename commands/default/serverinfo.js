@@ -16,13 +16,13 @@ var command = new Command("serverinfo", (message, bot) => {
 
 		let afkChannel = guild.afkChannelID;
 		let members = guild.members;
-		let onlineMembers = members.filter(gM => gM.presence.status === "online").size;
-		let offlineMembers = members.filter(gM => gM.presence.status === "offline").size;
-		let dndMembers = members.filter(gM => gM.presence.status === "dnd").size;
-		let idleMembers = members.filter(gM => gM.presence.status === "idle").size;
-		let bots = members.filter(gM => gM.user.bot).size;
-		let textChannels = guild.channels.filter(ch => ch.type === "text").size;
-		let voiceChannels = guild.channels.filter(ch => ch.type === "voice").size;
+		let onlineMembers = members.filter(gM => gM.status === "online").length;
+		let offlineMembers = members.filter(gM => gM.status === "offline").length;
+		let dndMembers = members.filter(gM => gM.status === "dnd").length;
+		let idleMembers = members.filter(gM => gM.status === "idle").length;
+		let bots = members.filter(gM => gM.user.bot).length;
+		let textChannels = guild.channels.filter(ch => ch.type === 0).length;
+		let voiceChannels = guild.channels.filter(ch => ch.type === 2).length;
 		if(!afkChannel) {
 			afkChannel = "N/A";
 		} else {
@@ -31,7 +31,7 @@ var command = new Command("serverinfo", (message, bot) => {
 
 		var channelInfo = [
 			`Text: ${textChannels}`, [
-				`Default Channel: ${guild.defaultChannel} (ID: ${guild.defaultChannel.id})`
+				`Default Channel: ${guild.defaultChannel.name} (ID: ${guild.defaultChannel.id})`
 			],
 			`Voice: ${voiceChannels}`, [
 				`AFK Channel: ${afkChannel}`, `AFK Timeout: ${guild.afkTimeout}`
@@ -51,17 +51,18 @@ var command = new Command("serverinfo", (message, bot) => {
 		];
 
 		var emojiInfo = [
-			`Amount: ${guild.emojis.size}`,
-			`Emojis: ${guild.emojis.array().join("")}`
+			`Amount: ${guild.emojis.length}`,
+			`Emojis: ${guild.emojis.map(emoji => `<:${emoji.name}:${emoji.id}>`) || "None"}`
 		];
 
+		let owner = guild.members.get(guild.ownerID).user;
 		var otherInfo = [
 			`Created: ${framework.formatDate(guild.createdAt)}`,
-			`Owner: ${guild.owner.user.username}#${guild.owner.user.discriminator} (ID: ${guild.ownerID})`,
+			`Owner: ${framework.unmention(owner)} (ID: ${owner.id})`,
 			`Roles: ${guild.roles.size}`,
 			`Region: ${guild.region}`,
 			`Verification Level: ${guild.verificationLevel}`,
-			`Icon: ${guild.iconUrl}`
+			`Icon: ${guild.iconURL || "None"}`
 		];
 
 		channelInfo = framework.listConstructor(channelInfo);

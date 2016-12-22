@@ -16,7 +16,7 @@ exports.newPoll = (message, time, topic) => {
 	`\n        **╚** `;
 
 	let durString = new Duration(timeMs).toString();
-	const pollMsg = channel.sendMessage(mainMsg + timeMsg + durString);
+	const pollMsg = channel.createMessage(mainMsg + timeMsg + durString);
 	Promise.resolve(pollMsg).then(msg => {
 		msg.react("✅");
 		msg.react("❌");
@@ -46,7 +46,7 @@ exports.newPoll = (message, time, topic) => {
 	// 150000);
 };
 
-bot.on("messageReactionAdd", (reaction, user) => {
+/* bot.on("messageReactionAdd", (reaction, user) => {
 	let message = reaction.message, search;
 	if(!runningPolls.includes(message.id) || user.id === bot.user.id) return;
 
@@ -67,4 +67,4 @@ bot.on("messageReactionAdd", (reaction, user) => {
 	});
 
 	if(hasOther) hasOther.remove(user);
-});
+}); */
