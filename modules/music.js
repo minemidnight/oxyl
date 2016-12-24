@@ -125,6 +125,7 @@ class MusicManager {
 		let connection = this.connection;
 		if(!connection) return;
 
+		if(this.data.playing) this.data.stopPlaying();
 		let data = this.data.queue[0];
 		this.data.playing = data;
 		let id = data.id;

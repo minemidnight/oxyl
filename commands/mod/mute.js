@@ -4,42 +4,38 @@ const Oxyl = require("../../oxyl.js"),
 const bot = Oxyl.bot;
 
 bot.on("channelCreate", (channel) => {
-	if(channel.type !== "text") return;
-	const mutedRole = channel.guild.roles.find("name", "Muted");
-	let rolePerms = channel.guild.member(bot.user).hasPermission("MANAGE_ROLES_OR_PERMISSIONS");
-	if(mutedRole && rolePerms) { channel.overwritePermissions(mutedRole, { SEND_MESSAGES: false }); }
+	if(channel.type !== 0) return;
+	let mutedRole = channel.guild.roles.find(role => role.name.toLowerCase() === "muted");
+	let rolePerms = channel.permissionsOf(bot.user.id).has("manageRoles");
+	if(mutedRole && rolePerms) bot.editChannelPermission(channel.id, mutedRole.id, 0, 2048, "role");
 });
 
 var command = new Command("mute", (message) => {
 	let guild = message.guild;
 	if(!guild) return "This command can only be used in guilds";
 
-	let rolePerms = message.guild.member(bot.user).hasPermission("MANAGE_ROLES_OR_PERMISSIONS");
-	let checkRole = guild.roles.find(role => role.name.toLowerCase() === "muted");
-	if(!checkRole && !rolePerms) {
+	let mutedRole = message.channel.guild.roles.find(role => role.name.toLowerCase() === "muted");
+	let rolePerms = message.channel.permissionsOf(bot.user.id).has("manageRoles");
+	if(!mutedRole && !rolePerms) {
 		return "Oxyl does not have the permission to create and configure the muted role.";
-	} else if(!checkRole) {
-		message.guild.createRole({ name: "Muted", color: "#DF4242", permissions: [] }).then((role) => {
-			var channels = message.guild.channels.filter(ch => ch.type === "text").array();
-			for(var i = 0; i < channels.length; i++) {
-				channels[i].overwritePermissions(role, { SEND_MESSAGES: false });
-			}
+	} else if(!mutedRole) {
+		console.log("role made");
+		message.guild.createRole({ name: "Muted", color: "#DF4242", permissions: [] }).then(role => {
+			let channels = message.guild.channels.filter(channel => channel.type === 0);
+			channels.forEach(channel => bot.editChannelPermission(channel.id, role.id, 0, 2048, "role"));
 		});
+	} else if(!rolePerms) {
+		return "Oxyl does not have permissions to add roles";
 	}
 
-	if(!rolePerms) {
-		return "Oxyl does not have permissions to mute any user.";
+	let mention = message.guild.members.get(message.args[0].id);
+	let isMuted = mention.roles.indexOf(mutedRole.id);
+	if(isMuted === -1) {
+		mention.addRole(mutedRole.id);
+		return `${mention.mention} has been muted`;
 	} else {
-		let mention = message.args[0];
-		let addRole = guild.roles.find(role => role.name.toLowerCase() === "muted");
-		let isMuted = message.guild.member(mention).roles.find(role => role.name.toLowerCase() === "muted");
-		if(isMuted) {
-			message.guild.member(mention).removeRole(addRole);
-			return `${mention} has been muted`;
-		} else {
-			message.guild.member(mention).addRole(addRole);
-			return `${mention} has been unmuted`;
-		}
+		mention.removeRole(mutedRole.id);
+		return `${mention.mention} has been unmuted`;
 	}
 }, {
 	type: "moderator",

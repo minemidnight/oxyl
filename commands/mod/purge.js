@@ -3,31 +3,32 @@ const Oxyl = require("../../oxyl.js"),
 	framework = require("../../framework.js");
 
 var command = new Command("purge", (message, bot) => {
-	let deletePerms = message.guild.member(bot.user).hasPermission("MANAGE_MESSAGES"), mentions = message.mentions.users;
+	let deletePerms = message.channel.permissionsOf(bot.user.id).has("manageMessages"),
+		mentions = message.mentions.users;
 	if(!deletePerms) {
 		message.channel.createMessage("Oxyl does not have permissions to delete messages")
 		.then(msg => msg.delete(3000));
-	} else if(!mentions || mentions.size === 0) {
-		message.delete();
-		message.channel.fetchMessages({ limit: message.args[0] })
-		.then(messages => {
-			message.channel.bulkDelete(messages);
-		});
 	} else {
-		message.delete();
-		message.channel.fetchMessages({ limit: message.args[0] }).then(messages => {
-			messages = messages.filter(msg => mentions.array().includes(message.author));
-			message.channel.bulkDelete(messages);
+		message.delete().then(() => {
+			message.channel.purge(message.args[0], msg => {
+				if(mentions && mentions.length >= 1 && mentions.includes(message.author)) {
+					return true;
+				} else if(!mentions || mentions.length === 0) {
+					return true;
+				} else {
+					return false;
+				}
+			});
 		});
 	}
 }, {
 	type: "moderator",
-	aliases: ["deletemessages"],
-	description: "Delete up to 100 messages by all users or a list of users",
+	aliases: [],
+	description: "Delete up to 2500 messages by all users or a list of users",
 	args: [{
 		type: "int",
 		min: 1,
-		max: 100,
+		max: 2500,
 		label: "amount"
 	}, {
 		type: "custom",

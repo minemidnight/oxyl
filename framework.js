@@ -57,6 +57,14 @@ exports.getCmd = (msgCase) => {
 	let commands = Oxyl.commands;
 	let prefix = exports.config.options.prefixRegex;
 	let returnData = {};
+
+	let cmdCheck;
+	if(msg.indexOf(" ") === -1) {
+		cmdCheck = msg;
+	} else {
+		cmdCheck = msg.substring(0, msg.indexOf(" "));
+	}
+
 	for(let cmdType in commands) {
 		for(let cmd in commands[cmdType]) {
 			cmd = commands[cmdType][cmd];
@@ -65,7 +73,7 @@ exports.getCmd = (msgCase) => {
 
 			for(let i in possibleStarts) {
 				let loopCmd = possibleStarts[i];
-				if(msg.startsWith(loopCmd)) {
+				if(cmdCheck === loopCmd) {
 					returnData = {
 						newContent: msgCase.substring(loopCmd.length, msg.length).trim(),
 						cmd: cmd

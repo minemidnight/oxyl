@@ -26,6 +26,7 @@ bot.on("messageCreate", (message) => {
 		var guildConfig = configs.getConfig(guild);
 		if(guildConfig.channels.ignored.value.includes(message.channel.id)) return;
 		var roles = message.member.roles;
+		roles = roles.map(role => guild.roles.get(role));
 	}
 
 	if(msg.match(prefix) && msg.match(prefix)[2]) {
@@ -141,15 +142,10 @@ bot.on("messageCreate", (message) => {
 				consoleLog(`Failed command ${command.name} (${command.type})\n` +
 				`**Error:** ${framework.codeBlock(error.stack)}`, "debug");
 			} finally {
-<<<<<<< HEAD
 				if(result && result.length > 2000 && !result.includes("\n")) message.channel.createMessage("Message exceeds 2000 characters :(");
-				else if(result) message.channel.createMessage(result, { split: true });
-=======
-				if(result && result.length > 2000 && !result.includes("\n")) message.channel.sendMessage("Message exceeds 2000 characters :(");
-				else if(result) message.channel.sendMessage(result, { split: true });
->>>>>>> origin/master
+				else if(result) message.channel.createMessage(result);
 			}
-		}).catch(reason => message.channel.createMessage(reason));
+		}).catch(reason => { if(reason) message.channel.createMessage(reason); });
 });
 
 function checkArg(input, arg, message) {
@@ -189,11 +185,7 @@ function validateArgs(message, command, index) {
 				}
 			}, { maxMatches: 1, time: 15000 })
 			.then(responses => {
-<<<<<<< HEAD
 				if(!responses || responses.size === 0 || !responses[0]) {
-=======
-				if(!responses || responses.size === 0 || !responses.first()) {
->>>>>>> origin/master
 					reject("Command timed out");
 					return;
 				}

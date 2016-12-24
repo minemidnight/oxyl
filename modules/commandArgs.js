@@ -8,8 +8,6 @@ exports.test = (input, arg, message) => {
 	return new Promise((resolve, reject) => {
 		if(type === "text" || type === "custom") {
 			resolve(input);
-		} else if(type === "custom") {
-			resolve(input);
 		} else if(type === "int") {
 			input = parseInt(input);
 			if(isNaN(input)) {
@@ -101,7 +99,7 @@ exports.test = (input, arg, message) => {
 						return `[${i}] ${framework.unmention(user)}`;
 					}).join("\n");
 					if(usersFound.length > 15) map += `\n... and ${usersFound.length - 15} more`;
-					let selectUser = message.channel.sendMessage(`Multiple users found. Please say a number` +
+					let selectUser = message.channel.createMessage(`Multiple users found. Please say a number` +
 						`below to choose one in the next 10 seconds: ${framework.codeBlock(map, "ini")}`);
 
 					framework.awaitMessages(message.channel, newMsg => {

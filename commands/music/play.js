@@ -73,9 +73,9 @@ var command = new Command("play", (message, bot) => {
 
 	if(manager && manager.connection && !manager.voiceCheck(message.member)) {
 		return "You must be in the music channel to run this command";
-	} else if(!voiceChannel.permissionsOf(bot.user.id).has("voiceConnect")) {
+	} else if(voiceChannel && !voiceChannel.permissionsOf(bot.user.id).has("voiceConnect")) {
 		return "I cannot join that channel";
-	} else if(!voiceChannel.permissionsOf(bot.user.id).has("voiceSpeak")) {
+	} else if(voiceChannel && !voiceChannel.permissionsOf(bot.user.id).has("voiceSpeak")) {
 		return "I cannot speak in that channel";
 	} else {
 		playCmdProcess(message).then(msg => {
