@@ -38,6 +38,8 @@ var command = new Command("mute", (message) => {
 		return `${mention.mention} has been unmuted`;
 	}
 }, {
+	perm: "manageRoles",
+	guildOnly: true,
 	type: "moderator",
 	description: "Toggle a person's mute state in the guild (for text chat)",
 	args: [{

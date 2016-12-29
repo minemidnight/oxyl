@@ -18,9 +18,11 @@ exports.addCommand = (command) => {
 
 exports.bot = bot;
 exports.commands = {};
+exports.version = framework.config.version;
 
 framework.loadScripts("./commands/");
 framework.loadScripts("./modules/");
+framework.loadScripts("./site/");
 
-var postStats = require("./modules/statPoster.js");
-setInterval(() => { postStats(); }, 600000);
+exports.postStats = require("./modules/statPoster.js");
+setInterval(() => exports.postStats(), 600000);

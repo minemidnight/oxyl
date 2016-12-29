@@ -1,15 +1,604 @@
 const Oxyl = require("../../oxyl.js"),
 	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js"),
-	tags = require("../tags.js").tags;
+	math = require("mathjs");
+
+let tableOrder = ["GlobalTags", "GuildTags", "ChannelTags", "UserTags"];
+function getTag(query, message, table = 0) {
+	let tableName = tableOrder[table], dbQuery;
+
+	return new Promise((resolve, reject) => {
+		if(tableName === "GlobalTags") {
+			dbQuery = `SELECT * FROM \`${tableName}\` WHERE \`NAME\` = '${query}'`;
+		} else if(tableName === "GuildTags" || tableName === "ChannelTags") {
+			let id = tableName === "GuildTags" ? message.guild.id : message.channel.id;
+			dbQuery = `SELECT * FROM \`${tableName}\` WHERE \`NAME\` = '${query}' AND \`ID\` = '${id}'`;
+		} else {
+			dbQuery = `SELECT * FROM \`${tableName}\` WHERE \`NAME\` = '${query}' AND \`CREATOR\` = '${message.author.id}'`;
+		}
+
+		framework.dbQuery(dbQuery).then(data => {
+			if(data && data[0]) {
+				data[0].TYPE = tableName.substring(0, tableName.indexOf("Tags")).toLowerCase();
+				resolve(data[0]);
+			} else if(table < tableOrder.length - 1) {
+				getTag(query, message, table + 1)
+				.then(resolve)
+				.catch(reject);
+			} else {
+				reject("NO_RESULTS");
+			}
+		});
+	});
+}
+
+function createTag(data) {
+	let type = data.type;
+	type = tableOrder.find(table => table.toLowerCase().startsWith(type));
+	if(type === "GlobalTags") {
+		framework.dbQuery(`INSERT INTO \`${type}\`(\`CREATOR\`, \`NAME\`, \`CREATED_AT\`, \`CONTENT\`)` +
+		`VALUES ('${data.creator}','${data.name}','${data.createdAt}', '${data.content}')`);
+	} else if(type === "GuildTags" || type === "ChannelTags") {
+		framework.dbQuery(`INSERT INTO \`${type}\`(\`CREATOR\`, \`ID\`, \`NAME\`, \`CREATED_AT\`, \`CONTENT\`)` +
+		`VALUES ('${data.creator}','${data.id}','${data.name}','${data.createdAt}','${data.content}')`);
+	} else if(type === "UserTags") {
+		framework.dbQuery(`INSERT INTO \`${type}\`(\`CREATOR\`, \`NAME\`, \`CREATED_AT\`, \`CONTENT\`)` +
+		`VALUES ('${data.creator}','${data.name}','${data.createdAt}','${data.content}')`);
+	}
+}
+
+function deleteTag(type, name, message) {
+	type = tableOrder.find(table => table.toLowerCase().startsWith(type));
+	if(type === "GlobalTags") {
+		framework.dbQuery(`DELETE FROM \`${type}\` WHERE \`NAME\` = '${name}'`);
+	} else if(type === "GuildTags" || type === "ChannelTags") {
+		let id = type === "GuildTags" ? message.guild.id : message.channel.id;
+		framework.dbQuery(`DELETE FROM \`${type}\` WHERE \`NAME\` = '${name}' AND \`ID\` = '${id}'`);
+	} else if(type === "UserTags") {
+		framework.dbQuery(`DELETE FROM \`${type}\` WHERE \`NAME\` = '${name}' AND \`CREATOR\` = '${message.author.id}'`);
+	}
+}
+
+function getTags(message, fullData, table = 0) {
+	let tableName = tableOrder[table], dbQuery;
+	if(!fullData) {
+		fullData = {
+			global: [],
+			guild: [],
+			channel: [],
+			user: []
+		}; }
+
+	return new Promise((resolve, reject) => {
+		if(tableName === "GlobalTags") {
+			dbQuery = `SELECT * FROM \`${tableName}\``;
+		} else if(tableName === "GuildTags" || tableName === "ChannelTags") {
+			let id = tableName === "GuildTags" ? message.guild.id : message.channel.id;
+			dbQuery = `SELECT * FROM \`${tableName}\` WHERE \`ID\` = '${id}'`;
+		} else {
+			dbQuery = `SELECT * FROM \`${tableName}\` WHERE \`CREATOR\` = '${message.author.id}'`;
+		}
+
+		framework.dbQuery(dbQuery).then(data => {
+			if(data && data.length >= 1) {
+				let type = tableName.substring(0, tableName.indexOf("Tags")).toLowerCase();
+				data.forEach(dataType => {
+					dataType.TYPE = type;
+				});
+
+				fullData[type] = data;
+			}
+
+			if(table < tableOrder.length - 1) {
+				getTags(message, fullData, table + 1)
+				.then(resolve);
+			} else {
+				resolve(fullData);
+			}
+		});
+	});
+}
+
+function parseTag(tag, message) {
+	tag = tag.CONTENT || tag;
+	message.argsPreserved = message.argsPreserved[0].split(" ").splice(1);
+	return new Promise((resolve, reject) => {
+		let results = [];
+		while(tag.match(/{[^{}]+}/)) {
+			let originalArg = tag.match(/{[^{}]+}/)[0];
+			let arg = originalArg;
+			let argArray = [], argType;
+			arg = arg.substring(1, arg.length - 1);
+			if(arg.endsWith(":") && !arg.includes("|")) {
+				argType = arg.substring(0, arg.length - 1);
+			} else if(arg.includes(":")) {
+				argType = arg.substring(0, arg.indexOf(":"));
+				arg = arg.substring(arg.indexOf(":") + 1);
+				argArray = arg.includes("|") ? argArray.concat(arg.split("|")) : argArray = [arg];
+			} else {
+				argType = arg;
+			}
+
+			if(results.length >= 1) argArray = results;
+			try {
+				let newArg = tagParser[argType](argArray, message);
+				if(typeof newArg === "object") results.push(newArg);
+				else results = [];
+
+				tag = tag.replace(originalArg, newArg);
+			} catch(err) {
+				reject(`Error parsing tag at \`${originalArg}\``);
+				return;
+			}
+		}
+
+		resolve(tag);
+	});
+}
+exports.parseTag = parseTag;
 
 var command = new Command("tag", (message, bot) => {
-	let globalTags = tags.user[message.author.id],
-		guildTags = tags.user[message.author.id],
-		channelTags = tags.user[message.author.id],
-		userTags = tags.user[message.author.id];
+	let msg = message.argsPreserved[0];
+	let guild = message.guild, channel = message.channel, user = message.author;
+	if(msg.toLowerCase() === "list" || msg.toLowerCase() === "all") {
+		getTags(message).then(tagTypes => {
+			let tagMsg = "";
+			for(let type in tagTypes) {
+				let tagNames = [];
+				for(let i in tagTypes[type]) {
+					tagNames.push(tagTypes[type][i].NAME);
+				}
+				tagNames.sort();
+
+				tagMsg += `${framework.capitalizeEveryFirst(type)} Tags **(${tagNames.length})**: `;
+				tagMsg += `\`${tagNames.length >= 1 ? tagNames.join("`**,** `") : "None"}\`\n`;
+			}
+
+			tagMsg += "\nThis excludes other users, other channel and other server tags.";
+
+			message.channel.createMessage(tagMsg);
+		});
+	} else if(msg.toLowerCase().startsWith("delete")) {
+		let name = msg.split(" ", 2)[1];
+		if(!name) channel.createMessage("Please provide the name of the tag you'd like to delete, `tag dlete [name]`");
+		name = name.toLowerCase();
+
+		getTag(name, message).then(tag => {
+			if(tag.CREATOR !== user.id && !framework.config.creators.includes(user.id)) {
+				channel.createMessage("You can't delete a tag you did not make, unless it is a guild/channel tag and you are the server owner.");
+			} else {
+				deleteTag(tag.TYPE, name, message);
+				channel.createMessage("Tag deleted.");
+			}
+		}).catch(() => {
+			channel.createMessage("That tag does not exist.");
+		});
+	} else if(msg.toLowerCase().startsWith("create")) {
+		let name = msg.split(" ", 2)[1], type;
+		if(!name) channel.createMessage("Your tag needs a name, `tag create [name] [content] [type (default user)]`");
+		name = name.toLowerCase();
+
+		getTag(name, message).then(tag => {
+			channel.createMessage("That tag already exists. Please delete it, then try again");
+		}).catch(() => {
+			let createData = {
+				creator: user.id,
+				createdAt: new Date().getTime() / 1000,
+				name: name
+			};
+
+			if(msg.toLowerCase().endsWith("-global")) {
+				createData.type = "global";
+			} else if(msg.toLowerCase().endsWith("-guild") || msg.toLowerCase().endsWith("-server")) {
+				createData.type = "guild";
+				createData.id = guild.id;
+			} else if(msg.toLowerCase().endsWith("-channel")) {
+				createData.type = "channel";
+				createData.id = channel.id;
+			} else {
+				createData.type = "user";
+			}
+
+			let content;
+			if(createData.type === "user" && !msg.endsWith("-user")) {
+				content = msg.substring(7 + name.length);
+			} else {
+				content = msg.substring(7 + name.length, msg.lastIndexOf("-"));
+			}
+			content = content.trim();
+			if(!content || content.length === 0) channel.createMessage("Tag must have content");
+			else if(content.length < 5) channel.createMessage("Content of tag must be 5 characters or more");
+
+			createData.content = content;
+			createTag(createData);
+			channel.createMessage(`Tag \`${name}\` created (type: \`${createData.type}\`)`);
+		});
+	} else if(msg.toLowerCase().startsWith("test")) {
+		parseTag(msg.substring(4).trim(), message).then(parsed => {
+			channel.createMessage(parsed);
+		}).catch(reason => {
+			channel.createMessage(reason);
+		});
+	} else {
+		msg = msg.toLowerCase();
+		getTag(msg, message).then(tag => {
+			parseTag(tag, message).then(parsed => {
+				channel.createMessage(parsed);
+			}).catch(reason => {
+				channel.createMessage(reason);
+			});
+		}).catch(() => {
+			message.channel.createMessage("No tag found");
+		});
+	}
 }, {
+	guildOnly: true,
 	type: "default",
-	aliases: ["taglist"],
-	description: "List tags"
+	aliases: ["t", "tags"],
+	description: "Create, delete, display or list tags",
+	args: [{
+		type: "text",
+		label: "<tag name>/create/delete/list"
+	}]
 });
+
+const tagInfo = {
+	choose: {
+		return: "Random choice out of the choices given",
+		in: "cake|pie",
+		out: `"pie"`,
+		usage: "<Strings...>"
+	},
+	arg: {
+		return: "Argument number requested",
+		in: "@%{math:{arg:0}/{arg:1}",
+		out: "2",
+		usage: "<Numbers...>"
+	},
+	allargs: {
+		return: "All arguments combined",
+		in: "@%You said: {allargs}",
+		out: `"You said: testing args"`
+	},
+	channel: {
+		return: "Current Channel",
+		out: "{ Object Channel }"
+	},
+	id: {
+		return: "ID of channel/guild/user",
+		in: "{author}",
+		out: `"254768930223161344"`,
+		usage: "<Channel/Guild/User Object>"
+	},
+	name: {
+		return: "Name of channel/guild",
+		in: "{guild}",
+		out: `"Oxyl Support"`,
+		usage: "<Channel/Guild Object>"
+	},
+	guild: {
+		return: "Current Guild (server)",
+		out: "{ Object Guild }"
+	},
+	membercount: {
+		return: "Amount of members in a guild",
+		in: "{guild}",
+		out: "34",
+		usage: "<Guild Object>"
+	},
+	lb: {
+		return: "{",
+		out: `"{"`
+	},
+	rb: {
+		return: "}",
+		out: `"}"`
+	},
+	colon: {
+		return: ":",
+		out: `":"`
+	},
+	pipe: {
+		return: "|",
+		out: `"|"`
+	},
+	abs: {
+		return: "Absolute value of a number",
+		in: "-5",
+		out: "5",
+		usage: "<Number>"
+	},
+	floor: {
+		return: "Rounded down number",
+		in: "3.7421",
+		out: "3",
+		usage: "<Number>"
+	},
+	round: {
+		return: "Rounded number",
+		in: "3.5",
+		out: "4",
+		usage: "<Number>"
+	},
+	createdAt: {
+		return: "When a channel/guild/user was created",
+		in: "{guild}",
+		out: `"Sunday, November 01 2015, 08:46:38"`,
+		usage: "<Channel/Guild/User Object>"
+	},
+	author: {
+		return: "User who sent the message",
+		out: "{ Object Member }"
+	},
+	member: {
+		return: "Guild member who sent the message (can get nickname from this, but not user)",
+		out: "{ Object Member }"
+	},
+	roles: {
+		return: "ID of roles a member has",
+		out: `["110375768374136832"]`,
+		usage: "<Member>"
+	},
+	length: {
+		return: "Length of string",
+		in: "hello",
+		out: "5",
+		usage: "<String>"
+	},
+	capitalize: {
+		return: "A string capitalized",
+		in: "Hello World!",
+		out: `"HELLO WORLD!"`,
+		usage: "<String>"
+	},
+	lower: {
+		return: "A string converted to lowercase",
+		in: "Today is Decemeber 26th",
+		out: `"today is decemember 26th"`,
+		usage: "<String>"
+	},
+	int: {
+		return: "Random integer (whole number) between two numbers",
+		in: "3|9",
+		out: "6",
+		usage: "<Number> <Number>"
+	},
+	num: {
+		return: "Randon number (not whole) between two numbers",
+		in: "2|6",
+		out: "3.64",
+		usage: "<Number> <Number>"
+	},
+	replace: {
+		return: "Replace text with another text",
+		in: "hello world|world|earth",
+		out: `"hello earth"`,
+		usage: "<Input> <String> <String>"
+	},
+	replaceAll: {
+		return: "Replace all instances of a text with another text",
+		in: "world hello world|world|earth",
+		out: `"earth hello earth"`,
+		usage: "<Input> <String> <String>"
+	},
+	repeat: {
+		return: "Repeats a phrase as many times as you'd like (do not forget the character limit)",
+		in: "hi|3",
+		out: `"hihihi"`,
+		usage: "<Input> <Number>"
+	},
+	substring: {
+		return: "Gets a part of a phrase",
+		in: "test|1|3",
+		out: `"es"`,
+		usage: "<String>"
+	},
+	now: {
+		return: "Current Time",
+		out: `"Monday, Decemeber 26 2016, 23:03:53"`
+	},
+	avatar: {
+		return: "User's avatar URL",
+		in: "{author}",
+		out: `"https://cdn.discordapp.com/avatars/..."`,
+		usage: "<Member/User Object>"
+	},
+	getUser: {
+		return: "User from ID (Only searches current guild)",
+		in: "155112606661607425",
+		out: "{ Object User }",
+		usage: "<Member/User ID>"
+	},
+	getMember: {
+		return: "Member from ID (Only searches current guild)",
+		in: "155112606661607425",
+		out: "{ Object Member }",
+		usage: "<Member/User ID>"
+	},
+	memberJoinedAt: {
+		return: "When a member joined the current guild",
+		in: "{member}",
+		out: `"Sunday, Decemeber 11 2016, 17:49:30"`,
+		usage: "<Member Object>"
+	},
+	discriminator: {
+		return: "A user's discriminator",
+		in: "{author}",
+		out: `"1537"`,
+		usage: "<Member/User Object>"
+	},
+	status: {
+		return: "A user's status",
+		in: "{member}",
+		out: `"online"`,
+		usage: "<Member Object>"
+	},
+	username: {
+		return: "A user's username",
+		in: "{author}",
+		out: `"minemidnight"`,
+		usage: "<Member/User Object>"
+	},
+	mention: {
+		return: "Mention of a channel or user",
+		in: "{channel}",
+		out: `"#general"`,
+		usage: "<Channel/User Object>"
+	},
+	nickname: {
+		return: "Nickname of a member",
+		in: "{member}",
+		out: `"mememidnight"`,
+		usage: "<Member Object>"
+	},
+	game: {
+		return: "Game of a member",
+		in: "{member}",
+		out: `"Rocket League"`,
+		usage: "<Member Object>"
+	},
+	if: {
+		return: "Use conditionals to execute code (<=, <, >, >=, !=, =, includes, startswith, endswith)",
+		in: "{game:{member}}|!==|\"None\"|{game:{member}}|Not playing a game",
+		out: `"Not playing a game"`,
+		usage: "<Argument> <Conditional> <Argument> <Then> [Else]"
+	},
+	regex: {
+		return: "Specified match of regex execution",
+		in: "aaab|a+|0|gi",
+		out: `"aaa"`,
+		usage: "<String> <Regex> <Group <Number>> [Flags <String>]"
+	},
+	isNaN: {
+		return: "If something is a number or not",
+		in: "4.3",
+		out: `"true"`,
+		usage: "<Argument>"
+	},
+	icon: {
+		return: "Icon of a guild",
+		in: "{guild}",
+		out: `"https://cdn.discordapp.com/icons/..."`,
+		usage: "<Guild Object>"
+	},
+	parseInt: {
+		return: "String parsed as integer",
+		in: "@%{math:{parseInt:{id:{guild}}}/34}",
+		out: "113743192305827841",
+		usage: "<String>"
+	},
+	parseFloat: {
+		return: "String parsed as a float (number with decimals)",
+		in: "@%{math:{parseFloat:3.141592653}*3}",
+		out: "9.42477796",
+		usage: "<String>"
+	},
+	charAt: {
+		return: "Character at a certain place",
+		in: "hello|0",
+		out: `"h"`,
+		usage: "<String> <Number>"
+	},
+	math: {
+		return: "Evaluate a math expression",
+		in: "5*9",
+		out: "45",
+		usage: "<Expression>"
+	},
+	ceil: {
+		return: "Number rounded up",
+		in: "3.1",
+		out: "4",
+		usage: "<Number>"
+	}
+};
+
+module.exports.info = tagInfo;
+module.exports.sorted = Object.keys(tagInfo).sort();
+
+const tagParser = {
+	abs: args => Math.abs(parseFloat(args[0])),
+	allargs: (args, message) => message.argsPreserved.join(" "),
+	arg: (args, message) => {
+		let argsCombined = "";
+		args.forEach(ele => { argsCombined += message.argsPreserved[ele]; });
+		return argsCombined;
+	},
+	author: (args, message) => message.author,
+	avatar: args => args[0].user ? args[0].user.avatarURL : args[0].avatarURL,
+	capitalize: args => args[0].toString().toUpperCase(),
+	ceil: args => Math.ceil(parseFloat(args[0])),
+	channel: (args, message) => message.channel,
+	charAt: args => args[0].toString().charAt(args[1]),
+	choose: args => args[Math.floor(Math.random() * args.length)],
+	colon: args => ":",
+	createdAt: args => framework.formatDate(args[0].createdAt),
+	discriminator: args => args[0].user ? args[0].user.discriminator : args[0].discriminator,
+	floor: args => Math.floor(parseFloat(args[0])),
+	game: args => args[0].game ? args[0].game.name : "None",
+	getMember: (args, message) => message.guild.members.get(args[0]),
+	getUser: (args, message) => message.guild.members.get(args[0]).user,
+	guild: (args, message) => message.guild,
+	icon: args => args[0].iconURL,
+	id: args => args[0].id,
+	if: args => {
+		if(!args[0] || !args[1] || !args[2] || !args[3]) return new Error("Invalid syntax -- 4 arguments required");
+		let result;
+		if(args[1] === "<=") {
+			result = args[0] <= args[2];
+		} else if(args[1] === ">=") {
+			result = args[0] >= args[2];
+		} else if(args[1] === "=" || args[1] === "==" || args[1] === "===") {
+			result = args[0] === args[2];
+		} else if(args[1] === "!=" || args[1] === "=/=" || args[1] === "!==") {
+			result = args[0] !== args[2];
+		} else if(args[1] === "startswith") {
+			result = args[0].startWith(args[2]);
+		} else if(args[1] === "endswith") {
+			result = args[0].endsWith(args[2]);
+		} else if(args[1] === "includes" || args[1] === "contains") {
+			result = args[0].includes(args[2]);
+		} else if(args[1] === "<") {
+			result = args[0] < args[2];
+		} else if(args[1] === ">") {
+			result = args[0] > args[2];
+		} else {
+			return new Error("Invalid operator");
+		}
+
+		if(result) {
+			return args[3];
+		} else if(args[4]) {
+			return args[4];
+		} else {
+			return false;
+		}
+	},
+	int: args => Math.floor(Math.random() * (parseInt(args[1]) - parseInt(args[0]))) + parseInt(args[0]),
+	isNaN: args => isNaN(args[0]),
+	lb: args => "{",
+	length: args => args[0].length,
+	lower: args => args[0].toString().toLowerCase(),
+	math: args => math.eval(args[0]),
+	member: (args, message) => message.member,
+	memberJoinedAt: (args, message) => framework.formatDate(args[0].joinedAt),
+	membercount: (args, message) => message.guild.memberCount,
+	mention: args => args[0].mention,
+	name: args => args[0].name,
+	nickname: args => args[0].nick || args[0].user.username,
+	now: args => framework.formatDate(new Date()),
+	num: args => (Math.random() * (parseFloat(args[1]) - parseFloat(args[0]))) + parseFloat(args[0]),
+	parseFloat: args => parseFloat(args[0]),
+	parseInt: args => parseInt(args[0]),
+	pipe: args => "|",
+	rb: args => "}",
+	regex: args => new RegExp(args[1], args[3] || "").exec(args[0])[args[2]],
+	repeat: args => args[0].repeat(parseInt(args[1])),
+	replace: args => args[0].replace(args[1], args[2]),
+	replaceAll: args => args[0].replace(new RegExp(args[1], "g"), args[2]),
+	roles: args => args[0].roles,
+	round: args => Math.round(parseFloat(args[0])),
+	status: args => args[0].status,
+	substring: args => args[0].toString().substring(args[1], args[2]),
+	username: (args, message) => args[0].user ? args[0].user.username : args[0].username
+};

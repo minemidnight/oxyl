@@ -7,6 +7,8 @@ const bot = Oxyl.bot,
 bot.on("ready", () => {
 	framework.consoleLog(`Oxyl is ready.\nTimestamp: ${framework.formatDate(new Date())}`, "startup");
 	bot.editStatus("online", { name: config.messages.onlineGame });
+
+	Oxyl.postStats();
 });
 
 bot.connect();

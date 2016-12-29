@@ -32,6 +32,7 @@ var command = new Command("botinfo", (message, bot) => {
 	let otherInfo = [
 		`Memory Usage: ${memoryInfo}`,
 		`Creator: minemidnight`,
+		`Version: ${Oxyl.version}`,
 		`Library: Eris`,
 		`GitHub: http://github.com/minemidnight/oxyl`,
 		`Prefix - \`${config.options.prefixText}\``

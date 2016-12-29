@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<link rel="stylesheet" href="assets/css/style.css" />
+	<link rel="stylesheet" href="assets/css/stats.css" />
+	<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="assets/js/main.js"></script>
+	<script src="assets/js/stats.js"></script>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Oxyl - Stats</title>
+
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="author" content="minemidnight" />
+	<meta property="og:title" content="Oxyl Statistics" />
+	<meta property="og:site_name" content="Oxyl" />
+	<meta property="og:description" content="A multipurpose discord bot with with features from music to moderation" />
+	<meta property="og:image" content="assets/images/oxyl-logo.jpg" />
+</head>
+<body class="w3-darknotblack">
+	<nav id="main-nav" class="w3-card-2 w3-sidenav w3-collapse w3-notquiteblack w3-animate-left">
+		<a class="w3-xxlarge w3-hide-large w3-text-red" style="position:absolute;right:10%" onclick="toggleNav()">&times;</a>
+		<h1 class="w3-xxxlarge w3-center">Oxyl</h1>
+		<a class="w3-padding" href="index.html">Home</a>
+		<a class="w3-padding" href="commands.html">Commands</a>
+		<a class="w3-padding" href="tags.html">Tag Documentation</a>
+		<a class="w3-padding" href="config.html">Config Documentation</a>
+		<a id="current-nav" class="w3-padding" href="stats.html">Statistics</a>
+	</nav>
+	<div class="w3-overlay w3-animate-opacity" onclick="toggleNav()"></div>
+	<main class="w3-main" style="margin-left:300px">
+		<header class="w3-container w3-center">
+			<span class="w3-btn w3-black w3-round-jumbo w3-large w3-hide-large" style="position:fixed;left:20px;top:20px" onclick="toggleNav()">&#9776;</span>
+			<h1 class="w3-clear w3-jumbo w3-margin-0">Statistics</h1>
+		</header>
+		<div class="w3-row-padding w3-center w3-container">
+			<div class="w3-quarter">&#8203;</div>
+			<div class="w3-half" id="loading">
+				<div id="progress" class="w3-right"></div>
+				<p id="display-text">LOADING...</p>
+				<div class="loading-circle w3-left"></div>
+				<p id="action-text">FETCHING BOT STATS</p>
+			</div>
+			<div class="w3-row-padding w3-xxlarge w3-rest w3-container" id="stats-display">
+				<ul class="w3-ul">
+					<li>
+						<i class="material-icons">assessment</i>
+						Guilds (Servers): <span class="guild"></span>
+					</li>
+					<li>
+						<i class="material-icons">account_circle</i>
+						Users: <span class="user"></span>
+					</li>
+					<li>
+						<i class="material-icons">textsms</i>
+						Channels: <span class="channel"></span>
+					</li>
+					<li>
+						<i class="material-icons">cloud_circle</i>
+						Memory Usage: <span class="memory"></span>
+					</li>
+					<li>
+						<i class="material-icons">access_time</i>
+						Uptime: <span class="uptime"></span>
+					</li>
+					<li>
+						<i class="material-icons">settings_input_composite</i>
+						Shards: <span class="shard"></span>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</main>
+</body>
+</html>

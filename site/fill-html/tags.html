@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<link rel="stylesheet" href="assets/css/style.css" />
+	<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="assets/js/main.js"></script>
+	<title>Oxyl - Tag Documentation</title>
+
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="author" content="minemidnight" />
+	<meta property="og:title" content="Oxyl Tag Documentation" />
+	<meta property="og:site_name" content="Oxyl" />
+	<meta property="og:description" content="A multipurpose discord bot with with features from music to moderation" />
+	<meta property="og:image" content="assets/images/oxyl-logo.jpg" />
+</head>
+<body class="w3-darknotblack">
+	<nav id="main-nav" class="w3-card-2 w3-sidenav w3-collapse w3-notquiteblack w3-animate-left">
+		<a class="w3-xxlarge w3-hide-large w3-text-red" style="position:absolute;right:10%" onclick="toggleNav()">&times;</a>
+		<h1 class="w3-xxxlarge w3-center">Oxyl</h1>
+		<a class="w3-padding" href="index.html">Home</a>
+		<a class="w3-padding" href="commands.html">Commands</a>
+		<a id="current-nav" class="w3-padding" href="tags.html">Tag Documentation</a>
+		<a class="w3-padding" href="config.html">Config Documentation</a>
+		<a class="w3-padding" href="stats.html">Statistics</a>
+	</nav>
+	<div class="w3-overlay w3-animate-opacity" onclick="toggleNav()"></div>
+	<main class="w3-main" style="margin-left:300px">
+		<header class="w3-container w3-center">
+			<span class="w3-btn w3-black w3-round-jumbo w3-large w3-hide-large" style="position:absolute;left:5%;top:5%" onclick="toggleNav()">&#9776;</span>
+			<h1 class="w3-clear w3-jumbo w3-margin-0">Tag Documentation</h1>
+		</header>
+		<div class="w3-row-padding m6 l3">
+			<div class="w3-quarter">&#8203;</div>
+			<div class="w3-half w3-xlarge">
+				<p>Tags are Oxyl's way of custom commands - kind of, besides the fact
+				you have to use the tag command to call them. Tags are very customizable, giving users
+				access to creating complex tags, or simple tags that just display text.</p>
+				<p>There are also different tag types, which go from user to global:</p>
+				<ul class="w3-ul">
+					<li>User - Anyone can create these tags and they only apply to the user whom created it</li>
+					<li>Channel - Anyone having ban and mute permissions can create channel-wide tags</li>
+					<li>Guild - Anyone having manage server permissions can create server-wide tags</li>
+					<li>Global - Anyone who is a bot creator can make global (bot-wide) tags</li>
+				</ul>
+				<p>These are inherited, so if you can create a guild tag you can also create
+					channel tag. Nobody is able to change user tags besides the user that made it
+					themselves. Only the owner of a tag can delete the tag, unless they have a
+					higher permission, such as someone with manage server can delete a channel tag.
+					Guild Owners can delete guild tags, even if they did not make them.</p>
+				<p>The following are placeholders for tags, that replicate basic coding.
+					If you need help creating a certain tag, please ask in the support server.
+					You may test tags using oxyl tag test &lt;content&gt; but this does not
+					support tag arguments</p>
+				<ul class="w3-ul">
+					<li>[ ] indicates optional arguments, empty brackets mean no arguments,
+						or arguments will not change the outcome of the tag</li>
+					<li>&lt; &gt; indicates required arguments</li>
+					<li>... indicates one or more arguments</li>
+				</ul>
+			</div>
+		</div>
+		<div class="w3-row">
+			<table class="w3-table w3-bordered w3-hoverable">
+				<tr class="w3-hover-notquiteblack" id="tag-table">
+					<th>Name</th>
+					<th>Arguments</th>
+					<th>Returns</th>
+					<th>Example In</th>
+					<th>Example Out</th>
+				</tr>
+			</table>
+		</div>
+	</main>
+</body>
+</html>

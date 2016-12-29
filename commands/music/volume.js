@@ -14,6 +14,7 @@ var command = new Command("volume", (message, bot) => {
 		return `Set the volume to ${message.args[0]} :sound:`;
 	}
 }, {
+	guildOnly: true,
 	aliases: ["vol"],
 	type: "music",
 	description: "Change the volume of music being played",

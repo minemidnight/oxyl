@@ -22,6 +22,8 @@ var command = new Command("purge", (message, bot) => {
 		});
 	}
 }, {
+	perm: "manageMessages",
+	guildOnly: true,
 	type: "moderator",
 	aliases: [],
 	description: "Delete up to 2500 messages by all users or a list of users",

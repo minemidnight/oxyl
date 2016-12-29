@@ -15,6 +15,7 @@ var command = new Command("shuffle", (message, bot) => {
 		return "Queue shuffled :arrows_counterclockwise:";
 	}
 }, {
+	guildOnly: true,
 	type: "music",
 	description: "Shuffle the songs in queue"
 });

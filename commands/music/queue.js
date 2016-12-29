@@ -13,10 +13,8 @@ var command = new Command("queue", (message, bot) => {
 	} else {
 		let queue = manager.data.queue;
 		let queueSize = queue.length;
-		let page = 1;
+		let page = 1 || message.args[0];
 		let pageAmount = Math.ceil(queueSize / perPage);
-
-		if(message.args[0]) page = message.args[0];
 		if(page > pageAmount) page = pageAmount;
 
 		let queueMsg = `Music Info for **${guild.name}**\n`;
@@ -51,6 +49,7 @@ var command = new Command("queue", (message, bot) => {
 		return queueMsg;
 	}
 }, {
+	guildOnly: true,
 	type: "music",
 	description: "List the current guild music queue",
 	aliases: ["playing", "current"],

@@ -4,9 +4,17 @@ const Oxyl = require("./oxyl.js"),
 	yaml = require("js-yaml"),
 	path = require("path"),
 	EventEmitter = require("events").EventEmitter;
+	// mysql = require("promise-mysql");
 
 exports.config = yaml.safeLoad(fs.readFileSync("./private/config.yml"));
-exports.defaultConfig = fs.readFileSync("./private/default-config.yml");
+// exports.defaultConfig = fs.readFileSync("./private/default-config.yml");
+
+let dbData = exports.config.database;
+dbData.password = exports.config.private.databasePass;
+// mysql.createConnection(dbData).then(connection => {
+// 	exports.dbQuery = (query) => connection.query(query);
+// });
+
 
 exports.splitParts = (message) => {
 	if(message.length < 2000) {
@@ -128,7 +136,10 @@ exports.codeBlock = (content, lang) => {
 	return `\n\`\`\`${lang}\n${content}\n\`\`\``;
 };
 
-exports.unmention = (user) => `${user.username}#${user.discriminator}`;
+exports.unmention = (user) => {
+	if(user.user) user = user.user;
+	return `${user.username}#${user.discriminator}`;
+};
 
 exports.consoleLog = (message, type) => {
 	let channel;
@@ -215,15 +226,15 @@ exports.findFile = (dirs, name, ext) => {
 	}
 };
 
-exports.getFiles = (filePath) => {
+exports.getFiles = (filePath, filter = (file) => true) => {
 	var dirFiles = fs.readdirSync(filePath);
 	let fullFiles = [];
 	dirFiles.forEach(file => {
 		var stats = fs.lstatSync(`${filePath}${file}`);
-		if(stats.isDirectory()) {
-			let toAdd = exports.getFiles(`${filePath}${file}/`);
+		if(stats.isDirectory() && file !== "public") {
+			let toAdd = exports.getFiles(`${filePath}${file}/`, filter);
 			fullFiles = fullFiles.concat(toAdd);
-		} else {
+		} else if(filter(file)) {
 			fullFiles.push(`${filePath}${file}`);
 		}
 	});
@@ -232,7 +243,7 @@ exports.getFiles = (filePath) => {
 
 exports.loadScripts = (filePath) => {
 	exports.consoleLog(`Loading all scripts at ${filePath}`, "debug");
-	var dirFiles = exports.getFiles(filePath);
+	var dirFiles = exports.getFiles(filePath, file => file.endsWith(".js"));
 	for(var i in dirFiles) {
 		exports.loadScript(dirFiles[i]);
 	}

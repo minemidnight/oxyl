@@ -16,6 +16,7 @@ var command = new Command("pause", (message, bot) => {
 		return "Music paused :pause_button:";
 	}
 }, {
+	guildOnly: true,
 	type: "music",
 	description: "Pause the music in your channel"
 });

@@ -6,7 +6,6 @@ const config = framework.config;
 googl.setKey(config.private.googleKey);
 
 var command = new Command("userinfo", (message, bot) => {
-	if(!message.guild) return "This command only works in guilds";
 	let user = message.author;
 	if(message.args[0]) user = message.args[0];
 	user = message.guild.members.get(user.id);
@@ -37,6 +36,7 @@ var command = new Command("userinfo", (message, bot) => {
 	});
 	return undefined;
 }, {
+	guildOnly: true,
 	type: "default",
 	description: "View tons of detailed information about a user",
 	args: [{

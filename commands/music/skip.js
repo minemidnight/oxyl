@@ -21,6 +21,7 @@ var command = new Command("skip", (message, bot) => {
 		}
 	}
 }, {
+	guildOnly: true,
 	type: "music",
 	description: "Skip a song in your channel"
 });

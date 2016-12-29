@@ -15,6 +15,7 @@ var command = new Command("ship", (message, bot) => {
 
 	return `Your ship name is ${shipname}`;
 }, {
+	guildOnly: true,
 	type: "default",
 	description: "Create a ship name from two users, or one and yourself",
 	args: [{ type: "user" }, {

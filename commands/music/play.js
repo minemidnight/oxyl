@@ -108,6 +108,7 @@ var command = new Command("play", (message, bot) => {
 	}
 	return false;
 }, {
+	guildOnly: true,
 	type: "music",
 	description: "Add a youtube video to the music queue",
 	args: [{

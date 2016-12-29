@@ -14,6 +14,7 @@ var command = new Command("stop", (message, bot) => {
 		return "Music stopped :stop_button:";
 	}
 }, {
+	guildOnly: true,
 	type: "music",
 	aliases: ["end"],
 	description: "Stop the music in your channel"

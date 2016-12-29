@@ -25,7 +25,7 @@ var command = new Command("cmdinfo", (message, bot) => {
 	}
 
 	helpInfo.push(`Usage: ${cmd.usage}`);
-	helpInfo.push(`Uses (resets on restart): ${cmd.uses}`);
+	helpInfo.push(`Uses since startup: ${cmd.uses}`);
 	helpMsg += framework.listConstructor(helpInfo);
 	return helpMsg;
 }, {

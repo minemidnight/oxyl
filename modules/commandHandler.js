@@ -14,20 +14,7 @@ const spamData = {};
 bot.on("messageCreate", (message) => {
 	let guild = message.guild;
 	let msg = message.content.toLowerCase();
-
-	if(message.author.bot) {
-		return;
-	} else if(!message.guild) {
-		message.channel.createMessage("Oxyl only supports commands within guilds");
-		return;
-	}
-
-	if(guild) {
-		var guildConfig = configs.getConfig(guild);
-		if(guildConfig.channels.ignored.value.includes(message.channel.id)) return;
-		var roles = message.member.roles;
-		roles = roles.map(role => guild.roles.get(role));
-	}
+	if(message.author.bot) return;
 
 	if(msg.match(prefix) && msg.match(prefix)[2]) {
 		message.content = message.content.match(prefix)[2];
@@ -39,72 +26,24 @@ bot.on("messageCreate", (message) => {
 			msg = message.contentPreserved.toLowerCase();
 			message.content = msg;
 		} else {
-			message.contentPreserved = message.content;
-			message.content = msg;
+			return;
 		}
-	}
-
-	if(!command) {
-		let whitelistedRoles = guildConfig.roles.whitelist.value;
-		let isWhitelisted = roles.some(role => whitelistedRoles.includes(role.id));
-
-		if(!isWhitelisted) {
-			let link = guildConfig.filters.link.value;
-			let spam = guildConfig.filters.spam.value;
-
-			if(link) {
-				let linkFilter = new RegExp(config.options.linkFilter);
-				if(linkFilter.test(message.content)) {
-					message.delete();
-					message.author.createMessage(`Please do not send links in **${guild.name}**, it is not allowed.`);
-				}
-			}
-
-			if(spam) {
-				if(!spamData[guild.id]) {
-					spamData[guild.id] = [];
-				}
-
-				let lastMessage = spamData[guild.id][message.author.id];
-
-				if(lastMessage && lastMessage.length > 7 &&
-             Math.abs(lastMessage.length - msg.length) < 5 &&
-             lastMessage.substring(0, msg.length) === lastMessage) {
-					message.delete();
-					message.author.createMessage(`Please do not spam in **${guild}**, it is not allowed.`);
-				}
-
-				spamData[guild.id][message.author.id] = msg;
-			}
-		}
-
+	} else {
 		return;
 	}
 
-	if(command.type === "creator") {
-		if(!config.creators.includes(message.author.id)) {
-			message.channel.createMessage(config.messages.notCreator);
-			return;
-		}
-	} else if(command.type === "moderator") {
-		let accepted = guildConfig.roles.mod.value;
-		let isMod = roles.some(role => accepted.includes(role.id) || role.name.toLowerCase() === "bot commander");
-
-		if(!isMod) {
-			message.channel.createMessage(config.messages.notMod);
-			return;
-		}
-	} else if(command.type === "guild owner") {
-		if(message.author.id !== guild.owner.id) {
-			message.channel.createMessage(config.messages.notGuildOwner);
-			return;
-		}
-	} else if(command.type === "music") {
-		let musicText = guildConfig.channels.musicText.value;
-		if(musicText && musicText !== message.channel.id) {
-			message.channel.createMessage(config.messages.notMusicChannel);
-			return;
-		}
+	if((command.guildOnly && !message.guild) || (command.perm && !message.guild)) {
+		message.channel.createMessage("This command only works in guilds (servers)");
+		return;
+	} else if(command.type === "creator" && !config.creators.includes(message.author.id)) {
+		message.channel.createMessage(config.messages.notCreator);
+		return;
+	} else if(command.type === "guild owner" && message.author.id !== guild.ownerID) {
+		message.channel.createMessage(config.messages.notGuildOwner);
+		return;
+	} else if(command.perm && !message.channel.permissionsOf(message.author.id).has(command.perm)) {
+		message.channel.createMessage(config.messages.invalidPerms.replace(/{PERM}/g, command.perm));
+		return;
 	}
 
 	let arguments = message.contentPreserved.split(" ", command.args.length);
@@ -130,7 +69,7 @@ bot.on("messageCreate", (message) => {
 
 			try {
 				let startText = `[${framework.formatDate(new Date())}] ${framework.unmention(message.author)} ran \`${command.name}\` in`;
-				let argsText = `\n      Args: ${message.args}`;
+				let argsText = `\n      Args: ${message.argsPreserved}`;
 				if(guild) {
 					consoleLog(`${startText} **${guild.name}**${argsText}`, "cmd");
 				} else {

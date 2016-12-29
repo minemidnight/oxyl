@@ -16,9 +16,10 @@ class Command {
 		this.description = options.description || undefined;
 		this.args = options.args || [];
 		this.enabled = !!options.defaultEnabled || true;
+		this.guildOnly = !!options.guildOnly || false;
 		this.uses = 0;
 
-		if(!this.args) {
+		if(this.args.length === 0) {
 			this.usage = "[]";
 		} else {
 			let usage = [];

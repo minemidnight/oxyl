@@ -15,6 +15,7 @@ var command = new Command("repeat", (message, bot) => {
 		return `Repeat has been turned ${newValue}`;
 	}
 }, {
+	guildOnly: true,
 	type: "music",
 	description: "Toggle repeating of songs",
 	aliases: ["loop"]

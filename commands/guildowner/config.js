@@ -50,6 +50,7 @@ var command = new Command("config", (message, bot) => {
 		return handleConfig(message, args);
 	}
 }, {
+	guildOnly: true,
 	type: "guild owner",
 	description: "Configurate Oxyl and his settings per guild",
 	args: [{

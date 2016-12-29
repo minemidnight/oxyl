@@ -14,7 +14,7 @@ var command = new Command("advancedhelp", (message, bot) => {
 			helpMsg += `\nCommand: ${cmd.name}`;
 			if(cmd.aliases.length > 0) cmdInfo.push(`Aliases: ${cmd.aliases.join(", ")}`);
 			if(cmd.description) cmdInfo.push(`Description: ${cmd.description}`);
-			cmdInfo.push(`Usage: ${cmd.usage}`);
+			if(cmd.usage !== "[]") cmdInfo.push(`Usage: ${cmd.usage}`);
 			helpMsg += framework.listConstructor(cmdInfo);
 		}
 	}

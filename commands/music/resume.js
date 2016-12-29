@@ -16,6 +16,7 @@ var command = new Command("resume", (message, bot) => {
 		return "Music resumed :play_pause:";
 	}
 }, {
+	guildOnly: true,
 	type: "music",
 	description: "Resume the music in your channel"
 });
