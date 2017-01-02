@@ -4,6 +4,7 @@ const Oxyl = require("../../oxyl.js"),
 	math = require("mathjs");
 
 let tableOrder = ["GlobalTags", "GuildTags", "ChannelTags", "UserTags"];
+exports.funcs = { getTag, createTag, deleteTag, getTags };
 function getTag(query, message, table = 0) {
 	let tableName = tableOrder[table], dbQuery;
 
@@ -30,6 +31,18 @@ function getTag(query, message, table = 0) {
 			}
 		});
 	});
+}
+
+function addUse(type, name, message) {
+	type = tableOrder.find(table => table.toLowerCase().startsWith(type));
+	if(type === "GlobalTags") {
+		framework.dbQuery(`UPDATE \`${type}\` SET \`USES\` = \`USES\` + 1 WHERE \`NAME\` = '${name}'`);
+	} else if(type === "GuildTags" || type === "ChannelTags") {
+		let id = type === "GuildTags" ? message.guild.id : message.channel.id;
+		framework.dbQuery(`UPDATE \`${type}\` SET \`USES\` = \`USES\` + 1 WHERE \`NAME\` = '${name}' AND \`ID\` = '${id}'`);
+	} else if(type === "UserTags") {
+		framework.dbQuery(`UPDATE \`${type}\` SET \`USES\` = \`USES\` + 1 WHERE \`NAME\` = '${name}' AND \`CREATOR\` = '${message.author.id}'`);
+	}
 }
 
 function createTag(data) {
@@ -132,7 +145,7 @@ function parseTag(tag, message) {
 			}
 		}
 
-		resolve(tag);
+		resolve(`\u200B${tag}`);
 	});
 }
 exports.parseTag = parseTag;
@@ -159,13 +172,31 @@ var command = new Command("tag", (message, bot) => {
 			message.channel.createMessage(tagMsg);
 		});
 	} else if(msg.toLowerCase().startsWith("delete")) {
-		let name = msg.split(" ", 2)[1];
-		if(!name) channel.createMessage("Please provide the name of the tag you'd like to delete, `tag dlete [name]`");
+		let name = msg.split(" ", 2)[1], deletable;
+		let level = framework.guildLevel(message.member, message.guild);
+		if(!name) {
+			channel.createMessage("Please provide the name of the tag you'd like to delete, `tag delete [name]`");
+			return;
+		}
 		name = name.toLowerCase();
 
 		getTag(name, message).then(tag => {
-			if(tag.CREATOR !== user.id && !framework.config.creators.includes(user.id)) {
-				channel.createMessage("You can't delete a tag you did not make, unless it is a guild/channel tag and you are the server owner.");
+			if(tag.TYPE === "global" && level >= 4) {
+				deletable = true;
+			} else if(tag.TYPE === "guild" && level >= 3) {
+				deletable = true;
+			} else if(tag.TYPE === "guild" && level >= 2 && tag.CREATOR === user.id) {
+				deletable = true;
+			} else if(tag.TYPE === "channel" && level >= 2) {
+				deletable = true;
+			} else if(tag.TYPE === "channel" && level >= 1 && tag.CREATOR === user.id) {
+				deletable = true;
+			} else if(tag.CREATOR === user.id) {
+				deletable = true;
+			}
+
+			if(!deletable) {
+				channel.createMessage("You can't delete that tag (not enough permissions)");
 			} else {
 				deleteTag(tag.TYPE, name, message);
 				channel.createMessage("Tag deleted.");
@@ -175,7 +206,11 @@ var command = new Command("tag", (message, bot) => {
 		});
 	} else if(msg.toLowerCase().startsWith("create")) {
 		let name = msg.split(" ", 2)[1], type;
-		if(!name) channel.createMessage("Your tag needs a name, `tag create [name] [content] [type (default user)]`");
+		let level = framework.guildLevel(message.member, message.guild);
+		if(!name) {
+			channel.createMessage("Your tag needs a name, `tag create [name] [content] [type (default user)]`");
+			return;
+		}
 		name = name.toLowerCase();
 
 		getTag(name, message).then(tag => {
@@ -183,18 +218,33 @@ var command = new Command("tag", (message, bot) => {
 		}).catch(() => {
 			let createData = {
 				creator: user.id,
-				createdAt: new Date().getTime() / 1000,
+				createdAt: Date.now(),
 				name: name
 			};
 
 			if(msg.toLowerCase().endsWith("-global")) {
 				createData.type = "global";
+
+				if(level < 4) {
+					channel.createMessage("You do not have enough permissions to create a global tag");
+					return;
+				}
 			} else if(msg.toLowerCase().endsWith("-guild") || msg.toLowerCase().endsWith("-server")) {
 				createData.type = "guild";
 				createData.id = guild.id;
+
+				if(level < 2) {
+					channel.createMessage("You do not have enough permissions to create a guild tag");
+					return;
+				}
 			} else if(msg.toLowerCase().endsWith("-channel")) {
 				createData.type = "channel";
 				createData.id = channel.id;
+
+				if(level < 1) {
+					channel.createMessage("You do not have enough permissions to create a channel tag");
+					return;
+				}
 			} else {
 				createData.type = "user";
 			}
@@ -214,31 +264,76 @@ var command = new Command("tag", (message, bot) => {
 			channel.createMessage(`Tag \`${name}\` created (type: \`${createData.type}\`)`);
 		});
 	} else if(msg.toLowerCase().startsWith("test")) {
+		if(!message.content) {
+			channel.createMessage("You must provide tag content");
+			return;
+		}
+
 		parseTag(msg.substring(4).trim(), message).then(parsed => {
 			channel.createMessage(parsed);
 		}).catch(reason => {
 			channel.createMessage(reason);
 		});
-	} else {
-		msg = msg.toLowerCase();
-		getTag(msg, message).then(tag => {
-			parseTag(tag, message).then(parsed => {
-				channel.createMessage(parsed);
-			}).catch(reason => {
-				channel.createMessage(reason);
-			});
+	} else if(msg.toLowerCase().startsWith("raw")) {
+		let name = msg.split(" ", 2)[1];
+		if(!name) {
+			channel.createMessage("Please provide the name of the tag you'd like to see, `tag raw [name]`");
+			return;
+		}
+		name = name.toLowerCase();
+
+		getTag(name, message).then(tag => {
+			channel.createMessage(framework.codeBlock(tag.CONTENT));
 		}).catch(() => {
-			message.channel.createMessage("No tag found");
+			channel.createMessage("No tag found");
+		});
+	} else if(msg.toLowerCase().startsWith("info")) {
+		let name = msg.split(" ", 2)[1];
+		if(!name) {
+			channel.createMessage("Please provide the name of the tag you'd like to see, `tag raw [name]`");
+			return;
+		}
+		name = name.toLowerCase();
+
+		getTag(name, message).then(tag => {
+			let data = [
+				`Creator: ${framework.unmention(bot.users.get(tag.CREATOR))}`,
+				`Created At: ${framework.formatDate(parseInt(tag.CREATED_AT))}`,
+				`Type: ${framework.capitalizeEveryFirst(tag.TYPE)}`,
+				`Uses: ${tag.USES}`
+			];
+
+			channel.createMessage(`Tag **${name}**: ${framework.listConstructor(data)}`);
+		}).catch(() => {
+			channel.createMessage("No tag found");
+		});
+	} else {
+		let name = msg.split(" ", 1)[0];
+		if(!name) {
+			channel.createMessage("Please provide the name of the tag you'd like to see, `tag raw [name]`");
+			return;
+		}
+		name = name.toLowerCase();
+
+		console.log(message.argsPreserved);
+		console.log(name);
+		getTag(name, message).then(tag => {
+			parseTag(tag, message).then(parsed => {
+				addUse(tag.TYPE, tag.NAME, message);
+				channel.createMessage(parsed);
+			}).catch(channel.createMessage);
+		}).catch(() => {
+			channel.createMessage("No tag found");
 		});
 	}
 }, {
 	guildOnly: true,
 	type: "default",
 	aliases: ["t", "tags"],
-	description: "Create, delete, display or list tags",
+	description: "Create, delete, display, test or list tags (view http://minemidnight.work/tags.html)",
 	args: [{
 		type: "text",
-		label: "<tag name>/create/delete/list"
+		label: "<tag name>/test/create/delete/list/raw/info"
 	}]
 });
 
@@ -459,7 +554,7 @@ const tagInfo = {
 	},
 	if: {
 		return: "Use conditionals to execute code (<=, <, >, >=, !=, =, includes, startswith, endswith)",
-		in: "{game:{member}}|!==|\"None\"|{game:{member}}|Not playing a game",
+		in: "{game:{member}}|!==|None|Playing {game:{member}}|Not playing a game",
 		out: `"Not playing a game"`,
 		usage: "<Argument> <Conditional> <Argument> <Then> [Else]"
 	},

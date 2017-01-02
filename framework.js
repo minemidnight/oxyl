@@ -3,18 +3,28 @@ const Oxyl = require("./oxyl.js"),
 	request = require("request"),
 	yaml = require("js-yaml"),
 	path = require("path"),
-	EventEmitter = require("events").EventEmitter;
-	// mysql = require("promise-mysql");
+	EventEmitter = require("events").EventEmitter,
+	mysql = require("promise-mysql");
 
 exports.config = yaml.safeLoad(fs.readFileSync("./private/config.yml"));
-// exports.defaultConfig = fs.readFileSync("./private/default-config.yml");
+exports.defaultConfig = fs.readFileSync("./private/default-config.yml");
 
 let dbData = exports.config.database;
 dbData.password = exports.config.private.databasePass;
-// mysql.createConnection(dbData).then(connection => {
-// 	exports.dbQuery = (query) => connection.query(query);
-// });
+exports.sqlEscape = mysql.escape;
+mysql.createConnection(dbData).then(connection => {
+	console.log("connected");
+	exports.dbQuery = (query) => connection.query(query);
+});
 
+exports.guildLevel = (member, guild) => {
+	let perms = member.permission;
+	if(exports.config.creators.includes(member.id)) return 4;
+	else if(guild.ownerID === member.id) return 3;
+	else if(perms.has(32)) return 2;
+	else if(perms.has(2) && perms.has(4)) return 1;
+	else return 0;
+};
 
 exports.splitParts = (message) => {
 	if(message.length < 2000) {

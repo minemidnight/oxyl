@@ -4,11 +4,10 @@ const Eris = require("eris"),
 const bot = new Eris(framework.config.private.token);
 
 process.on("unhandledRejection", (err) => {
-	if(!err.stack) {
-		framework.consoleLog(`Unhandled Rejection: ${framework.codeBlock(err)}`, "debug");
-	} else {
-		framework.consoleLog(`Unhandled Rejection: ${framework.codeBlock(err.stack)}`, "debug");
-	}
+	if(!err) return;
+
+	err = err.stack || err;
+	framework.consoleLog(`Unhandled Rejection: ${framework.codeBlock(err)}`, "debug");
 });
 
 exports.addCommand = (command) => {
