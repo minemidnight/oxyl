@@ -5,7 +5,7 @@ const commands = Oxyl.commands;
 
 var command = new Command("cmdinfo", (message, bot) => {
 	let cmd = framework.findCommand(message.args[0]);
-	if(!cmd) return "command not found";
+	if(!cmd) return "Command not found";
 
 	let helpMsg = "", helpInfo = [];
 	helpMsg += `Info on ${message.args[0]}\n`;

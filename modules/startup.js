@@ -5,10 +5,14 @@ const bot = Oxyl.bot,
 	config = framework.config;
 
 bot.on("ready", () => {
-	framework.consoleLog(`Oxyl is ready.\nTimestamp: ${framework.formatDate(new Date())}`, "startup");
 	bot.editStatus("online", { name: config.messages.onlineGame });
-
 	Oxyl.postStats();
+
+	setTimeout(() => {
+		for(let i in bot.voiceConnections.guilds) {
+			bot.leaveVoiceChannel(bot.voiceConnections.guilds[i].channelID);
+		}
+	}, 5000);
 });
 
 bot.connect();

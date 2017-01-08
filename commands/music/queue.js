@@ -13,7 +13,7 @@ var command = new Command("queue", (message, bot) => {
 	} else {
 		let queue = manager.data.queue;
 		let queueSize = queue.length;
-		let page = 1 || message.args[0];
+		let page = message.args[0] || 1;
 		let pageAmount = Math.ceil(queueSize / perPage);
 		if(page > pageAmount) page = pageAmount;
 
@@ -38,13 +38,18 @@ var command = new Command("queue", (message, bot) => {
 			queueMsg += `\nN/A`;
 		}
 
-		let videoDuration = music.getDuration(manager.playing.duration);
-		let playTime = manager.parsedPlayTime();
+		if(!manager.data.playing) {
+			queueMsg += `\n\nPlaying: Nothing (Still queueing?)`;
+		} else {
+			var videoDuration = music.getDuration(manager.data.playing.duration);
+			var playTime = manager.parsedPlayTime();
+			queueMsg += `\n\nPlaying: ${manager.data.playing.title}`;
+		}
 		let repeat = manager.data.extraOptions.repeat ? "on" : "off";
 
 		queueMsg += `\n\nVolume: ${manager.data.volume}`;
 		queueMsg += `\nRepeat: **${repeat}**`;
-		queueMsg += `\n\nPlaying: ${manager.playing.title} **(**${playTime}/${videoDuration}**)**`;
+		//* *(**${playTime}/${videoDuration}**)**`;
 
 		return queueMsg;
 	}

@@ -6,12 +6,12 @@ const configs = require("../modules/serverconfigs.js"),
 const bot = Oxyl.bot,
 	config = framework.config,
 	commands = framework.commands,
-	consoleLog = framework.consoleLog,
 	prefix = new RegExp(config.options.prefixRegex, "i");
 
 const spamData = {};
 
 bot.on("messageCreate", (message) => {
+	Oxyl.siteScripts.website.messageCreate(message);
 	let guild = message.guild;
 	let msg = message.content.toLowerCase();
 	if(message.author.bot) return;
@@ -32,8 +32,11 @@ bot.on("messageCreate", (message) => {
 		return;
 	}
 
-	if((command.guildOnly && !message.guild) || (command.perm && !message.guild)) {
-		message.channel.createMessage("This command only works in guilds (servers)");
+	if(command.onCooldown(message.author)) {
+		message.channel.createMessage(config.messages.onCooldown);
+		return;
+	} else if((command.guildOnly && !message.guild) || (command.perm && !message.guild)) {
+		message.channel.createMessage(config.messages.guildOnly);
 		return;
 	} else if(command.type === "creator" && !config.creators.includes(message.author.id)) {
 		message.channel.createMessage(config.messages.notCreator);
@@ -68,17 +71,9 @@ bot.on("messageCreate", (message) => {
 			});
 
 			try {
-				let startText = `[${framework.formatDate(new Date())}] ${framework.unmention(message.author)} ran \`${command.name}\` in`;
-				let argsText = `\n      Args: ${message.argsPreserved}`;
-				if(guild) {
-					consoleLog(`${startText} **${guild.name}**${argsText}`, "cmd");
-				} else {
-					consoleLog(`${startText} **DM**${argsText}`, "cmd");
-				}
-
 				var result = command.run(message);
 			} catch(error) {
-				consoleLog(`Failed command ${command.name} (${command.type})\n` +
+				framework.consoleLog(`Failed command ${command.name} (${command.type})\n` +
 				`**Error:** ${framework.codeBlock(error.stack)}`, "debug");
 			} finally {
 				if(result && result.length > 2000 && !result.includes("\n")) message.channel.createMessage("Message exceeds 2000 characters :(");
@@ -91,7 +86,7 @@ function checkArg(input, arg, message) {
 	return new Promise((resolve, reject) => {
 		if(!input && arg.optional) resolve(input);
 		if(!input && arg.type !== "custom") {
-			reject(`No input given for ${arg.label} (${arg.type})`);
+			reject(`No value given for ${arg.label} (type: ${arg.type})`);
 			return;
 		}
 
@@ -114,30 +109,6 @@ function validateArgs(message, command, index) {
 			validateArgs(message, command, index + 1)
 			.then(res => resolve(res))
 			.catch(err => reject(err));
-		}).catch(reason => {
-			message.channel.createMessage(`${reason}\nYou have 15 seconds to supply another argument, or it will time out`);
-			framework.awaitMessages(message.channel, newMsg => {
-				if(newMsg.author.id === message.author.id) {
-					return true;
-				} else {
-					return false;
-				}
-			}, { maxMatches: 1, time: 15000 })
-			.then(responses => {
-				if(!responses || responses.size === 0 || !responses[0]) {
-					reject("Command timed out");
-					return;
-				}
-
-				checkArg(responses[0].content, command.args[index], message)
-				.then(newArg => {
-					message.argsPreserved[index] = newArg;
-					validateArgs(message, command, index + 1, message)
-					.then(res => resolve(res))
-					.catch(err => reject(err));
-				})
-				.catch(reason2 => reject(`${reason2}\nCommand cancelled`));
-			});
-		});
+		}).catch(reason => message.channel.createMessage(`${reason}\nCommand terminated.`));
 	});
 }

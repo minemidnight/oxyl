@@ -4,14 +4,13 @@ const Oxyl = require("../../oxyl.js"),
 
 var command = new Command("serverinfo", (message, bot) => {
 	let guild;
-	if(message.content && bot.guilds.get(message.content)) {
-		guild = bot.guilds.get(message.content);
-			// hidden feature
+	if(message.content && bot.guilds.find(serv => serv.id === message.content)) {
+		guild = bot.guilds.find(serv => serv.id === message.content);
+		// hidden feature
 	} else {
 		guild = message.guild;
 	}
 
-	let afkChannel = guild.afkChannelID;
 	let members = guild.members;
 	let onlineMembers = members.filter(gM => gM.status === "online").length;
 	let offlineMembers = members.filter(gM => gM.status === "offline").length;
@@ -20,19 +19,12 @@ var command = new Command("serverinfo", (message, bot) => {
 	let bots = members.filter(gM => gM.user.bot).length;
 	let textChannels = guild.channels.filter(ch => ch.type === 0).length;
 	let voiceChannels = guild.channels.filter(ch => ch.type === 2).length;
-	if(!afkChannel) {
-		afkChannel = "N/A";
-	} else {
-		afkChannel = `${guild.channels.get(afkChannel)} (ID: ${guild.afkChannelID})`;
-	}
 
 	var channelInfo = [
 		`Text: ${textChannels}`, [
 			`Default Channel: ${guild.defaultChannel.name} (ID: ${guild.defaultChannel.id})`
 		],
-		`Voice: ${voiceChannels}`, [
-			`AFK Channel: ${afkChannel}`, `AFK Timeout: ${guild.afkTimeout}`
-		]
+		`Voice: ${voiceChannels}`
 	];
 
 	var memberInfo = [

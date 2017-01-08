@@ -17,7 +17,9 @@ class Command {
 		this.args = options.args || [];
 		this.enabled = !!options.defaultEnabled || true;
 		this.guildOnly = !!options.guildOnly || false;
+		this.cooldown = options.cooldown || 0;
 		this.uses = 0;
+		this.cooldowns = {};
 
 		if(this.args.length === 0) {
 			this.usage = "[]";
@@ -26,11 +28,8 @@ class Command {
 			for(let arg of this.args) {
 				arg.label = arg.label || arg.type;
 
-				if(arg.optional) {
-					usage.push(`[${arg.label}]`);
-				} else {
-					usage.push(`<${arg.label}>`);
-				}
+				if(arg.optional) usage.push(`[${arg.label}]`);
+				else usage.push(`<${arg.label}>`);
 			}
 			this.usage = usage.join(" ");
 		}
@@ -39,12 +38,20 @@ class Command {
 	}
 
 	run(message) {
-		this.addUse();
+		this.addUse(message.author);
 		return this.process(message, bot);
 	}
 
-	addUse() {
+	addUse(user) {
 		this.uses++;
+		if(this.cooldown > 0) {
+			this.cooldowns[user.id] = true;
+			setTimeout(() => delete this.cooldowns[user.id], this.cooldown);
+		}
+	}
+
+	onCooldown(user) {
+		return this.cooldowns[user.id];
 	}
 
 	toString() {

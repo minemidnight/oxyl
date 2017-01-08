@@ -11,7 +11,10 @@ var command = new Command("color", (message, bot) => {
 	message.channel.sendTyping();
 	var image = new Jimp(128, 128, color);
 	image.getBuffer(Jimp.MIME_PNG, (error, buffer) => {
-		message.channel.createMessage("", { file: buffer });
+		message.channel.createMessage("", {
+			file: buffer,
+			name: "color.png"
+		});
 	});
 	return false;
 }, {

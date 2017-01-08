@@ -16,6 +16,6 @@ var command = new Command("shorten", (message, bot) => {
 }, {
 	type: "default",
 	description: "Shorten a link using goo.gl",
-	aliases: ["shortenlink", "googl", "shortlink"],
+	aliases: ["googl", "shortlink"],
 	args: [{ type: "link" }]
 });

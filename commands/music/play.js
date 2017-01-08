@@ -19,13 +19,13 @@ function handleInlineSearch(message, editMsg, res) {
 		if(res === "NO_RESULTS") {
 			Promise.resolve(editMsg).then(msg => {
 				msg.edit(`No results found`)
-				.then(value => resolve(value));
+				.then(resolve);
 			});
 		} else {
 			Promise.resolve(editMsg).then(msg => {
 				music.videoInfo(res).then(info => {
 					msg.edit(`Adding __${info.title}__ (<http://youtube.com/watch?v=${info.id}>) to **${message.guild.name}**'s queue.`)
-					.then(value => resolve(value));
+					.then(resolve);
 				});
 			});
 		}
@@ -41,16 +41,16 @@ function playCmdProcess(message) {
 			editMsg = message.channel.createMessage(`Searching \`${query}\` then playing result`);
 			music.searchVideo(query).then(res => {
 				handleInlineSearch(message, editMsg, res)
-				.then(value => resolve(value));
+				.then(resolve);
 			});
 		} else if(type === "PLAYLIST") {
 			message.channel.createMessage(`Adding playlist to queue: \`${query}\``)
-			.then(value => resolve(value));
+			.then(resolve);
 		} else if(type === "VIDEO") {
 			message.channel.createMessage(`Getting video title of: \`${query}\``).then(msg => {
 				music.videoInfo(query).then(info => {
 					msg.edit(`Adding __${info.title}__ (<http://youtube.com/watch?v=${info.id}>) to **${message.guild.name}**'s queue.`)
-					.then(value => resolve(value));
+					.then(resolve);
 				}).catch(reason => "Failed to get video info");
 			});
 		}
@@ -65,7 +65,7 @@ var command = new Command("play", (message, bot) => {
 		voiceChannel = undefined;
 	}
 
-	if(!voiceChannel && !(!manager || !manager.connection)) {
+	if(!voiceChannel) {
 		return "You are not in a voice channel";
 	} else if(!manager) {
 		manager = new music.Manager(message.guild);
@@ -90,7 +90,9 @@ var command = new Command("play", (message, bot) => {
 					msg.edit(`Cancelled play command`);
 				} else {
 					if(!manager.connection) {
-						manager.connect(voiceChannel).then(connection => manager.addQueue(id));
+						manager.connect(voiceChannel).then(connection => {
+							manager.addQueue(id);
+						});
 					} else {
 						manager.addQueue(id);
 					}

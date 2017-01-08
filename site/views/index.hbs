@@ -1,10 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-90011901-1', 'auto');
+	ga('send', 'pageview');
+	</script>
 	<link rel="stylesheet" href="assets/css/style.css" />
 	<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-	<script src="assets/js/main.js"></script>
+	<script async src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script async defer src="assets/js/main.js"></script>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Oxyl - Home</title>
@@ -21,11 +30,19 @@
 	<nav id="main-nav" class="w3-card-2 w3-sidenav w3-collapse w3-notquiteblack w3-animate-left">
 		<a class="w3-xxlarge w3-hide-large w3-text-red" style="position:absolute;right:10%" onclick="toggleNav()">&times;</a>
 		<h1 class="w3-xxxlarge w3-center">Oxyl</h1>
-		<a id="current-nav" class="w3-padding" href="index.html">Home</a>
-		<a class="w3-padding" href="commands.html">Commands</a>
-		<a class="w3-padding" href="tags.html">Tag Documentation</a>
-		<a class="w3-padding" href="config.html">Config Documentation</a>
-		<a class="w3-padding" href="stats.html">Statistics</a>
+		<a id="current-nav" class="w3-padding" href="/">Home</a>
+		<a class="w3-padding" href="commands">Commands</a>
+		<a class="w3-padding" href="tags">Tag Documentation</a>
+		<a class="w3-padding" href="stats">Statistics</a>
+		<div style="position:absolute;bottom:0;width:100%;height:100px">
+			{{#if user}}
+			<img class="w3-left w3-circle w3-image w3-margin" style="max-height:64px" src="https://cdn.discordapp.com/avatars/{{user.id}}/{{user.avatar}}.jpg" />
+			<br />
+			<p class="w3-left-align w3-large">{{user.username}}#{{user.discriminator}}</p>
+			{{else}}
+			<a class="w3-padding" href="https://discordapp.com/oauth2/authorize?response_type=code&redirect_uri=https://minemidnight.work/login&scope=identify+guilds&client_id=255832257519026178">Login with Discord</a>
+			{{/if}}
+		</div>
 	</nav>
 	<div class="w3-overlay w3-animate-opacity" onclick="toggleNav()"></div>
 	<main class="w3-main w3-center" style="margin-left:300px">

@@ -13,7 +13,7 @@ var command = new Command("skip", (message, bot) => {
 		let next = manager.data.queue[0];
 
 		if(next) {
-			manager.play();
+			manager.connection.stopPlaying();
 			return `Now playing __${next.title}__ :arrow_forward:`;
 		} else {
 			manager.end();

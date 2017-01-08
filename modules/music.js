@@ -36,7 +36,7 @@ class MusicManager {
 
 	toggleOption(option) {
 		let optionValue = this.data.extraOptions[option];
-		if(!optionValue || typeof optionValue !== "boolean") return null;
+		if(typeof optionValue !== "boolean") return null;
 
 		optionValue = !optionValue;
 		this.data.extraOptions[option] = optionValue;
@@ -54,7 +54,7 @@ class MusicManager {
 		let connection = this.connection;
 		if(!connection) return;
 
-		connection.setVolume(this.data.volume / 225);
+		connection.setVolume(this.data.volume / 500);
 	}
 
 	destroy() {
@@ -83,6 +83,7 @@ class MusicManager {
 		let connection = this.connection;
 		if(!connection) return;
 
+		this.data.playing = null;
 		connection.disconnect();
 		delete this.connection;
 	}
@@ -125,25 +126,43 @@ class MusicManager {
 		let connection = this.connection;
 		if(!connection) return;
 
-		if(this.data.playing) this.data.stopPlaying();
-		let data = this.data.queue[0];
-		this.data.playing = data;
-		let id = data.id;
-		if(!this.data.extraOptions.repeat) this.data.queue.shift();
+		if(!this.data.playing && this.connection.playing) {
+			this.connection.stopPlaying();
+		} else if(this.data.playing && !this.connection.playing) {
+			this.data.playing = null;
+		} else if(this.data.playing && this.connection.playing) {
+			return;
+		}
 
+		let nextQueue = this.data.queue[0];
+		if(!nextQueue) {
+			this.end();
+			return;
+		} else {
+			this.data.playing = nextQueue;
+			var id = nextQueue.id;
+			if(!this.data.extraOptions.repeat) this.data.queue.shift();
+		}
 
 		let stream = yt(`http://www.youtube.com/watch?v=${id}`, { audioonly: true });
 		connection.play(stream, { inlineVolume: true });
 		this.updateVolume();
-		this.sendEmbed("playing", data);
+		this.sendEmbed("playing", nextQueue);
 	}
 
 	connect(channelID) {
-		if(channelID.id) channelID = channelID.id;
 		return new Promise((resolve, reject) => {
+			if(!channelID) reject("No channel");
+			else if(channelID.id) channelID = channelID.id;
+
 			bot.joinVoiceChannel(channelID).then(connection => {
 				this.connection = connection;
-				resolve(connection);
+				connection.on("ready", () => {
+					resolve(connection);
+				});
+				setTimeout(() => {
+					resolve(connection);
+				}, 5000);
 
 				connection.on("end", () => {
 					if(this.data.queue.length <= 0) this.end();
@@ -165,10 +184,7 @@ class MusicManager {
 				image: { url: `https://i.ytimg.com/vi/${data.id}/hqdefault.jpg` }
 			};
 		}
-		this.musicTextChannel.createMessage({
-			content: "",
-			embed: embed
-		});
+		this.musicTextChannel.createMessage({ embed: embed });
 	}
 }
 exports.Manager = MusicManager;

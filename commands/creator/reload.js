@@ -6,7 +6,7 @@ const loadScript = framework.loadScript;
 
 var command = new Command("reload", (message, bot) => {
 	message.content = message.content.toLowerCase();
-	var reload = framework.findFile(["./commands/", "./modules/"], message.args[0], "js");
+	var reload = framework.findFile(["./commands/", "./modules/", "./site/"], message.args[0], "js");
 
 	if(!reload) {
 		return `Invalid file: ${message.args[0]}`;

@@ -9,5 +9,5 @@ function toggleNav() {
 }
 
 function toggleAccordion(selector) {
-	$(selector).toggleClass("w3-show");
+	$(selector).next().toggleClass("w3-show");
 }

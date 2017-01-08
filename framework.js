@@ -3,18 +3,32 @@ const Oxyl = require("./oxyl.js"),
 	request = require("request"),
 	yaml = require("js-yaml"),
 	path = require("path"),
-	EventEmitter = require("events").EventEmitter;
-	// mysql = require("promise-mysql");
+	EventEmitter = require("events").EventEmitter,
+	mysql = require("promise-mysql");
 
 exports.config = yaml.safeLoad(fs.readFileSync("./private/config.yml"));
-// exports.defaultConfig = fs.readFileSync("./private/default-config.yml");
+exports.defaultConfig = fs.readFileSync("./private/default-config.yml");
 
 let dbData = exports.config.database;
 dbData.password = exports.config.private.databasePass;
-// mysql.createConnection(dbData).then(connection => {
-// 	exports.dbQuery = (query) => connection.query(query);
-// });
+exports.sqlEscape = mysql.escape;
+mysql.createConnection(dbData).then(connection => {
+	exports.dbQuery = (query) => connection.query(query);
+});
 
+exports.guildLevel = (member) => {
+	let perms = member.permission, guild = member.guild;
+	if(exports.config.creators.includes(member.id)) return 4;
+	else if(guild.ownerID === member.id) return 3;
+	else if(perms.has(32)) return 2;
+	else if(perms.has(2) && perms.has(4)) return 1;
+	else return 0;
+};
+
+exports.setSetting = (guild, setting, value) => {
+	let val = "a";
+	return val;
+};
 
 exports.splitParts = (message) => {
 	if(message.length < 2000) {
@@ -231,7 +245,7 @@ exports.getFiles = (filePath, filter = (file) => true) => {
 	let fullFiles = [];
 	dirFiles.forEach(file => {
 		var stats = fs.lstatSync(`${filePath}${file}`);
-		if(stats.isDirectory() && file !== "public") {
+		if(stats.isDirectory() && file !== "public" && file !== "routes") {
 			let toAdd = exports.getFiles(`${filePath}${file}/`, filter);
 			fullFiles = fullFiles.concat(toAdd);
 		} else if(filter(file)) {
@@ -242,11 +256,15 @@ exports.getFiles = (filePath, filter = (file) => true) => {
 };
 
 exports.loadScripts = (filePath) => {
-	exports.consoleLog(`Loading all scripts at ${filePath}`, "debug");
-	var dirFiles = exports.getFiles(filePath, file => file.endsWith(".js"));
+	let scripts = {};
+	let dirFiles = exports.getFiles(filePath, file => file.endsWith(".js"));
 	for(var i in dirFiles) {
-		exports.loadScript(dirFiles[i]);
+		i = dirFiles[i];
+		scripts[i.substring(i.lastIndexOf("/") + 1, i.length - 3)] = exports.loadScript(i);
 	}
+
+	exports.consoleLog(`Loaded scripts at ${filePath}`, "debug");
+	return scripts;
 };
 
 exports.loadScript = (scriptPath, reload) => {
@@ -254,7 +272,7 @@ exports.loadScript = (scriptPath, reload) => {
 		let script = path.resolve(scriptPath);
 		delete require.cache[require.resolve(script)];
 	}
-	require(scriptPath);
+	return require(scriptPath);
 };
 
 exports.listConstructor = (obj, index, follower) => {

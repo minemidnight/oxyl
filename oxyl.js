@@ -1,14 +1,12 @@
 const Eris = require("eris"),
 	framework = require("./framework.js");
 
-const bot = new Eris(framework.config.private.token);
+const bot = new Eris(framework.config.private.token, {seedVoiceConnections: true});
 
 process.on("unhandledRejection", (err) => {
-	if(!err.stack) {
-		framework.consoleLog(`Unhandled Rejection: ${framework.codeBlock(err)}`, "debug");
-	} else {
-		framework.consoleLog(`Unhandled Rejection: ${framework.codeBlock(err.stack)}`, "debug");
-	}
+	if(!err) return;
+	err = err.stack || err;
+	framework.consoleLog(`Unhandled Rejection: ${framework.codeBlock(err)}`, "debug");
 });
 
 exports.addCommand = (command) => {
@@ -18,11 +16,10 @@ exports.addCommand = (command) => {
 
 exports.bot = bot;
 exports.commands = {};
-exports.version = framework.config.version;
 
-framework.loadScripts("./commands/");
-framework.loadScripts("./modules/");
-framework.loadScripts("./site/");
+exports.cmdScripts = framework.loadScripts("./commands/");
+exports.modScripts = framework.loadScripts("./modules/");
+exports.siteScripts = framework.loadScripts("./site/");
 
 exports.postStats = require("./modules/statPoster.js");
-setInterval(() => exports.postStats(), 600000);
+setInterval(() => exports.postStats(), 1800000);

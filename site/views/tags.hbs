@@ -1,40 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<link rel="stylesheet" href="assets/css/style.css" />
+	<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-90011901-1', 'auto');
+	ga('send', 'pageview');
+	</script>
+	<link rel="stylesheet" href="assets/css/style.css">
 	<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-	<script src="assets/js/main.js"></script>
+	<script async src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script async defer src="assets/js/main.js"></script>
 	<title>Oxyl - Tag Documentation</title>
 
-	<meta charset="utf-8" />
+	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="author" content="minemidnight" />
-	<meta property="og:title" content="Oxyl Tag Documentation" />
-	<meta property="og:site_name" content="Oxyl" />
-	<meta property="og:description" content="A multipurpose discord bot with with features from music to moderation" />
-	<meta property="og:image" content="assets/images/oxyl-logo.jpg" />
+	<meta name="author" content="minemidnight">
+	<meta property="og:title" content="Oxyl Tag Documentation">
+	<meta property="og:site_name" content="Oxyl">
+	<meta property="og:description" content="A multipurpose discord bot with with features from music to moderation">
+	<meta property="og:image" content="assets/images/oxyl-logo.jpg">
 </head>
 <body class="w3-darknotblack">
 	<nav id="main-nav" class="w3-card-2 w3-sidenav w3-collapse w3-notquiteblack w3-animate-left">
 		<a class="w3-xxlarge w3-hide-large w3-text-red" style="position:absolute;right:10%" onclick="toggleNav()">&times;</a>
 		<h1 class="w3-xxxlarge w3-center">Oxyl</h1>
-		<a class="w3-padding" href="index.html">Home</a>
-		<a class="w3-padding" href="commands.html">Commands</a>
-		<a id="current-nav" class="w3-padding" href="tags.html">Tag Documentation</a>
-		<a class="w3-padding" href="config.html">Config Documentation</a>
-		<a class="w3-padding" href="stats.html">Statistics</a>
+		<a class="w3-padding" href="/">Home</a>
+		<a class="w3-padding" href="commands">Commands</a>
+		<a id="current-nav" class="w3-padding" href="tags">Tag Documentation</a>
+		<a class="w3-padding" href="stats">Statistics</a>
+		<div style="position:absolute;bottom:0;width:100%;height:100px">
+			{{#if user}}
+			<img class="w3-left w3-circle w3-image w3-margin" style="max-height:64px" src="https://cdn.discordapp.com/avatars/{{user.id}}/{{user.avatar}}.jpg" />
+			<br />
+			<p class="w3-left-align w3-large">{{user.username}}#{{user.discriminator}}</p>
+			{{else}}
+			<a class="w3-padding" href="https://discordapp.com/oauth2/authorize?response_type=code&redirect_uri=https://minemidnight.work/login&scope=identify+guilds&client_id=255832257519026178">Login with Discord</a>
+			{{/if}}
+		</div>
 	</nav>
 	<div class="w3-overlay w3-animate-opacity" onclick="toggleNav()"></div>
 	<main class="w3-main" style="margin-left:300px">
 		<header class="w3-container w3-center">
-			<span class="w3-btn w3-black w3-round-jumbo w3-large w3-hide-large" style="position:absolute;left:5%;top:5%" onclick="toggleNav()">&#9776;</span>
+			<span class="w3-btn w3-black w3-round-jumbo w3-large w3-hide-large" style="position:fixed;left:20px;top:20px" onclick="toggleNav()">&#x2630;</span>
 			<h1 class="w3-clear w3-jumbo w3-margin-0">Tag Documentation</h1>
 		</header>
 		<div class="w3-row-padding m6 l3">
-			<div class="w3-quarter">&#8203;</div>
+			<div class="w3-quarter">&#x200B;</div>
 			<div class="w3-half w3-xlarge">
-				<p>Tags are Oxyl's way of custom commands - kind of, besides the fact
+				<p>Tags are Oxyl&apos;s way of custom commands - kind of, besides the fact
 				you have to use the tag command to call them. Tags are very customizable, giving users
 				access to creating complex tags, or simple tags that just display text.</p>
 				<p>There are also different tag types, which go from user to global:</p>
@@ -59,6 +76,11 @@
 					<li>&lt; &gt; indicates required arguments</li>
 					<li>... indicates one or more arguments</li>
 				</ul>
+				<p>View Tag: tag &lt;tag name&gt;</p>
+				<p>Create Tag: tag create &lt;tag name&gt; &lt;content&gt; [-type]</p>
+				<p>Test Tag: tag test &lt;content&gt; (Does not support arguments)</p>
+				<p>View All Tags: tag list</p>
+				<p>Other tag info: tag delete/raw/info &lt;tag name&gt;</p>
 			</div>
 		</div>
 		<div class="w3-row">
@@ -70,6 +92,7 @@
 					<th>Example In</th>
 					<th>Example Out</th>
 				</tr>
+				{{#listtags tags}}{{/listtags}}
 			</table>
 		</div>
 	</main>

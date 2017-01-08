@@ -2,7 +2,8 @@ const Oxyl = require("../../oxyl.js"),
 	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
 
-function isBannable(member, guild) {
+function isBannable(member) {
+	let guild = member.guild;
 	let botMember = guild.members.get(Oxyl.bot.user.id);
 	let highestRoleBot = Math.max(botMember.roles.map(role => guild.roles.get(role).position));
 	let highestRoleMember = Math.max(member.roles.map(role => guild.roles.get(role).position));
@@ -18,12 +19,12 @@ var command = new Command("ban", (message, bot) => {
 		return "Oxyl does not have permissions to ban.";
 	} else {
 		let member = message.guild.members.get(message.args[0].id);
-		let bannable = isBannable(member, message.guild);
+		let bannable = isBannable(member);
 		if(!bannable) {
 			return `${framework.unmention(member)} couldn't be banned (has higher permissions)`;
 		} else {
-			message.guild.ban(message.args[0]);
-			return `${member.mention()} has been banned`;
+			message.guild.banMember(message.args[0].id);
+			return `${framework.unmention(member)} has been banned`;
 		}
 	}
 }, {

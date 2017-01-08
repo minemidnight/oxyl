@@ -93,13 +93,9 @@ exports.test = (input, arg, message) => {
 				} else if(usersFound.length === 1) {
 					resolve(usersFound[0]);
 				} else {
-					i = 0;
-					let map = usersFound.slice(0, 15).map(user => {
-						i++;
-						return `[${i}] ${framework.unmention(user)}`;
-					}).join("\n");
+					let map = usersFound.slice(0, 15).map(user => `[${usersFound.indexOf(user) + 1}] ${framework.unmention(user)}`).join("\n");
 					if(usersFound.length > 15) map += `\n... and ${usersFound.length - 15} more`;
-					let selectUser = message.channel.createMessage(`Multiple users found. Please say a number` +
+					let selectUser = message.channel.createMessage(`Multiple users found. Please say a number ` +
 						`below to choose one in the next 10 seconds: ${framework.codeBlock(map, "ini")}`);
 
 					framework.awaitMessages(message.channel, newMsg => {
@@ -112,7 +108,7 @@ exports.test = (input, arg, message) => {
 						if(!responses || responses.size === 0 || !responses[0]) {
 							reject("No user given");
 						} else {
-							let int = parseInt(responses.first().content);
+							let int = parseInt(responses[0].content);
 							if(isNaN(int) || int > 15 || int < 1 || int > usersFound.length) {
 								reject("Invalid user number");
 							} else {
