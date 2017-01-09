@@ -33,12 +33,55 @@
 	<div class="w3-container w3-aqua w3-margin w3-padding-bottom w3-margin-bottom">
 		<h4 class="w3-xlarge">Live Chat</h4>
 		<style>
-			table td {display: block!important}
+			table {table-layout:fixed;}
+			table td {display: block!important;word-wrap:break-word;}
 			table td:nth-child(1) {font-weight:600;background:#F5E7E7}
 			table td:nth-child(2) {margin-left:8px}
-			table span:nth-child(1) {margin-right:5px}
-			table code {background:#2e3136;color:#839496;display:block;border-radius:10px;padding:5px;border:2px solid #282b30}
-			table img {width:22px;height:22px;}
+			table span {margin:0 3px}
+			table code {
+				font-family: Menlo, Consolas, Monaco, monospace;
+				font-size: 14px;
+				line-height: 16px;
+			}
+			table code:not(.inline-code) {
+				background: #2e3136;
+				margin-top: 6px;
+				max-width: 90%;
+				white-space: prewrap;
+				color: #839496;
+				display: block;
+				border-radius: 10px;
+				padding: .5em;
+				border: 2px solid #282b30
+			}
+			table code.inline-code {
+				background: #2e3136;
+				color: rgba(255, 255, 255, .7);
+				padding: .2em;
+				border-radius: 3px;
+				font-size: 85%;
+				text-indent: initial
+			}
+			table span.bot-tag {
+				background: #7289da;
+				font-size: 10px;
+				font-weight: 600;
+				padding: 1px 2px;
+				border-radius: 3px;
+				text-transform: uppercase;
+				color: white;
+				vertical-align: middle;
+				line-height: 16px;
+			}
+			table img.emoji {width:22px;height:22px}
+			table img.attachment {max-width: 520px}
+			.embed p {color:rgba(255,255,255,.7);margin:0}
+			.embed h6 {color:white;}
+			.embed a {color: blue; text-decoration:none;}
+			.embed a:hover {text-decoration:underline;}
+			.embed img.embed-thumbnail {max-width:80px;max-height:80px;border-radius:2.5px}
+			.embed .embed-image img {max-width:520px}
+			.embed img.embed-icon {height:20px;width:20px;border-radius:50%;margin-right:7.5px}
 		</style>
 		<div class="w3-responsive" style="max-height:600px">
 			<table id="msg-table" class="w3-table-all w3-white" style="height:600px">

@@ -384,7 +384,7 @@ var command = new Command("tag", (message, bot) => {
 	description: "Create, delete, display, test or list tags (view http://minemidnight.work/tags.html)",
 	args: [{
 		type: "text",
-		label: "<tag name>/test/create/delete/list/raw/info"
+		label: "<tag name>|test <content>|create <name> <content>|delete <name>|list|raw <name>|info <name>"
 	}]
 });
 
@@ -655,6 +655,12 @@ const tagInfo = {
 	argcount: {
 		return: "Amount of args",
 		out: "2"
+	},
+	unmention: {
+		return: "Username#Discriminator",
+		in: "{author}",
+		out: "mineminihgt#1537",
+		usage: "<Member/User Object>"
 	}
 };
 
@@ -749,5 +755,6 @@ const tagParser = {
 			return message.tagVars[args[0]];
 		}
 	},
+	unmention: args => framework.unmention(args[0]),
 	username: (args, message) => args[0].user ? args[0].user.username : args[0].username
 };

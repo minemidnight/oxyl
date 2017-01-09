@@ -11,7 +11,7 @@ var command = new Command("reload", (message, bot) => {
 	if(!reload) {
 		return `Invalid file: ${message.args[0]}`;
 	} else {
-		loadScript(reload[0] + reload[1], true);
+		loadScript(reload[0] + reload[1]);
 		return `Reloaded script \`${reload[1]}\` **(**${reload[0]}${reload[1]}**)**`;
 	}
 }, {
