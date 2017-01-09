@@ -13,6 +13,8 @@ router.get("*", (req, res) => {
 		guild.subname = guild.name.split(" ").map(str => str.charAt(0)).join("");
 		guild.owner = guild.members.get(guild.ownerID);
 		guild.onlineCount = guild.members.filter(gM => gM.status === "online").length;
+		guild.botCount = guild.members.filter(gM => gM.bot).length;
+		guild.botPercent = ((guild.botCount / guild.memberCount) * 100).toFixed(2);
 		context.guild = guild;
 
 		if(main.tokens[ip]) {

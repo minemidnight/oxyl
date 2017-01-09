@@ -33,7 +33,23 @@ function postdBots() {
 	framework.getContent(`https://bots.discord.pw/api/bots/${bot.user.id}/stats`, options);
 }
 
+function postDiscordlist() {
+	let stats = {
+		token: framework.config.privae.discordListKey,
+		servers: bot.guilds.size
+	};
+
+	let options = {
+		method: "POST",
+		json: true,
+		body: stats
+	};
+
+	framework.getContent(`https://bots.discordlist.net/api`, options);
+}
+
 module.exports = () => {
 	postdBots();
 	postCarbon();
+	// postDiscordlist();
 };

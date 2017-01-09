@@ -9,6 +9,7 @@ const Oxyl = require("../oxyl.js"),
 
 const app = express();
 app.use(express.static("./site/public"));
+exports.app = app;
 exports.tokens = {};
 
 const	sse = new SSE();
@@ -21,18 +22,99 @@ var entityMap = {
 	">": "&gt;",
 	'"': "&quot;",
 	"'": "&#39;",
-	"/": "&#x2F;"
+	"/": "&#x2F;",
+	"#": "&#35;"
 };
 
 function escapeHTML(string) {
-	return String(string).replace(/[&<>"'\/]/g, str => entityMap[str]);
+	return String(string).replace(/[&<>"'\#/]/g, str => entityMap[str]);
+}
+
+function parseEmbed(embed) {
+	let html = `<div class="w3-container embed w3-leftbar w3-round" style="position:relative;` +
+		`background:#32353A;border-color:#${embed.color ? embed.color.toString(16) : "4f545c"}!important">`;
+	html += `<div class="w3-padding-section embed-content w3-padding-bottom" style="position:relative;">`;
+
+	if(embed.author) {
+		html += `<div class="embed-author"><h6>`;
+		if(embed.author.icon_url) html += `<img class="embed-icon" src="${embed.author.icon_url}" />`;
+
+		html += `${embed.author.name}`;
+		html += `</h6></div>`;
+	}
+	if(embed.title) {
+		html += `<div class="embed-title"><h6>`;
+		if(embed.url) html += `<a href="${embed.url}">${embed.title}</a>`;
+		else html += `${embed.title}`;
+		html += "</h6></div>";
+	}
+	if(embed.description) html += `<div class="embed-description"><p>${embed.description}</p></div>`;
+	if(embed.thumbnail) {
+		html += `<div class="embed-thumb" style="position:absolute;right:7.5px;top:7.5px">`;
+		html += `<img class="embed-thumbnail" src="${embed.thumbnail.url}"`;
+		if(embed.thumbnail.height) html += `height="${embed.thumbnail.height}px"`;
+		if(embed.thumbnail.width) html += `width="${embed.thumbnail.width}px"`;
+		html += `/></div>`;
+	}
+	if(embed.fields && embed.fields.length >= 1) {
+		let inline, inlineCount = -1;
+		if(embed.thumbnail) inline = 2;
+		else inline = 3;
+		embed.fields.forEach(field => {
+			if(field.inline) {
+				if(inlineCount === inline) html += "</div>";
+				if(inlineCount === inline || inlineCount === -1) {
+					html += `<div class="w3-row w3-margin-bottom embed-field">`;
+					inlineCount = 0;
+				}
+				html += `<div class="w3-${inline === 2 ? "half" : "third"} embed-field-content">`;
+
+				inlineCount++;
+			} else {
+				if(inlineCount !== 0) html += "</div>";
+				inlineCount = 0;
+				html += `<div class="w3-row w3-margin-bottom embed-field">`;
+				html += `<div class="w3-full embed-field-content">`;
+			}
+
+			html += `<h6>${field.name}</h6>`;
+			html += `<p>${field.value}</p>`;
+
+			html += "</div>";
+		});
+		html += "</div>";
+	}
+	if(embed.image) {
+		html += `<div class="embed-image w3-container"><img src="${embed.image.url}" /></div>`;
+	}
+	if(embed.footer) {
+		html += `<div class="embed-footer"><p class="w3-small">`;
+		if(embed.footer.icon_url) html += `<img class="embed-icon" src="${embed.footer.icon_url}" />`;
+
+		html += `${embed.footer.text}`;
+		if(embed.timestamp) html += ` | ${framework.formatDate(embed.timestamp)}`;
+		html += `</p></div>`;
+	}
+
+	html += "</div></div>";
+	return html;
 }
 
 exports.messageCreate = message => {
-	let content = escapeHTML(message.cleanContent);
-	content = content.replace(/\n/g, "<br />");
-	content = content.replace(/&lt;:[A-Z0-9_]{2,32}:\d{14,20}&gt;/gi, id =>
-		`<img src="https://cdn.discordapp.com/emojis/${id.substring(id.lastIndexOf(":") + 1, id.length - 4)}.png"></img>`);
+	let content = message.cleanContent;
+	let embed = message.embeds.filter(em => em.type === "rich")[0];
+
+	content = escapeHTML(content);
+	if(embed) content += parseEmbed(embed);
+	content = content.replace(/(?:&lt;|<):[A-Z0-9_]{2,32}:(\d{14,20})(?:&gt;|>)/gi,
+	`<img class="emoji" src="https://cdn.discordapp.com/emojis/$1.png"></img>`);
+	message.attachments.forEach(attachment => {
+		content += `\n<img src="${attachment.url}" class="attachment" alt="Attachment"></img>`;
+	});
+	content = content.replace(/`([^`\s]+)`/g, `<code class="inline-code">$1</code>`);
+	content = content.trim();
+	content = content.replace(/\n/g, `<br />`);
+	if(!content || content === "") return;
 
 	sse.send({
 		content: twemoji.parse(content),
@@ -40,6 +122,7 @@ exports.messageCreate = message => {
 		guildid: message.guild ? message.guild.id : message.channel.id,
 		guildname: message.guild ? message.guild.name : "DM",
 		channelname: message.channel.name,
+		bot: message.author.bot,
 		sent: message.createdAt
 	});
 };
@@ -124,5 +207,3 @@ exports.parseHB = (hb, req, context = {}) => {
 };
 
 exports.getHTML = (name) => fs.readFileSync(`./site/views/${name}.html`).toString();
-
-app.listen(8080);
