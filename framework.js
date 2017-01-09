@@ -28,7 +28,6 @@ exports.getSetting = (guild, setting) => {
 	let query = `SELECT \`VALUE\` FROM \`Settings\` WHERE \`ID\` = '${guild.id}' AND \`Name\` = '${setting}'`;
 	return new Promise((resolve, reject) => {
 		exports.dbQuery(query).then(res => {
-			console.log(res && res[0], res[0].VALUE);
 			if(res && res[0]) resolve(res[0].VALUE);
 			else reject();
 		});

@@ -458,7 +458,11 @@ const tagInfo = {
 	},
 	author: {
 		return: "User who sent the message",
-		out: "{ Object Member }"
+		out: "{ Object User }"
+	},
+	user: {
+		return: "Alias for author -- user who sent message / user from event",
+		out: "{ Object User }"
 	},
 	member: {
 		return: "Guild member who sent the message (can get nickname from this, but not user)",
@@ -669,8 +673,9 @@ module.exports.sorted = Object.keys(tagInfo).sort();
 
 const tagParser = {
 	abs: args => Math.abs(parseFloat(args[0])),
-	allargs: (args, message) => message.argsPreserved.join(" "),
+	allargs: (args, message) => message.argsPreserved.length >= 0 ? message.argsPreserved.join(" ") : null,
 	arg: (args, message) => {
+		if(!message.argsPreserved.length >= 0) return null;
 		let argsCombined = "";
 		args.forEach(ele => { argsCombined += message.argsPreserved[ele]; });
 		return argsCombined;
@@ -756,5 +761,6 @@ const tagParser = {
 		}
 	},
 	unmention: args => framework.unmention(args[0]),
+	user: (args, message) => message.author,
 	username: (args, message) => args[0].user ? args[0].user.username : args[0].username
 };

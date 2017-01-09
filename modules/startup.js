@@ -1,11 +1,9 @@
 const Oxyl = require("../oxyl.js"),
 	framework = require("../framework.js");
-
-const bot = Oxyl.bot,
-	config = framework.config;
+const bot = Oxyl.bot;
 
 bot.on("ready", () => {
-	bot.editStatus("online", { name: config.messages.onlineGame });
+	bot.editStatus("online", { name: framework.config.messages.onlineGame });
 	Oxyl.postStats();
 
 	setTimeout(() => {

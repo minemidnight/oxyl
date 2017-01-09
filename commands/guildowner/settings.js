@@ -2,12 +2,14 @@ const Oxyl = require("../../oxyl.js"),
 	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
 
-const settings = [{ name: "prefix", type: "text" },
-{ name: "modlog", type: "textChannel" },
+let settings = [{ name: "prefix", type: "text", disabled: true },
+{ name: "modlog", type: "textChannel", disabled: true },
+{ name: "musicchannel", type: "textChannel" },
 { name: "userlog", type: "textChannel" },
-{ name: "userjoin", type: "text" },
-{ name: "userleave", type: "text" }];
+{ name: "userjoin", type: "tag" },
+{ name: "userleave", type: "tag" }];
 exports.settings = settings;
+settings = settings.filter(setting => !setting.disabled);
 
 function handleConfig(message, args) {
 	return new Promise((resolve, reject) => {
@@ -33,13 +35,13 @@ function handleConfig(message, args) {
 				return;
 			} else {
 				let value = message.argsPreserved[0];
-				value = value.substring(value.indexOf(setting.name) + setting.name.length + 1);
+				value = value.substring(value.toLowerCase().indexOf(setting.name) + setting.name.length + 1);
 				value = configTypes[setting.type].validate(message.guild, value);
 				if(value === null) {
 					resolve(`Invalid input given -- please provide ${configTypes[setting.type].info}`);
 				} else {
 					framework.setSetting(message.guild, setting.name, value);
-					resolve(`Set \`${setting.name}\` to \`${value}\``);
+					resolve(`Set \`${setting.name}\` to \`${value}\` (success!)`);
 				}
 			}
 		}
@@ -109,6 +111,10 @@ const configTypes = {
 	},
 	text: {
 		info: "any combination of words and letters",
+		validate: (guild, value) => value
+	},
+	tag: {
+		info: "message using the tag format (http://minemidnight.work/tags)",
 		validate: (guild, value) => value
 	}
 };
