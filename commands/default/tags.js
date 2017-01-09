@@ -131,7 +131,7 @@ function parseTag(tag, message) {
 		message.argsPreserved = [];
 	} else {
 		message.argsPreserved = message.argsPreserved[0].split(" ").splice(1);
-		message.argsPreserved = message.argsPreserved.map(ele => ele.replace(/{/g, "\\{"));
+		message.argsPreserved = message.argsPreserved.map(ele => ele.replace(/}/g, "&rb;").replace(/{/g, "&lb;"));
 	}
 	message.tagVars = {};
 	return new Promise((resolve, reject) => {
@@ -169,8 +169,11 @@ function parseTag(tag, message) {
 			}
 		}
 
-		tag = tag.replace(/@everyone/g, "@\u200Beveryone");
-		resolve(tag.replace(/@here/g, "@\u200Bhere"));
+		tag = tag.replace(/@everyone/g, "@\u200Beveryone")
+		.replace(/@here/g, "@\u200Bhere")
+		.replace(/&lb;/g, "{")
+		.replace(/&rb;/g, "}");
+		resolve(tag);
 	});
 }
 exports.parseTag = parseTag;
@@ -306,7 +309,10 @@ var command = new Command("tag", (message, bot) => {
 				content = msg.substring(7 + name.length, msg.lastIndexOf("-"));
 			}
 			content = content.trim();
-			if(!content || content.length === 0) channel.createMessage("Tag must have content");
+			if(!content || content.length === 0) {
+				channel.createMessage("Tag must have content");
+				return;
+			}
 
 			createData.content = content;
 			createTag(createData);
@@ -381,7 +387,7 @@ var command = new Command("tag", (message, bot) => {
 	cooldown: 5000,
 	type: "default",
 	aliases: ["t", "tags"],
-	description: "Create, delete, display, test or list tags (view http://minemidnight.work/tags.html)",
+	description: "Create, delete, display, test or list tags (view http://minemidnight.work/tags)",
 	args: [{
 		type: "text",
 		label: "<tag name>|test <content>|create <name> <content>|delete <name>|list|raw <name>|info <name>"
@@ -504,16 +510,22 @@ const tagInfo = {
 		usage: "<Number> <Number>"
 	},
 	replace: {
-		return: "Replace text with another text",
+		return: "Replace the first instance of a text with another text",
 		in: "hello world|world|earth",
 		out: `"hello earth"`,
-		usage: "<Input> <String> <String>"
+		usage: "<String> <String> <String>"
 	},
 	replaceAll: {
 		return: "Replace all instances of a text with another text",
 		in: "world hello world|world|earth",
 		out: `"earth hello earth"`,
-		usage: "<Input> <String> <String>"
+		usage: "<String> <String> <String>"
+	},
+	replaceRegex: {
+		return: "Replace all instances of a text in a string using regex",
+		in: "Hello wolrd!|wo[rl]{2}d|earth|g",
+		out: `"Hello earth!"`,
+		usage: "<String> <Regex> <String> [String]"
 	},
 	repeat: {
 		return: "Repeats a phrase as many times as you'd like (do not forget the character limit)",
@@ -654,7 +666,7 @@ const tagInfo = {
 	nl: {
 		return: "New line (\\n)",
 		in: "@%Hello!{nl}You are {username:{member}}",
-		out: "Hello\nYou are minemidnight"
+		out: `"Hello\nYou are minemidnight"`
 	},
 	argcount: {
 		return: "Amount of args",
@@ -663,7 +675,7 @@ const tagInfo = {
 	unmention: {
 		return: "Username#Discriminator",
 		in: "{author}",
-		out: "mineminihgt#1537",
+		out: `"mineminihgt#1537"`,
 		usage: "<Member/User Object>"
 	}
 };
@@ -747,7 +759,8 @@ const tagParser = {
 	regex: args => new RegExp(args[1], args[3] || "").exec(args[0])[args[2]],
 	repeat: args => args[0].repeat(parseInt(args[1])),
 	replace: args => args[0].replace(args[1], args[2]),
-	replaceAll: args => args[0].replace(new RegExp(args[1], "g"), args[2]),
+	replaceAll: args => args[0].replace(new RegExp(args[1].replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"), args[2]),
+	replaceRegex: args => args[0].replace(new RegExp(args[1], args[3] || ""), args[2]),
 	roles: args => args[0].roles,
 	round: args => Math.round(parseFloat(args[0])),
 	status: args => args[0].status,

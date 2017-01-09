@@ -14,8 +14,9 @@ settings = settings.filter(setting => !setting.disabled);
 function handleConfig(message, args) {
 	return new Promise((resolve, reject) => {
 		if(!args || !args[0] || args[0].toLowerCase() === "help") {
-			resolve("Provide what setting to see or set, via `setting get <name>`" +
-			" or `setting set <name> <value>`, or view `settings list` for a list of settings");
+			resolve("Provide what setting to see, set or reset, via `setting get <name>,`" +
+			"`setting set <name> <value>` or `setting reset <name>`, otherwise view" +
+			"`settings list` for a list of settings");
 		} else if(args[0].toLowerCase() === "list") {
 			resolve(`All Settings: ${settings.map(setting => `\`${setting.name}\``).join(", ")}`);
 		} else if(args[0].toLowerCase() === "get") {
@@ -26,6 +27,19 @@ function handleConfig(message, args) {
 			} else {
 				framework.getSetting(message.guild, setting.name)
 				.then(val => resolve(`Setting \`${setting.name}\` is \`${val}\``))
+				.catch(() => resolve(`Setting \`${setting.name}\` is not set`));
+			}
+		} else if(args[0].toLowerCase() === "reset") {
+			let setting = settings.find(set => set.name === args[1].toLowerCase());
+			if(!setting) {
+				resolve("Invalid setting! Setting not found.");
+				return;
+			} else {
+				framework.getSetting(message.guild, setting.name)
+				.then(val => {
+					framework.resetSetting(message.guild, setting.name);
+					resolve(`Setting \`${setting.name}\` reset`);
+				})
 				.catch(() => resolve(`Setting \`${setting.name}\` is not set`));
 			}
 		} else if(args[0].toLowerCase() === "set") {

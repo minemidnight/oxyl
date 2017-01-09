@@ -34,6 +34,10 @@ exports.getSetting = (guild, setting) => {
 	});
 };
 
+exports.resetSetting = (guild, setting) => {
+	exports.dbQuery(`DELETE FROM \`Settings\` WHERE \`ID\` = '${guild.id}' AND \`Name\` = '${setting}'`);
+};
+
 exports.setSetting = (guild, setting, value) => {
 	exports.getSetting(guild, setting)
 	.then(() => exports.dbQuery(`UPDATE \`Settings\` SET \`VALUE\`='${value}' WHERE \`ID\` = '${guild.id}' AND \`Name\` = '${setting}'`))

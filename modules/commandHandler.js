@@ -3,11 +3,8 @@ const validator = require("../modules/commandArgs.js"),
 	framework = require("../framework.js");
 
 const bot = Oxyl.bot,
-	config = framework.config,
-	commands = framework.commands,
-	prefix = new RegExp(config.options.prefixRegex, "i");
-
-const spamData = {};
+	commands = Oxyl.commands,
+	prefix = new RegExp(framework.config.options.prefixRegex, "i");
 
 bot.on("messageCreate", (message) => {
 	Oxyl.siteScripts.website.messageCreate(message);
@@ -32,19 +29,19 @@ bot.on("messageCreate", (message) => {
 	}
 
 	if(command.onCooldown(message.author)) {
-		message.channel.createMessage(config.messages.onCooldown);
+		message.channel.createMessage(framework.config.messages.onCooldown);
 		return;
 	} else if((command.guildOnly && !message.guild) || (command.perm && !message.guild)) {
-		message.channel.createMessage(config.messages.guildOnly);
+		message.channel.createMessage(framework.config.messages.guildOnly);
 		return;
-	} else if(command.type === "creator" && !config.creators.includes(message.author.id)) {
-		message.channel.createMessage(config.messages.notCreator);
+	} else if(command.type === "creator" && !framework.config.creators.includes(message.author.id)) {
+		message.channel.createMessage(framework.config.messages.notCreator);
 		return;
-	} else if(command.type === "guild owner" && message.author.id !== guild.ownerID) {
-		message.channel.createMessage(config.messages.notGuildOwner);
+	} else if(command.type === "guild owner" && framework.guildLevel(message.member) > 3) {
+		message.channel.createMessage(framework.config.messages.notGuildOwner);
 		return;
 	} else if(command.perm && !message.channel.permissionsOf(message.author.id).has(command.perm)) {
-		message.channel.createMessage(config.messages.invalidPerms.replace(/{PERM}/g, command.perm));
+		message.channel.createMessage(framework.config.messages.invalidPerms.replace(/{PERM}/g, command.perm));
 		return;
 	}
 
@@ -62,11 +59,8 @@ bot.on("messageCreate", (message) => {
 			message = newMsg;
 
 			message.args = message.argsPreserved.map(ele => {
-				if(typeof ele === "string") {
-					return ele.toLowerCase();
-				} else {
-					return ele;
-				}
+				if(typeof ele === "string") return ele.toLowerCase();
+				else return ele;
 			});
 
 			try {
@@ -74,6 +68,7 @@ bot.on("messageCreate", (message) => {
 			} catch(error) {
 				framework.consoleLog(`Failed command ${command.name} (${command.type})\n` +
 				`**Error:** ${framework.codeBlock(error.stack)}`, "debug");
+				message.channel.createMessage("Bot error when executing command -- error sent to Support Server");
 			} finally {
 				if(result && result.length > 2000 && !result.includes("\n")) message.channel.createMessage("Message exceeds 2000 characters :(");
 				else if(result) message.channel.createMessage(result);

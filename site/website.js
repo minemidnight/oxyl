@@ -33,7 +33,7 @@ function escapeHTML(string) {
 function parseEmbed(embed) {
 	let html = `<div class="w3-container embed w3-leftbar w3-round" style="position:relative;` +
 		`background:#32353A;border-color:#${embed.color ? embed.color.toString(16) : "4f545c"}!important">`;
-	html += `<div class="w3-padding-section embed-content w3-padding-bottom" style="position:relative;">`;
+	html += `<div class="embed-content w3-padding-bottom w3-padding-top" style="position:relative;">`;
 
 	if(embed.author) {
 		html += `<div class="embed-author"><h6>`;
