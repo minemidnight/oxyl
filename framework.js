@@ -7,7 +7,6 @@ const Oxyl = require("./oxyl.js"),
 	mysql = require("promise-mysql");
 
 exports.config = yaml.safeLoad(fs.readFileSync("./private/config.yml"));
-exports.defaultConfig = fs.readFileSync("./private/default-config.yml");
 
 let dbData = exports.config.database;
 dbData.password = exports.config.private.databasePass;
@@ -25,9 +24,23 @@ exports.guildLevel = (member) => {
 	else return 0;
 };
 
+exports.getSetting = (guild, setting) => {
+	let query = `SELECT \`VALUE\` FROM \`Settings\` WHERE \`ID\` = '${guild.id}' AND \`Name\` = '${setting}'`;
+	return new Promise((resolve, reject) => {
+		exports.dbQuery(query).then(res => {
+			if(res && res[0]) resolve(res[0].VALUE);
+			else reject();
+		});
+	});
+};
+
 exports.setSetting = (guild, setting, value) => {
-	let val = "a";
-	return val;
+	exports.getSetting(guild, setting)
+	.then(() => exports.dbQuery(`UPDATE \`Settings\` SET \`VALUE\`='${value}' WHERE \`ID\` = '${guild.id}' AND \`Name\` = '${setting}'`))
+	.catch(() => {
+		console.log("insert");
+		exports.dbQuery(`INSERT INTO \`Settings\`(\`NAME\`, \`VALUE\`, \`ID\`) VALUES ('${setting}','${value}','${guild.id}')`);
+	});
 };
 
 exports.splitParts = (message) => {
@@ -164,6 +177,7 @@ exports.consoleLog = (message, type) => {
 	}
 
 	channel = exports.config.channels[channel];
+	if(!type) type = "!";
 	console.log(`[${type.toUpperCase()}] ${message}`);
 	if(channel && Oxyl.bot.uptime > 0) Oxyl.bot.createMessage(channel, message);
 };
@@ -263,15 +277,15 @@ exports.loadScripts = (filePath) => {
 		scripts[i.substring(i.lastIndexOf("/") + 1, i.length - 3)] = exports.loadScript(i);
 	}
 
-	exports.consoleLog(`Loaded scripts at ${filePath}`, "debug");
+	exports.consoleLog(`Loaded scripts at ${filePath}`);
 	return scripts;
 };
 
-exports.loadScript = (scriptPath, reload) => {
-	if(reload) {
-		let script = path.resolve(scriptPath);
-		delete require.cache[require.resolve(script)];
-	}
+exports.loadScript = (scriptPath) => {
+	let script = path.resolve(scriptPath);
+	let cache = require.cache[require.resolve(script)];
+
+	if(cache) delete require.cache[require.resolve(script)];
 	return require(scriptPath);
 };
 

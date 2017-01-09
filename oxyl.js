@@ -1,7 +1,7 @@
 const Eris = require("eris"),
 	framework = require("./framework.js");
 
-const bot = new Eris(framework.config.private.token, {seedVoiceConnections: true});
+const bot = new Eris(framework.config.private.token, { seedVoiceConnections: true });
 
 process.on("unhandledRejection", (err) => {
 	if(!err) return;
