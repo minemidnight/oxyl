@@ -1,6 +1,5 @@
 const Oxyl = require("../oxyl.js"),
 	framework = require("../framework.js"),
-	configs = require("../modules/serverconfigs.js"),
 	yt = require("ytdl-core");
 const config = framework.config,
 	bot = Oxyl.bot;
@@ -16,13 +15,10 @@ class MusicManager {
 		this.resetData();
 		managers[guild.id] = this;
 
-		let guildConfig = configs.getConfig(guild);
-		let musicText = guildConfig.channels.musicText.value;
-		if(musicText && guild.channels.get(musicText)) {
-			this.musicTextChannel = guild.channels.get(musicText);
-		} else {
-			this.musicTextChannel = undefined;
-		}
+		framework.getSetting(guild, "musicChannel").then(val => {
+			this.musicChannel = guild.channels.get(val);
+			if(!this.musicChannel) this.musicChannel = undefined;
+		}).catch(this.musicChannel = undefined);
 	}
 
 	resetData() {
@@ -54,13 +50,14 @@ class MusicManager {
 		let connection = this.connection;
 		if(!connection) return;
 
-		connection.setVolume(this.data.volume / 500);
+		connection.setVolume(this.data.volume / 1000);
 	}
 
 	destroy() {
 		let connection = this.connection;
 		if(connection) connection.disconnect();
 
+		this.connection.stopPlaying();
 		delete managers[this.id];
 		delete this;
 	}
@@ -83,6 +80,7 @@ class MusicManager {
 		let connection = this.connection;
 		if(!connection) return;
 
+		this.connection.stopPlaying();
 		this.data.playing = null;
 		connection.disconnect();
 		delete this.connection;
@@ -152,8 +150,12 @@ class MusicManager {
 
 	connect(channelID) {
 		return new Promise((resolve, reject) => {
-			if(!channelID) reject("No channel");
-			else if(channelID.id) channelID = channelID.id;
+			if(!channelID) {
+				reject("No channel");
+				return;
+			} else if(channelID.id)	{
+				channelID = channelID.id;
+			}
 
 			bot.joinVoiceChannel(channelID).then(connection => {
 				this.connection = connection;
@@ -173,7 +175,7 @@ class MusicManager {
 	}
 
 	sendEmbed(type, data) {
-		if(!this.musicTextChannel) return;
+		if(!this.musicChannel) return;
 		let embed;
 		if(type === "playing") {
 			embed = {
@@ -184,7 +186,7 @@ class MusicManager {
 				image: { url: `https://i.ytimg.com/vi/${data.id}/hqdefault.jpg` }
 			};
 		}
-		this.musicTextChannel.createMessage({ embed: embed });
+		this.musicChannel.createMessage({ embed: embed });
 	}
 }
 exports.Manager = MusicManager;
