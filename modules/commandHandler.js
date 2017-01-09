@@ -1,5 +1,4 @@
-const configs = require("../modules/serverconfigs.js"),
-	validator = require("../modules/commandArgs.js"),
+const validator = require("../modules/commandArgs.js"),
 	Oxyl = require("../oxyl.js"),
 	framework = require("../framework.js");
 

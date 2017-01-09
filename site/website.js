@@ -111,10 +111,9 @@ exports.messageCreate = message => {
 	message.attachments.forEach(attachment => {
 		content += `\n<img src="${attachment.url}" class="attachment" alt="Attachment"></img>`;
 	});
-	content = content.replace(/`([^`\s]+)`/g, `<code class="inline-code">$1</code>`);
-	content = content.trim();
+	content = content.replace(/`([^`]+)`/g, `<code class="inline-code">$1</code>`);
 	content = content.replace(/\n/g, `<br />`);
-	if(!content || content === "") return;
+	content = content.trim();
 
 	sse.send({
 		content: twemoji.parse(content),

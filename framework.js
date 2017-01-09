@@ -28,6 +28,7 @@ exports.getSetting = (guild, setting) => {
 	let query = `SELECT \`VALUE\` FROM \`Settings\` WHERE \`ID\` = '${guild.id}' AND \`Name\` = '${setting}'`;
 	return new Promise((resolve, reject) => {
 		exports.dbQuery(query).then(res => {
+			console.log(res && res[0], res[0].VALUE);
 			if(res && res[0]) resolve(res[0].VALUE);
 			else reject();
 		});
@@ -37,10 +38,7 @@ exports.getSetting = (guild, setting) => {
 exports.setSetting = (guild, setting, value) => {
 	exports.getSetting(guild, setting)
 	.then(() => exports.dbQuery(`UPDATE \`Settings\` SET \`VALUE\`='${value}' WHERE \`ID\` = '${guild.id}' AND \`Name\` = '${setting}'`))
-	.catch(() => {
-		console.log("insert");
-		exports.dbQuery(`INSERT INTO \`Settings\`(\`NAME\`, \`VALUE\`, \`ID\`) VALUES ('${setting}','${value}','${guild.id}')`);
-	});
+	.catch(() => exports.dbQuery(`INSERT INTO \`Settings\`(\`NAME\`, \`VALUE\`, \`ID\`) VALUES ('${setting}','${value}','${guild.id}')`));
 };
 
 exports.splitParts = (message) => {
