@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-let startTime = parseInt($(".uptime").text());
+let startTime = parseFloat($(".uptime").text());
 $(".uptime").text(timespanDifference(startTime));
 setInterval(() => {
 	$(".uptime").text(timespanDifference(startTime));

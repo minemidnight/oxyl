@@ -31,7 +31,7 @@ router.get("/", (req, res) => {
 				refresh: body.refresh_token
 			};
 		}
-		res.redirect("http://minemidnight.work");
+		res.redirect(`http://minemidnight.work/select`);
 	});
 });
 

@@ -140,11 +140,10 @@ exports.getInfo = (token, path) => {
 	return new Promise((resolve, reject) => {
 		if(Date.now() - token.time >= 604800) {
 			refreshToken(token)
-			.then(newToken => exports.getInfo(newToken, path).then(resolve).catch(reject))
-			.catch(console.log);
-		}		else {
+			.then(newToken => exports.getInfo(newToken, path).then(resolve).catch(reject));
+		}	else {
 			framework.getContent(url, { headers: { Authorization: `Bearer ${token.token}` } })
-		.then(body => resolve(JSON.parse(body))).catch(reject);
+			.then(body => resolve(JSON.parse(body)));
 		}
 	});
 };
@@ -173,6 +172,7 @@ function refreshToken(token) {
 					time: Date.now(),
 					refresh: body.refresh_token
 				};
+				resolve(exports.tokens[ip]);
 			}
 		});
 	});
