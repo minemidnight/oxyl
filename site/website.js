@@ -153,13 +153,11 @@ function refreshToken(token) {
 	return new Promise((resolve, reject) => {
 		let ip = token.ip;
 		let data = {
-			refresh_token: token.refresh_token, // eslint-disable-line camelcase
+			refresh_token: token.refresh, // eslint-disable-line camelcase
 			grant_type: "refresh_token" // eslint-disable-line camelcase
 		};
 
-		console.log(data);
 		let base64 = new Buffer(`${framework.config.botid}:${framework.config.private.secret}`).toString("base64");
-		console.log(`Basic ${base64}`);
 		request.post({
 			url: "https://discordapp.com/api/oauth2/token",
 			headers: { Authorization: `Basic ${base64}` },
@@ -169,7 +167,6 @@ function refreshToken(token) {
 				reject(err);
 			} else {
 				body = JSON.parse(body);
-				console.log(body);
 				exports.tokens[ip] = {
 					token: body.access_token,
 					ip: ip,

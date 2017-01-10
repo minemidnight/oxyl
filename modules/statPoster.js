@@ -35,7 +35,7 @@ function postdBots() {
 
 function postDiscordlist() {
 	let stats = {
-		token: framework.config.privae.discordListKey,
+		token: framework.config.private.discordListKey,
 		servers: bot.guilds.size
 	};
 
@@ -51,5 +51,5 @@ function postDiscordlist() {
 module.exports = () => {
 	postdBots();
 	postCarbon();
-	// postDiscordlist();
+	postDiscordlist();
 };

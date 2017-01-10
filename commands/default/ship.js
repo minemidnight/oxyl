@@ -5,7 +5,7 @@ const Oxyl = require("../../oxyl.js"),
 var command = new Command("ship", (message, bot) => {
 	if(message.args[1] === undefined) message.args[1] = message.author;
 	if(message.args[0] === message.args[1]) return "You must provide 2 different people to ship";
-	if(message.args[2].endsWith("-n")) var nicknames = true;
+	if(message.args[2] && message.args[2].endsWith("-n")) var nicknames = true;
 
 	let members = message.guild.members;
 	let user1 = message.args[0], user2 = message.args[1];
@@ -25,7 +25,7 @@ var command = new Command("ship", (message, bot) => {
 }, {
 	guildOnly: true,
 	type: "default",
-	description: "Create a ship name from two users, or one and yourself",
+	description: "Create a ship name from two users, or one and yourself, add -n to use nicknames instead of usernames",
 	args: [{ type: "user" }, {
 		type: "user",
 		optional: true
