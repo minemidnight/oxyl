@@ -19,6 +19,7 @@ var command = new Command("kick", (message, bot) => {
 		return "Oxyl does not have permissions to kick.";
 	} else {
 		let member = message.guild.members.get(message.args[0].id);
+		if(!member) return "Error -- user not found";
 		let kickable = isKickable(member);
 		if(!kickable) {
 			return `${framework.unmention(member)} couldn't be kicked (has higher permissions)`;
@@ -32,8 +33,5 @@ var command = new Command("kick", (message, bot) => {
 	guildOnly: true,
 	type: "moderator",
 	description: "Kick a user from the guild",
-	args: [{
-		type: "user",
-		label: "user"
-	}]
+	args: [{ type: "user" }]
 });

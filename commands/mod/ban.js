@@ -19,6 +19,7 @@ var command = new Command("ban", (message, bot) => {
 		return "Oxyl does not have permissions to ban.";
 	} else {
 		let member = message.guild.members.get(message.args[0].id);
+		if(!member) return "Error -- user not found";
 		let bannable = isBannable(member);
 		if(!bannable) {
 			return `${framework.unmention(member)} couldn't be banned (has higher permissions)`;
@@ -32,8 +33,5 @@ var command = new Command("ban", (message, bot) => {
 	guildOnly: true,
 	type: "moderator",
 	description: "Ban a user from the guild",
-	args: [{
-		type: "user",
-		label: "user"
-	}]
+	args: [{ type: "user" }]
 });

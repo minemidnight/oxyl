@@ -2,15 +2,28 @@ const validator = require("../modules/commandArgs.js"),
 	Oxyl = require("../oxyl.js"),
 	framework = require("../framework.js");
 
+const prefixes = {};
+exports.prefixes = prefixes;
+// wait for connection
+setTimeout(() => {
+	framework.dbQuery("SELECT * FROM `Settings` WHERE `NAME` = 'prefix'").then(prefixArray => {
+		prefixArray.forEach(prefix => {
+			prefixes[prefix.ID] = prefix.VALUE;
+		});
+	});
+}, 2500);
+
 const bot = Oxyl.bot,
-	commands = Oxyl.commands,
-	prefix = new RegExp(framework.config.options.prefixRegex, "i");
+	commands = Oxyl.commands;
 
 bot.on("messageCreate", (message) => {
 	Oxyl.siteScripts.website.messageCreate(message);
+	if(message.author.bot) return;
 	let guild = message.guild;
 	let msg = message.content.toLowerCase();
-	if(message.author.bot) return;
+
+	let prefix = new RegExp(framework.config.options.prefixRegex, "i");
+	if(prefixes[guild.id]) prefix = new RegExp(`^(oxyl|<@!?255832257519026178>|${framework.escapeRegex(prefixes[guild.id])}),?(?:\\s+)?([\\s\\S]+)`, "i");
 
 	if(msg.match(prefix) && msg.match(prefix)[2]) {
 		message.content = message.content.match(prefix)[2];

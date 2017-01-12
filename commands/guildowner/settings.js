@@ -2,7 +2,7 @@ const Oxyl = require("../../oxyl.js"),
 	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
 
-let settings = [{ name: "prefix", type: "text", disabled: true },
+let settings = [{ name: "prefix", type: "text" },
 { name: "modlog", type: "textChannel", disabled: true },
 { name: "musicchannel", type: "textChannel" },
 { name: "userlog", type: "textChannel" },

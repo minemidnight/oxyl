@@ -153,7 +153,7 @@ function parseTag(tag, message) {
 
 			if(results.length >= 1) argArray = results;
 			try {
-				let newArg = tagParser[argType](argArray, message);
+				let newArg = tagParser[argType.toLowerCase()](argArray, message);
 				if(typeof newArg === "object" && newArg.tagVars) {
 					message = newArg; newArg = "";
 				} else if(typeof newArg === "object") {
@@ -515,13 +515,13 @@ const tagInfo = {
 		out: `"hello earth"`,
 		usage: "<String> <String> <String>"
 	},
-	replaceAll: {
+	replaceall: {
 		return: "Replace all instances of a text with another text",
 		in: "world hello world|world|earth",
 		out: `"earth hello earth"`,
 		usage: "<String> <String> <String>"
 	},
-	replaceRegex: {
+	replaceregex: {
 		return: "Replace all instances of a text in a string using regex",
 		in: "Hello wolrd!|wo[rl]{2}d|earth|g",
 		out: `"Hello earth!"`,
@@ -549,19 +549,19 @@ const tagInfo = {
 		out: `"https://cdn.discordapp.com/avatars/..."`,
 		usage: "<Member/User Object>"
 	},
-	getUser: {
+	getuser: {
 		return: "User from ID (Only searches current guild)",
 		in: "155112606661607425",
 		out: "{ Object User }",
 		usage: "<Member/User ID>"
 	},
-	getMember: {
+	getmember: {
 		return: "Member from ID (Only searches current guild)",
 		in: "155112606661607425",
 		out: "{ Object Member }",
 		usage: "<Member/User ID>"
 	},
-	memberJoinedAt: {
+	memberjoinedat: {
 		return: "When a member joined the current guild",
 		in: "{member}",
 		out: `"Sunday, Decemeber 11 2016, 17:49:30"`,
@@ -615,7 +615,7 @@ const tagInfo = {
 		out: `"aaa"`,
 		usage: "<String> <Regex> <Group <Number>> [Flags <String>]"
 	},
-	isNaN: {
+	isnan: {
 		return: "If something is a not a number",
 		in: "4.3",
 		out: `"false"`,
@@ -627,19 +627,19 @@ const tagInfo = {
 		out: `"https://cdn.discordapp.com/icons/..."`,
 		usage: "<Guild Object>"
 	},
-	parseInt: {
+	parseint: {
 		return: "String parsed as integer",
 		in: "@%{parseInt:5} {parseInt:5.25} {parseInt:abc}",
 		out: "5 NaN NaN",
 		usage: "<String>"
 	},
-	parseFloat: {
+	parsefloat: {
 		return: "String parsed as a float (number with decimals)",
 		in: "@%{parseFloat:5} {parseFloat:5.25} {parseFloat:abc}",
 		out: "5.00 5.25 NaN",
 		usage: "<String>"
 	},
-	charAt: {
+	charat: {
 		return: "Character at a certain place",
 		in: "hello|0",
 		out: `"h"`,
@@ -675,7 +675,7 @@ const tagInfo = {
 	unmention: {
 		return: "Username#Discriminator",
 		in: "{author}",
-		out: `"mineminihgt#1537"`,
+		out: `"minemidnight#1537"`,
 		usage: "<Member/User Object>"
 	}
 };
@@ -700,12 +700,12 @@ const tagParser = {
 	channel: (args, message) => message.channel,
 	charAt: args => args[0].toString().charAt(args[1]),
 	choose: args => args[Math.floor(Math.random() * args.length)],
-	createdAt: args => framework.formatDate(args[0].createdAt),
+	createdat: args => framework.formatDate(args[0].createdAt),
 	discriminator: args => args[0].user ? args[0].user.discriminator : args[0].discriminator,
 	floor: args => Math.floor(parseFloat(args[0])),
 	game: args => args[0].game ? args[0].game.name : "None",
-	getMember: (args, message) => message.guild.members.get(args[0]),
-	getUser: (args, message) => message.guild.members.get(args[0]).user,
+	getmember: (args, message) => message.guild.members.get(args[0]),
+	getuser: (args, message) => message.guild.members.get(args[0]).user,
 	guild: (args, message) => message.guild,
 	icon: args => args[0].iconURL,
 	id: args => args[0].id,
@@ -741,12 +741,12 @@ const tagParser = {
 		}
 	},
 	int: args => Math.floor(Math.random() * (parseInt(args[1]) - parseInt(args[0]))) + parseInt(args[0]),
-	isNaN: args => isNaN(args[0]),
+	isnan: args => isNaN(args[0]),
 	length: args => args[0].length,
 	lower: args => args[0].toString().toLowerCase(),
 	math: args => math.eval(args[0]),
 	member: (args, message) => message.member,
-	memberJoinedAt: (args, message) => framework.formatDate(args[0].joinedAt),
+	memberjoinedat: (args, message) => framework.formatDate(args[0].joinedAt),
 	membercount: (args, message) => message.guild.memberCount,
 	mention: args => args[0].mention,
 	name: args => args[0].name,
@@ -754,13 +754,13 @@ const tagParser = {
 	nl: args => "\n",
 	now: args => framework.formatDate(new Date()),
 	num: args => (Math.random() * (parseFloat(args[1]) - parseFloat(args[0]))) + parseFloat(args[0]),
-	parseFloat: args => parseFloat(args[0]),
-	parseInt: args => parseInt(args[0]),
+	parsefloat: args => parseFloat(args[0]),
+	parseint: args => parseInt(args[0]),
 	regex: args => new RegExp(args[1], args[3] || "").exec(args[0])[args[2]],
 	repeat: args => args[0].repeat(parseInt(args[1])),
 	replace: args => args[0].replace(args[1], args[2]),
-	replaceAll: args => args[0].replace(new RegExp(args[1].replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"), args[2]),
-	replaceRegex: args => args[0].replace(new RegExp(args[1], args[3] || ""), args[2]),
+	replaceall: args => args[0].replace(new RegExp(framework.escapeRegex(args[1])), args[2]),
+	replaceregex: args => args[0].replace(new RegExp(args[1], args[3] || ""), args[2]),
 	roles: args => args[0].roles,
 	round: args => Math.round(parseFloat(args[0])),
 	status: args => args[0].status,

@@ -10,8 +10,8 @@ var command = new Command("ship", (message, bot) => {
 	let members = message.guild.members;
 	let user1 = message.args[0], user2 = message.args[1];
 	if(nicknames) {
-		if(members.has(user1.id)) user1 = members.get(user1.id).nick || user1.username;
-		if(members.has(user2.id)) user2 = members.get(user2.id).nick || user2.username;
+		user1 = members.get(user1.id).nick || user1.username;
+		user2 = members.get(user2.id).nick || user2.username;
 	} else {
 		user1 = user1.username;
 		user2 = user2.username;

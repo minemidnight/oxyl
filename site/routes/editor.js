@@ -20,24 +20,8 @@ router.get("/", (req, res) => {
 		});
 	}
 
-	main.parseHB("tags", req, data)
+	main.parseHB("editor", req, data)
 	.then(hbs => res.send(hbs));
-});
-
-handlebars.registerHelper("listtags", (tags) => {
-	let returnstr = "";
-	for(let tag in tags) {
-		tag = tags[tag];
-		returnstr += `<tr class="w3-hover-notquiteblack">`;
-		returnstr += `<td>${tag.name}</td>`;
-		returnstr += `<td>${tag.usage}</td>`;
-		returnstr += `<td>${tag.return}</td>`;
-		returnstr += `<td>${tag.input}</td>`;
-		returnstr += `<td>${tag.out}</td>`;
-		returnstr += `</tr>`;
-	}
-
-	return new handlebars.SafeString(returnstr);
 });
 
 module.exports = router;

@@ -18,9 +18,9 @@ mysql.createConnection(dbData).then(connection => {
 exports.guildLevel = (member) => {
 	let perms = member.permission, guild = member.guild;
 	if(exports.config.creators.includes(member.id)) return 4;
-	else if(guild.ownerID === member.id) return 3;
-	else if(perms.has(32)) return 2;
-	else if(perms.has(2) && perms.has(4)) return 1;
+	else if(guild.ownerID === member.id || perms.has("administrator")) return 3;
+	else if(perms.has("manageGuild")) return 2;
+	else if(perms.has("kickMembers") && perms.has("banMembers")) return 1;
 	else return 0;
 };
 
@@ -36,12 +36,14 @@ exports.getSetting = (guild, setting) => {
 
 exports.resetSetting = (guild, setting) => {
 	exports.dbQuery(`DELETE FROM \`Settings\` WHERE \`ID\` = '${guild.id}' AND \`Name\` = '${setting}'`);
+	if(setting === "prefix") delete Oxyl.modScripts.commandHandler.prefixes[guild.id];
 };
 
 exports.setSetting = (guild, setting, value) => {
 	exports.getSetting(guild, setting)
 	.then(() => exports.dbQuery(`UPDATE \`Settings\` SET \`VALUE\`='${value}' WHERE \`ID\` = '${guild.id}' AND \`Name\` = '${setting}'`))
 	.catch(() => exports.dbQuery(`INSERT INTO \`Settings\`(\`NAME\`, \`VALUE\`, \`ID\`) VALUES ('${setting}','${value}','${guild.id}')`));
+	if(setting === "prefix") Oxyl.modScripts.commandHandler.prefixes[guild.id] = value;
 };
 
 exports.splitParts = (message) => {
@@ -65,6 +67,8 @@ exports.splitParts = (message) => {
 		return returnData;
 	}
 };
+
+exports.escapeRegex = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&", "g");
 
 exports.nthIndex = (string, pattern, nth) => {
 	let len = string.length, i = -1;
