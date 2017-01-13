@@ -13,7 +13,7 @@ function isBannable(member) {
 }
 
 var command = new Command("ban", (message, bot) => {
-	let banPerms = message.channel.permissionsOf(bot.user.id).has("banMembers");
+	let banPerms = message.guild.members.get(bot.user.id).permission.has("banMembers");
 
 	if(!banPerms) {
 		return "Oxyl does not have permissions to ban.";

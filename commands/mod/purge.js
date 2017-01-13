@@ -3,7 +3,7 @@ const Oxyl = require("../../oxyl.js"),
 	framework = require("../../framework.js");
 
 var command = new Command("purge", (message, bot) => {
-	let deletePerms = message.channel.permissionsOf(bot.user.id).has("manageMessages"),
+	let deletePerms = message.guild.members.get(bot.user.id).permission.has("manageMessages"),
 		mentions = message.mentions.users;
 	if(!deletePerms) {
 		message.channel.createMessage("Oxyl does not have permissions to delete messages")

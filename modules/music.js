@@ -1,11 +1,10 @@
 const Oxyl = require("../oxyl.js"),
 	framework = require("../framework.js"),
 	yt = require("ytdl-core");
-const config = framework.config,
-	bot = Oxyl.bot;
-const ytKey = config.private.googleKey;
-const managers = {};
-exports.managers = managers;
+const bot = Oxyl.bot;
+const ytKey = framework.config.private.googleKey;
+exports.managers = {};
+const managers = exports.managers;
 
 class MusicManager {
 	constructor(guild) {
@@ -23,10 +22,10 @@ class MusicManager {
 
 	resetData() {
 		this.data = {
-			volume: config.options.music.defaultVolume,
 			queue: [],
 			playing: null,
-			extraOptions: { repeat: false }
+			extraOptions: { repeat: false },
+			processQueue: true
 		};
 	}
 
@@ -40,23 +39,11 @@ class MusicManager {
 		return optionValue;
 	}
 
-	updateVolume(newVolume) {
-		if(newVolume) {
-			if(newVolume > 100) newVolume = 100;
-			else if(newVolume < 0) newVolume = 0;
-			this.data.volume = newVolume;
-		}
-
-		let connection = this.connection;
-		if(!connection) return;
-
-		connection.setVolume(this.data.volume / 1000);
-	}
-
 	destroy() {
 		let connection = this.connection;
 		if(connection) connection.disconnect();
 
+		this.data.processQueue = false;
 		this.connection.stopPlaying();
 		delete managers[this.id];
 		delete this;
@@ -80,10 +67,13 @@ class MusicManager {
 		let connection = this.connection;
 		if(!connection) return;
 
+		this.data.processQueue = false;
 		this.connection.stopPlaying();
 		this.data.playing = null;
+		this.data.queue = [];
 		connection.disconnect();
 		delete this.connection;
+		this.data.processQueue = true;
 	}
 
 	parsedPlayTime() {
@@ -126,9 +116,10 @@ class MusicManager {
 
 		if(!this.data.playing && this.connection.playing) {
 			this.connection.stopPlaying();
-		} else if(this.data.playing && !this.connection.playing) {
-			this.data.playing = null;
+			return;
 		} else if(this.data.playing && this.connection.playing) {
+			return;
+		} else if(!this.data.processQueue) {
 			return;
 		}
 
@@ -139,12 +130,13 @@ class MusicManager {
 		} else {
 			this.data.playing = nextQueue;
 			var id = nextQueue.id;
-			if(!this.data.extraOptions.repeat) this.data.queue.shift();
+			if(this.data.queue.length > 1) this.data.queue.shift();
+			else this.data.queue = [];
+			if(this.data.extraOptions.repeat) this.data.queue.push(this.data.playing);
 		}
 
 		let stream = yt(`http://www.youtube.com/watch?v=${id}`, { audioonly: true });
-		connection.play(stream, { inlineVolume: true });
-		this.updateVolume();
+		connection.play(stream);
 		this.sendEmbed("playing", nextQueue);
 	}
 
@@ -160,11 +152,13 @@ class MusicManager {
 			bot.joinVoiceChannel(channelID).then(connection => {
 				this.connection = connection;
 				connection.on("ready", () => {
+					connection.setVolume(0.3);
 					resolve(connection);
 				});
 				setTimeout(() => {
+					connection.setVolume(0.3);
 					resolve(connection);
-				}, 5000);
+				}, 10000);
 
 				connection.on("end", () => {
 					if(this.data.queue.length <= 0) this.end();
@@ -227,7 +221,7 @@ exports.ytType = (id) => {
 };
 
 exports.ytID = (url) => {
-	var match = url.match(config.options.music.youtubeRegex);
+	var match = url.match(framework.config.options.music.youtubeRegex);
 	if(match && match[1]) {
 		return match[1];
 	} else {

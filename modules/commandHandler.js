@@ -22,8 +22,10 @@ bot.on("messageCreate", (message) => {
 	let guild = message.guild;
 	let msg = message.content.toLowerCase();
 
-	let prefix = new RegExp(framework.config.options.prefixRegex, "i");
-	if(prefixes[guild.id]) prefix = new RegExp(`^(oxyl|<@!?255832257519026178>|${framework.escapeRegex(prefixes[guild.id])}),?(?:\\s+)?([\\s\\S]+)`, "i");
+	let prefix = framework.config.options.prefixRegex;
+	if(guild && prefixes[guild.id]) prefix = prefix.replace("{PREFIX}", `|${framework.escapeRegex(prefixes[guild.id])}`);
+	else prefix = prefix.replace("{PREFIX}", "");
+	prefix = new RegExp(prefix, "i");
 
 	if(msg.match(prefix) && msg.match(prefix)[2]) {
 		message.content = message.content.match(prefix)[2];

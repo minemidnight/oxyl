@@ -25,7 +25,7 @@ exports.guildLevel = (member) => {
 };
 
 exports.getSetting = (guild, setting) => {
-	let query = `SELECT \`VALUE\` FROM \`Settings\` WHERE \`ID\` = '${guild.id}' AND \`Name\` = '${setting}'`;
+	let query = `SELECT \`VALUE\` FROM \`Settings\` WHERE \`ID\` = '${guild.id}' AND \`Name\` = ${exports.sqlEscape(setting)}`;
 	return new Promise((resolve, reject) => {
 		exports.dbQuery(query).then(res => {
 			if(res && res[0]) resolve(res[0].VALUE);
@@ -35,14 +35,15 @@ exports.getSetting = (guild, setting) => {
 };
 
 exports.resetSetting = (guild, setting) => {
-	exports.dbQuery(`DELETE FROM \`Settings\` WHERE \`ID\` = '${guild.id}' AND \`Name\` = '${setting}'`);
+	exports.dbQuery(`DELETE FROM \`Settings\` WHERE \`ID\` = '${guild.id}' AND \`Name\` = ${exports.sqlEscape(setting)}`);
 	if(setting === "prefix") delete Oxyl.modScripts.commandHandler.prefixes[guild.id];
 };
 
 exports.setSetting = (guild, setting, value) => {
 	exports.getSetting(guild, setting)
-	.then(() => exports.dbQuery(`UPDATE \`Settings\` SET \`VALUE\`='${value}' WHERE \`ID\` = '${guild.id}' AND \`Name\` = '${setting}'`))
-	.catch(() => exports.dbQuery(`INSERT INTO \`Settings\`(\`NAME\`, \`VALUE\`, \`ID\`) VALUES ('${setting}','${value}','${guild.id}')`));
+	.then(() => exports.dbQuery(`UPDATE \`Settings\` SET \`VALUE\`='${value}' WHERE \`ID\` = '${guild.id}' AND \`Name\` = ${exports.sqlEscape(setting)}`))
+	.catch(() => exports.dbQuery(`INSERT INTO \`Settings\`(\`NAME\`, \`VALUE\`, \`ID\`)` +
+						`VALUES (${exports.sqlEscape(setting)},'${exports.sqlEscape(value)}','${guild.id}')`));
 	if(setting === "prefix") Oxyl.modScripts.commandHandler.prefixes[guild.id] = value;
 };
 
