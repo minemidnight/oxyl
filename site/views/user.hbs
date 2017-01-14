@@ -69,12 +69,13 @@
 			<div class="w3-half w3-card-2">
 				<div class="w3-row">
 					<div class="w3-quarter">
-						<img class="w3-circle" style="margin-bottom:0px;width:64px" src="{{viewUser.avatar}}" />
+						<img class="w3-circle w3-margin" style="margin-bottom:0px;width:64px" src="{{viewUser.avatarURL}}" />
+						<p class="vertical-align:bottom">Shared: {{viewUser.shared}}</p>
 					</div>
 					<div class="w3-threequarter">
 						<div class="w3-container">
 							<h4 class="w3-xlarge">Description</h4>
-							<p>None Set</p>
+							<p>{{viewUser.description}}</p>
 						</div>
 					</div>
 				</div>
@@ -82,8 +83,22 @@
 		</div>
 
 		{{#if desc}}
-		<div class="w3-row-padding w3-margin-bottom">
-			<h3 class="w3-margin w3-xlarge">Change Description</h3>
+		<div class="w3-row">
+			<div class="w3-third">&#8203;</div>
+			<div class="w3-third">
+				<div class="w3-section w3-card-4">
+					<div class="w3-container w3-blurple w3-section">
+						<h3 class="w3-margin w3-xlarge">Change Description</h3>
+					</div>
+					<form action="http://minemidnight.work/user/update" method="post" class="w3-padding w3-left-align w3-container">
+						<label class="w3-label">New Description:</label>
+						<input class="w3-input w3-border w3-animate-input" style="width:60%" type="text" name="desc" placeholder="Bot Developer" />
+						<br />
+						<input class="w3-center w3-btn" type="submit" name="reset" value="Reset">
+						<input class="w3-center w3-btn" type="submit" value="Submit">
+					</form>
+				</div>
+			</div>
 		</div>
 		{{/if}}
 

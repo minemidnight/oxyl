@@ -95,7 +95,7 @@ bot.on("messageCreate", async (message) => {
 			}
 
 			if(msg) {
-				msg = msg.content.substring(0, 2000);
+				if(msg.content) msg.content = msg.content.substring(0, 2000);
 				try {
 					var resultmsg = await message.channel.createMessage(msg, file || null);
 				} catch(err) {

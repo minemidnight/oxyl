@@ -5,10 +5,13 @@ const Oxyl = require("../oxyl.js"),
 	fs = require("fs"),
 	request = require("request"),
 	SSE = require("express-sse"),
-	twemoji = require("twemoji");
+	twemoji = require("twemoji"),
+	bodyParser = require("body-parser");
 
 const app = express();
 app.use(express.static("./site/public"));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 exports.app = app;
 exports.tokens = {};
 

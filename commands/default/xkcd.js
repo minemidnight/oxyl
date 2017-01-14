@@ -5,21 +5,24 @@ const Oxyl = require("../../oxyl.js"),
 var command = new Command("xkcd", async (message, bot) => {
 	message.channel.sendTyping();
 
-	let comic = message.args[0] || -1;
-	framework.getContent("https://www.reddit.com/r/ProgrammerHumor/random/.json").then(body => {
-		body = JSON.parse(body)[0].data.children[0].data;
+	let comic = message.args[0] || Math.floor(Math.random() * 1785) + 1;
+	let body = await framework.getContent(`http://xkcd.com/${comic}/info.0.json`);
+	body = JSON.parse(body);
+	let embed = {
+		url: `http://xkcd.com/${comic}/`,
+		title: `${body.title} (#${comic})`,
+		image: { url: body.img }
+	};
 
-		let embed = { title: body.title, url: `https://redd.it/${body.id}` };
-		if(body.preview && body.preview.images) embed.image = { url: body.preview.images[0].source.url };
-		if(body.selftext) embed.description = body.selftext;
-		message.channel.createMessage({ embed: embed });
-	});
+	return { embed };
 }, {
 	type: "default",
 	description: "Grab a xkcd from xkcd.com",
 	args: [{
 		label: "comic number",
-		type: "number",
-		min: 0
+		type: "int",
+		min: 1,
+		max: 1785,
+		optional: true
 	}]
 });

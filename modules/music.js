@@ -16,7 +16,9 @@ class MusicManager {
 		framework.getSetting(guild, "musicchannel").then(val => {
 			this.musicChannel = guild.channels.get(val);
 			if(!this.musicChannel) this.musicChannel = undefined;
-		}).catch(this.musicChannel = undefined);
+		}).catch(() => {
+			this.musicChannel = undefined;
+		});
 	}
 
 	resetData() {

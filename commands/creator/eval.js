@@ -5,12 +5,12 @@ const util = require("util"),
 const config = framework.config;
 
 var command = new Command("eval", async (message, bot) => {
-	let guild = message.guild, channel = message.channel, author = message.author;
+	let guild = message.guild, channel = message.channel, author = message.author, member = message.member;
 	// So the executor can use in eval
 
 	let msg = await message.channel.createMessage("Executing code...");
 	try {
-		var output = await eval(`(async function (){${message.argsPreserved[0]}})()`);
+		var output = await eval(`(async function(){${message.argsPreserved[0]}}).call()`);
 		output = util.inspect(output, { depth: 0 }).substring(0, 1900);
 		for(var i in config.private) {
 			output = output.replace(new RegExp(config.private[i], "ig"), "xPRIVATEx");

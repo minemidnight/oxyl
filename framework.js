@@ -26,7 +26,7 @@ exports.guildLevel = (member) => {
 
 exports.getSetting = async (guild, setting) => {
 	let query = `SELECT \`VALUE\` FROM \`Settings\` WHERE \`ID\` = '${guild.id}' AND \`Name\` = ${exports.sqlEscape(setting)}`;
-	let data = exports.dbQuery(query);
+	let data = await exports.dbQuery(query);
 
 	if(data && data[0]) return data[0].VALUE;
 	else throw new Error();
@@ -40,7 +40,7 @@ exports.resetSetting = (guild, setting) => {
 exports.setSetting = async (guild, setting, value) => {
 	try {
 		await exports.getSetting(guild, setting);
-		exports.dbQuery(`UPDATE \`Settings\` SET \`VALUE\`='${value}' WHERE \`ID\` = '${guild.id}' AND \`Name\` = ${exports.sqlEscape(setting)}`);
+		exports.dbQuery(`UPDATE \`Settings\` SET \`VALUE\`=${exports.sqlEscape(value)} WHERE \`ID\` = '${guild.id}' AND \`Name\` = ${exports.sqlEscape(setting)}`);
 	} catch(err) {
 		exports.dbQuery(`INSERT INTO \`Settings\`(\`NAME\`, \`VALUE\`, \`ID\`) VALUES (${exports.sqlEscape(setting)},${exports.sqlEscape(value)},'${guild.id}')`);
 	}
