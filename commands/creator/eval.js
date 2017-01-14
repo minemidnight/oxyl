@@ -10,7 +10,7 @@ var command = new Command("eval", (message, bot) => {
 
 	let editMsg = message.channel.createMessage("Executing code...");
 	try {
-		var output = util.inspect(eval(message.argsPreserved[0]), { depth: 0 });
+		var output = util.inspect(eval(message.argsPreserved[0]), { depth: 0 }).substring(0, 1900);
 		for(var i in config.private) {
 			output = output.replace(new RegExp(config.private[i], "ig"), "xPRIVATEx");
 		}

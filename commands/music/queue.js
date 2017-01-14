@@ -45,9 +45,8 @@ var command = new Command("queue", (message, bot) => {
 			var playTime = manager.parsedPlayTime();
 			queueMsg += `\n\nPlaying: ${manager.data.playing.title}`;
 		}
-		let repeat = manager.data.extraOptions.repeat ? "on" : "off";
 
-		queueMsg += `\n\nVolume: ${manager.data.volume}`;
+		let repeat = manager.data.extraOptions.repeat ? "on" : "off";
 		queueMsg += `\nRepeat: **${repeat}**`;
 		//* *(**${playTime}/${videoDuration}**)**`;
 
@@ -57,7 +56,6 @@ var command = new Command("queue", (message, bot) => {
 	guildOnly: true,
 	type: "music",
 	description: "List the current guild music queue",
-	aliases: ["playing", "current"],
 	args: [{
 		type: "int",
 		label: "page",

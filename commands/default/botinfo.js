@@ -24,7 +24,8 @@ var command = new Command("botinfo", (message, bot) => {
 
 	let extraInfo = [
 		`Channels: ${channels}`,
-		`Users: ${totalUsers}`
+		`Users: ${totalUsers}`,
+		`Music In: ${Object.keys(Oxyl.modScripts.music.managers).length} Guilds`
 	];
 
 	let memoryInfo = `${((usedMemory / totalMemory) * 100).toFixed(2)}%, `;

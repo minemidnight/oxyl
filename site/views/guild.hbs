@@ -42,12 +42,15 @@
 		<a class="w3-padding" href="http://minemidnight.work/commands">Commands</a>
 		<a class="w3-padding" href="http://minemidnight.work/tags">Tag Documentation</a>
 		<a class="w3-padding" href="http://minemidnight.work/stats">Statistics</a>
-		<a class="w3-padding" href="http://minemidnight.work/select">Guild Dashboard</a>
+		<a id="current" class="w3-padding" href="http://minemidnight.work/select">Guild Dashboard</a>
 		<div style="position:absolute;bottom:0;width:100%;height:100px">
 		{{#if user}}
-			<img class="w3-left w3-circle w3-image w3-margin" style="max-height:64px" src="https://cdn.discordapp.com/avatars/{{user.id}}/{{user.avatar}}.jpg" />
-			<br />
-			<p class="w3-left-align w3-large">{{user.username}}#{{user.discriminator}}</p>
+			<a href="http://minemidnight.work/user/{{user.id}}">
+				<p class="w3-center w3-large">
+					<img class="w3-circle" style="max-height:36px;vertical-align:text-bottom" src="https://cdn.discordapp.com/avatars/{{user.id}}/{{user.avatar}}.jpg" />
+					{{user.username}}#{{user.discriminator}}
+				</p>
+			</a>
 		{{else}}
 			<a class="w3-padding" href="https://discordapp.com/oauth2/authorize?response_type=code&redirect_uri=https://minemidnight.work/login&scope=identify+guilds&client_id=255832257519026178">Login with Discord</a>
 		{{/if}}
@@ -135,7 +138,7 @@
 				<div class="w3-container w3-blue w3-padding-16 w3-margin-bottom">
 					<div class="w3-left"><i class="material-icons w3-xxxlarge">adb</i></div>
 					<div class="w3-right">
-						<h3 class="w3-large">{{guild.botCount}}</h3>
+						<h3 class="w3-large">{{guild.botCount}} ({{guild.botPercent}}%)</h3>
 					</div>
 					<div class="w3-clear"></div>
 					<h4 class="w3-xlarge">Bot Count</h4>
@@ -145,10 +148,10 @@
 				<div class="w3-container w3-light-gray w3-padding-16 w3-margin-bottom">
 					<div class="w3-left"><i class="material-icons w3-xxxlarge">link</i></div>
 					<div class="w3-right">
-						<h3 class="w3-large">{{guild.botPercent}}%</h3>
+						<h3 class="w3-large">{{guild.userCount}} ({{guild.userPercent}}%)</h3>
 					</div>
 					<div class="w3-clear"></div>
-					<h4 class="w3-xlarge">Bot Percentage</h4>
+					<h4 class="w3-xlarge">User Count</h4>
 				</div>
 			</div>
 		</div>

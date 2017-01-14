@@ -8,7 +8,8 @@ bot.on("ready", () => {
 
 	setTimeout(() => {
 		for(let i in bot.voiceConnections.guilds) {
-			bot.leaveVoiceChannel(bot.voiceConnections.guilds[i].channelID);
+			i = bot.voiceConnections.guilds[i].channelID;
+			if(Object.keys(bot.channelGuildMap).indexOf(i) !== -1) bot.leaveVoiceChannel(i);
 		}
 	}, 5000);
 });

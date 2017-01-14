@@ -10,32 +10,40 @@
 	ga('create', 'UA-90011901-1', 'auto');
 	ga('send', 'pageview');
 	</script>
-	<link rel="stylesheet" href="assets/css/style.css" />
-	<link rel="stylesheet" href="assets/css/w3.css">
-	<script async src="assets/js/jquery.min.js"></script>
-	<script async defer src="assets/js/main.js"></script>
+	<link rel="stylesheet" href="http://minemidnight.work/assets/css/style.css" />
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<link rel="stylesheet" href="http://minemidnight.work/assets/css/w3.css">
+	<script async src="http://minemidnight.work/assets/js/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.5.5/showdown.min.js"></script>
+	<script async defer src="http://minemidnight.work/assets/js/main.js"></script>
+	<script async defer src="http://minemidnight.work/assets/js/liveChat.js"></script>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Oxyl - Server Selector</title>
+	<title>Oxyl - User Profiles</title>
 
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="author" content="minemidnight" />
-	<meta property="og:title" content="Oxyl Server Selection" />
+	<meta property="og:title" content="Oxyl User Profiles" />
 	<meta property="og:site_name" content="Oxyl" />
+	{{#if user}}
+	<meta property="og:description" content="Profile for {{user.username}}" />
+	<meta property="og:image" content="{{user.avatar}}" />
+	{{else}}
 	<meta property="og:description" content="A multipurpose discord bot with with features from music to moderation" />
 	<meta property="og:image" content="assets/images/oxyl-logo.jpg" />
+	{{/if}}
 </head>
 <body class="w3-darknotblack">
 	<nav id="main-nav" class="w3-card-2 w3-sidenav w3-collapse w3-notquiteblack w3-animate-left">
 		<a class="w3-xxlarge w3-hide-large w3-text-red" style="position:absolute;right:10%" onclick="toggleNav()">&times;</a>
 		<h1 class="w3-xxxlarge w3-center">Oxyl</h1>
-		<a class="w3-padding" href="/">Home</a>
-		<a class="w3-padding" href="commands">Commands</a>
-		<a class="w3-padding" href="tags">Tag Documentation</a>
-		<a class="w3-padding" href="stats">Statistics</a>
-		<a id="current-nav" class="w3-padding" href="select">Guild Dashboard</a>
-		<div style="position:absolute;bottom:0;width:100%">
+		<a class="w3-padding" href="http://minemidnight.work/">Home</a>
+		<a class="w3-padding" href="http://minemidnight.work/commands">Commands</a>
+		<a class="w3-padding" href="http://minemidnight.work/tags">Tag Documentation</a>
+		<a class="w3-padding" href="http://minemidnight.work/stats">Statistics</a>
+		<a class="w3-padding" href="http://minemidnight.work/select">Guild Dashboard</a>
+		<div style="position:absolute;bottom:0;width:100%;height:100px">
 		{{#if user}}
 			<a href="http://minemidnight.work/user/{{user.id}}">
 				<p class="w3-center w3-large">
@@ -52,24 +60,35 @@
 	<main class="w3-main w3-center" style="margin-left:300px">
 		<header class="w3-container">
 			<span class="w3-btn w3-black w3-round-jumbo w3-large w3-hide-large" style="position:fixed;left:20px;top:20px" onclick="toggleNav()">&#9776;</span>
-			<h1 class="w3-clear w3-jumbo w3-margin-0">Guild Dashboard</h1>
+			<h1 class="w3-clear w3-jumbo w3-margin-0">User Profiles</h1>
 		</header>
-		{{#if guilds}}
-		<h3 class="w3-xxlarge">Select a server</h3>
-		<div class="w3-container">
-			{{#each guilds}}
-			<div class="w3-row w3-card w3-notquiteblack w3-margin w3-round" style="cursor:pointer" onclick="window.location.pathname='/guild/{{this.id}}'">
-				{{#if this.icon}}
-				<img class="w3-left w3-circle w3-margin" style="width:75px" src="https://cdn.discordapp.com/icons/{{this.id}}/{{this.icon}}.jpg" />
-				{{else}}
-				<p class="w3-xlarge w3-left w3-circle w3-margin" style="background-color:rgb(46, 49, 54);padding:22.5px">{{this.subname}}</p>
-				{{/if}}
-				<p class="w3-xlarge">{{this.name}}</p>
+
+		{{#if viewUser}}
+		<div class="w3-row-padding w3-section">
+			<div class="w3-quarter">&#8203;</div>
+			<div class="w3-half w3-card-2">
+				<div class="w3-row">
+					<div class="w3-quarter">
+						<img class="w3-circle" style="margin-bottom:0px;width:64px" src="{{viewUser.avatar}}" />
+					</div>
+					<div class="w3-threequarter">
+						<div class="w3-container">
+							<h4 class="w3-xlarge">Description</h4>
+							<p>None Set</p>
+						</div>
+					</div>
+				</div>
 			</div>
-			{{/each}}
 		</div>
+
+		{{#if desc}}
+		<div class="w3-row-padding w3-margin-bottom">
+			<h3 class="w3-margin w3-xlarge">Change Description</h3>
+		</div>
+		{{/if}}
+
 		{{else}}
-		<h3 class="w3-xxlarge">You are not logged on!</h3>
+		<h2 class="w3-xxlarge">Invalid User ID</h2>
 		{{/if}}
 	</main>
 </body>

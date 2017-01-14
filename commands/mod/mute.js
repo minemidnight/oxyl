@@ -22,7 +22,7 @@ function getMutedRole(guild) {
 				role.edit({
 					name: "Muted",
 					permissions: 0,
-					color: "0xDF4242"
+					color: 0xDF4242
 				}).then(editedRole => {
 					let channels = guild.channels.filter(channel => channel.type === 0);
 					channels.forEach(channel => bot.editChannelPermission(channel.id, editedRole.id, 0, 2048, "role"));
@@ -31,6 +31,8 @@ function getMutedRole(guild) {
 			});
 		} else if(!rolePerms) {
 			reject("Oxyl does not have permissions to add roles");
+		} else {
+			resolve(mutedRole);
 		}
 	});
 }
@@ -46,7 +48,7 @@ var command = new Command("mute", (message) => {
 			mention.removeRole(mutedRole.id);
 			message.channel.createMessage(`${framework.unmention(mention)} has been unmuted`);
 		}
-	});// .catch(reason => message.channel.createMessage(reason));
+	}).catch(reason => message.channel.createMessage(reason));
 }, {
 	perm: "manageRoles",
 	guildOnly: true,

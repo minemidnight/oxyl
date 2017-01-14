@@ -4,7 +4,6 @@ const Oxyl = require("../oxyl.js"),
 const bot = Oxyl.bot;
 const ytKey = framework.config.private.googleKey;
 exports.managers = {};
-const managers = exports.managers;
 
 class MusicManager {
 	constructor(guild) {
@@ -12,7 +11,7 @@ class MusicManager {
 		this.id = guild.id;
 
 		this.resetData();
-		managers[guild.id] = this;
+		exports.managers[guild.id] = this;
 
 		framework.getSetting(guild, "musicchannel").then(val => {
 			this.musicChannel = guild.channels.get(val);
@@ -45,7 +44,7 @@ class MusicManager {
 
 		this.data.processQueue = false;
 		this.connection.stopPlaying();
-		delete managers[this.id];
+		delete exports.managers[this.id];
 		delete this;
 	}
 
@@ -149,20 +148,21 @@ class MusicManager {
 				channelID = channelID.id;
 			}
 
+			if(bot.voiceConnections.get(this.id)) return;
 			bot.joinVoiceChannel(channelID).then(connection => {
 				this.connection = connection;
-				connection.on("ready", () => {
+				connection.once("ready", () => {
 					connection.setVolume(0.3);
 					resolve(connection);
 				});
-				setTimeout(() => {
-					connection.setVolume(0.3);
-					resolve(connection);
-				}, 10000);
 
-				connection.on("end", () => {
+				connection.once("end", () => {
 					if(this.data.queue.length <= 0) this.end();
 					else this.play();
+				});
+
+				connection.once("error", err => {
+					this.sendEmbed("error", err);
 				});
 			});
 		});
@@ -175,11 +175,17 @@ class MusicManager {
 			embed = {
 				title: "Now playing :arrow_forward:",
 				description: `[**${data.title}**](http://youtube.com/watch?v=${data.id}) (${exports.getDuration(data.duration)})`,
-				timestamp: new Date(),
 				color: 0xFF0000,
 				image: { url: `https://i.ytimg.com/vi/${data.id}/hqdefault.jpg` }
 			};
+		} else if(type === "error") {
+			embed = {
+				title: "Recieved a Error! :error:",
+				description: data.stack || data,
+				footer: { text: "Please report this to the Support Server" }
+			};
 		}
+
 		this.musicChannel.createMessage({ embed: embed });
 	}
 }
@@ -187,7 +193,7 @@ exports.Manager = MusicManager;
 
 exports.getManager = (guild) => {
 	if(guild.id) guild = guild.id;
-	return managers[guild];
+	return exports.managers[guild];
 };
 
 exports.getDuration = (seconds) => {

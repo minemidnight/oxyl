@@ -13,7 +13,7 @@ function isKickable(member) {
 }
 
 var command = new Command("kick", (message, bot) => {
-	var kickPerms = message.guild.members.get(bot.user.id).permisssion.has("kickMembers");
+	var kickPerms = message.guild.members.get(bot.user.id).permission.has("kickMembers");
 
 	if(!kickPerms) {
 		return "Oxyl does not have permissions to kick.";

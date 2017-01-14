@@ -53,27 +53,27 @@ function createTag(data) {
 	type = tableOrder.find(table => table.toLowerCase().startsWith(type));
 	if(type === "GlobalTags") {
 		framework.dbQuery(`INSERT INTO \`${type}\`(\`CREATOR\`, \`NAME\`, \`CREATED_AT\`, \`CONTENT\`)` +
-		`VALUES ('${data.creator}','${data.name}','${data.createdAt}', '${data.content}')`);
+		`VALUES ('${data.creator}',${framework.sqlEscape(data.name)},'${data.createdAt}', ${framework.sqlEscape(data.content)})`);
 	} else if(type === "GuildTags" || type === "ChannelTags") {
 		framework.dbQuery(`INSERT INTO \`${type}\`(\`CREATOR\`, \`ID\`, \`NAME\`, \`CREATED_AT\`, \`CONTENT\`)` +
-		`VALUES ('${data.creator}','${data.id}','${data.name}','${data.createdAt}','${data.content}')`);
+		`VALUES ('${data.creator}','${data.id}',${framework.sqlEscape(data.name)},'${data.createdAt}',${framework.sqlEscape(data.content)})`);
 	} else {
 		framework.dbQuery(`INSERT INTO \`${type}\`(\`CREATOR\`, \`NAME\`, \`CREATED_AT\`, \`CONTENT\`)` +
-		`VALUES ('${data.creator}','${data.name}','${data.createdAt}','${data.content}')`);
+		`VALUES ('${data.creator}',${framework.sqlEscape(data.name)},'${data.createdAt}',${framework.sqlEscape(data.content)})`);
 	}
 }
 
 function deleteTag(type, name, message) {
 	type = tableOrder.find(table => table.toLowerCase().startsWith(type));
 	if(type === "GlobalTags") {
-		framework.dbQuery(`DELETE FROM \`${type}\` WHERE \`NAME\` = '${name}'`);
+		framework.dbQuery(`DELETE FROM \`${type}\` WHERE \`NAME\` = ${framework.sqlEscape(name)}`);
 	} else if(type === "GuildTags" || type === "ChannelTags") {
 		let id = type === "GuildTags" ? message.guild.id : message.channel.id;
-		framework.dbQuery(`DELETE FROM \`${type}\` WHERE \`NAME\` = '${name}' AND \`ID\` = '${id}'`);
+		framework.dbQuery(`DELETE FROM \`${type}\` WHERE \`NAME\` = ${framework.sqlEscape(name)} AND \`ID\` = '${id}'`);
 	} else if(type === "UserTags") {
-		framework.dbQuery(`DELETE FROM \`${type}\` WHERE \`NAME\` = '${name}' AND \`CREATOR\` = '${message.author.id}'`);
+		framework.dbQuery(`DELETE FROM \`${type}\` WHERE \`NAME\` = ${framework.sqlEscape(name)} AND \`CREATOR\` = '${message.author.id}'`);
 	} else if(type === "UnlistedTags") {
-		framework.dbQuery(`DELETE FROM \`${type}\` WHERE \`NAME\` = '${name}'`);
+		framework.dbQuery(`DELETE FROM \`${type}\` WHERE \`NAME\` = ${framework.sqlEscape(name)}`);
 	}
 }
 
@@ -173,6 +173,7 @@ function parseTag(tag, message) {
 		.replace(/@here/g, "@\u200Bhere")
 		.replace(/&lb;/g, "{")
 		.replace(/&rb;/g, "}");
+		console.log(tag);
 		resolve(tag);
 	});
 }
@@ -377,14 +378,14 @@ var command = new Command("tag", (message, bot) => {
 				addUse(tag.TYPE, tag.NAME, message);
 				channel.createMessage(parsed)
 				.catch(() => channel.createMessage("Error sending tag -- no content or too long?"));
-			}).catch(channel.createMessage);
+			}).catch(err => channel.createMessage(err));
 		}).catch(() => {
 			channel.createMessage("No tag found");
 		});
 	}
 }, {
 	guildOnly: true,
-	cooldown: 5000,
+	cooldown: 2500,
 	type: "default",
 	aliases: ["t", "tags"],
 	description: "Create, delete, display, test or list tags (view http://minemidnight.work/tags)",
@@ -759,7 +760,7 @@ const tagParser = {
 	regex: args => new RegExp(args[1], args[3] || "").exec(args[0])[args[2]],
 	repeat: args => args[0].repeat(parseInt(args[1])),
 	replace: args => args[0].replace(args[1], args[2]),
-	replaceall: args => args[0].replace(new RegExp(framework.escapeRegex(args[1])), args[2]),
+	replaceall: args => args[0].replace(new RegExp(framework.escapeRegex(args[1]), "g"), args[2]),
 	replaceregex: args => args[0].replace(new RegExp(args[1], args[3] || ""), args[2]),
 	roles: args => args[0].roles,
 	round: args => Math.round(parseFloat(args[0])),
