@@ -26,9 +26,9 @@
 	<meta name="author" content="minemidnight" />
 	<meta property="og:title" content="Oxyl User Profiles" />
 	<meta property="og:site_name" content="Oxyl" />
-	{{#if user}}
-	<meta property="og:description" content="Profile for {{user.username}}" />
-	<meta property="og:image" content="{{user.avatar}}" />
+	{{#if viewUser}}
+	<meta property="og:description" content="Profile for {{viewUser.username}}" />
+	<meta property="og:image" content="{{viewUser.avatarURL}}" />
 	{{else}}
 	<meta property="og:description" content="A multipurpose discord bot with with features from music to moderation" />
 	<meta property="og:image" content="assets/images/oxyl-logo.jpg" />
