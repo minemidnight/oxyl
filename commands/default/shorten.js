@@ -5,14 +5,11 @@ const Oxyl = require("../../oxyl.js"),
 const config = framework.config;
 googl.setKey(config.private.googleKey);
 
-var command = new Command("shorten", (message, bot) => {
-	var editMsg = message.channel.createMessage("`Shortening Link...`");
-	googl.shorten(message.args[0], { quotaUser: message.author.id }).then((shortUrl) => {
-		Promise.resolve(editMsg).then(msg => {
-			msg.edit(`Shortened link: ${shortUrl}`);
-		});
-	});
-	return false;
+var command = new Command("shorten", async (message, bot) => {
+	message.channel.startTyping();
+
+	let shortUrl = await googl.shorten(message.args[0], { quotaUser: message.author.id });
+	return `Shortened link: ${shortUrl}`;
 }, {
 	type: "default",
 	description: "Shorten a link using goo.gl",

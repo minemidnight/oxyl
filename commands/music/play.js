@@ -4,60 +4,44 @@ const music = require("../../modules/music.js"),
 	framework = require("../../framework.js");
 const ytReg = framework.config.options.music.youtubeRegex;
 
-var cancelFilter = (newMsg, oldMsg) => {
-	if(newMsg.author.id === oldMsg.author.id && newMsg.content.toLowerCase() === "cancel") {
-		return true;
-	} else if(newMsg.author.id === oldMsg.author.id && newMsg.content.toLowerCase() === "continue") {
-		return true;
-	} else {
-		return false;
-	}
+let cancelFilter = (newMsg, oldMsg) => {
+	if(newMsg.author.id !== newMsg.author.id) return false;
+	else if(newMsg.content.toLowerCase() === "cancel") return true;
+	else if(newMsg.content.toLowerCase() === "continue") return true;
+	else return false;
 };
 
-function handleInlineSearch(message, editMsg, res) {
-	return new Promise((resolve, reject) => {
-		if(res === "NO_RESULTS") {
-			Promise.resolve(editMsg).then(msg => {
-				msg.edit(`No results found`)
-				.then(resolve);
-			});
-		} else {
-			Promise.resolve(editMsg).then(msg => {
-				music.videoInfo(res).then(info => {
-					msg.edit(`Adding __${info.title}__ (<http://youtube.com/watch?v=${info.id}>) to **${message.guild.name}**'s queue.`)
-					.then(resolve);
-				});
-			});
-		}
-	});
-}
-
-function playCmdProcess(message) {
-	let editMsg, query = message.argsPreserved[0];
-
+async function playCmdProcess(message) {
+	let msg, query = message.argsPreserved[0];
 	let type = music.ytType(query);
-	return new Promise((resolve, reject) => {
-		if(type === "NONE") {
-			editMsg = message.channel.createMessage(`Searching \`${query}\` then playing result`);
-			music.searchVideo(query).then(res => {
-				handleInlineSearch(message, editMsg, res)
-				.then(resolve);
-			});
-		} else if(type === "PLAYLIST") {
-			message.channel.createMessage(`Adding playlist to queue: \`${query}\``)
-			.then(resolve);
-		} else if(type === "VIDEO") {
-			message.channel.createMessage(`Getting video title of: \`${query}\``).then(msg => {
-				music.videoInfo(query).then(info => {
-					msg.edit(`Adding __${info.title}__ (<http://youtube.com/watch?v=${info.id}>) to **${message.guild.name}**'s queue.`)
-					.then(resolve);
-				}).catch(reason => "Failed to get video info");
-			});
+
+	if(type === "NONE") {
+		msg = await message.channel.createMessage(`Searching \`${query}\` then playing result`);
+		let searched = await music.searchVideo(query);
+
+		if(searched === "NO_RESULTS") {
+			return await msg.edit(`No results found`);
+		} else {
+			let info = await music.videoInfo(searched);
+			return await msg.edit(`Adding __${info.title}__ (<http://youtube.com/watch?v=${info.id}>) to **${message.guild.name}**'s queue.`);
 		}
-	});
+	} else if(type === "PLAYLIST") {
+		return await message.channel.createMessage(`Adding playlist to queue: \`${query}\``);
+	} else if(type === "VIDEO") {
+		msg = await message.channel.createMessage(`Getting video title of: \`${query}\``);
+		let info;
+		try {
+			info = await music.videoInfo(query);
+			return await msg.edit(`Adding __${info.title}__ (<http://youtube.com/watch?v=${info.id}>) to **${message.guild.name}**'s queue.`);
+		} catch(err) {
+			return await msg.edit("Failed to get video info");
+		}
+	} else {
+		return message.channel.sendMessage("Unknown error");
+	}
 }
 
-var command = new Command("play", (message, bot) => {
+var command = new Command("play", async (message, bot) => {
 	let voiceChannel, editMsg, manager = music.getManager(message.guild);
 	if(message.member && message.member.voiceState && message.member.voiceState.channelID) {
 		voiceChannel = message.guild.channels.get(message.member.voiceState.channelID);
@@ -65,11 +49,8 @@ var command = new Command("play", (message, bot) => {
 		voiceChannel = undefined;
 	}
 
-	if(!voiceChannel) {
-		return "You are not in a voice channel";
-	} else if(!manager) {
-		manager = new music.Manager(message.guild);
-	}
+	if(!voiceChannel) return "You are not in a voice channel";
+	else if(!manager) manager = new music.Manager(message.guild);
 
 	if(manager && manager.connection && !manager.voiceCheck(message.member)) {
 		return "You must be in the music channel to run this command";
@@ -78,37 +59,33 @@ var command = new Command("play", (message, bot) => {
 	} else if(voiceChannel && !voiceChannel.permissionsOf(bot.user.id).has("voiceSpeak")) {
 		return "I cannot speak in that channel";
 	} else {
-		playCmdProcess(message).then(msg => {
-			var type = music.ytType(msg.content);
-			let id = music.ytID(msg.content);
-			if(id === "INVALID_URL" || type === "NONE") return;
+		let msg = await playCmdProcess(message);
+		var type = music.ytType(msg.content);
+		let id = music.ytID(msg.content);
+		if(id === "INVALID_URL" || type === "NONE") return "Unknown error";
 
-			msg.edit(`${msg.content}\n\n*Reply with cancel in the next 10 seconds or the command will be processed, or continue to play now*`);
-			framework.awaitMessages(msg.channel, newMsg => cancelFilter(newMsg, message), { maxMatches: 1, time: 10000 })
-			.then(responses => {
-				if(responses && responses.length >= 1 && responses[0].content.toLowerCase() === "cancel") {
-					msg.edit(`Cancelled play command`);
-				} else {
-					if(!manager.connection) {
-						manager.connect(voiceChannel).then(connection => {
-							manager.addQueue(id);
-						});
-					} else {
-						manager.addQueue(id);
-					}
+		await msg.edit(`${msg.content}\n\n*Reply with cancel in the next 10 seconds or the command will be processed, or continue to play now*`);
+		let responses = await framework.awaitMessages(msg.channel, newMsg => cancelFilter(newMsg, message), { maxMatches: 1, time: 10000 });
 
-					if(type === "PLAYLIST") {
-						msg.edit(`Added playlist to **${message.guild.name}**'s queue`);
-					} else if(type === "VIDEO") {
-						music.videoInfo(id).then(info => {
-							msg.edit(`Added __${info.title}__ to **${message.guild.name}**'s queue`);
-						});
-					}
-				}
-			});
-		});
+		if(responses && responses.length >= 1 && responses[0].content.toLowerCase() === "cancel") {
+			msg.edit(`Cancelled play command`);
+		} else {
+			if(!manager.connection) {
+				await manager.connect(voiceChannel);
+				manager.addQueue(id);
+			} else {
+				manager.addQueue(id);
+			}
+
+			if(type === "PLAYLIST") {
+				msg.edit(`Added playlist to **${message.guild.name}**'s queue`);
+			} else if(type === "VIDEO") {
+				let info = await music.videoInfo(id);
+				msg.edit(`Added __${info.title}__ to **${message.guild.name}**'s queue`);
+			}
+		}
+		return false;
 	}
-	return false;
 }, {
 	guildOnly: true,
 	type: "music",

@@ -5,7 +5,7 @@ const express = require("express"),
 const router = express.Router(); // eslint-disable-line new-cap
 const tokens = main.tokens;
 
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
 	let ip = main.getIp(req);
 	let data = {
 		client_id: framework.config.botid, // eslint-disable-line camelcase

@@ -11,56 +11,67 @@ let settings = [{ name: "prefix", type: "text" },
 exports.settings = settings;
 settings = settings.filter(setting => !setting.disabled);
 
-function handleConfig(message, args) {
-	return new Promise((resolve, reject) => {
-		if(!args || !args[0] || args[0].toLowerCase() === "help") {
-			resolve("Provide what setting to see, set or reset, via `setting get <name>,`" +
+async function handleConfig(message, args) {
+	if(!args || !args[0] || args[0].toLowerCase() === "help") {
+		return "Provide what setting to see, set or reset, via `setting get <name>`," +
 			"`setting set <name> <value>` or `setting reset <name>`, otherwise view" +
-			"`settings list` for a list of settings");
-		} else if(args[0].toLowerCase() === "list") {
-			resolve(`All Settings: ${settings.map(setting => `\`${setting.name}\``).join(", ")}`);
-		} else if(args[0].toLowerCase() === "get") {
-			let setting = settings.find(set => set.name === args[1].toLowerCase());
-			if(!setting) {
-				resolve("Invalid setting! Setting not found.");
-				return;
-			} else {
-				framework.getSetting(message.guild, setting.name)
-				.then(val => resolve(`Setting \`${setting.name}\` is \`${val}\``))
-				.catch(() => resolve(`Setting \`${setting.name}\` is not set`));
-			}
-		} else if(args[0].toLowerCase() === "reset") {
-			let setting = settings.find(set => set.name === args[1].toLowerCase());
-			if(!setting) {
-				resolve("Invalid setting! Setting not found.");
-				return;
-			} else {
-				framework.getSetting(message.guild, setting.name)
-				.then(val => {
-					framework.resetSetting(message.guild, setting.name);
-					resolve(`Setting \`${setting.name}\` reset`);
-				})
-				.catch(() => resolve(`Setting \`${setting.name}\` is not set`));
-			}
-		} else if(args[0].toLowerCase() === "set") {
-			let setting = settings.find(set => set.name === args[1].toLowerCase());
-			if(!setting) {
-				resolve("Invalid setting! Setting not found.");
-				return;
-			} else {
-				let value = message.argsPreserved[0];
-				value = value.substring(value.toLowerCase().indexOf(setting.name) + setting.name.length + 1);
-				value = configTypes[setting.type].validate(message.guild, value);
-				if(value === null) {
-					resolve(`Invalid input given -- please provide ${configTypes[setting.type].info}`);
-				} else {
-					framework.setSetting(message.guild, setting.name, value);
-					resolve(`Set \`${setting.name}\` to \`${value}\` (success!)`);
-				}
-			}
+			"`settings list` for a list of settings";
+	} else if(args[0].toLowerCase() === "list") {
+		return `All Settings: ${settings.map(setting => `\`${setting.name}\``).join(", ")}`;
+	} else if(args[0].toLowerCase() === "get") {
+		let setting = settings.find(set => set.name === args[1].toLowerCase());
+		if(!setting) return "Invalid setting! Setting not found.";
+
+		let value;
+		try {
+			value = await framework.getSetting(message.guild, setting.name);
+			return `Setting \`${setting.name}\` is \`${value}\``;
+		} catch(err) {
+			return `Setting \`${setting.name}\` is not set`;
 		}
-	});
+	} else if(args[0].toLowerCase() === "reset") {
+		let setting = settings.find(set => set.name === args[1].toLowerCase());
+		if(!setting) return "Invalid setting! Setting not found.";
+
+		let value;
+		try {
+			value = await framework.getSetting(message.guild, setting.name);
+			framework.resetSetting(message.guild, setting.name);
+			return `Setting \`${setting.name}\` reset`;
+		} catch(err) {
+			return `Setting \`${setting.name}\` is not set`;
+		}
+	} else if(args[0].toLowerCase() === "set") {
+		let setting = settings.find(set => set.name === args[1].toLowerCase());
+		if(!setting) return "Invalid setting! Setting not found.";
+
+		let value = message.argsPreserved[0];
+		value = value.substring(value.toLowerCase().indexOf(setting.name) + setting.name.length + 1);
+		value = configTypes[setting.type].validate(message.guild, value);
+
+		if(value === null) return `Invalid input given -- please provide ${configTypes[setting.type].info}`;
+		framework.setSetting(message.guild, setting.name, value);
+		return `Set \`${setting.name}\` to \`${value}\` (success!)`;
+	} else {
+		return "Invalid argument -- view `settings help`";
+	}
 }
+
+var command = new Command("settings", async (message, bot) => {
+	let args = message.argsPreserved[0].split(" ");
+	return await handleConfig(message, args);
+}, {
+	cooldown: 2500,
+	guildOnly: true,
+	type: "guild owner",
+	aliases: ["setting"],
+	description: "Configurate Oxyl's settings per guild",
+	args: [{
+		type: "text",
+		label: "help|list|get <setting>|set <setting>",
+		optional: true
+	}]
+});
 
 const configTypes = {
 	textChannel: {
@@ -133,19 +144,3 @@ const configTypes = {
 	}
 };
 exports.configTypes = configTypes;
-
-var command = new Command("settings", (message, bot) => {
-	let args = message.argsPreserved[0].split(" ");
-	handleConfig(message, args)
-	.then(val => message.channel.createMessage(val));
-}, {
-	cooldown: 2500,
-	guildOnly: true,
-	type: "guild owner",
-	description: "Configurate Oxyl's settings per guild",
-	args: [{
-		type: "text",
-		label: "help|list|get <setting>|set <setting>",
-		optional: true
-	}]
-});

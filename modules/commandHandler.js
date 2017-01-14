@@ -5,18 +5,17 @@ const validator = require("../modules/commandArgs.js"),
 const prefixes = {};
 exports.prefixes = prefixes;
 // wait for connection
-setTimeout(() => {
-	framework.dbQuery("SELECT * FROM `Settings` WHERE `NAME` = 'prefix'").then(prefixArray => {
-		prefixArray.forEach(prefix => {
-			prefixes[prefix.ID] = prefix.VALUE;
-		});
+setTimeout(async () => {
+	let prefixArray = await framework.dbQuery("SELECT * FROM `Settings` WHERE `NAME` = 'prefix'");
+	prefixArray.forEach(prefix => {
+		prefixes[prefix.ID] = prefix.VALUE;
 	});
 }, 2500);
 
 const bot = Oxyl.bot,
 	commands = Oxyl.commands;
 
-bot.on("messageCreate", (message) => {
+bot.on("messageCreate", async (message) => {
 	Oxyl.siteScripts.website.messageCreate(message);
 	if(message.author.bot) return;
 	let guild = message.guild;
@@ -69,55 +68,67 @@ bot.on("messageCreate", (message) => {
 	message.argsUnparsed = arguments;
 	message.argsPreserved = [];
 
-	validateArgs(message, command)
-		.then(newMsg => {
-			message = newMsg;
+	try {
+		var validated = await validateArgs(message, command);
 
-			message.args = message.argsPreserved.map(ele => {
-				if(typeof ele === "string") return ele.toLowerCase();
-				else return ele;
-			});
+		message = validated;
+		message.args = message.argsPreserved.map(ele => {
+			if(typeof ele === "string") return ele.toLowerCase();
+			else return ele;
+		});
 
-			try {
-				var result = command.run(message);
-			} catch(error) {
-				framework.consoleLog(`Failed command ${command.name} (${command.type})\n` +
-				`**Error:** ${framework.codeBlock(error.stack)}`, "debug");
-				message.channel.createMessage("Bot error when executing command -- error sent to Support Server");
-			} finally {
-				if(result && result.length > 2000 && !result.includes("\n")) message.channel.createMessage("Message exceeds 2000 characters :(");
-				else if(result) message.channel.createMessage(result);
+		try {
+			var result = await command.run(message);
+
+			msg = { content: "" };
+			let file;
+
+			if(Array.isArray(result)) {
+				msg.content = result[0];
+				file = result[1];
+			} else if(typeof result === "object") {
+				msg = result;
+			} else if(result) {
+				msg.content = result;
+			} else {
+				msg = false;
 			}
-		}).catch(reason => { if(reason) message.channel.createMessage(reason); });
+
+			if(msg) {
+				msg = msg.content.substring(0, 2000);
+				try {
+					var resultmsg = await message.channel.createMessage(msg, file || null);
+				} catch(err) {
+					message.channel.createMessage("Error sending message -- please contact Support");
+				}
+			}
+		} catch(error) {
+			framework.consoleLog(`Failed command ${command.name} (${command.type})\n` +
+				`**Error:** ${framework.codeBlock(error.stack)}`, "debug");
+			message.channel.createMessage("Bot error when executing command -- error sent to Support Server");
+		}
+	} catch(err) {
+		message.channel.createMessage(err.toString().substring(6));
+	}
 });
 
-function checkArg(input, arg, message) {
-	return new Promise((resolve, reject) => {
-		if(!input && arg.optional) resolve(input);
-		if(!input && arg.type !== "custom") {
-			reject(`No value given for ${arg.label} (type: ${arg.type})`);
-			return;
-		}
-
-		validator.test(input, arg, message)
-		.then(value => resolve(value))
-		.catch(reason => reject(reason));
-	});
+async function checkArg(input, arg, message) {
+	if(!input && arg.optional) {
+		return input;
+	} else if(!input && arg.type !== "custom") {
+		throw new Error(`No value given for ${arg.label} (type: ${arg.type})`);
+	} else {
+		return await validator.test(input, arg, message);
+	}
 }
 
-function validateArgs(message, command, index) {
-	if(index === undefined) index = 0;
-	return new Promise((resolve, reject) => {
-		if(index >= command.args.length) {
-			resolve(message);
-			return;
-		}
-
-		checkArg(message.argsUnparsed[index], command.args[index], message).then(newArg => {
-			message.argsPreserved[index] = newArg;
-			validateArgs(message, command, index + 1)
-			.then(res => resolve(res))
-			.catch(err => reject(err));
-		}).catch(reason => message.channel.createMessage(`${reason}\nCommand terminated.`));
-	});
+async function validateArgs(message, command, index = 0) {
+	if(index >= command.args.length) return message;
+	try {
+		var newArg = await checkArg(message.argsUnparsed[index], command.args[index], message);
+		message.argsPreserved[index] = newArg;
+		return await validateArgs(message, command, index + 1); // eslint-disable-line no-unsafe-finally
+	} catch(err) {
+		throw new Error(`${err}\nCommand terminated`);
+	}
 }

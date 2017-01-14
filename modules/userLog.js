@@ -3,27 +3,27 @@ const Oxyl = require("../oxyl.js"),
 const bot = Oxyl.bot,
 	parseTag = Oxyl.cmdScripts.tags.parseTag;
 
-function userLog(guild, member, type) {
-	framework.getSetting(guild, "userlog")
-	.then(channel => {
-		if(!guild.channels.has(channel)) return;
-		framework.getSetting(guild, type)
-		.then(tag => {
-			let fakemsg = {
-				guild: guild,
-				author: member.user,
-				member: member,
-				channel: guild.channels.get(channel),
-				args: [""],
-				argsPreserved: [""],
-				tagVars: []
-			};
+async function userLog(guild, member, type) {
+	try {
+		let channel = await framework.getSetting(guild, "userlog");
+		let tag = framework.getSetting(guild, type);
 
-			parseTag(tag, fakemsg).then(parsed => {
-				bot.createMessage(channel, parsed).catch();
-			}).catch();
-		}).catch();
-	}).catch();
+		if(!guild.channels.has(channel)) return;
+		let fakemsg = {
+			guild: guild,
+			author: member.user,
+			member: member,
+			channel: guild.channels.get(channel),
+			args: [""],
+			argsPreserved: [""],
+			tagVars: []
+		};
+
+		let parsed = parseTag(tag, fakemsg);
+		bot.createMessage(channel, parsed);
+	} catch(err) {
+		return;
+	}
 }
 
 bot.on("guildMemberAdd", (guild, member) => {

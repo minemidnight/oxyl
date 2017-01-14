@@ -3,20 +3,16 @@ const Oxyl = require("../../oxyl.js"),
 	framework = require("../../framework.js"),
 	math = require("mathjs");
 
-var command = new Command("math", (message, bot) => {
+var command = new Command("math", async (message, bot) => {
 	let result;
-
 	try {
 		result = math.eval(message.content);
 	} catch(error) {
 		result = undefined;
 	}
 
-	if(isNaN(result)) {
-		return "Invalid Calculation Expression";
-	} else {
-		return `**Result:** ${result}`;
-	}
+	if(isNaN(result)) return "Invalid Calculation Expression";
+	else return `**Result:** ${result}`;
 }, {
 	type: "default",
 	aliases: ["calc", "calculate"],

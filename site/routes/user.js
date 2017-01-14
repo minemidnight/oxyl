@@ -4,8 +4,8 @@ const express = require("express"),
 	Oxyl = require("../../oxyl.js");
 const router = express.Router(); // eslint-disable-line new-cap
 
-router.get("*", (req, res) => {
-	let ip = main.getIp(req), context = {};
+router.get("*", async (req, res) => {
+	let ip = main.getIp(req), data = {};
 	let user = req.path.substring(1);
 
 	if(Oxyl.bot.users.has(user)) {
@@ -13,23 +13,15 @@ router.get("*", (req, res) => {
 		user.username = user.username;
 		user.avatar = user.avatarURL;
 		user.guildCount = Oxyl.bot.guilds.filter(guild => guild.members.has(user.id));
-		context.viewUser = user;
+		data.viewUser = user;
 
 		if(main.tokens[ip]) {
-			main.getInfo(main.tokens[ip], "users/@me")
-			.then(loggedUser => {
-				if(loggedUser.id === user.id) context.desc = true;
-				main.parseHB("user", req, context)
-				.then(hbs => res.send(hbs));
-			});
-		} else {
-			main.parseHB("user", req, context)
-			.then(hbs => res.send(hbs));
+			let loggedUser = await main.getInfo(main.tokens[ip], "users/@me");
+			if(loggedUser.id === user.id) data.desc = true;
 		}
-	} else {
-		main.parseHB("user", req, context)
-		.then(hbs => res.send(hbs));
 	}
+
+	res.send(await main.parseHB("user", req, data));
 });
 
 module.exports = router;

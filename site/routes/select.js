@@ -4,29 +4,18 @@ const express = require("express"),
 	Oxyl = require("../../oxyl.js");
 const router = express.Router(); // eslint-disable-line new-cap
 
-router.get("/", (req, res) => {
-	let ip = main.getIp(req), context = {};
+router.get("/", async (req, res) => {
+	let ip = main.getIp(req), data = {};
 	if(main.tokens[ip]) {
-		main.getInfo(main.tokens[ip], "users/@me/guilds")
-		.then(guilds => {
-			guilds = guilds.filter(guild => Oxyl.bot.guilds.has(guild.id));
-			guilds.forEach(guild => {
-				guild.subname = guild.name.split(" ").map(str => str.charAt(0)).join("");
-			});
-			context.guilds = guilds;
-
-			main.parseHB("select", req, context)
-			.then(hbs => {
-				res.send(hbs);
-			});
+		let guilds = await main.getInfo(main.tokens[ip], "users/@me/guilds");
+		guilds = guilds.filter(guild => Oxyl.bot.guilds.has(guild.id));
+		guilds.forEach(guild => {
+			guild.subname = guild.name.split(" ").map(str => str.charAt(0)).join("");
 		});
-	} else {
-		main.parseHB("select", req)
-		.then(hbs => {
-			res.send(hbs);
-			res.end();
-		});
+		data.guilds = guilds;
 	}
+
+	res.send(await main.parseHB("select", req, data));
 });
 
 module.exports = router;

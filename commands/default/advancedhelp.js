@@ -3,7 +3,7 @@ const Oxyl = require("../../oxyl.js"),
 	framework = require("../../framework.js");
 const commands = Oxyl.commands;
 
-var command = new Command("advancedhelp", (message, bot) => {
+var command = new Command("advancedhelp", async (message, bot) => {
 	let helpMsg = "**Advanced Help**\nPrefix: @oxyl or oxyl";
 
 	for(let cmdType in commands) {
@@ -19,11 +19,8 @@ var command = new Command("advancedhelp", (message, bot) => {
 		}
 	}
 
-	message.author.getDMChannel().then(channel => {
-		framework.splitParts(helpMsg).forEach(msg => {
-			channel.createMessage(msg);
-		});
-	});
+	let dm = await message.author.getDMChannel();
+	framework.splitParts(helpMsg).forEach(msg => dm.createMessage(msg));
 	return "Messaging you Oxyl's Advanced Help!";
 }, {
 	type: "default",

@@ -4,8 +4,8 @@ const express = require("express"),
 	Oxyl = require("../../oxyl.js");
 const router = express.Router(); // eslint-disable-line new-cap
 
-router.get("*", (req, res) => {
-	let ip = main.getIp(req), context = {};
+router.get("*", async (req, res) => {
+	let ip = main.getIp(req), data = {};
 	let guild = req.path.substring(1);
 
 	if(Oxyl.bot.guilds.has(guild)) {
@@ -17,23 +17,15 @@ router.get("*", (req, res) => {
 		guild.botPercent = ((guild.botCount / guild.memberCount) * 100).toFixed(2);
 		guild.userCount = guild.memberCount - guild.botCount;
 		guild.botPercent = ((guild.userCount / guild.memberCount) * 100).toFixed(2);
-		context.guild = guild;
+		data.guild = guild;
 
 		if(main.tokens[ip]) {
-			main.getInfo(main.tokens[ip], "users/@me")
-			.then(user => {
-				if(framework.guildLevel(guild.members.get(user.id)) >= 1) context.panel = true;
-				main.parseHB("guild", req, context)
-				.then(hbs => res.send(hbs));
-			});
-		} else {
-			main.parseHB("guild", req, context)
-			.then(hbs => res.send(hbs));
+			let user = await main.getInfo(main.tokens[ip], "users/@me");
+			if(framework.guildLevel(guild.members.get(user.id)) >= 1) data.panel = true;
 		}
-	} else {
-		main.parseHB("guild", req, context)
-		.then(hbs => res.send(hbs));
 	}
+
+	res.send(await main.parseHB("guild", req, data));
 });
 
 module.exports = router;

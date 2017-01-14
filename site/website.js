@@ -135,46 +135,36 @@ for(let script in routes) {
 	}
 }
 
-exports.getInfo = (token, path) => {
+exports.getInfo = async (token, path) => {
 	let url = `https://discordapp.com/api/${path}`;
-	return new Promise((resolve, reject) => {
-		if(Date.now() - token.time >= 604800) {
-			refreshToken(token)
-			.then(newToken => exports.getInfo(newToken, path).then(resolve).catch(reject));
-		}	else {
-			framework.getContent(url, { headers: { Authorization: `Bearer ${token.token}` } })
-			.then(body => resolve(JSON.parse(body)));
-		}
-	});
+	if(Date.now() - token.time >= 604800) token = await refreshToken(token);
+
+	let body = await framework.getContent(url, { headers: { Authorization: `Bearer ${token.token}` } });
+	return JSON.parse(body);
 };
 
-function refreshToken(token) {
-	return new Promise((resolve, reject) => {
-		let ip = token.ip;
-		let data = {
-			refresh_token: token.refresh, // eslint-disable-line camelcase
-			grant_type: "refresh_token" // eslint-disable-line camelcase
-		};
+async function refreshToken(token) {
+	let ip = token.ip;
+	let data = {
+		refresh_token: token.refresh, // eslint-disable-line camelcase
+		grant_type: "refresh_token" // eslint-disable-line camelcase
+	};
 
-		let base64 = new Buffer(`${framework.config.botid}:${framework.config.private.secret}`).toString("base64");
-		request.post({
-			url: "https://discordapp.com/api/oauth2/token",
-			headers: { Authorization: `Basic ${base64}` },
-			form: data
-		}, (err, httpResponse, body) => {
-			if(err) {
-				reject(err);
-			} else {
-				body = JSON.parse(body);
-				exports.tokens[ip] = {
-					token: body.access_token,
-					ip: ip,
-					time: Date.now(),
-					refresh: body.refresh_token
-				};
-				resolve(exports.tokens[ip]);
-			}
-		});
+	let base64 = new Buffer(`${framework.config.botid}:${framework.config.private.secret}`).toString("base64");
+	request.post({
+		url: "https://discordapp.com/api/oauth2/token",
+		headers: { Authorization: `Basic ${base64}` },
+		form: data
+	}, (err, httpResponse, body) => {
+		if(err) return new Error(err);
+		body = JSON.parse(body);
+		exports.tokens[ip] = {
+			token: body.access_token,
+			ip: ip,
+			time: Date.now(),
+			refresh: body.refresh_token
+		};
+		return exports.tokens[ip];
 	});
 }
 exports.refreshToken = refreshToken;
@@ -187,19 +177,13 @@ function parseHBRest(hb, context) {
 	return hbs(context);
 }
 
-exports.parseHB = (hb, req, context = {}) => {
+exports.parseHB = async (hb, req, context = {}) => {
 	let ip = exports.getIp(req);
-	return new Promise((resolve, reject) => {
-		if(exports.tokens[ip]) {
-			exports.getInfo(exports.tokens[ip], "users/@me")
-			.then(body => {
-				context.user = body;
-				resolve(parseHBRest(hb, context));
-			});
-		} else {
-			resolve(parseHBRest(hb, context));
-		}
-	});
+	if(exports.tokens[ip]) {
+		let body = await exports.getInfo(exports.tokens[ip], "users/@me");
+		context.user = body;
+	}
+	return parseHBRest(hb, context);
 };
 
 exports.getHTML = (name) => fs.readFileSync(`./site/views/${name}.html`).toString();

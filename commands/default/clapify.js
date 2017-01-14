@@ -2,7 +2,7 @@ const Oxyl = require("../../oxyl.js"),
 	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
 
-var command = new Command("clapify", (message, bot) => {
+var command = new Command("clapify", async (message, bot) => {
 	let replaced = message.argsPreserved[0].replace(/ /g, " :clap: ");
 	return `:clap: ${replaced} :clap:`;
 }, {

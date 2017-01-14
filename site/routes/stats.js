@@ -5,7 +5,7 @@ const express = require("express"),
 	os = require("os");
 const router = express.Router(); // eslint-disable-line new-cap
 
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
 	let totalUsers = 0, bot = Oxyl.bot;
 	bot.guilds.forEach((guild) => {
 		totalUsers += guild.memberCount;
@@ -39,8 +39,7 @@ router.get("/", (req, res) => {
 		}
 	};
 
-	main.parseHB("stats", req, data)
-	.then(hbs => res.send(hbs));
+	res.send(await main.parseHB("stats", req, data));
 });
 
 module.exports = router;

@@ -4,7 +4,7 @@ const Oxyl = require("../../oxyl.js"),
 	fs = require("fs");
 const loadScript = framework.loadScript;
 
-var command = new Command("reload", (message, bot) => {
+var command = new Command("reload", async (message, bot) => {
 	message.content = message.content.toLowerCase();
 	var reload = framework.findFile(["./commands/", "./modules/", "./site/"], message.args[0], "js");
 

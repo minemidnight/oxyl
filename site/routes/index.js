@@ -3,9 +3,8 @@ const express = require("express"),
 	main = require("../website.js");
 const router = express.Router(); // eslint-disable-line new-cap
 
-router.get("/", (req, res) => {
-	main.parseHB("index", req)
-	.then(hbs => res.send(hbs));
+router.get("/", async (req, res) => {
+	res.send(await main.parseHB("index", req));
 });
 
 module.exports = router;

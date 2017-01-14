@@ -2,7 +2,7 @@ const Oxyl = require("../../oxyl.js"),
 	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
 
-var command = new Command("roleme", (message, bot) => {
+var command = new Command("roleme", async (message, bot) => {
 	let eslintfix;
 	return "Unfinished command";
 }, {

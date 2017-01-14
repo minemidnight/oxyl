@@ -3,7 +3,7 @@ const Oxyl = require("../../oxyl.js"),
 	framework = require("../../framework.js");
 const perPage = framework.config.options.commands.serverListPerPage;
 
-var command = new Command("serverlist", (message, bot) => {
+var command = new Command("serverlist", async (message, bot) => {
 	// convert to array
 	let guilds = bot.guilds.map(guild => guild);
 	guilds.sort((a, b) => b.memberCount - a.memberCount);

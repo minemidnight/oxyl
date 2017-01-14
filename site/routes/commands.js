@@ -5,7 +5,7 @@ const express = require("express"),
 	handlebars = require("handlebars");
 const router = express.Router(); // eslint-disable-line new-cap
 
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
 	let data = { commands: {} }, commands = Oxyl.commands;
 	for(let cmdType in commands) {
 		data.commands[cmdType] = [];
@@ -19,8 +19,7 @@ router.get("/", (req, res) => {
 		}
 	}
 
-	main.parseHB("commands", req, data)
-	.then(hbs => res.send(hbs));
+	res.send(await main.parseHB("commands", req, data));
 });
 
 handlebars.registerHelper("listcmds", (commands) => {

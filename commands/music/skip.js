@@ -3,7 +3,7 @@ const music = require("../../modules/music.js"),
 	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
 
-var command = new Command("skip", (message, bot) => {
+var command = new Command("skip", async (message, bot) => {
 	let manager = music.getManager(message.guild);
 	if(!manager) {
 		return "There is currently no music playing";

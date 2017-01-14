@@ -6,7 +6,7 @@ const express = require("express"),
 const router = express.Router(); // eslint-disable-line new-cap
 
 const tagReq = Oxyl.cmdScripts.tags;
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
 	let data = { tags: [] };
 	for(let i of tagReq.sorted) {
 		let tag = tagReq.info[i];
@@ -20,8 +20,7 @@ router.get("/", (req, res) => {
 		});
 	}
 
-	main.parseHB("tags", req, data)
-	.then(hbs => res.send(hbs));
+	res.send(await main.parseHB("tags", req, data));
 });
 
 handlebars.registerHelper("listtags", (tags) => {

@@ -24,14 +24,12 @@ exports.guildLevel = (member) => {
 	else return 0;
 };
 
-exports.getSetting = (guild, setting) => {
+exports.getSetting = async (guild, setting) => {
 	let query = `SELECT \`VALUE\` FROM \`Settings\` WHERE \`ID\` = '${guild.id}' AND \`Name\` = ${exports.sqlEscape(setting)}`;
-	return new Promise((resolve, reject) => {
-		exports.dbQuery(query).then(res => {
-			if(res && res[0]) resolve(res[0].VALUE);
-			else reject();
-		});
-	});
+	let data = exports.dbQuery(query);
+
+	if(data && data[0]) return data[0].VALUE;
+	else throw new Error();
 };
 
 exports.resetSetting = (guild, setting) => {
@@ -39,11 +37,13 @@ exports.resetSetting = (guild, setting) => {
 	if(setting === "prefix") delete Oxyl.modScripts.commandHandler.prefixes[guild.id];
 };
 
-exports.setSetting = (guild, setting, value) => {
-	exports.getSetting(guild, setting)
-	.then(() => exports.dbQuery(`UPDATE \`Settings\` SET \`VALUE\`='${value}' WHERE \`ID\` = '${guild.id}' AND \`Name\` = ${exports.sqlEscape(setting)}`))
-	.catch(() => exports.dbQuery(`INSERT INTO \`Settings\`(\`NAME\`, \`VALUE\`, \`ID\`)` +
-						`VALUES (${exports.sqlEscape(setting)},${exports.sqlEscape(value)},'${guild.id}')`));
+exports.setSetting = async (guild, setting, value) => {
+	try {
+		await exports.getSetting(guild, setting);
+		exports.dbQuery(`UPDATE \`Settings\` SET \`VALUE\`='${value}' WHERE \`ID\` = '${guild.id}' AND \`Name\` = ${exports.sqlEscape(setting)}`);
+	} catch(err) {
+		exports.dbQuery(`INSERT INTO \`Settings\`(\`NAME\`, \`VALUE\`, \`ID\`) VALUES (${exports.sqlEscape(setting)},${exports.sqlEscape(value)},'${guild.id}')`);
+	}
 	if(setting === "prefix") Oxyl.modScripts.commandHandler.prefixes[guild.id] = value;
 };
 
@@ -51,7 +51,7 @@ exports.splitParts = (message) => {
 	if(message.length < 2000) {
 		return [message];
 	} else if(message.indexOf("\n") === -1 || message.indexOf("\n") > 2000) {
-		return new Error("!! Invalid message split attempt -- no new line found or new line past 2000th character");
+		throw new Error("!! Invalid message split attempt -- no new line found or new line past 2000th character");
 	} else {
 		let returnData = [], nth = 1, splitTimes = Math.ceil(message.length / 2000);
 		while(returnData.length < splitTimes) {
@@ -84,11 +84,8 @@ exports.getContent = (link, options = {}) => {
 	options.url = link;
 	return new Promise((resolve, reject) => {
 		request(options, (error, response, body) => {
-			if(!error && response.statusCode === 200) {
-				resolve(body);
-			} else {
-				reject(error);
-			}
+			if(!error && response.statusCode === 200) resolve(body);
+			else reject(error);
 		});
 	});
 };
@@ -223,7 +220,7 @@ class MessageCollector extends EventEmitter {
 	}
 }
 
-exports.awaitMessages = (channel, filter, options) => {
+exports.awaitMessages = async (channel, filter, options) => {
 	const collector = new MessageCollector(channel, filter, options);
 	return new Promise((resolve, reject) => {
 		collector.on("end", (collection, reason) => {

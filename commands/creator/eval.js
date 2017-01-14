@@ -4,20 +4,23 @@ const util = require("util"),
 	framework = require("../../framework.js");
 const config = framework.config;
 
-var command = new Command("eval", (message, bot) => {
+var command = new Command("eval", async (message, bot) => {
 	let guild = message.guild, channel = message.channel, author = message.author;
 	// So the executor can use in eval
 
-	let editMsg = message.channel.createMessage("Executing code...");
+	let msg = await message.channel.createMessage("Executing code...");
 	try {
-		var output = util.inspect(eval(message.argsPreserved[0]), { depth: 0 }).substring(0, 1900);
+		var output = await eval(`(async function (){${message.argsPreserved[0]}})()`);
+		output = util.inspect(output, { depth: 0 }).substring(0, 1900);
 		for(var i in config.private) {
 			output = output.replace(new RegExp(config.private[i], "ig"), "xPRIVATEx");
 		}
-		Promise.resolve(editMsg).then(msg => msg.edit(`:white_check_mark: **Output:** ${framework.codeBlock(output)}`));
+		msg.edit(`:white_check_mark: **Output:** ${framework.codeBlock(output)}`);
 	} catch(error) {
-		Promise.resolve(editMsg).then(msg => msg.edit(`:x: **Error:** ${framework.codeBlock(error)}`));
+		msg.edit(`:x: **Error:** ${framework.codeBlock(error)}`);
 	}
+
+	return false;
 }, {
 	type: "creator",
 	description: "Execute code",

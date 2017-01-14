@@ -3,7 +3,7 @@ const Oxyl = require("../../oxyl.js"),
 	framework = require("../../framework.js");
 const config = framework.config;
 
-var command = new Command("support", () => {
+var command = new Command("support", async (message, bot) => {
 	let inviteLink = config.options.inviteLink;
 	return `Support Guild: https://discord.gg/9wkTDcE\nInvite Link: ${inviteLink}`;
 }, {

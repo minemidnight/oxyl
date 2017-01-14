@@ -4,34 +4,29 @@ const Oxyl = require("../../oxyl.js"),
 	math = require("mathjs");
 
 let tableOrder = ["GlobalTags", "GuildTags", "ChannelTags", "UserTags", "UnlistedTags"];
-function getTag(query, message, table = 0) {
+async function getTag(query, message, table = 0) {
 	let tableName = tableOrder[table], dbQuery;
 
-	return new Promise((resolve, reject) => {
-		if(tableName === "GlobalTags") {
-			dbQuery = `SELECT * FROM \`${tableName}\` WHERE \`NAME\` = '${query}'`;
-		} else if(tableName === "GuildTags" || tableName === "ChannelTags") {
-			let id = tableName === "GuildTags" ? message.guild.id : message.channel.id;
-			dbQuery = `SELECT * FROM \`${tableName}\` WHERE \`NAME\` = '${query}' AND \`ID\` = '${id}'`;
-		} else if(tableName === "UserTags") {
-			dbQuery = `SELECT * FROM \`${tableName}\` WHERE \`NAME\` = '${query}' AND \`CREATOR\` = '${message.author.id}'`;
-		} else if(tableName === "UnlistedTags") {
-			dbQuery = `SELECT * FROM \`${tableName}\` WHERE \`NAME\` = '${query}'`;
-		}
+	if(tableName === "GlobalTags") {
+		dbQuery = `SELECT * FROM \`${tableName}\` WHERE \`NAME\` = '${query}'`;
+	} else if(tableName === "GuildTags" || tableName === "ChannelTags") {
+		let id = tableName === "GuildTags" ? message.guild.id : message.channel.id;
+		dbQuery = `SELECT * FROM \`${tableName}\` WHERE \`NAME\` = '${query}' AND \`ID\` = '${id}'`;
+	} else if(tableName === "UserTags") {
+		dbQuery = `SELECT * FROM \`${tableName}\` WHERE \`NAME\` = '${query}' AND \`CREATOR\` = '${message.author.id}'`;
+	} else if(tableName === "UnlistedTags") {
+		dbQuery = `SELECT * FROM \`${tableName}\` WHERE \`NAME\` = '${query}'`;
+	}
 
-		framework.dbQuery(dbQuery).then(data => {
-			if(data && data[0]) {
-				data[0].TYPE = tableName.substring(0, tableName.indexOf("Tags")).toLowerCase();
-				resolve(data[0]);
-			} else if(table < tableOrder.length - 1) {
-				getTag(query, message, table + 1)
-				.then(resolve)
-				.catch(reject);
-			} else {
-				reject("NO_RESULTS");
-			}
-		});
-	});
+	let data = await framework.dbQuery(dbQuery);
+	if(data && data[0]) {
+		data[0].TYPE = tableName.substring(0, tableName.indexOf("Tags")).toLowerCase();
+		return data[0];
+	} else if(table < tableOrder.length - 1) {
+		return await getTag(query, message, table + 1);
+	} else {
+		throw new Error("NO_RESULTS");
+	}
 }
 
 function addUse(type, name, message) {
@@ -77,11 +72,11 @@ function deleteTag(type, name, message) {
 	}
 }
 
-function getUnlistedTags() {
-	return framework.dbQuery(`SELECT * FROM \`UnlistedTags\``);
+async function getUnlistedTags() {
+	return await framework.dbQuery(`SELECT * FROM \`UnlistedTags\``);
 }
 
-function getTags(message, fullData, table = 0) {
+async function getTags(message, fullData, table = 0) {
 	let tableName = tableOrder[table], dbQuery;
 	if(!fullData) {
 		fullData = {
@@ -92,40 +87,35 @@ function getTags(message, fullData, table = 0) {
 		};
 	}
 
-	return new Promise((resolve, reject) => {
-		if(tableName === "GlobalTags") {
-			dbQuery = `SELECT * FROM \`${tableName}\``;
-		} else if(tableName === "GuildTags" || tableName === "ChannelTags") {
-			let id = tableName === "GuildTags" ? message.guild.id : message.channel.id;
-			dbQuery = `SELECT * FROM \`${tableName}\` WHERE \`ID\` = '${id}'`;
-		} else if(tableName === "UserTags") {
-			dbQuery = `SELECT * FROM \`${tableName}\` WHERE \`CREATOR\` = '${message.author.id}'`;
-		} else {
-			resolve(fullData);
-			return;
-		}
+	if(tableName === "GlobalTags") {
+		dbQuery = `SELECT * FROM \`${tableName}\``;
+	} else if(tableName === "GuildTags" || tableName === "ChannelTags") {
+		let id = tableName === "GuildTags" ? message.guild.id : message.channel.id;
+		dbQuery = `SELECT * FROM \`${tableName}\` WHERE \`ID\` = '${id}'`;
+	} else if(tableName === "UserTags") {
+		dbQuery = `SELECT * FROM \`${tableName}\` WHERE \`CREATOR\` = '${message.author.id}'`;
+	} else {
+		return fullData;
+	}
 
-		framework.dbQuery(dbQuery).then(data => {
-			if(data && data.length >= 1) {
-				let type = tableName.substring(0, tableName.indexOf("Tags")).toLowerCase();
-				data.forEach(dataType => {
-					dataType.TYPE = type;
-				});
-
-				fullData[type] = data;
-			}
-
-			if(table < tableOrder.length - 1) {
-				getTags(message, fullData, table + 1)
-				.then(resolve);
-			} else {
-				resolve(fullData);
-			}
+	let data = await framework.dbQuery(dbQuery);
+	if(data && data.length >= 1) {
+		let type = tableName.substring(0, tableName.indexOf("Tags")).toLowerCase();
+		data.forEach(dataType => {
+			dataType.TYPE = type;
 		});
-	});
+
+		fullData[type] = data;
+	}
+
+	if(table < tableOrder.length - 1) {
+		return await getTags(message, fullData, table + 1);
+	} else {
+		return fullData;
+	}
 }
 
-function parseTag(tag, message) {
+async function parseTag(tag, message) {
 	tag = tag.CONTENT || tag;
 	if(message.args[0].startsWith("test")) {
 		message.argsPreserved = [];
@@ -134,254 +124,231 @@ function parseTag(tag, message) {
 		message.argsPreserved = message.argsPreserved.map(ele => ele.replace(/}/g, "&rb;").replace(/{/g, "&lb;"));
 	}
 	message.tagVars = {};
-	return new Promise((resolve, reject) => {
-		let results = [];
-		while(tag.match(/{[^{}]+}/)) {
-			let originalArg = tag.match(/{[^{}]+}/)[0];
-			let arg = originalArg;
-			let argArray = [], argType;
-			arg = arg.substring(1, arg.length - 1);
-			if(arg.endsWith(":") && !arg.includes("|")) {
-				argType = arg.substring(0, arg.length - 1);
-			} else if(arg.includes(":")) {
-				argType = arg.substring(0, arg.indexOf(":"));
-				arg = arg.substring(arg.indexOf(":") + 1);
-				argArray = arg.includes("|") ? argArray.concat(arg.split("|")) : argArray = [arg];
-			} else {
-				argType = arg;
-			}
 
-			if(results.length >= 1) argArray = results;
-			try {
-				let newArg = tagParser[argType.toLowerCase()](argArray, message);
-				if(typeof newArg === "object" && newArg.tagVars) {
-					message = newArg; newArg = "";
-				} else if(typeof newArg === "object") {
-					results.push(newArg);
-				} else {
-					results = [];
-				}
-
-				tag = tag.replace(originalArg, newArg);
-			} catch(err) {
-				reject(`Error parsing tag at \`${originalArg}\``);
-				return;
-			}
+	let results = [];
+	while(tag.match(/{[^{}]+}/)) {
+		let originalArg = tag.match(/{[^{}]+}/)[0];
+		let arg = originalArg;
+		let argArray = [], argType;
+		arg = arg.substring(1, arg.length - 1);
+		if(arg.endsWith(":") && !arg.includes("|")) {
+			argType = arg.substring(0, arg.length - 1);
+		} else if(arg.includes(":")) {
+			argType = arg.substring(0, arg.indexOf(":"));
+			arg = arg.substring(arg.indexOf(":") + 1);
+			argArray = arg.includes("|") ? argArray.concat(arg.split("|")) : argArray = [arg];
+		} else {
+			argType = arg;
 		}
 
-		tag = tag.replace(/@everyone/g, "@\u200Beveryone")
+		if(results.length >= 1) argArray = results;
+		try {
+			let newArg = await tagParser[argType.toLowerCase()](argArray, message);
+			if(typeof newArg === "object" && newArg.tagVars) {
+				message = newArg;
+				newArg = "";
+			} else if(typeof newArg === "object") {
+				results.push(newArg);
+			} else {
+				results = [];
+			}
+
+			tag = tag.replace(originalArg, newArg);
+		} catch(err) {
+			throw new Error(`Error parsing tag at \`${originalArg}\``);
+		}
+	}
+
+	tag = tag.replace(/@everyone/g, "@\u200Beveryone")
 		.replace(/@here/g, "@\u200Bhere")
 		.replace(/&lb;/g, "{")
 		.replace(/&rb;/g, "}");
-		console.log(tag);
-		resolve(tag);
-	});
+	return tag;
 }
 exports.parseTag = parseTag;
 
-var command = new Command("tag", (message, bot) => {
+var command = new Command("tag", async (message, bot) => {
 	let msg = message.argsPreserved[0];
 	let guild = message.guild, channel = message.channel, user = message.author;
 	if(msg.toLowerCase() === "list") {
-		getTags(message).then(tagTypes => {
-			let tagMsg = "";
-			for(let type in tagTypes) {
-				let tagNames = [];
-				for(let i in tagTypes[type]) {
-					tagNames.push(tagTypes[type][i].NAME);
-				}
-				tagNames.sort();
-
-				tagMsg += `${framework.capitalizeEveryFirst(type)} Tags **(${tagNames.length})**: `;
-				tagMsg += `\`${tagNames.length >= 1 ? tagNames.join("`**,** `") : "None"}\`\n`;
+		let tagTypes = await getTags(message);
+		let tagMsg = "";
+		for(let type in tagTypes) {
+			let tagNames = [];
+			for(let i in tagTypes[type]) {
+				tagNames.push(tagTypes[type][i].NAME);
 			}
+			tagNames.sort();
 
-			tagMsg += "\nThis excludes other users, other channel and other server tags.\n" +
+			tagMsg += `${framework.capitalizeEveryFirst(type)} Tags **(${tagNames.length})**: `;
+			tagMsg += `\`${tagNames.length >= 1 ? tagNames.join("`**,** `") : "None"}\`\n`;
+		}
+
+		tagMsg += "\nThis excludes other users, other channel and other server tags.\n" +
 								"To view unlisted tags, use `tag listu`.";
 
-			message.channel.createMessage(tagMsg);
-		});
+		return tagMsg;
 	} else if(msg.toLowerCase().startsWith("listu")) {
-		getUnlistedTags().then(tags => {
-			let maxPages = Math.ceil(tags.length / 100);
-			let page = parseInt(msg.substring(5).trim()) || 1;
-			if(page > maxPages) page = maxPages;
+		let tags = await getUnlistedTags();
+		let maxPages = Math.ceil(tags.length / 100);
+		let page = parseInt(msg.substring(5).trim()) || 1;
+		if(page > maxPages) page = maxPages;
 
-			let tagMsg = `Found ${tags.length} total unlisted tags.\nPage ${page} of ${maxPages}:`;
+		let tagMsg = `Found ${tags.length} total unlisted tags.\nPage ${page} of ${maxPages}:`;
 
-			if(tags.length > 0) {
-				let tagNames = [];
-				for(let i = 0; i < 100; i++) {
-					let index = ((page - 1) * 100) + i;
-					tagNames.push(tags[index].NAME);
-					if(tags.length - 1 === index || i === 99) break;
-				}
-				tagMsg += `${framework.codeBlock(tagNames.join(","))}`;
-			} else {
-				tagMsg = "No unlisted tags";
+		if(tags.length > 0) {
+			let tagNames = [];
+			for(let i = 0; i < 100; i++) {
+				let index = ((page - 1) * 100) + i;
+				tagNames.push(tags[index].NAME);
+				if(tags.length - 1 === index || i === 99) break;
 			}
+			tagMsg += `${framework.codeBlock(tagNames.join(","))}`;
+		} else {
+			tagMsg = "No unlisted tags";
+		}
 
-			message.channel.createMessage(tagMsg);
-		});
+		return tagMsg;
 	} else if(msg.toLowerCase().startsWith("delete")) {
-		let name = msg.split(" ", 2)[1], deletable;
+		let name = msg.split(" ", 2)[1], deletable, tag;
 		let level = framework.guildLevel(message.member);
-		if(!name) {
-			channel.createMessage("Please provide the name of the tag you'd like to delete, `tag delete [name]`");
-			return;
-		}
+		if(!name) return "Please provide the name of the tag you'd like to delete, `tag delete [name]`";
 		name = name.toLowerCase();
 
-		getTag(name, message).then(tag => {
-			if(level >= 4) {
-				deletable = true;
-			} else if(tag.TYPE === "guild" && level >= 3) {
-				deletable = true;
-			} else if(tag.TYPE === "guild" && level >= 2 && tag.CREATOR === user.id) {
-				deletable = true;
-			} else if(tag.TYPE === "channel" && level >= 2) {
-				deletable = true;
-			} else if(tag.TYPE === "channel" && level >= 1 && tag.CREATOR === user.id) {
-				deletable = true;
-			} else if(tag.CREATOR === user.id) {
-				deletable = true;
-			}
+		try {
+			tag = await getTag(name, message);
+		} catch(err) {
+			return "That tag does not exist";
+		}
 
-			if(!deletable) {
-				channel.createMessage("You can't delete that tag (not enough perms, and not the tag creator)");
-			} else {
-				deleteTag(tag.TYPE, name, message);
-				channel.createMessage("Tag deleted");
-			}
-		}).catch(() => {
-			channel.createMessage("That tag does not exist");
-		});
+		if(level >= 4) deletable = true;
+		else if(tag.TYPE === "guild" && level >= 3) deletable = true;
+		else if(tag.TYPE === "guild" && level >= 2 && tag.CREATOR === user.id) deletable = true;
+		else if(tag.TYPE === "channel" && level >= 2) deletable = true;
+		else if(tag.TYPE === "channel" && level >= 1 && tag.CREATOR === user.id) deletable = true;
+		else if(tag.CREATOR === user.id) deletable = true;
+
+		if(!deletable) {
+			return "You can't delete that tag (not enough perms, and not the tag creator)";
+		} else {
+			deleteTag(tag.TYPE, name, message);
+			return "Tag deleted";
+		}
 	} else if(msg.toLowerCase().startsWith("create")) {
-		let name = msg.split(" ", 2)[1], type;
+		let name = msg.split(" ", 2)[1], type, exists = true, tag;
 		let level = framework.guildLevel(message.member);
-		if(!name) {
-			channel.createMessage("Your tag needs a name, `tag create [name] [content] [type (default user)]`");
-			return;
-		}
+		if(!name) return "Your tag needs a name, `tag create [name] [content] [type (default user)]`";
 		name = name.toLowerCase();
 
-		getTag(name, message).then(tag => {
-			channel.createMessage("That tag already exists. Please delete it, then try again");
-		}).catch(() => {
-			let createData = {
-				creator: user.id,
-				createdAt: Date.now(),
-				name: name
-			};
+		try {
+			tag = await getTag(name, message);
+		} catch(err) {
+			exists = false;
+		}
 
-			if(msg.toLowerCase().endsWith("-global")) {
-				createData.type = "global";
+		if(exists) return "That tag already exists. Please delete it, then try again";
 
-				if(level < 4) {
-					channel.createMessage("You do not have enough permissions to create a global tag");
-					return;
-				}
-			} else if(msg.toLowerCase().endsWith("-guild") || msg.toLowerCase().endsWith("-server")) {
-				createData.type = "guild";
-				createData.id = guild.id;
+		let createData = {
+			creator: user.id,
+			createdAt: Date.now(),
+			name: name
+		};
 
-				if(level < 2) {
-					channel.createMessage("You do not have enough permissions to create a guild tag");
-					return;
-				}
-			} else if(msg.toLowerCase().endsWith("-channel")) {
-				createData.type = "channel";
-				createData.id = channel.id;
+		if(msg.toLowerCase().endsWith("-global")) {
+			createData.type = "global";
 
-				if(level < 1) {
-					channel.createMessage("You do not have enough permissions to create a channel tag");
-					return;
-				}
-			} else if(msg.toLowerCase().endsWith("-unlisted")) {
-				createData.type = "unlisted";
-			} else {
-				createData.type = "user";
-			}
+			if(level < 4) return "You do not have enough permissions to create a global tag, try an unlisted.";
+		} else if(msg.toLowerCase().endsWith("-guild") || msg.toLowerCase().endsWith("-server")) {
+			createData.type = "guild";
+			createData.id = guild.id;
 
-			let content;
-			if(createData.type === "user" && !msg.endsWith("-user")) {
-				content = msg.substring(7 + name.length);
-			} else {
-				content = msg.substring(7 + name.length, msg.lastIndexOf("-"));
-			}
-			content = content.trim();
-			if(!content || content.length === 0) {
-				channel.createMessage("Tag must have content");
-				return;
-			}
+			if(level < 2) return "You do not have enough permissions to create a guild tag";
+		} else if(msg.toLowerCase().endsWith("-channel")) {
+			createData.type = "channel";
+			createData.id = channel.id;
 
-			createData.content = content;
-			createTag(createData);
-			channel.createMessage(`Tag \`${name}\` created (type: \`${createData.type}\`)`);
-		});
+			if(level < 1) return "You do not have enough permissions to create a channel tag";
+		} else if(msg.toLowerCase().endsWith("-unlisted")) {
+			createData.type = "unlisted";
+		} else {
+			createData.type = "user";
+		}
+
+		let content;
+		if(createData.type === "user" && !msg.endsWith("-user")) {
+			content = msg.substring(7 + name.length);
+		} else {
+			content = msg.substring(7 + name.length, msg.lastIndexOf("-"));
+		}
+		content = content.trim();
+		if(!content || content.length === 0) return "Tag must have content";
+
+		createData.content = content;
+		createTag(createData);
+		return `Tag \`${name}\` created (type: \`${createData.type}\`)`;
 	} else if(msg.toLowerCase().startsWith("test")) {
-		if(!message.content) {
-			channel.createMessage("You must provide tag content");
-			return;
+		if(!message.content) return "You must provide tag content";
+
+		let parsed;
+		try {
+			parsed = await parseTag(msg.substring(4).trim(), message);
+		} catch(err) {
+			if(!err) return "Tag failed, no fail reason";
+			else return err;
 		}
 
-		parseTag(msg.substring(4).trim(), message).then(parsed => {
-			channel.createMessage(parsed)
-			.catch(() => channel.createMessage("Error sending tag -- no content or too long?"));
-		}).catch(reason => {
-			if(!reason) channel.createMessage("Tag failed, no fail reason");
-			else channel.createMessage(reason);
-		});
+		return parsed;
 	} else if(msg.toLowerCase().startsWith("raw")) {
-		let name = msg.split(" ", 2)[1];
-		if(!name) {
-			channel.createMessage("Please provide the name of the tag you'd like to see, `tag raw [name]`");
-			return;
-		}
+		let name = msg.split(" ", 2)[1], tag;
+		if(!name) return "Please provide the name of the tag you'd like to see, `tag raw [name]`";
 		name = name.toLowerCase();
 
-		getTag(name, message).then(tag => {
-			channel.createMessage(framework.codeBlock(tag.CONTENT));
-		}).catch(() => {
-			channel.createMessage("No tag found");
-		});
+		try {
+			tag = await getTag(name, message);
+		} catch(err) {
+			return "No tag found";
+		}
+
+		return framework.codeBlock(tag.CONTENT);
 	} else if(msg.toLowerCase().startsWith("info")) {
-		let name = msg.split(" ", 2)[1];
-		if(!name) {
-			channel.createMessage("Please provide the name of the tag you'd like to see, `tag raw [name]`");
-			return;
-		}
+		let name = msg.split(" ", 2)[1], tag;
+		if(!name) return "Please provide the name of the tag you'd like to see, `tag info [name]`";
 		name = name.toLowerCase();
 
-		getTag(name, message).then(tag => {
-			let data = [
-				`Creator: ${framework.unmention(bot.users.get(tag.CREATOR))}`,
-				`Created At: ${framework.formatDate(parseInt(tag.CREATED_AT))}`,
-				`Type: ${framework.capitalizeEveryFirst(tag.TYPE)}`,
-				`Uses: ${tag.USES}`
-			];
+		try {
+			tag = await getTag(name, message);
+		} catch(err) {
+			return "No tag found";
+		}
 
-			channel.createMessage(`Tag **${name}**: ${framework.listConstructor(data)}`);
-		}).catch(() => {
-			channel.createMessage("No tag found");
-		});
+		let data = [
+			`Creator: ${framework.unmention(bot.users.get(tag.CREATOR))}`,
+			`Created At: ${framework.formatDate(parseInt(tag.CREATED_AT))}`,
+			`Type: ${framework.capitalizeEveryFirst(tag.TYPE)}`,
+			`Uses: ${tag.USES}`
+		];
+
+		return `Tag **${name}**: ${framework.listConstructor(data)}`;
 	} else {
-		let name = msg.split(" ", 1)[0];
-		if(!name) {
-			channel.createMessage("Please provide the name of the tag you'd like to see, `tag raw [name]`");
-			return;
-		}
+		let name = msg.split(" ", 1)[0], tag, parsed;
+		if(!name) return "Please provide the name of the tag you'd like to see, `tag [name]`";
 		name = name.toLowerCase();
 
-		getTag(name, message).then(tag => {
-			parseTag(tag, message).then(parsed => {
-				addUse(tag.TYPE, tag.NAME, message);
-				channel.createMessage(parsed)
-				.catch(() => channel.createMessage("Error sending tag -- no content or too long?"));
-			}).catch(err => channel.createMessage(err));
-		}).catch(() => {
-			channel.createMessage("No tag found");
-		});
+		try {
+			tag = await getTag(name, message);
+		} catch(err) {
+			return "No tag found";
+		}
+
+		try {
+			parsed = await parseTag(tag, message);
+		} catch(err) {
+			if(!err) return "Tag failed, no fail reason";
+			else return err;
+		}
+
+		addUse(tag.TYPE, tag.NAME, message);
+		return parsed;
 	}
 }, {
 	guildOnly: true,
@@ -685,33 +652,33 @@ module.exports.info = tagInfo;
 module.exports.sorted = Object.keys(tagInfo).sort();
 
 const tagParser = {
-	abs: args => Math.abs(parseFloat(args[0])),
-	allargs: (args, message) => message.argsPreserved.length >= 0 ? message.argsPreserved.join(" ") : null,
-	arg: (args, message) => {
+	abs: async args => Math.abs(parseFloat(args[0])),
+	allargs: async (args, message) => message.argsPreserved.length >= 0 ? message.argsPreserved.join(" ") : null,
+	arg: async (args, message) => {
 		if(!message.argsPreserved.length >= 0) return null;
 		let argsCombined = "";
 		args.forEach(ele => { argsCombined += message.argsPreserved[ele]; });
 		return argsCombined;
 	},
-	argcount: (args, message) => message.argsPreserved.length,
-	author: (args, message) => message.author,
-	avatar: args => args[0].user ? args[0].user.avatarURL : args[0].avatarURL,
-	capitalize: args => args[0].toString().toUpperCase(),
-	ceil: args => Math.ceil(parseFloat(args[0])),
-	channel: (args, message) => message.channel,
-	charAt: args => args[0].toString().charAt(args[1]),
-	choose: args => args[Math.floor(Math.random() * args.length)],
-	createdat: args => framework.formatDate(args[0].createdAt),
-	discriminator: args => args[0].user ? args[0].user.discriminator : args[0].discriminator,
-	floor: args => Math.floor(parseFloat(args[0])),
-	game: args => args[0].game ? args[0].game.name : "None",
-	getmember: (args, message) => message.guild.members.get(args[0]),
-	getuser: (args, message) => message.guild.members.get(args[0]).user,
-	guild: (args, message) => message.guild,
-	icon: args => args[0].iconURL,
-	id: args => args[0].id,
-	if: args => {
-		if(args.length < 4) return new Error;
+	argcount: async (args, message) => message.argsPreserved.length,
+	author: async (args, message) => message.author,
+	avatar: async args => args[0].user ? args[0].user.avatarURL : args[0].avatarURL,
+	capitalize: async args => args[0].toString().toUpperCase(),
+	ceil: async args => Math.ceil(parseFloat(args[0])),
+	channel: async (args, message) => message.channel,
+	charAt: async args => args[0].toString().charAt(args[1]),
+	choose: async args => args[Math.floor(Math.random() * args.length)],
+	createdat: async args => framework.formatDate(args[0].createdAt),
+	discriminator: async args => args[0].user ? args[0].user.discriminator : args[0].discriminator,
+	floor: async args => Math.floor(parseFloat(args[0])),
+	game: async args => args[0].game ? args[0].game.name : "None",
+	getmember: async (args, message) => message.guild.members.get(args[0]),
+	getuser: async (args, message) => message.guild.members.get(args[0]).user,
+	guild: async (args, message) => message.guild,
+	icon: async args => args[0].iconURL,
+	id: async args => args[0].id,
+	if: async args => {
+		if(args.length < 4) throw new Error;
 		let result;
 		if(args[1] === "<=") {
 			result = args[0] <= args[2];
@@ -732,7 +699,7 @@ const tagParser = {
 		} else if(args[1] === ">") {
 			result = args[0] > args[2];
 		} else {
-			return new Error;
+			throw new Error();
 		}
 
 		if(result) {
@@ -741,32 +708,32 @@ const tagParser = {
 			return args[4] || "";
 		}
 	},
-	int: args => Math.floor(Math.random() * (parseInt(args[1]) - parseInt(args[0]))) + parseInt(args[0]),
-	isnan: args => isNaN(args[0]),
-	length: args => args[0].length,
-	lower: args => args[0].toString().toLowerCase(),
-	math: args => math.eval(args[0]),
-	member: (args, message) => message.member,
-	memberjoinedat: (args, message) => framework.formatDate(args[0].joinedAt),
-	membercount: (args, message) => message.guild.memberCount,
-	mention: args => args[0].mention,
-	name: args => args[0].name,
-	nickname: args => args[0].nick || args[0].user.username,
-	nl: args => "\n",
-	now: args => framework.formatDate(new Date()),
-	num: args => (Math.random() * (parseFloat(args[1]) - parseFloat(args[0]))) + parseFloat(args[0]),
-	parsefloat: args => parseFloat(args[0]),
-	parseint: args => parseInt(args[0]),
-	regex: args => new RegExp(args[1], args[3] || "").exec(args[0])[args[2]],
-	repeat: args => args[0].repeat(parseInt(args[1])),
-	replace: args => args[0].replace(args[1], args[2]),
-	replaceall: args => args[0].replace(new RegExp(framework.escapeRegex(args[1]), "g"), args[2]),
-	replaceregex: args => args[0].replace(new RegExp(args[1], args[3] || ""), args[2]),
-	roles: args => args[0].roles,
-	round: args => Math.round(parseFloat(args[0])),
-	status: args => args[0].status,
-	substring: args => args[0].toString().substring(args[1], args[2]),
-	tvar: (args, message) => {
+	int: async args => Math.floor(Math.random() * (parseInt(args[1]) - parseInt(args[0]))) + parseInt(args[0]),
+	isnan: async args => isNaN(args[0]),
+	length: async args => args[0].length,
+	lower: async args => args[0].toString().toLowerCase(),
+	math: async args => math.eval(args[0]),
+	member: async (args, message) => message.member,
+	memberjoinedat: async (args, message) => framework.formatDate(args[0].joinedAt),
+	membercount: async (args, message) => message.guild.memberCount,
+	mention: async args => args[0].mention,
+	name: async args => args[0].name,
+	nickname: async args => args[0].nick || args[0].user.username,
+	nl: async args => "\n",
+	now: async args => framework.formatDate(new Date()),
+	num: async args => (Math.random() * (parseFloat(args[1]) - parseFloat(args[0]))) + parseFloat(args[0]),
+	parsefloat: async args => parseFloat(args[0]),
+	parseint: async args => parseInt(args[0]),
+	regex: async args => new RegExp(args[1], args[3] || "").exec(args[0])[args[2]],
+	repeat: async args => args[0].repeat(parseInt(args[1])),
+	replace: async args => args[0].replace(args[1], args[2]),
+	replaceall: async args => args[0].replace(new RegExp(framework.escapeRegex(args[1]), "g"), args[2]),
+	replaceregex: async args => args[0].replace(new RegExp(args[1], args[3] || ""), args[2]),
+	roles: async args => args[0].roles,
+	round: async args => Math.round(parseFloat(args[0])),
+	status: async args => args[0].status,
+	substring: async args => args[0].toString().substring(args[1], args[2]),
+	tvar: async (args, message) => {
 		if(args[1]) {
 			message.tagVars[args[0]] = args[1];
 			return message;
@@ -774,7 +741,7 @@ const tagParser = {
 			return message.tagVars[args[0]];
 		}
 	},
-	unmention: args => framework.unmention(args[0]),
-	user: (args, message) => message.author,
-	username: (args, message) => args[0].user ? args[0].user.username : args[0].username
+	unmention: async args => framework.unmention(args[0]),
+	user: async (args, message) => message.author,
+	username: async (args, message) => args[0].user ? args[0].user.username : args[0].username
 };

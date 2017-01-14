@@ -2,14 +2,8 @@ const Oxyl = require("../../oxyl.js"),
 	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
 
-var command = new Command("serverinfo", (message, bot) => {
-	let guild;
-	if(message.content && bot.guilds.find(serv => serv.id === message.content)) {
-		guild = bot.guilds.find(serv => serv.id === message.content);
-		// hidden feature
-	} else {
-		guild = message.guild;
-	}
+var command = new Command("serverinfo", async (message, bot) => {
+	let guild = bot.guilds.get(message.content) || message.guild;
 
 	let members = guild.members;
 	let onlineMembers = members.filter(gM => gM.status === "online").length;

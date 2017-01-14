@@ -4,7 +4,7 @@ const Oxyl = require("../../oxyl.js"),
 	os = require("os");
 const config = framework.config;
 
-var command = new Command("botinfo", (message, bot) => {
+var command = new Command("botinfo", async (message, bot) => {
 	let guilds = bot.guilds;
 	let largeGuilds = guilds.filter(guild => guild.large === true).length;
 	let channels = Object.keys(bot.channelGuildMap).length;

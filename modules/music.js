@@ -139,38 +139,34 @@ class MusicManager {
 		this.sendEmbed("playing", nextQueue);
 	}
 
-	connect(channelID) {
-		return new Promise((resolve, reject) => {
-			if(!channelID) {
-				reject("No channel");
-				return;
-			} else if(channelID.id)	{
-				channelID = channelID.id;
-			}
+	async connect(channelID) { // eslint-disable-line consistent-return
+		if(!channelID) throw new Error("No channel");
+		else if(channelID.id)	channelID = channelID.id;
 
-			if(bot.voiceConnections.get(this.id)) return;
-			bot.joinVoiceChannel(channelID).then(connection => {
-				this.connection = connection;
-				connection.once("ready", () => {
-					connection.setVolume(0.3);
-					resolve(connection);
-				});
+		if(bot.voiceConnections.get(this.id)) return false;
+		let connection = await bot.joinVoiceChannel(channelID);
+		this.connection = connection;
+		await connection.ready;
 
-				connection.once("end", () => {
-					if(this.data.queue.length <= 0) this.end();
-					else this.play();
-				});
+		connection.once("ready", () => {
+			connection.setVolume(0.3);
+			return connection;
+		});
 
-				connection.once("error", err => {
-					this.sendEmbed("error", err);
-				});
-			});
+		connection.once("end", () => {
+			if(this.data.queue.length <= 0) this.end();
+			else this.play();
+		});
+
+		connection.once("error", err => {
+			this.sendEmbed("error", err);
 		});
 	}
 
 	sendEmbed(type, data) {
 		if(!this.musicChannel) return;
 		let embed;
+
 		if(type === "playing") {
 			embed = {
 				title: "Now playing :arrow_forward:",
@@ -186,7 +182,7 @@ class MusicManager {
 			};
 		}
 
-		this.musicChannel.createMessage({ embed: embed });
+		this.musicChannel.createMessage({ embed });
 	}
 }
 exports.Manager = MusicManager;
@@ -197,9 +193,7 @@ exports.getManager = (guild) => {
 };
 
 exports.getDuration = (seconds) => {
-	if(seconds >= 3600) {
-		var hours = Math.floor(seconds / 3600);
-	}
+	if(seconds >= 3600) var hours = Math.floor(seconds / 3600);
 	var mins = Math.floor(seconds % 3600 / 60);
 	var secs = Math.floor(seconds % 60);
 	if(mins < 10) {
@@ -208,101 +202,79 @@ exports.getDuration = (seconds) => {
 		secs = `0${secs}`;
 	}
 
-	if(hours) {
-		return `${hours}:${mins}:${secs}`;
-	} else {
-		return `${mins}:${secs}`;
-	}
+	if(hours) return `${hours}:${mins}:${secs}`;
+	else return `${mins}:${secs}`;
 };
 
 exports.ytType = (id) => {
 	if(id.includes("http://") || id.includes("https://")) id = exports.ytID(id);
-	if(id.length === 11 && id !== id.toLowerCase()) {
-		return "VIDEO";
-	} else if((id.startsWith("PL") || id.length === 34 || id.length === 32) && id !== id.toLowerCase()) {
-		return "PLAYLIST";
-	} else {
-		return "NONE";
-	}
+	if(id.length === 11 && id !== id.toLowerCase()) return "VIDEO";
+	else if((id.startsWith("PL") || id.length === 34 || id.length === 32) && id !== id.toLowerCase()) return "PLAYLIST";
+	else return "NONE";
 };
 
 exports.ytID = (url) => {
 	var match = url.match(framework.config.options.music.youtubeRegex);
-	if(match && match[1]) {
-		return match[1];
-	} else {
-		return "INVALID_URL";
-	}
+	if(match && match[1]) return match[1];
+	else return "INVALID_URL";
 };
 
-exports.searchVideo = (query) => {
+exports.searchVideo = async (query) => {
 	let url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1` +
 		`&type=video&q=${escape(query)}&key=${ytKey}`;
 
-	return new Promise((resolve, reject) => {
-		framework.getContent(url).then(body => {
-			if(body.indexOf("videoId") >= 0) {
-				body = JSON.parse(body).items[0].id.videoId;
-				resolve(body);
-			} else {
-				resolve("NO_RESULTS");
-			}
-		});
-	});
+	let body = await framework.getContent(url);
+	if(body.indexOf("videoId") >= 0) {
+		body = JSON.parse(body).items[0].id.videoId;
+		return body;
+	} else {
+		throw new Error("NO_RESULTS");
+	}
 };
 
-exports.playlistVideos = (id, page = "", videos = []) => {
+exports.playlistVideos = async (id, page = "", videos = []) => {
 	if(id.startsWith("http://") || id.startsWith("https://")) id = exports.ytID(id);
 	let url = `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${id}&maxResults=50&part=snippet` +
 		`&nextPageToken&pageToken=${page}&fields=nextPageToken,items(snippet(resourceId(videoId)))&key=${ytKey}`;
 
-	return new Promise((resolve, reject) => {
-		framework.getContent(url).then(body => {
-			body = JSON.parse(body);
-			let items = body.items;
+	let body = await framework.getContent(url);
 
-			for(var i = 0; i < items.length; i++) {
-				videos.push(items[i].snippet.resourceId.videoId);
-			}
+	body = JSON.parse(body);
+	let items = body.items;
 
-			if(body.nextPageToken) {
-				exports.playlistVideos(id, body.nextPageToken, videos)
-				.then(value => resolve(value));
-			} else {
-				resolve(videos);
-			}
-		});
-	});
+	for(var i = 0; i < items.length; i++) {
+		videos.push(items[i].snippet.resourceId.videoId);
+	}
+
+	if(body.nextPageToken) return await exports.playlistVideos(id, body.nextPageToken, videos);
+	else return videos;
 };
 
-exports.videoInfo = (id) => {
+exports.videoInfo = async (id) => {
 	if(id.startsWith("http://") || id.startsWith("https://")) id = exports.ytID(id);
 	let url = `https://www.googleapis.com/youtube/v3/videos?id=${id}&part=snippet,` +
 		`contentDetails&fields=items(snippet(title),contentDetails(duration))&key=${ytKey}`;
 
-	return new Promise((resolve, reject) => {
-		framework.getContent(url).then(body => {
-			body = JSON.parse(body).items[0];
+	let body = await framework.getContent(url);
+	body = JSON.parse(body).items[0];
 
-			if(!body) {
-				reject("NO_ITEMS");
-			} else {
-				let duration = 0;
-				let dur = body.contentDetails.duration;
-				if(dur.includes("H")) {
-					duration += parseInt(dur.substring(dur.indexOf("T") + 1, dur.indexOf("H"))) * 3600;
-					duration += parseInt(dur.substring(dur.indexOf("H") + 1, dur.indexOf("M"))) * 60;
-				} else if(dur.includes("M")) {
-					duration += parseInt(dur.substring(dur.indexOf("T") + 1, dur.indexOf("M"))) * 60;
-				}
-				duration += parseInt(dur.substring(dur.indexOf("M") + 1, dur.indexOf("S")));
+	if(!body) {
+		throw new Error("NO_ITEMS");
+	} else {
+		let duration = 0;
+		let dur = body.contentDetails.duration;
+		if(dur.includes("H")) {
+			duration += parseInt(dur.substring(dur.indexOf("T") + 1, dur.indexOf("H"))) * 3600;
+			duration += parseInt(dur.substring(dur.indexOf("H") + 1, dur.indexOf("M"))) * 60;
+		} else if(dur.includes("M")) {
+			duration += parseInt(dur.substring(dur.indexOf("T") + 1, dur.indexOf("M"))) * 60;
+		}
+		duration += parseInt(dur.substring(dur.indexOf("M") + 1, dur.indexOf("S")));
 
-				resolve({
-					id: id,
-					title: body.snippet.title,
-					duration: duration
-				});
-			}
-		});
-	});
+		return {
+			id: id,
+			title: body.snippet.title,
+			duration: duration
+		};
+	}
 };

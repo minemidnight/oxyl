@@ -3,7 +3,7 @@ const Oxyl = require("../../oxyl.js"),
 	framework = require("../../framework.js");
 const commands = Oxyl.commands;
 
-var command = new Command("help", (message, bot) => {
+var command = new Command("help", async (message, bot) => {
 	let cmds = {};
 
 	for(var cmdType in commands) {

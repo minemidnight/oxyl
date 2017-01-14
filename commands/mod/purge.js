@@ -2,25 +2,23 @@ const Oxyl = require("../../oxyl.js"),
 	Command = require("../../modules/commandCreator.js"),
 	framework = require("../../framework.js");
 
-var command = new Command("purge", (message, bot) => {
+var command = new Command("purge", async (message, bot) => {
 	let deletePerms = message.guild.members.get(bot.user.id).permission.has("manageMessages"),
-		mentions = message.mentions.users;
+		mentions = message.mentions;
 	if(!deletePerms) {
-		message.channel.createMessage("Oxyl does not have permissions to delete messages")
-		.then(msg => msg.delete(3000));
+		let msg = await message.channel.createMessage("Oxyl does not have permissions to delete messages");
+		setTimeout(() => msg.delete(), 3000);
 	} else {
-		message.delete().then(() => {
-			message.channel.purge(message.args[0], msg => {
-				if(mentions && mentions.length >= 1 && mentions.includes(message.author)) {
-					return true;
-				} else if(!mentions || mentions.length === 0) {
-					return true;
-				} else {
-					return false;
-				}
-			});
+		await message.delete();
+
+		message.channel.purge(message.args[0], msg => {
+			if(mentions && mentions.length >= 1 && mentions.includes(message.author)) return true;
+			else if(!mentions || mentions.length === 0) return true;
+			else return false;
 		});
 	}
+
+	return false;
 }, {
 	perm: "manageMessages",
 	guildOnly: true,
