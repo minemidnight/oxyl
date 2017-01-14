@@ -131,22 +131,18 @@ exports.messageCreate = message => {
 
 let routes = framework.loadScripts("./site/routes/");
 for(let script in routes) {
-	if(script === "index") {
-		app.use("/", routes[script]);
-	} else {
-		app.use(`/${script}`, routes[script]);
-	}
+	if(script === "index") app.use("/", routes[script]);
+	else app.use(`/${script}`, routes[script]);
 }
 
 exports.getInfo = async (token, path) => {
 	let url = `https://discordapp.com/api/${path}`;
 	if(Date.now() - token.time >= 604800) {
-		token = await refreshToken(token);
-		return await exports.getInfo(token, path);
-	} else {
-		let body = await framework.getContent(url, { headers: { Authorization: `Bearer ${token.token}` } });
-		return JSON.parse(body);
+		await refreshToken(token);
+		token = exports.tokens[token.ip];
 	}
+	let body = await framework.getContent(url, { headers: { Authorization: `Bearer ${token.token}` } });
+	return JSON.parse(body);
 };
 
 async function refreshToken(token) {
@@ -171,7 +167,7 @@ async function refreshToken(token) {
 			refresh: body.refresh_token
 		};
 
-		return exports.tokens[ip];
+		return false;
 	});
 }
 exports.refreshToken = refreshToken;
