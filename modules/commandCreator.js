@@ -18,6 +18,7 @@ class Command {
 		this.enabled = !!options.defaultEnabled || true;
 		this.guildOnly = !!options.guildOnly || false;
 		this.cooldown = options.cooldown || 0;
+		this.perm = options.perm || null;
 		this.uses = 0;
 		this.cooldowns = {};
 

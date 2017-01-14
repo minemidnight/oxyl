@@ -6,7 +6,7 @@ const bot = Oxyl.bot,
 async function userLog(guild, member, type) {
 	try {
 		let channel = await framework.getSetting(guild, "userlog");
-		let tag = framework.getSetting(guild, type);
+		let tag = await framework.getSetting(guild, type);
 
 		if(!guild.channels.has(channel)) return;
 		let fakemsg = {
@@ -19,8 +19,8 @@ async function userLog(guild, member, type) {
 			tagVars: []
 		};
 
-		let parsed = parseTag(tag, fakemsg);
-		bot.createMessage(channel, parsed);
+		let parsed = await parseTag(tag, fakemsg);
+		await bot.createMessage(channel, parsed);
 	} catch(err) {
 		return;
 	}

@@ -140,10 +140,13 @@ for(let script in routes) {
 
 exports.getInfo = async (token, path) => {
 	let url = `https://discordapp.com/api/${path}`;
-	if(Date.now() - token.time >= 604800) token = await refreshToken(token);
-
-	let body = await framework.getContent(url, { headers: { Authorization: `Bearer ${token.token}` } });
-	return JSON.parse(body);
+	if(Date.now() - token.time >= 604800) {
+		token = await refreshToken(token);
+		return await exports.getInfo(token, path);
+	} else {
+		let body = await framework.getContent(url, { headers: { Authorization: `Bearer ${token.token}` } });
+		return JSON.parse(body);
+	}
 };
 
 async function refreshToken(token) {
@@ -159,7 +162,7 @@ async function refreshToken(token) {
 		headers: { Authorization: `Basic ${base64}` },
 		form: data
 	}, (err, httpResponse, body) => {
-		if(err) return new Error(err);
+		if(err) throw err;
 		body = JSON.parse(body);
 		exports.tokens[ip] = {
 			token: body.access_token,
@@ -167,6 +170,7 @@ async function refreshToken(token) {
 			time: Date.now(),
 			refresh: body.refresh_token
 		};
+
 		return exports.tokens[ip];
 	});
 }

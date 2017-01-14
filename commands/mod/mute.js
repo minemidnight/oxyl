@@ -23,6 +23,7 @@ async function getMutedRole(guild) {
 			permissions: 0,
 			color: 0xDF4242
 		});
+		role.editPosition(0);
 
 		let channels = guild.channels.filter(channel => channel.type === 0);
 		channels.forEach(channel => bot.editChannelPermission(channel.id, role.id, 0, 2048, "role"));

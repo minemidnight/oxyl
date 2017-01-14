@@ -54,7 +54,7 @@ bot.on("messageCreate", async (message) => {
 	} else if(command.type === "guild owner" && framework.guildLevel(message.member) < 3) {
 		message.channel.createMessage(framework.config.messages.notGuildOwner);
 		return;
-	} else if(command.perm && !message.channel.permissionsOf(message.author.id).has(command.perm)) {
+	} else if(command.perm && !message.member.permission.has(command.perm)) {
 		message.channel.createMessage(framework.config.messages.invalidPerms.replace(/{PERM}/g, command.perm));
 		return;
 	}
