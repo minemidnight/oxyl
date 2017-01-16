@@ -148,7 +148,7 @@ async function parseTag(tag, message) {
 			if(typeof newArg === "object" && newArg.tagVars) {
 				message = newArg;
 				newArg = "";
-			} else if(typeof newArg === "object") {
+			} else if(typeof newArg === "string" || typeof newArg === "undefined") {
 				results = [newArg];
 			} else {
 				results = [];
@@ -582,7 +582,7 @@ const tagInfo = {
 		return: "Specified match of regex execution",
 		in: "aaab|a+|0|gi",
 		out: `"aaa"`,
-		usage: "<String> <Regex> <Group <Number>> [Flags <String>]"
+		usage: "<String> <Regex> <Group> <Number> [Flags <String>]"
 	},
 	isnan: {
 		return: "If something is a not a number",
@@ -664,6 +664,12 @@ const tagInfo = {
 		in: "{split:abc|b}|d",
 		out: `"adc"`,
 		usage: "<Array> [String]"
+	},
+	isset: {
+		return: "If something is set",
+		in: "{args:0}",
+		out: `"true"`,
+		usage: "<Anything>"
 	}
 };
 
@@ -729,6 +735,7 @@ const tagParser = {
 	},
 	int: async args => Math.floor(Math.random() * (parseInt(args[1]) - parseInt(args[0]))) + parseInt(args[0]),
 	isnan: async args => isNaN(args[0]),
+	isset: async args => args[0] ? "true" : "false",
 	join: async args => args[0].join(args[1]),
 	length: async args => args[0].length,
 	lower: async args => args[0].toString().toLowerCase(),
@@ -745,7 +752,11 @@ const tagParser = {
 	num: async args => (Math.random() * (parseFloat(args[1]) - parseFloat(args[0]))) + parseFloat(args[0]),
 	parsefloat: async args => parseFloat(args[0]),
 	parseint: async args => parseInt(args[0]),
-	regex: async args => new RegExp(args[1], args[3] || "").exec(args[0])[args[2]],
+	regex: async args => {
+		let match = new RegExp(args[1], args[3] || "").exec(args[0]);
+		if(match) return match[args[2]];
+		else return undefined;
+	},
 	repeat: async args => args[0].repeat(parseInt(args[1])),
 	replace: async args => args[0].replace(args[1], args[2]),
 	replaceall: async args => args[0].replace(new RegExp(framework.escapeRegex(args[1]), "g"), args[2]),
