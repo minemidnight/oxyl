@@ -181,7 +181,6 @@ function parseHBRest(hb, context) {
 }
 
 exports.parseHB = async (hb, req, context = {}) => {
-	console.log(`get to ${hb}`);
 	let ip = exports.getIp(req);
 	if(exports.tokens[ip]) {
 		let body = await exports.getInfo(exports.tokens[ip], "users/@me");

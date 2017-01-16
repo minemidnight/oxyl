@@ -141,14 +141,15 @@ async function parseTag(tag, message) {
 			argType = arg;
 		}
 
-		if(results.length >= 1) argArray = results;
+		if(results.length >= argArray.length && results.length >= 1) argArray = results;
+		else if(results.length >= 1) argArray = results.concat(argArray.splice(results.length));
 		try {
 			let newArg = await tagParser[argType.toLowerCase()](argArray, message);
 			if(typeof newArg === "object" && newArg.tagVars) {
 				message = newArg;
 				newArg = "";
 			} else if(typeof newArg === "object") {
-				results.push(newArg);
+				results = [newArg];
 			} else {
 				results = [];
 			}
@@ -443,7 +444,7 @@ const tagInfo = {
 		out: "{ Object Member }"
 	},
 	roles: {
-		return: "ID of roles a member has",
+		return: "Array of ID of roles a member has",
 		out: `["110375768374136832"]`,
 		usage: "<Member>"
 	},
@@ -645,6 +646,24 @@ const tagInfo = {
 		in: "{author}",
 		out: `"minemidnight#1537"`,
 		usage: "<Member/User Object>"
+	},
+	split: {
+		return: "Array of text split at a character",
+		in: "lolabc|a",
+		out: `["lol","bc"]`,
+		usage: "<String> [String]"
+	},
+	map: {
+		return: "New array with results based on argument (&this; is the looped element)",
+		in: "{split:abc|b}|:regional_indicator_&this;:",
+		out: `[":regional_indicator_a:",":regional_indicator_c:"]`,
+		usage: "<Array> <New Value>"
+	},
+	join: {
+		return: "Array joined by a character",
+		in: "{split:abc|b}|d",
+		out: `"adc"`,
+		usage: "<Array> [String]"
 	}
 };
 
@@ -710,8 +729,10 @@ const tagParser = {
 	},
 	int: async args => Math.floor(Math.random() * (parseInt(args[1]) - parseInt(args[0]))) + parseInt(args[0]),
 	isnan: async args => isNaN(args[0]),
+	join: async args => args[0].join(args[1]),
 	length: async args => args[0].length,
 	lower: async args => args[0].toString().toLowerCase(),
+	map: async args => args[0].map(ele => args[1].replace(/&this;/g, ele.toString())),
 	math: async args => math.eval(args[0]),
 	member: async (args, message) => message.member,
 	memberjoinedat: async (args, message) => framework.formatDate(args[0].joinedAt),
@@ -731,6 +752,7 @@ const tagParser = {
 	replaceregex: async args => args[0].replace(new RegExp(args[1], args[3] || ""), args[2]),
 	roles: async args => args[0].roles,
 	round: async args => Math.round(parseFloat(args[0])),
+	split: async args => args[0].split(args[1] || ""),
 	status: async args => args[0].status,
 	substring: async args => args[0].toString().substring(args[1], args[2]),
 	tvar: async (args, message) => {

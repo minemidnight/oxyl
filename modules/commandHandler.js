@@ -78,7 +78,6 @@ bot.on("messageCreate", async (message) => {
 		});
 
 		try {
-			console.log(`ran ${command.name}`);
 			var result = await command.run(message);
 
 			msg = { content: "" };
@@ -100,7 +99,7 @@ bot.on("messageCreate", async (message) => {
 				try {
 					var resultmsg = await message.channel.createMessage(msg, file || null);
 				} catch(err) {
-					message.channel.createMessage("Error sending message -- please contact Support");
+					message.channel.createMessage("Error sending message");
 				}
 			}
 		} catch(error) {

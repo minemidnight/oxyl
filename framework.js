@@ -88,10 +88,8 @@ exports.clearGuildData = async (guild) => {
 exports.splitParts = (message) => {
 	if(message.length < 2000) {
 		return [message];
-	} else if(message.indexOf("\n") === -1 || message.indexOf("\n") > 2000) {
-		throw new Error("!! Invalid message split attempt -- no new line found or new line past 2000th character");
 	} else {
-		let returnData = [], nth = 1, splitTimes = Math.ceil(message.length / 2000);
+		let returnData = [], nth = 1, splitTimes = Math.floor(message.length / 2000);
 		while(returnData.length < splitTimes) {
 			if(exports.nthIndex(message, "\n", nth) > 2000) {
 				let grabFrom = exports.nthIndex(message, "\n", nth - 1);
@@ -103,6 +101,7 @@ exports.splitParts = (message) => {
 			}
 		}
 
+		returnData.push(message);
 		return returnData;
 	}
 };
