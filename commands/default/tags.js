@@ -125,8 +125,11 @@ async function parseTag(tag, message) {
 	}
 	message.tagVars = {};
 
-	let results = [];
+	let results = [], executions = 0;
 	while(tag.match(/{[^{}]+}/)) {
+		if(executions >= 1000) throw new Error("Prevented recursion -- 1000 tag executions hit");
+		executions++;
+
 		let originalArg = tag.match(/{[^{}]+}/)[0];
 		let arg = originalArg;
 		let argArray = [], argType;
@@ -494,13 +497,13 @@ const tagInfo = {
 		return: "Replace all instances of a text in a string using regex",
 		in: "Hello wolrd!|wo[rl]{2}d|earth|g",
 		out: `"Hello earth!"`,
-		usage: "<String> <Regex> <String> [String]"
+		usage: "<String> <Regex> <String> [Flags <String>]"
 	},
 	repeat: {
 		return: "Repeats a phrase as many times as you'd like (do not forget the character limit)",
 		in: "hi|3",
 		out: `"hihihi"`,
-		usage: "<Input> <Number>"
+		usage: "<String> <Number>"
 	},
 	substring: {
 		return: "Gets a part of a phrase",
