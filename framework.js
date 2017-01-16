@@ -47,6 +47,44 @@ exports.setSetting = async (guild, setting, value) => {
 	if(setting === "prefix") Oxyl.modScripts.commandHandler.prefixes[guild.id] = value;
 };
 
+exports.getRoles = async (guild, type) => {
+	let tableName = type === "auto" ? "AutoRole" : "RoleMe";
+	let query = `SELECT * FROM \`${tableName}\` WHERE \`ID\` = '${guild.id}'`;
+	return await exports.dbQuery(query);
+};
+
+exports.getRole = async (guild, type, role) => {
+	let tableName = type === "auto" ? "AutoRole" : "RoleMe";
+	let query = `SELECT \`ROLE\` FROM \`${tableName}\` WHERE \`ID\` = '${guild.id}' AND \`ROLE\` = '${role.id}'`;
+	let data = await exports.dbQuery(query);
+
+	if(data && data[0]) return true;
+	else return false;
+};
+
+exports.addRole = async (guild, type, role) => {
+	let tableName = type === "auto" ? "AutoRole" : "RoleMe";
+	exports.dbQuery(`INSERT INTO \`${tableName}\` (\`ID\`, \`ROLE\`) VALUES ('${guild.id}','${role.id}')`);
+};
+
+exports.deleteRole = async (guild, type, role) => {
+	let tableName = type === "auto" ? "AutoRole" : "RoleMe";
+	exports.dbQuery(`DELETE FROM \`${tableName}\` WHERE \`ID\` = '${guild.id}' AND \`ROLE\` = '${role.id}'`);
+};
+
+exports.clearGuildData = async (guild) => {
+	let tables = {
+		AutoRole: "ID",
+		GuildTags: "ID",
+		RoleMe: "ID",
+		Settings: "ID"
+	};
+
+	for(let key in tables) {
+		await exports.dbQuery(`DELETE FROM \`${key}\` WHERE \`${tables[key]}\` = '${guild.id}'`);
+	}
+};
+
 exports.splitParts = (message) => {
 	if(message.length < 2000) {
 		return [message];

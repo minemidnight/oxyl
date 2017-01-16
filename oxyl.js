@@ -3,6 +3,8 @@ const Eris = require("eris"),
 
 const bot = new Eris(framework.config.private.token, { seedVoiceConnections: true });
 
+process.on("uncaughtException", console.error);
+
 process.on("unhandledRejection", (err) => {
 	if(!err) return;
 	err = err.stack || err;

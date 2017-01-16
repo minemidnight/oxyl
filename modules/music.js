@@ -189,6 +189,8 @@ class MusicManager {
 }
 exports.Manager = MusicManager;
 
+exports.dumpManagers = (guild) => exports.managers;
+
 exports.getManager = (guild) => {
 	if(guild.id) guild = guild.id;
 	return exports.managers[guild];
@@ -230,7 +232,7 @@ exports.searchVideo = async (query) => {
 		body = JSON.parse(body).items[0].id.videoId;
 		return body;
 	} else {
-		throw new Error("NO_RESULTS");
+		return "NO_RESULTS";
 	}
 };
 

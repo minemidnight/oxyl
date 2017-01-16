@@ -16,12 +16,12 @@ router.get("*", async (req, res) => {
 		guild.botCount = guild.members.filter(gM => gM.bot).length;
 		guild.botPercent = ((guild.botCount / guild.memberCount) * 100).toFixed(2);
 		guild.userCount = guild.memberCount - guild.botCount;
-		guild.botPercent = ((guild.userCount / guild.memberCount) * 100).toFixed(2);
+		guild.userPercent = ((guild.userCount / guild.memberCount) * 100).toFixed(2);
 		data.guild = guild;
 
 		if(main.tokens[ip]) {
 			let user = await main.getInfo(main.tokens[ip], "users/@me");
-			if(framework.guildLevel(guild.members.get(user.id)) >= 1) data.panel = true;
+			if(guild.members.get(user.id) && framework.guildLevel(guild.members.get(user.id)) >= 1) data.panel = true;
 		}
 	}
 

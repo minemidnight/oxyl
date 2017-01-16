@@ -37,4 +37,6 @@ bot.on("guildDelete", async guild => {
 				`I was removed, or how I can improve. You can do this by running \`oxyl feedback <message>\``)
 		.catch(err => err);
 	}
+
+	framework.clearGuildData(guild);
 });

@@ -78,6 +78,7 @@ bot.on("messageCreate", async (message) => {
 		});
 
 		try {
+			console.log(`ran ${command.name}`);
 			var result = await command.run(message);
 
 			msg = { content: "" };

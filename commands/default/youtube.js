@@ -4,7 +4,7 @@ const music = require("../../modules/music.js"),
 	framework = require("../../framework.js");
 
 var command = new Command("youtube", async (message, bot) => {
-	message.channel.startTyping();
+	message.channel.sendTyping();
 
 	let video = await music.searchVideo(message.argsPreserved[0]);
 	if(video === "NO_RESULTS") return "No results found";

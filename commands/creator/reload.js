@@ -1,7 +1,6 @@
 const Oxyl = require("../../oxyl.js"),
 	framework = require("../../framework.js"),
-	Command = require("../../modules/commandCreator.js"),
-	fs = require("fs");
+	Command = require("../../modules/commandCreator.js");
 const loadScript = framework.loadScript;
 
 var command = new Command("reload", async (message, bot) => {
