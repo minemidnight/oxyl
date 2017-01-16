@@ -13,18 +13,18 @@ function isBannable(member) {
 }
 
 var command = new Command("ban", (message, bot) => {
-	let banPerms = message.guild.members.get(bot.user.id).permission.has("banMembers");
+	let banPerms = message.channel.guild.members.get(bot.user.id).permission.has("banMembers");
 
 	if(!banPerms) {
 		return "Oxyl does not have permissions to ban.";
 	} else {
-		let member = message.guild.members.get(message.args[0].id);
+		let member = message.channel.guild.members.get(message.args[0].id);
 		if(!member) return "Error -- user not found";
 		let bannable = isBannable(member);
 		if(!bannable) {
 			return `${framework.unmention(member)} couldn't be banned (has higher permissions)`;
 		} else {
-			message.guild.banMember(message.args[0].id);
+			message.channel.guild.banMember(message.args[0].id);
 			return `${framework.unmention(member)} has been banned`;
 		}
 	}

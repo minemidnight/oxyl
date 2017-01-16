@@ -26,7 +26,7 @@ exports.test = async (input, arg, message) => {
 			else throw new Error("User from mention not found");
 		} else {
 			let members = bot.users, usersFound;
-			if(message.guild)	members = message.guild.members;
+			if(message.channel.guild)	members = message.channel.guild.members;
 
 			usersFound = members.filter(member => {
 				if(member.user) member = member.user;

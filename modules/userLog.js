@@ -11,12 +11,10 @@ async function userLog(guild, member, type) {
 		if(!guild.channels.has(channel)) return;
 		let fakemsg = {
 			guild: guild,
-			author: member.user,
+			author: member.user || member,
 			member: member,
 			channel: guild.channels.get(channel),
-			args: [""],
-			argsPreserved: [""],
-			tagVars: []
+			argsPreserved: [""]
 		};
 
 		let parsed = await parseTag(tag, fakemsg);

@@ -24,7 +24,7 @@ async function handleConfig(message, args) {
 
 		let value;
 		try {
-			value = await framework.getSetting(message.guild, setting.name);
+			value = await framework.getSetting(message.channel.guild, setting.name);
 			return `Setting \`${setting.name}\` is \`${value}\``;
 		} catch(err) {
 			return `Setting \`${setting.name}\` is not set`;
@@ -35,8 +35,8 @@ async function handleConfig(message, args) {
 
 		let value;
 		try {
-			value = await framework.getSetting(message.guild, setting.name);
-			framework.resetSetting(message.guild, setting.name);
+			value = await framework.getSetting(message.channel.guild, setting.name);
+			framework.resetSetting(message.channel.guild, setting.name);
 			return `Setting \`${setting.name}\` reset`;
 		} catch(err) {
 			return `Setting \`${setting.name}\` is not set`;
@@ -47,10 +47,10 @@ async function handleConfig(message, args) {
 
 		let value = message.argsPreserved[0];
 		value = value.substring(value.toLowerCase().indexOf(setting.name) + setting.name.length + 1);
-		value = configTypes[setting.type].validate(message.guild, value);
+		value = configTypes[setting.type].validate(message.channel.guild, value);
 
 		if(value === null) return `Invalid input given -- please provide ${configTypes[setting.type].info}`;
-		framework.setSetting(message.guild, setting.name, value);
+		framework.setSetting(message.channel.guild, setting.name, value);
 		return `Set \`${setting.name}\` to \`${value}\` (success!)`;
 	} else {
 		return "Invalid argument -- view `settings help`";

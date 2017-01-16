@@ -4,7 +4,7 @@ const music = require("../../modules/music.js"),
 	framework = require("../../framework.js");
 
 var command = new Command("repeat", async (message, bot) => {
-	let manager = music.getManager(message.guild);
+	let manager = music.getManager(message.channel.guild);
 	if(!manager) {
 		return "There is currently no music playing";
 	} else if(!manager.voiceCheck(message.member)) {

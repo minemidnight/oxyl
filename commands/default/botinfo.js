@@ -14,7 +14,8 @@ var command = new Command("botinfo", async (message, bot) => {
 	let guildsInfo = [
 		`Large (over 250 members): ${largeGuilds}`,
 		`Other: ${guilds.size - largeGuilds}`,
-		`Total: ${guilds.size}`
+		`Total: ${guilds.size}`,
+		`Streaming In: ${Object.keys(bot.voiceConnections.guilds).filter(ch => !bot.voiceConnections.guilds[ch].ended).length} Guilds`
 	];
 
 	let totalUsers = 0;
@@ -24,8 +25,7 @@ var command = new Command("botinfo", async (message, bot) => {
 
 	let extraInfo = [
 		`Channels: ${channels}`,
-		`Users: ${totalUsers}`,
-		`Music In: ${Object.keys(Oxyl.modScripts.music.managers).length} Guilds`
+		`Users: ${totalUsers}`
 	];
 
 	let memoryInfo = `${((usedMemory / totalMemory) * 100).toFixed(2)}%, `;

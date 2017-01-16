@@ -36,11 +36,11 @@ async function getMutedRole(guild) {
 }
 
 var command = new Command("mute", async (message) => {
-	let mutedRole = await getMutedRole(message.guild);
+	let mutedRole = await getMutedRole(message.channel.guild);
 
 	if(typeof mutedRole !== "object") return mutedRole;
 
-	let mention = message.guild.members.get(message.args[0].id);
+	let mention = message.channel.guild.members.get(message.args[0].id);
 	let isMuted = mention.roles.indexOf(mutedRole.id);
 	if(isMuted === -1) {
 		mention.addRole(mutedRole.id);

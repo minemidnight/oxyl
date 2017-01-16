@@ -10,7 +10,7 @@ async function getTag(query, message, table = 0) {
 	if(tableName === "GlobalTags") {
 		dbQuery = `SELECT * FROM \`${tableName}\` WHERE \`NAME\` = '${query}'`;
 	} else if(tableName === "GuildTags" || tableName === "ChannelTags") {
-		let id = tableName === "GuildTags" ? message.guild.id : message.channel.id;
+		let id = tableName === "GuildTags" ? message.channel.guild.id : message.channel.id;
 		dbQuery = `SELECT * FROM \`${tableName}\` WHERE \`NAME\` = '${query}' AND \`ID\` = '${id}'`;
 	} else if(tableName === "UserTags") {
 		dbQuery = `SELECT * FROM \`${tableName}\` WHERE \`NAME\` = '${query}' AND \`CREATOR\` = '${message.author.id}'`;
@@ -34,7 +34,7 @@ function addUse(type, name, message) {
 	if(type === "GlobalTags") {
 		framework.dbQuery(`UPDATE \`${type}\` SET \`USES\` = \`USES\` + 1 WHERE \`NAME\` = '${name}'`);
 	} else if(type === "GuildTags" || type === "ChannelTags") {
-		let id = type === "GuildTags" ? message.guild.id : message.channel.id;
+		let id = type === "GuildTags" ? message.channel.guild.id : message.channel.id;
 		framework.dbQuery(`UPDATE \`${type}\` SET \`USES\` = \`USES\` + 1 WHERE \`NAME\` = '${name}' AND \`ID\` = '${id}'`);
 	} else if(type === "UserTags") {
 		framework.dbQuery(`UPDATE \`${type}\` SET \`USES\` = \`USES\` + 1 WHERE \`NAME\` = '${name}' AND \`CREATOR\` = '${message.author.id}'`);
@@ -63,7 +63,7 @@ function deleteTag(type, name, message) {
 	if(type === "GlobalTags") {
 		framework.dbQuery(`DELETE FROM \`${type}\` WHERE \`NAME\` = ${framework.sqlEscape(name)}`);
 	} else if(type === "GuildTags" || type === "ChannelTags") {
-		let id = type === "GuildTags" ? message.guild.id : message.channel.id;
+		let id = type === "GuildTags" ? message.channel.guild.id : message.channel.id;
 		framework.dbQuery(`DELETE FROM \`${type}\` WHERE \`NAME\` = ${framework.sqlEscape(name)} AND \`ID\` = '${id}'`);
 	} else if(type === "UserTags") {
 		framework.dbQuery(`DELETE FROM \`${type}\` WHERE \`NAME\` = ${framework.sqlEscape(name)} AND \`CREATOR\` = '${message.author.id}'`);
@@ -90,7 +90,7 @@ async function getTags(message, fullData, table = 0) {
 	if(tableName === "GlobalTags") {
 		dbQuery = `SELECT * FROM \`${tableName}\``;
 	} else if(tableName === "GuildTags" || tableName === "ChannelTags") {
-		let id = tableName === "GuildTags" ? message.guild.id : message.channel.id;
+		let id = tableName === "GuildTags" ? message.channel.guild.id : message.channel.id;
 		dbQuery = `SELECT * FROM \`${tableName}\` WHERE \`ID\` = '${id}'`;
 	} else if(tableName === "UserTags") {
 		dbQuery = `SELECT * FROM \`${tableName}\` WHERE \`CREATOR\` = '${message.author.id}'`;
@@ -151,7 +151,7 @@ async function parseTag(tag, message) {
 			if(typeof newArg === "object" && newArg.tagVars) {
 				message = newArg;
 				newArg = "";
-			} else if(typeof newArg === "string" || typeof newArg === "undefined") {
+			} else if(typeof newArg === "object" || typeof newArg === "undefined") {
 				results = [newArg];
 			} else {
 				results = [];
@@ -173,7 +173,7 @@ exports.parseTag = parseTag;
 
 var command = new Command("tag", async (message, bot) => {
 	let msg = message.argsPreserved[0];
-	let guild = message.guild, channel = message.channel, user = message.author;
+	let guild = message.channel.guild, channel = message.channel, user = message.author;
 	if(msg.toLowerCase() === "list") {
 		let tagTypes = await getTags(message);
 		let tagMsg = "";
@@ -700,9 +700,9 @@ const tagParser = {
 	discriminator: async args => args[0].user ? args[0].user.discriminator : args[0].discriminator,
 	floor: async args => Math.floor(parseFloat(args[0])),
 	game: async args => args[0].game ? args[0].game.name : "None",
-	getmember: async (args, message) => message.guild.members.get(args[0]),
-	getuser: async (args, message) => message.guild.members.get(args[0]).user,
-	guild: async (args, message) => message.guild,
+	getmember: async (args, message) => message.channel.guild.members.get(args[0]),
+	getuser: async (args, message) => message.channel.guild.members.get(args[0]).user,
+	guild: async (args, message) => message.channel.guild,
 	icon: async args => args[0].iconURL,
 	id: async args => args[0].id,
 	if: async args => {
@@ -746,7 +746,7 @@ const tagParser = {
 	math: async args => math.eval(args[0]),
 	member: async (args, message) => message.member,
 	memberjoinedat: async (args, message) => framework.formatDate(args[0].joinedAt),
-	membercount: async (args, message) => message.guild.memberCount,
+	membercount: async (args, message) => message.channel.guild.memberCount,
 	mention: async args => args[0].mention,
 	name: async args => args[0].name,
 	nickname: async args => args[0].nick || args[0].user.username,

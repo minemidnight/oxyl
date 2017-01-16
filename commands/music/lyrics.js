@@ -25,7 +25,7 @@ var command = new Command("lyrics", async (message, bot) => {
 	return false;
 }, {
 	cooldown: 2500,
-	type: "default",
+	type: "music",
 	description: "Grab lyrics to a song from AZLyrics",
 	args: [{
 		type: "text",

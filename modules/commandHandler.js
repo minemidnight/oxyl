@@ -18,7 +18,7 @@ const bot = Oxyl.bot,
 bot.on("messageCreate", async (message) => {
 	Oxyl.siteScripts.website.messageCreate(message);
 	if(message.author.bot) return;
-	let guild = message.guild;
+	let guild = message.channel.guild;
 	let msg = message.content.toLowerCase();
 
 	let prefix = framework.config.options.prefixRegex;
@@ -45,7 +45,7 @@ bot.on("messageCreate", async (message) => {
 	if(command.onCooldown(message.author)) {
 		message.channel.createMessage(framework.config.messages.onCooldown);
 		return;
-	} else if((command.guildOnly && !message.guild) || (command.perm && !message.guild)) {
+	} else if((command.guildOnly && !message.channel.guild) || (command.perm && !message.channel.guild)) {
 		message.channel.createMessage(framework.config.messages.guildOnly);
 		return;
 	} else if(command.type === "creator" && !framework.config.creators.includes(message.author.id)) {

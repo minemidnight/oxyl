@@ -13,18 +13,18 @@ function isKickable(member) {
 }
 
 var command = new Command("kick", (message, bot) => {
-	var kickPerms = message.guild.members.get(bot.user.id).permission.has("kickMembers");
+	var kickPerms = message.channel.guild.members.get(bot.user.id).permission.has("kickMembers");
 
 	if(!kickPerms) {
 		return "Oxyl does not have permissions to kick.";
 	} else {
-		let member = message.guild.members.get(message.args[0].id);
+		let member = message.channel.guild.members.get(message.args[0].id);
 		if(!member) return "Error -- user not found";
 		let kickable = isKickable(member);
 		if(!kickable) {
 			return `${framework.unmention(member)} couldn't be kicked (has higher permissions)`;
 		} else {
-			message.guild.kickMember(message.args[0].id);
+			message.channel.guild.kickMember(message.args[0].id);
 			return `${framework.unmention(member)} has been kicked`;
 		}
 	}

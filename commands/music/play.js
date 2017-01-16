@@ -23,7 +23,7 @@ async function playCmdProcess(message) {
 			return await msg.edit(`No results found`);
 		} else {
 			let info = await music.videoInfo(searched);
-			return await msg.edit(`Adding __${info.title}__ (<http://youtube.com/watch?v=${info.id}>) to **${message.guild.name}**'s queue.`);
+			return await msg.edit(`Adding __${info.title}__ (<http://youtube.com/watch?v=${info.id}>) to **${message.channel.guild.name}**'s queue.`);
 		}
 	} else if(type === "PLAYLIST") {
 		return await message.channel.createMessage(`Adding playlist to queue: \`${query}\``);
@@ -32,7 +32,7 @@ async function playCmdProcess(message) {
 		let info;
 		try {
 			info = await music.videoInfo(query);
-			return await msg.edit(`Adding __${info.title}__ (<http://youtube.com/watch?v=${info.id}>) to **${message.guild.name}**'s queue.`);
+			return await msg.edit(`Adding __${info.title}__ (<http://youtube.com/watch?v=${info.id}>) to **${message.channel.guild.name}**'s queue.`);
 		} catch(err) {
 			return await msg.edit("Failed to get video info");
 		}
@@ -42,15 +42,15 @@ async function playCmdProcess(message) {
 }
 
 var command = new Command("play", async (message, bot) => {
-	let voiceChannel, editMsg, manager = music.getManager(message.guild);
+	let voiceChannel, editMsg, manager = music.getManager(message.channel.guild);
 	if(message.member && message.member.voiceState && message.member.voiceState.channelID) {
-		voiceChannel = message.guild.channels.get(message.member.voiceState.channelID);
+		voiceChannel = message.channel.guild.channels.get(message.member.voiceState.channelID);
 	} else {
 		voiceChannel = undefined;
 	}
 
 	if(!voiceChannel) return "You are not in a voice channel";
-	else if(!manager) manager = new music.Manager(message.guild);
+	else if(!manager) manager = new music.Manager(message.channel.guild);
 
 	if(manager && manager.connection && !manager.voiceCheck(message.member)) {
 		return "You must be in the music channel to run this command";
@@ -78,10 +78,10 @@ var command = new Command("play", async (message, bot) => {
 			}
 
 			if(type === "PLAYLIST") {
-				msg.edit(`Added playlist to **${message.guild.name}**'s queue`);
+				msg.edit(`Added playlist to **${message.channel.guild.name}**'s queue`);
 			} else if(type === "VIDEO") {
 				let info = await music.videoInfo(id);
-				msg.edit(`Added __${info.title}__ to **${message.guild.name}**'s queue`);
+				msg.edit(`Added __${info.title}__ to **${message.channel.guild.name}**'s queue`);
 			}
 		}
 		return false;

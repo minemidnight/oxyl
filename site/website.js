@@ -121,8 +121,8 @@ exports.messageCreate = message => {
 	sse.send({
 		content: twemoji.parse(content),
 		author: framework.unmention(message.author),
-		guildid: message.guild ? message.guild.id : message.channel.id,
-		guildname: message.guild ? message.guild.name : "DM",
+		guildid: message.channel.guild ? message.channel.guild.id : message.channel.id,
+		guildname: message.channel.guild ? message.channel.guild.name : "DM",
 		channelname: message.channel.name,
 		bot: message.author.bot,
 		sent: message.createdAt

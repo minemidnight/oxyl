@@ -5,7 +5,7 @@ const util = require("util"),
 const config = framework.config;
 
 var command = new Command("eval", async (message, bot) => {
-	let guild = message.guild, channel = message.channel, author = message.author, member = message.member;
+	let guild = message.channel.guild, channel = message.channel, author = message.author, member = message.member;
 	// So the executor can use in eval
 
 	let msg = await message.channel.createMessage("Executing code...");

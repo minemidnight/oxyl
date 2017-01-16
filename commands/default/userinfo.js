@@ -8,7 +8,7 @@ googl.setKey(config.private.googleKey);
 var command = new Command("userinfo", (message, bot) => {
 	let user = message.author;
 	if(message.args[0]) user = message.args[0];
-	user = message.guild.members.get(user.id);
+	user = message.channel.guild.members.get(user.id);
 
 	var info = {
 		ID: user.id,

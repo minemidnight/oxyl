@@ -3,7 +3,7 @@ const Oxyl = require("../../oxyl.js"),
 	framework = require("../../framework.js");
 
 var command = new Command("serverinfo", async (message, bot) => {
-	let guild = bot.guilds.get(message.content) || message.guild;
+	let guild = bot.guilds.get(message.content) || message.channel.guild;
 
 	let members = guild.members;
 	let onlineMembers = members.filter(gM => gM.status === "online").length;

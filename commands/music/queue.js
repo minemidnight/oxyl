@@ -5,7 +5,7 @@ const music = require("../../modules/music.js"),
 const perPage = framework.config.options.commands.queueListPerPage;
 
 var command = new Command("queue", async (message, bot) => {
-	let guild = message.guild;
+	let guild = message.channel.guild;
 	let manager = music.getManager(guild);
 
 	if(!manager) {
