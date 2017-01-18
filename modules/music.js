@@ -73,8 +73,8 @@ class MusicManager {
 		this.data.playing = null;
 		this.data.queue = [];
 		connection.disconnect();
-		delete this.connection;
 		this.data.processQueue = true;
+		delete this.connection;
 	}
 
 	parsedPlayTime() {
@@ -136,7 +136,12 @@ class MusicManager {
 			if(this.data.extraOptions.repeat) this.data.queue.push(this.data.playing);
 		}
 
-		let stream = yt(`http://www.youtube.com/watch?v=${id}`, { audioonly: true });
+		try {
+			var stream = yt(`http://www.youtube.com/watch?v=${id}`, { audioonly: true });
+		} catch(err) {
+			this.sendEmbed("error", `${nextQueue.title} (${nextQueue.id}) is not available in Canada, song skipped.`);
+		}
+
 		connection.play(stream);
 		this.sendEmbed("playing", nextQueue);
 	}
@@ -144,24 +149,27 @@ class MusicManager {
 	async connect(channelID) { // eslint-disable-line consistent-return
 		if(!channelID) throw new Error("No channel");
 		else if(channelID.id)	channelID = channelID.id;
+		if(!this.processQueue) this.processQueue = true;
 
-		if(bot.voiceConnections.get(this.id)) return false;
+		if(bot.voiceConnections.get(this.id) && !bot.voiceConnections.get(this.id).ended) return false;
 		let connection = await bot.joinVoiceChannel(channelID);
-		this.connection = connection;
 		await connection.ready;
+		connection.setVolume(0.15);
+		this.connection = connection;
 
-		connection.once("ready", () => {
-			connection.setVolume(0.3);
-			return connection;
-		});
+		connection.on("ready", () => connection);
 
-		connection.once("end", () => {
+		connection.on("end", () => {
 			if(this.data.queue.length <= 0) this.end();
 			else this.play();
 		});
 
-		connection.once("error", err => {
+		connection.on("error", err => {
 			this.sendEmbed("error", err);
+		});
+
+		connection.on("disconnect", () => {
+			delete this.connection;
 		});
 	}
 
@@ -178,9 +186,9 @@ class MusicManager {
 			};
 		} else if(type === "error") {
 			embed = {
-				title: "Recieved a Error! :error:",
+				title: "Recieved Error :warning:",
 				description: data.stack || data,
-				footer: { text: "Please report this to the Support Server" }
+				footer: { text: "Please report this to the Support Server, if you believe it is a bot error" }
 			};
 		}
 

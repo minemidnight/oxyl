@@ -2,7 +2,7 @@ const Oxyl = require("../oxyl.js"),
 	framework = require("../framework.js");
 const bot = Oxyl.bot;
 
-bot.on("ready", () => {
+bot.once("ready", () => {
 	bot.editStatus("online", { name: framework.config.messages.onlineGame });
 	Oxyl.postStats();
 

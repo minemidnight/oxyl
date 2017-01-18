@@ -40,5 +40,6 @@ var command = new Command("discordify", async (message, bot) => {
 	args: [{
 		type: "link",
 		optional: true
-	}]
+	}],
+	disabled: true
 });

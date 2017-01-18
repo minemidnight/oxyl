@@ -47,9 +47,10 @@ async function handleConfig(message, args) {
 
 		let value = message.argsPreserved[0];
 		value = value.substring(value.toLowerCase().indexOf(setting.name) + setting.name.length + 1);
+		if(!value || value.length === 0) return `Please provide a value for \`${setting.name}\` (${configTypes[setting.type].info})`;
 		value = configTypes[setting.type].validate(message.channel.guild, value);
 
-		if(value === null) return `Invalid input given -- please provide ${configTypes[setting.type].info}`;
+		if(value === null) return `Invalid input given, please provide ${configTypes[setting.type].info}`;
 		framework.setSetting(message.channel.guild, setting.name, value);
 		return `Set \`${setting.name}\` to \`${value}\` (success!)`;
 	} else {

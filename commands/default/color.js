@@ -12,12 +12,12 @@ var command = new Command("color", async (message, bot) => {
 	var image = new Jimp(128, 128, color);
 	image.getBuffer(Jimp.MIME_PNG, (error, buffer) => {
 		if(error) {
-			return "Error generating color";
+			message.channel.createMessage("Error generating picture");
 		} else {
-			return ["", {
+			message.channel.createMessage("", {
 				file: buffer,
-				name: "color.png"
-			}];
+				name: `${message.args[0].toUpperCase()}.png`
+			});
 		}
 	});
 	return false;

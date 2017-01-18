@@ -7,8 +7,8 @@ var command = new Command("update", async (message, bot) => {
 	let role = guild.roles.get("265293123821895680");
 
 	await role.edit({ mentionable: true });
-	bot.createMessage(framework.config.channels.updates, `<@&${role.id}>\n${message.argsPreserved[0]}`);
-	role.edit({ mentionable: false });
+	await bot.createMessage(framework.config.channels.updates, `${role.mention}\n${message.argsPreserved[0]}`);
+	await role.edit({ mentionable: false });
 	return ":white_check_mark: Released update";
 }, {
 	type: "creator",

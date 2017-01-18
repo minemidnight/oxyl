@@ -5,17 +5,18 @@ class Command {
 	constructor(name, callback, options) {
 		if(!name) throw new Error("Command must have a name");
 		if(!callback) throw new Error("Command must have a callback");
+		if(!options) throw new Error("Command has no options");
 		if(!options.description) console.warn(`!! Command ${name} has no description`);
 		if(!options.type) console.warn(`!! Command ${name} has no type (using default)`);
 
 		this.name = name;
 		this.process = callback;
 
+		if(options.disabled) return;
 		this.aliases = options.aliases || [];
 		this.type = options.type || "default";
 		this.description = options.description || undefined;
 		this.args = options.args || [];
-		this.enabled = !!options.defaultEnabled || true;
 		this.guildOnly = !!options.guildOnly || false;
 		this.cooldown = options.cooldown || 0;
 		this.perm = options.perm || null;
