@@ -67,6 +67,9 @@ async function handleRole(message, args) {
 		let exists = await framework.getRole(message.channel.guild, "me", role);
 		if(!exists) return `\`${role.name}\` is not available role`;
 
+		let rolePerms = message.channel.guild.members.get(Oxyl.bot.user.id).permission.has("manageRoles");
+		if(!rolePerms) return "I do not have permissions to edit roles!";
+
 		let hasRole = message.member.roles.indexOf(role.id) > -1;
 		if(hasRole) {
 			message.member.removeRole(role.id);

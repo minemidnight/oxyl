@@ -117,7 +117,7 @@ async function getTags(message, fullData, table = 0) {
 
 async function parseTag(tag, message) {
 	tag = tag.CONTENT || tag;
-	if(message.args[0].startsWith("test")) {
+	if(message.argsPreserved[0].toLowerCase().startsWith("test")) {
 		message.argsPreserved = [];
 	} else {
 		message.argsPreserved = message.argsPreserved[0].split(" ").splice(1);

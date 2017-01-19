@@ -7,7 +7,7 @@ var command = new Command("ship", async (message, bot) => {
 	if(message.args[0] === message.args[1]) return "You must provide 2 different people to ship";
 	if(message.args[2] && message.args[2].endsWith("-n")) var nicknames = true;
 
-	let members = message.guild.members;
+	let members = message.channel.guild.members;
 	let user1 = message.args[0], user2 = message.args[1];
 	if(nicknames) {
 		user1 = members.get(user1.id).nick || user1.username;

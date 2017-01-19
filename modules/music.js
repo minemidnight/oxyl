@@ -111,9 +111,11 @@ class MusicManager {
 		}
 	}
 
-	play() {
+	async play() {
 		let connection = this.connection;
 		if(!connection) return;
+
+		if(!connection.ready) await connection.ready;
 
 		if(!this.data.playing && this.connection.playing) {
 			this.connection.stopPlaying();
@@ -156,20 +158,23 @@ class MusicManager {
 		await connection.ready;
 		connection.setVolume(0.15);
 		this.connection = connection;
+		return new Promise((resolve, reject) => {
+			connection.on("ready", () => {
+				resolve(connection);
+			});
 
-		connection.on("ready", () => connection);
+			connection.on("end", () => {
+				if(this.data.queue.length <= 0) this.end();
+				else this.play();
+			});
 
-		connection.on("end", () => {
-			if(this.data.queue.length <= 0) this.end();
-			else this.play();
-		});
+			connection.on("error", err => {
+				this.sendEmbed("error", err);
+			});
 
-		connection.on("error", err => {
-			this.sendEmbed("error", err);
-		});
-
-		connection.on("disconnect", () => {
-			delete this.connection;
+			connection.on("disconnect", () => {
+				delete this.connection;
+			});
 		});
 	}
 

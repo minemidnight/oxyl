@@ -6,7 +6,7 @@ const config = framework.config;
 googl.setKey(config.private.googleKey);
 
 var command = new Command("shorten", async (message, bot) => {
-	message.channel.startTyping();
+	message.channel.sendTyping();
 
 	let shortUrl = await googl.shorten(message.args[0], { quotaUser: message.author.id });
 	return `Shortened link: ${shortUrl}`;
