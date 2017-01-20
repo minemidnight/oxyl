@@ -27,7 +27,7 @@ var command = new Command("queue", async (message, bot) => {
 				let queueData = queue[index];
 
 				let title = queueData.title;
-				if(title.length > 75) title = `${title.substring(0, 71)} __**...**__`;
+				if(title && title.length > 75) title = `${title.substring(0, 71)} __**...**__`;
 
 				queueSongs.push(`[${index + 1}] ${title}`);
 				if(queueSize - 1 === index || i === perPage - 1) break;

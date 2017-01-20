@@ -5,36 +5,30 @@ const Oxyl = require("../../oxyl.js"),
 const config = framework.config;
 googl.setKey(config.private.googleKey);
 
-var command = new Command("userinfo", (message, bot) => {
+var command = new Command("userinfo", async (message, bot) => {
 	let user = message.author;
 	if(message.args[0]) user = message.args[0];
 	user = message.channel.guild.members.get(user.id);
 
-	var info = {
-		ID: user.id,
-		Discriminator: user.user.discriminator,
-		Avatar: user.user.avatarURL ? "Shortening Link..." : "No Avatar",
-		Game: user.game === null ? "Nothing" : user.game.name,
-		Status: user.status.toUpperCase(),
-		"Join Date": framework.formatDate(user.user.createdAt),
-		"Guild Join Date": framework.formatDate(user.joinedAt)
-	};
-
-	let constructorData = [];
-	for(var i in info) {
-		constructorData.push(`${i}: ${info[i]}`);
-	}
+	let constructorData = [
+		`ID: ${user.id}`,
+		`Discriminator: ${user.user.discriminator}`,
+		`Avatar: ${user.user.avatarURL ? "Shortening Link..." : "No Avatar"}`,
+		`Game: ${user.game ? user.game.name : "Nothing"}`,
+		`Status: ${user.status.toUpperCase()}`,
+		`Join Date: ${framework.formatDate(user.user.createdAt)}`,
+		`Guild Join Date: ${framework.formatDate(user.joinedAt)}`,
+		`Profile: http://minemidnight.work/user/${user.id}`
+	];
 
 	constructorData = framework.listConstructor(constructorData);
-	message.channel.createMessage(`Info on ${user.user.username}: ${constructorData}`)
-	.then(msg => {
-		if(!user.user.avatarURL) return;
-		googl.shorten(user.user.avatarURL, { quotaUser: user.id }).then((shortUrl) => {
-			msg.content = msg.content.replace("Shortening Link...", `<${shortUrl}>`);
-			msg.edit(msg.content);
-		});
-	});
-	return undefined;
+	let msg = await message.channel.createMessage(`Info on ${user.user.username}: ${constructorData}`);
+
+	if(!user.user.avatarURL) return;
+	let shortUrl = await googl.shorten(user.user.avatarURL, { quotaUser: user.id });
+	msg.content = msg.content.replace("Shortening Link...", `<${shortUrl}>`);
+	msg.edit(msg.content);
+	return;
 }, {
 	guildOnly: true,
 	type: "default",

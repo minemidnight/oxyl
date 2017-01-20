@@ -135,14 +135,7 @@ class MusicManager {
 			else this.data.queue = [];
 		}
 
-		try {
-			var stream = yt(`http://www.youtube.com/watch?v=${id}`, { audioonly: true });
-		} catch(err) {
-			this.sendEmbed("error", `${nextQueue.title} (${nextQueue.id}) is not available in Canada, song skipped.`);
-			this.play();
-			return;
-		}
-
+		let stream = yt(`http://www.youtube.com/watch?v=${id}`, { audioonly: true });
 		connection.play(stream);
 		this.sendEmbed("playing", nextQueue);
 	}
@@ -176,7 +169,7 @@ class MusicManager {
 				this.sendEmbed("error", err);
 			});
 
-			connection.on("disconnect", () => {
+			connection.once("disconnect", () => {
 				delete this.connection;
 			});
 		});
@@ -197,7 +190,7 @@ class MusicManager {
 			embed = {
 				title: "Recieved Error :warning:",
 				description: data.stack || data,
-				footer: { text: "Please report this to the Support Server, if you believe it is a bot error" }
+				footer: { text: "Please report this to the Support Server if it is a bot issue" }
 			};
 		}
 
