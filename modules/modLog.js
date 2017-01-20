@@ -72,7 +72,8 @@ bot.on("guildBanRemove", async (guild, user) => {
 });
 
 bot.on("guildMemberUpdate", (guild, member, oldMember) => {
-	if(oldMember.roles === member.roles) return;
+	if(!member || !oldMember) return;
+	else if(oldMember.roles === member.roles) return;
 	let oldMute = oldMember.roles.find(role => guild.roles.get(role).name.toLowerCase() === "muted");
 	let newMute = member.roles.find(role => guild.roles.get(role).name.toLowerCase() === "muted");
 

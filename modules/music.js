@@ -111,11 +111,9 @@ class MusicManager {
 		}
 	}
 
-	async play() {
+	play() {
 		let connection = this.connection;
 		if(!connection) return;
-
-		if(!connection.ready) await connection.ready;
 
 		if(!this.data.playing && this.connection.playing) {
 			this.connection.stopPlaying();
@@ -135,13 +133,14 @@ class MusicManager {
 			var id = nextQueue.id;
 			if(this.data.queue.length > 1) this.data.queue.shift();
 			else this.data.queue = [];
-			if(this.data.extraOptions.repeat) this.data.queue.push(this.data.playing);
 		}
 
 		try {
 			var stream = yt(`http://www.youtube.com/watch?v=${id}`, { audioonly: true });
 		} catch(err) {
 			this.sendEmbed("error", `${nextQueue.title} (${nextQueue.id}) is not available in Canada, song skipped.`);
+			this.play();
+			return;
 		}
 
 		connection.play(stream);
@@ -155,15 +154,20 @@ class MusicManager {
 
 		if(bot.voiceConnections.get(this.id) && !bot.voiceConnections.get(this.id).ended) return false;
 		let connection = await bot.joinVoiceChannel(channelID);
-		await connection.ready;
-		connection.setVolume(0.15);
 		this.connection = connection;
+		await connection.ready;
 		return new Promise((resolve, reject) => {
-			connection.on("ready", () => {
+			if(connection.ready) {
 				resolve(connection);
-			});
+			} else {
+				connection.once("ready", () => {
+					connection.setVolume(0.15);
+					resolve(connection);
+				});
+			}
 
 			connection.on("end", () => {
+				if(this.data.extraOptions.repeat) this.data.queue.push(this.data.playing);
 				if(this.data.queue.length <= 0) this.end();
 				else this.play();
 			});
