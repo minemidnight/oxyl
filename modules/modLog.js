@@ -20,8 +20,7 @@ exports.caseInfo = async (guild, casenum) => {
 
 exports.createCase = async (guild, action, user) => {
 	let casenum = await framework.dbQuery(`SELECT * FROM \`ModLog\` WHERE \`GUILD\` = '${guild.id}'`);
-	casenum = casenum.length;
-	if(casenum === 0) casenum = 1;
+	casenum = casenum.length + 1;
 
 	let channel = await exports.modChannel(guild);
 	if(!channel) return;
@@ -64,10 +63,13 @@ exports.setReason = async (guild, casenum, reason, mod) => {
 	return "SUCCESS";
 };
 
-exports.possibleBan = async (guild, member) => {
-	let bans = await guild.getBans();
-	if(bans.indexOf(member.user) !== -1) exports.createCase(guild, 0, member.user);
-};
+bot.on("guildBanAdd", async (guild, user) => {
+	exports.createCase(guild, 0, user);
+});
+
+bot.on("guildBanRemove", async (guild, user) => {
+	exports.createCase(guild, 1, user);
+});
 
 bot.on("guildMemberUpdate", (guild, member, oldMember) => {
 	if(oldMember.roles === member.roles) return;
