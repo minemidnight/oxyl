@@ -12,7 +12,7 @@ function isBannable(member) {
 	else return highestRoleBot > highestRoleMember;
 }
 
-var command = new Command("ban", (message, bot) => {
+var command = new Command("ban", async (message, bot) => {
 	let banPerms = message.channel.guild.members.get(bot.user.id).permission.has("banMembers");
 
 	if(!banPerms) {

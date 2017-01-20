@@ -12,8 +12,8 @@ function isKickable(member) {
 	else return highestRoleBot > highestRoleMember;
 }
 
-var command = new Command("kick", (message, bot) => {
-	var kickPerms = message.channel.guild.members.get(bot.user.id).permission.has("kickMembers");
+var command = new Command("kick", async (message, bot) => {
+	let kickPerms = message.channel.guild.members.get(bot.user.id).permission.has("kickMembers");
 
 	if(!kickPerms) {
 		return "Oxyl does not have permissions to kick.";
@@ -25,6 +25,7 @@ var command = new Command("kick", (message, bot) => {
 			return `${framework.unmention(member)} couldn't be kicked (has higher permissions)`;
 		} else {
 			message.channel.guild.kickMember(message.args[0].id);
+			Oxyl.modScripts.modLog.createCase(message.channel.guild, 2, message.args[0]);
 			return `${framework.unmention(member)} has been kicked`;
 		}
 	}

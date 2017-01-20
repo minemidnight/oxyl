@@ -3,7 +3,7 @@ const Oxyl = require("../../oxyl.js"),
 	framework = require("../../framework.js");
 
 let settings = [{ name: "prefix", type: "text" },
-{ name: "modlog", type: "textChannel", disabled: true },
+{ name: "modlog", type: "textChannel" },
 { name: "musicchannel", type: "textChannel" },
 { name: "userlog", type: "textChannel" },
 { name: "userjoin", type: "tag" },

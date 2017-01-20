@@ -9,4 +9,5 @@ bot.on("guildMemberAdd", (guild, member) => {
 
 bot.on("guildMemberRemove", (guild, member) => {
 	Oxyl.modScripts.userLog(guild, member, "userleave");
+	Oxyl.modScripts.modLog.possibleBan(guild, member);
 });
