@@ -2,13 +2,18 @@ const validator = require("../modules/commandArgs.js"),
 	Oxyl = require("../oxyl.js"),
 	framework = require("../framework.js");
 
-const prefixes = {};
-exports.prefixes = prefixes;
+const prefixes = exports.prefixes = {};
+const blacklist = exports.blacklist = [];
 // wait for connection
 setTimeout(async () => {
 	let prefixArray = await framework.dbQuery("SELECT * FROM `Settings` WHERE `NAME` = 'prefix'");
-	prefixArray.forEach(prefix => {
-		prefixes[prefix.ID] = prefix.VALUE;
+	prefixArray.forEach(data => {
+		prefixes[data.ID] = data.VALUE;
+	});
+
+	let blacklistedUsers = await framework.dbQuery("SELECT * FROM `Blacklist`");
+	blacklistedUsers.forEach(data => {
+		blacklist.push(data.USER);
 	});
 }, 2500);
 
@@ -17,7 +22,7 @@ const bot = Oxyl.bot,
 
 bot.on("messageCreate", async (message) => {
 	Oxyl.siteScripts.website.messageCreate(message);
-	if(message.author.bot) return;
+	if(message.author.bot || blacklist[message.author.id]) return;
 	let guild = message.channel.guild;
 	let msg = message.content.toLowerCase();
 

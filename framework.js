@@ -77,7 +77,8 @@ exports.clearGuildData = async (guild) => {
 		AutoRole: "ID",
 		GuildTags: "ID",
 		RoleMe: "ID",
-		Settings: "ID"
+		Settings: "ID",
+		ModLog: "GUILD"
 	};
 
 	for(let key in tables) {

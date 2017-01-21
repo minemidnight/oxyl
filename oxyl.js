@@ -5,7 +5,8 @@ const bot = new Eris(framework.config.private.token, { seedVoiceConnections: tru
 
 process.on("unhandledRejection", (err) => {
 	if(!err) return;
-	err = err.stack || err;
+	if(err.code && (err.code === 50013 || err.code === 10008)) return;
+	err = err.stack.substring(0, 1900) || err;
 	framework.consoleLog(`Unhandled Rejection: ${framework.codeBlock(err)}`, "debug");
 });
 

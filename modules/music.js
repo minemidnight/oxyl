@@ -154,18 +154,18 @@ class MusicManager {
 				resolve(connection);
 			} else {
 				connection.once("ready", () => {
-					connection.setVolume(0.15);
+					connection.setVolume(0.05);
 					resolve(connection);
 				});
 			}
 
-			connection.on("end", () => {
+			connection.once("end", () => {
 				if(this.data.extraOptions.repeat) this.data.queue.push(this.data.playing);
 				if(this.data.queue.length <= 0) this.end();
 				else this.play();
 			});
 
-			connection.on("error", err => {
+			connection.once("error", err => {
 				this.sendEmbed("error", err);
 			});
 
