@@ -127,7 +127,7 @@ async function parseTag(tag, message) {
 
 	let results = [], executions = 0;
 	while(tag.match(/{[^{}]+}/)) {
-		if(executions >= 1000) throw new Error("Prevented recursion -- 1000 tag executions hit");
+		if(executions >= 1000) throw new Error("Prevented recursion, 1000 tag executions hit");
 		executions++;
 
 		let originalArg = tag.match(/{[^{}]+}/)[0];
@@ -148,7 +148,8 @@ async function parseTag(tag, message) {
 		else if(results.length >= 1) argArray = results.concat(argArray.splice(results.length));
 		try {
 			let newArg = await tagParser[argType.toLowerCase()](argArray, message);
-			if(typeof newArg === "object" && newArg.tagVars) {
+			// detect if it's modifying the message
+			if(newArg && typeof newArg === "object" && newArg.argsPreserved) {
 				message = newArg;
 				newArg = "";
 			} else if(typeof newArg === "object" || typeof newArg === "undefined") {
@@ -159,7 +160,8 @@ async function parseTag(tag, message) {
 
 			tag = tag.replace(originalArg, newArg);
 		} catch(err) {
-			throw new Error(`Error parsing tag at \`${originalArg}\``);
+			if(message.tagVars.fallback) return message.tagVars.fallback;
+			else throw new Error(`Parsing at \`${originalArg}\`\nMore Info: ${framework.codeBlock(err.stack || err)}`);
 		}
 	}
 
@@ -167,7 +169,10 @@ async function parseTag(tag, message) {
 		.replace(/@here/g, "@\u200Bhere")
 		.replace(/&lb;/g, "{")
 		.replace(/&rb;/g, "}");
-	return tag;
+
+	if(!tag || tag.length <= 0) throw new Error(`Tag has no content`);
+	else if(tag.length >= 2000) throw new Error(`Tag is over 2000 characters`);
+	else return tag;
 }
 exports.parseTag = parseTag;
 
@@ -298,7 +303,7 @@ var command = new Command("tag", async (message, bot) => {
 			parsed = await parseTag(msg.substring(4).trim(), message);
 		} catch(err) {
 			if(!err) return "Tag failed, no fail reason";
-			else return err;
+			else return err.toString();
 		}
 
 		return parsed;
@@ -348,7 +353,7 @@ var command = new Command("tag", async (message, bot) => {
 			parsed = await parseTag(tag, message);
 		} catch(err) {
 			if(!err) return "Tag failed, no fail reason";
-			else return err;
+			else return err.toString();
 		}
 
 		addUse(tag.TYPE, tag.NAME, message);
@@ -631,7 +636,7 @@ const tagInfo = {
 	},
 	tvar: {
 		return: "A temporary variable (must be set before using)",
-		in: "@%{tvar:uname}",
+		in: "@%{tvar:uname|{username:{author}}} {tvar:uname}",
 		out: `"minemidnight"`,
 		usage: "<String> [New Value (Anything)]"
 	},
@@ -673,6 +678,18 @@ const tagInfo = {
 		in: "{args:0}",
 		out: `"true"`,
 		usage: "<Anything>"
+	},
+	settype: {
+		return: "Parses an argument as a specific type to use later, accepted types are text, int, float or mention/user",
+		in: "0|user",
+		out: `"" (nothing)`,
+		usage: "<Integer> <String <ArgType>>"
+	},
+	fallback: {
+		return: "Sets fallback text if the tag fails, instead of the default",
+		in: "This tag failed! :(",
+		out: `"" (nothing)`,
+		usage: "<String>"
 	}
 };
 
@@ -682,12 +699,7 @@ module.exports.sorted = Object.keys(tagInfo).sort();
 const tagParser = {
 	abs: async args => Math.abs(parseFloat(args[0])),
 	allargs: async (args, message) => message.argsPreserved.length >= 0 ? message.argsPreserved.join(" ") : null,
-	arg: async (args, message) => {
-		if(!message.argsPreserved.length >= 0) return null;
-		let argsCombined = "";
-		args.forEach(ele => { argsCombined += message.argsPreserved[ele]; });
-		return argsCombined;
-	},
+	arg: async (args, message) => message.argsPreserved[parseInt(args[0])],
 	argcount: async (args, message) => message.argsPreserved.length,
 	author: async (args, message) => message.author,
 	avatar: async args => args[0].user ? args[0].user.avatarURL : args[0].avatarURL,
@@ -698,6 +710,10 @@ const tagParser = {
 	choose: async args => args[Math.floor(Math.random() * args.length)],
 	createdat: async args => framework.formatDate(args[0].createdAt),
 	discriminator: async args => args[0].user ? args[0].user.discriminator : args[0].discriminator,
+	fallback: async (args, message) => {
+		message.tagVars.fallback = args[0];
+		return message;
+	},
 	floor: async args => Math.floor(parseFloat(args[0])),
 	game: async args => args[0].game ? args[0].game.name : "None",
 	getmember: async (args, message) => message.channel.guild.members.get(args[0]),
@@ -766,6 +782,13 @@ const tagParser = {
 	replaceregex: async args => args[0].replace(new RegExp(args[1], args[3] || ""), args[2]),
 	roles: async args => args[0].roles,
 	round: async args => Math.round(parseFloat(args[0])),
+	settype: async (args, message) => {
+		const validator = Oxyl.modScripts.commandArgs;
+		let index = parseInt(args[0]);
+		let newArg = await validator.test(message.argsPreserved[index], { type: args[1] }, message);
+		message.argsPreserved[index] = newArg;
+		return message;
+	},
 	split: async args => args[0].split(args[1] || ""),
 	status: async args => args[0].status,
 	substring: async args => args[0].toString().substring(args[1], args[2]),

@@ -21,6 +21,8 @@ async function handleConfig(message, args) {
 	} else if(args[0].toLowerCase() === "list") {
 		return `All Settings: ${settings.map(setting => `\`${setting.name}\``).join(", ")}`;
 	} else if(args[0].toLowerCase() === "get" || args[0].toLowerCase() === "desc" || args[0].toLowerCase() === "description") {
+		if(!args[1]) return "Please provide a setting to get";
+
 		let setting = settings.find(set => set.name === args[1].toLowerCase());
 		if(!setting) return "Invalid setting! Setting not found.";
 
@@ -36,6 +38,8 @@ async function handleConfig(message, args) {
 		msg += `\nDescription: ${setting.description}`;
 		return msg;
 	} else if(args[0].toLowerCase() === "reset") {
+		if(!args[1]) return "Please provide a setting to reset";
+
 		let setting = settings.find(set => set.name === args[1].toLowerCase());
 		if(!setting) return "Invalid setting! Setting not found.";
 
@@ -48,6 +52,8 @@ async function handleConfig(message, args) {
 			return `Setting \`${setting.name}\` is not set`;
 		}
 	} else if(args[0].toLowerCase() === "set") {
+		if(!args[1]) return "Please provide a setting to set";
+
 		let setting = settings.find(set => set.name === args[1].toLowerCase());
 		if(!setting) return "Invalid setting! Setting not found.";
 

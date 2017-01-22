@@ -14,7 +14,7 @@ router.get("/", async (req, res) => {
 	let usedMemory = process.memoryUsage().heapUsed;
 	let totalMemory = os.totalmem();
 	let usedPercent = `${((usedMemory / totalMemory) * 100).toFixed(2)}%`;
-	usedMemory = `${(usedMemory / Math.pow(1024, 2)).toFixed(2)} MB`;
+	usedMemory = `${(usedMemory / Math.pow(1024, 3)).toFixed(2)} GB`;
 	totalMemory = `${(totalMemory / Math.pow(1024, 3)).toFixed(2)} GB`;
 
 	let commands = Oxyl.commands, commandUses = 0;

@@ -19,7 +19,7 @@ var command = new Command("botinfo", async (message, bot) => {
 	];
 
 	let totalUsers = 0;
-	guilds.forEach((guild) => {
+	guilds.forEach(guild => {
 		totalUsers += guild.memberCount;
 	});
 
@@ -29,7 +29,7 @@ var command = new Command("botinfo", async (message, bot) => {
 	];
 
 	let memoryInfo = `${((usedMemory / totalMemory) * 100).toFixed(2)}%, `;
-	memoryInfo += `${(usedMemory / Math.pow(1024, 2)).toFixed(2)} MB / ${(totalMemory / Math.pow(1024, 3)).toFixed(2)} GB`;
+	memoryInfo += `${(usedMemory / Math.pow(1024, 3)).toFixed(2)} GB / ${(totalMemory / Math.pow(1024, 3)).toFixed(2)} GB`;
 	let otherInfo = [
 		`Memory Usage: ${memoryInfo}`,
 		`Website: http://minemidnight.work`,

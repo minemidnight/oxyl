@@ -13,7 +13,7 @@ router.get("/", async (req, res) => {
 		let input = `${tag.in ? tag.in.startsWith("@%") ? tag.in.substring(2) : `{${i}:${tag.in}}` : `{${i}}`}`;
 		data.tags.push({
 			name: i,
-			usage: tag.usage ? tag.usage.replace(/</g, "&lt;").replace(/>/g, "&gt;") : "[ ]",
+			usage: tag.usage ? main.escapeHTML(tag.usage) : "[ ]",
 			return: tag.return,
 			input: input,
 			out: tag.out

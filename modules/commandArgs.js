@@ -5,6 +5,7 @@ const config = framework.config,
 
 exports.test = async (input, arg, message) => {
 	let type = arg.type;
+	if(!input || input.length === 0) return new Error("No input given");
 	if(type === "text" || type === "custom") {
 		return input;
 	} else if(type === "int" || type === "float") {
@@ -87,6 +88,6 @@ exports.test = async (input, arg, message) => {
 			}
 		}
 	} else {
-		throw new Error("Invalid validation type -- report to Support Server");
+		throw new Error("Invalid argument type");
 	}
 };

@@ -1,5 +1,6 @@
 const express = require("express"),
 	framework = require("../../framework.js"),
+	handlebars = require("handlebars"),
 	main = require("../website.js"),
 	Oxyl = require("../../oxyl.js");
 const router = express.Router(); // eslint-disable-line new-cap
@@ -22,6 +23,33 @@ router.get("*", async (req, res) => {
 		if(main.tokens[ip]) {
 			let user = await main.getInfo(main.tokens[ip], "users/@me");
 			if(guild.members.get(user.id) && framework.guildLevel(guild.members.get(user.id)) >= 1) data.panel = true;
+
+			let settings = await framework.dbQuery(`SELECT * FROM \`Settings\` WHERE \`ID\` = '${guild.id}'`);
+			let possibleSettings = Oxyl.cmdScripts.settings.settings;
+			data.settings = settings.map(setting => {
+				let settingFound = possibleSettings.find(set => set.name === setting.NAME);
+				setting.TYPE = settingFound.type;
+				if(setting.TYPE === "textChannel") setting.valueDisplay = guild.channels.get(setting.VALUE).name;
+				else setting.valueDisplay = setting.VALUE;
+
+				return setting;
+			});
+
+			for(let i of possibleSettings) {
+				if(data.settings.find(set => set.NAME === i.name)) continue;
+				data.settings.push({
+					NAME: i.name,
+					VALUE: undefined,
+					valueDisplay: "",
+					placeholder: "Not set",
+					TYPE: i.type
+				});
+			}
+
+			// let roleme = await framework.getRoles(guild, "me");
+			// data.roleme = roleme.map(role => guild.roles.get(role.ID) || "Deleted Role");
+			// let autorole = await framework.getRoles(guild, "auto");
+			// data.autorole = autorole.map(role => guild.roles.get(role.ID) || "Deleted Role");
 		}
 	}
 
@@ -29,3 +57,29 @@ router.get("*", async (req, res) => {
 });
 
 module.exports = router;
+
+handlebars.registerHelper("createInput", (settings, guild) => {
+	let returnstr = "";
+	settings.forEach(setting => {
+		returnstr += `<label class="w3-label">${setting.NAME}</label>`;
+		if(setting.TYPE === "text") {
+			returnstr += `<input class="w3-input" value="${setting.valueDisplay}"` +
+				`${setting.placeholder ? `placeholder="${setting.placeholder}"` : ""} type="text" />`;
+		}	else if(setting.TYPE === "tag") {
+			returnstr += `<textarea class="w3-input" style="max-width:100%;max-height:300px;"` +
+				`${setting.placeholder ? `placeholder="${setting.placeholder}"` : ""}>${setting.valueDisplay}</textarea>`;
+		}	else if(setting.TYPE === "textChannel") {
+			returnstr += `<select class="w3-select">`;
+			returnstr += `<option value="undefined" ${setting.VALUE === undefined ? "selected" : ""}>None</option>`;
+
+			returnstr += guild.channels
+				.map(channel => `<option value="${channel.id}" ${setting.VALUE === channel.id ? "selected" : ""}>${channel.name}</option>`)
+				.join("");
+			returnstr += `</select>`;
+		}
+
+		returnstr += "<br />";
+	});
+
+	return new handlebars.SafeString(returnstr);
+});

@@ -3,7 +3,7 @@ const Oxyl = require("../oxyl.js"),
 	yt = require("ytdl-core");
 const bot = Oxyl.bot;
 const ytKey = framework.config.private.googleKey;
-exports.managers = {};
+module.exports.managers = exports.managers = {};
 
 class MusicManager {
 	constructor(guild) {

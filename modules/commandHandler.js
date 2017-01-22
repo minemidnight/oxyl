@@ -1,6 +1,7 @@
 const validator = require("../modules/commandArgs.js"),
 	Oxyl = require("../oxyl.js"),
-	framework = require("../framework.js");
+	framework = require("../framework.js"),
+	sse = require("../site/routes/sse.js");
 
 const prefixes = exports.prefixes = {};
 const blacklist = exports.blacklist = [];
@@ -21,7 +22,7 @@ const bot = Oxyl.bot,
 	commands = Oxyl.commands;
 
 bot.on("messageCreate", async (message) => {
-	Oxyl.siteScripts.website.messageCreate(message);
+	sse.messageCreate(message);
 	if(message.author.bot || blacklist[message.author.id]) return;
 	let guild = message.channel.guild;
 	let msg = message.content.toLowerCase();
@@ -113,7 +114,7 @@ bot.on("messageCreate", async (message) => {
 			message.channel.createMessage("Bot error when executing command -- error sent to Support Server");
 		}
 	} catch(err) {
-		message.channel.createMessage(err.toString().substring(6));
+		message.channel.createMessage(err.toString());
 	}
 });
 
@@ -132,7 +133,7 @@ async function validateArgs(message, command, index = 0) {
 	try {
 		var newArg = await checkArg(message.argsUnparsed[index], command.args[index], message);
 		message.argsPreserved[index] = newArg;
-		return await validateArgs(message, command, index + 1); // eslint-disable-line no-unsafe-finally
+		return await validateArgs(message, command, index + 1);
 	} catch(err) {
 		throw new Error(`${err}\nCommand terminated`);
 	}

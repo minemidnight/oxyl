@@ -71,7 +71,7 @@
 						{{#if guild.icon}}
 						<img class="w3-circle" style="margin-bottom:0px;width:64px" src="https://cdn.discordapp.com/icons/{{guild.id}}/{{guild.icon}}.jpg" />
 						{{else}}
-						<p class="w3-large w3-circle" style="background-color:rgb(46, 49, 54);padding:15px;width:56px;margin-top:-4px">{{guild.subname}}</p>
+						<p class="w3-large w3-circle" style="background-color:rgb(46, 49, 54);padding:15px;width:56px;margin-top:-4px;user-select:none">{{guild.subname}}</p>
 						{{/if}}
 					</div>
 					<div class="w3-right">
@@ -215,13 +215,16 @@
 			</div>
 		</div>
 
-		<div class="w3-row-padding w3-margin-bottom">
+		<div class="w3-row-padding w3-margin-bottom w3-left-align">
 			{{#if panel}}
-			<h3 class="w3-margin w3-xlarge">Manage Settings</h3>
+				<h3 class="w3-margin w3-xlarge">Manage Settings</h3>
+				<form>
+				{{#createInput settings guild}}{{/createInput}}
+				</form>
 			{{else if user}}
-			<p class="w3-margin w3-xlarge">Sorry! You don't have permissions on this guild, so you can't manage it.</p>
+				<p class="w3-margin w3-xlarge">Sorry! You don't have permissions on this guild, so you can't manage it.</p>
 			{{else}}
-			<p class="w3-margin w3-xlarge">Log in to Manage Guild Settings</p>
+				<p class="w3-margin w3-xlarge">Log in to Manage Guild Settings</p>
 			{{/if}}
 		</div>
 
