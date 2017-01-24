@@ -1,24 +1,33 @@
 const Oxyl = require("../oxyl.js"),
 	framework = require("../framework.js"),
-	yt = require("ytdl-core");
+	yt = require("ytdl-core"),
+	fs = require("fs");
 const bot = Oxyl.bot;
 const ytKey = framework.config.private.googleKey;
-module.exports.managers = exports.managers = {};
+exports.managers = {};
 
 class MusicManager {
-	constructor(guild) {
+	constructor(guild, extraData) {
 		this.guild = guild;
 		this.id = guild.id;
 
-		this.resetData();
-		exports.managers[guild.id] = this;
+		if(extraData) {
+			for(let i in extraData) {
+				this[i] = extraData[i];
+			}
+		} else {
+			this.resetData();
 
-		framework.getSetting(guild, "musicchannel").then(val => {
-			this.musicChannel = guild.channels.get(val);
-			if(!this.musicChannel) this.musicChannel = undefined;
-		}).catch(() => {
-			this.musicChannel = undefined;
-		});
+			framework.getSetting(guild, "musicchannel").then(val => {
+				this.musicChannel = guild.channels.get(val);
+				if(!this.musicChannel) this.musicChannel = undefined;
+			}).catch(() => {
+				this.musicChannel = undefined;
+			});
+		}
+
+		exports.managers[guild.id] = this;
+		Oxyl.managers[guild.id] = this;
 	}
 
 	resetData() {
@@ -147,17 +156,24 @@ class MusicManager {
 
 		if(bot.voiceConnections.get(this.id) && !bot.voiceConnections.get(this.id).ended) return false;
 		let connection = await bot.joinVoiceChannel(channelID);
+		connection.setVolume(0.05);
 		this.connection = connection;
 		await connection.ready;
 		return new Promise((resolve, reject) => {
 			if(connection.ready) {
 				resolve(connection);
+				connection.setVolume(0.05);
 			} else {
 				connection.once("ready", () => {
-					connection.setVolume(0.05);
 					resolve(connection);
+					connection.setVolume(0.05);
 				});
 			}
+
+			let error = err => {
+				this.sendEmbed("error", err);
+			};
+			connection.on("error", error);
 
 			connection.once("end", () => {
 				if(this.data.extraOptions.repeat) this.data.queue.push(this.data.playing);
@@ -165,18 +181,15 @@ class MusicManager {
 				else this.play();
 			});
 
-			connection.once("error", err => {
-				this.sendEmbed("error", err);
-			});
-
 			connection.once("disconnect", () => {
+				connection.removeListener("error", error);
 				delete this.connection;
 			});
 		});
 	}
 
-	sendEmbed(type, data) {
-		if(!this.musicChannel) return;
+	async sendEmbed(type, data) {
+		if(!this.musicChannel) return false;
 		let embed;
 
 		if(type === "playing") {
@@ -189,12 +202,19 @@ class MusicManager {
 		} else if(type === "error") {
 			embed = {
 				title: "Recieved Error :warning:",
+				color: 0xF1C40F,
 				description: data.stack || data,
 				footer: { text: "Please report this to the Support Server if it is a bot issue" }
 			};
+		} else if(type === "restart") {
+			embed = {
+				title: "Oxyl Restarting :gear:",
+				color: 0xAED6F1,
+				description: "Oxyl is restarting. Your music will be paused then start playing again, from the start of the current song. This is intentional."
+			};
 		}
 
-		this.musicChannel.createMessage({ embed });
+		return await this.musicChannel.createMessage({ embed });
 	}
 }
 exports.Manager = MusicManager;
@@ -218,14 +238,57 @@ exports.getDuration = (seconds) => {
 	else return `${mins}:${secs}`;
 };
 
-exports.ytType = (id) => {
+exports.managerDump = () => {
+	let managers = Object.keys(Oxyl.managers)
+		.map(manager => Oxyl.managers[manager])
+		.filter(manager => manager.data.playing && manager.connection)
+		.map(manager => {
+			let object = {};
+			object.id = manager.id;
+			object.data = manager.data;
+			object.musicChannel = manager.musicChannel ? manager.musicChannel.id : undefined;
+			object.processQueue = manager.processQueue;
+			object.channel = manager.connection ? manager.connection.channelID : undefined;
+			return object;
+		});
+
+	fs.writeFileSync("./managers.json", JSON.stringify(managers));
+};
+
+exports.managerLoad = (managers) => {
+	managers.forEach(async manager => {
+		let guild = bot.guilds.get(manager.id);
+		if(!guild) return;
+		else if(!manager.data.playing) return;
+		else if(!manager.channel) return;
+		manager.data.queue.unshift(manager.data.playing);
+		let newManager = new MusicManager(guild, {
+			data: manager.data,
+			musicChannel: manager.musicChannel ? guild.channels.get(manager.musicChannel.id) : undefined,
+			processQueue: manager.processQueue
+		});
+
+		await newManager.connect(manager.channel);
+		newManager.play();
+	});
+};
+
+exports.isReady = () => {
+	if(fs.existsSync("./managers.json")) {
+		let data = fs.readFileSync("./managers.json").toString();
+		exports.managerLoad(JSON.parse(data));
+		fs.unlinkSync("./managers.json");
+	}
+};
+
+exports.ytType = id => {
 	if(id.includes("http://") || id.includes("https://")) id = exports.ytID(id);
 	if(id.length === 11 && id !== id.toLowerCase()) return "VIDEO";
 	else if((id.startsWith("PL") || id.length === 34 || id.length === 32) && id !== id.toLowerCase()) return "PLAYLIST";
 	else return "NONE";
 };
 
-exports.ytID = (url) => {
+exports.ytID = url => {
 	var match = url.match(framework.config.options.music.youtubeRegex);
 	if(match && match[1]) return match[1];
 	else return "INVALID_URL";

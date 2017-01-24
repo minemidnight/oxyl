@@ -324,9 +324,8 @@ exports.loadScripts = (filePath) => {
 
 exports.loadScript = (scriptPath) => {
 	let script = path.resolve(scriptPath);
-	let cache = require.cache[require.resolve(script)];
+	delete require.cache[require.resolve(script)];
 
-	if(cache) delete require.cache[require.resolve(script)];
 	return require(scriptPath);
 };
 

@@ -57,7 +57,7 @@ bot.on("messageCreate", async (message) => {
 	} else if(command.type === "creator" && !framework.config.creators.includes(message.author.id)) {
 		message.channel.createMessage(framework.config.messages.notCreator);
 		return;
-	} else if(command.type === "guild owner" && framework.guildLevel(message.member) < 3) {
+	} else if(command.type === "admin" && framework.guildLevel(message.member) < 3) {
 		message.channel.createMessage(framework.config.messages.notGuildOwner);
 		return;
 	} else if(command.perm && !message.member.permission.has(command.perm)) {

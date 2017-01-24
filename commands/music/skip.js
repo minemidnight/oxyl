@@ -17,7 +17,7 @@ var command = new Command("skip", async (message, bot) => {
 			return `Now playing __${next.title}__ :arrow_forward:`;
 		} else {
 			manager.end();
-			return "No songs in queue";
+			return "Song skipped, no songs in queue. Music ended.";
 		}
 	}
 }, {

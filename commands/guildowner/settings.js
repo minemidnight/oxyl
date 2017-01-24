@@ -76,7 +76,7 @@ var command = new Command("settings", async (message, bot) => {
 }, {
 	cooldown: 2500,
 	guildOnly: true,
-	type: "guild owner",
+	type: "admin",
 	aliases: ["setting"],
 	description: "Configurate Oxyl's settings per guild",
 	args: [{

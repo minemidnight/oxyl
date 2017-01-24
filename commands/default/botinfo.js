@@ -15,7 +15,7 @@ var command = new Command("botinfo", async (message, bot) => {
 		`Large (over 250 members): ${largeGuilds}`,
 		`Other: ${guilds.size - largeGuilds}`,
 		`Total: ${guilds.size}`,
-		`Streaming In: ${Object.keys(bot.voiceConnections.guilds).filter(ch => bot.voiceConnections.guilds[ch].playing).length} Guilds`
+		`Streaming In: ${Object.keys(Oxyl.managers).filter(man => Oxyl.managers[man].data.playing).length} Guilds`
 	];
 
 	let totalUsers = 0;

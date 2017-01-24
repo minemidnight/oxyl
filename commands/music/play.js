@@ -4,13 +4,6 @@ const music = require("../../modules/music.js"),
 	framework = require("../../framework.js");
 const ytReg = framework.config.options.music.youtubeRegex;
 
-let cancelFilter = (newMsg, oldMsg) => {
-	if(newMsg.author.id !== newMsg.author.id) return false;
-	else if(newMsg.content.toLowerCase() === "cancel") return true;
-	else if(newMsg.content.toLowerCase() === "continue") return true;
-	else return false;
-};
-
 async function playCmdProcess(message) {
 	let msg, query = message.argsPreserved[0];
 	let type = music.ytType(query);
@@ -65,7 +58,12 @@ var command = new Command("play", async (message, bot) => {
 		if(id === "INVALID_URL" || type === "NONE") return "Unknown error";
 
 		await msg.edit(`${msg.content}\n\n*Reply with cancel in the next 10 seconds or the command will be processed, or continue to play now*`);
-		let responses = await framework.awaitMessages(msg.channel, newMsg => cancelFilter(newMsg, message), { maxMatches: 1, time: 10000 });
+		let responses = await framework.awaitMessages(msg.channel, newMsg => {
+			if(newMsg.author.id !== message.author.id) return false;
+			else if(newMsg.content.toLowerCase() === "cancel") return true;
+			else if(newMsg.content.toLowerCase() === "continue") return true;
+			else return false;
+		}, { maxMatches: 1, time: 10000 });
 
 		if(responses && responses.length >= 1 && responses[0].content.toLowerCase() === "cancel") {
 			msg.edit(`Cancelled play command`);

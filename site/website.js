@@ -23,12 +23,9 @@ var entityMap = {
 	"#": "&#35;"
 };
 
-function escapeHTML(string) {
-	return String(string).replace(/[&<>"'\#/]/g, str => entityMap[str]);
-}
-exports.escapeHTML = escapeHTML;
+let escapeHTML = exports.escapeHTML = (string) => String(string).replace(/[&<>"'\#/]/g, str => entityMap[str]);
 
-let routes = framework.loadScripts("./site/routes/");
+let routes = exports.routes = framework.loadScripts("./site/routes/");
 for(let script in routes) {
 	if(script === "index") app.use("/", routes[script]);
 	else app.use(`/${script}`, routes[script]);
