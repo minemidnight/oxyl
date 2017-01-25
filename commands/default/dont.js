@@ -31,7 +31,7 @@ var command = new Command("dont", async (message, bot) => { // eslint-disable-li
 	return false;
 }, {
 	type: "default",
-	description: "Create a ship name from two users, or one and yourself",
+	description: "Create a picture saying 'don't talk to me or my son ever again' with 2 user avatars",
 	args: [{
 		type: "user",
 		optional: true

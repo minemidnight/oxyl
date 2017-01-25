@@ -23,7 +23,7 @@ var command = new Command("color", async (message, bot) => {
 	return false;
 }, {
 	type: "default",
-	description: "Add a hat to a user's avatar",
+	description: "Send a image in chat with a hex color",
 	args: [{
 		type: "text",
 		label: "hex color"

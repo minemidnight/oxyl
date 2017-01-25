@@ -77,7 +77,7 @@ router.post("/update", async (req, res) => {
 		else deleteSettings.push(key);
 	}
 	if(deleteSettings.indexOf("prefix") !== -1) delete Oxyl.modScripts.commandHandler.prefixes[guild.id];
-	await framework.dbQuery(`DELETE from \`Settings\` WHERE \`NAME\` IN ('${deleteSettings.join("','")}')`);
+	await framework.dbQuery(`DELETE from \`Settings\` WHERE \`NAME\` IN ('${deleteSettings.join("','")}') AND \`ID\` = '${guild.id}'`);
 
 	res.redirect(`http://minemidnight.work/guild/${guild.id}`);
 });

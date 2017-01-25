@@ -17,6 +17,5 @@ var command = new Command("repeat", async (message, bot) => {
 }, {
 	guildOnly: true,
 	type: "music",
-	description: "Toggle repeating of songs",
-	aliases: ["loop"]
+	description: "Toggle repeating of songs"
 });

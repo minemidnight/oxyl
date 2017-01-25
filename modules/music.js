@@ -4,12 +4,12 @@ const Oxyl = require("../oxyl.js"),
 	fs = require("fs");
 const bot = Oxyl.bot;
 const ytKey = framework.config.private.googleKey;
-exports.managers = {};
 
 class MusicManager {
 	constructor(guild, extraData) {
 		this.guild = guild;
 		this.id = guild.id;
+		Oxyl.managers[guild.id] = this;
 
 		if(extraData) {
 			for(let i in extraData) {
@@ -17,17 +17,7 @@ class MusicManager {
 			}
 		} else {
 			this.resetData();
-
-			framework.getSetting(guild, "musicchannel").then(val => {
-				this.musicChannel = guild.channels.get(val);
-				if(!this.musicChannel) this.musicChannel = undefined;
-			}).catch(() => {
-				this.musicChannel = undefined;
-			});
 		}
-
-		exports.managers[guild.id] = this;
-		Oxyl.managers[guild.id] = this;
 	}
 
 	resetData() {
@@ -51,11 +41,13 @@ class MusicManager {
 
 	destroy() {
 		let connection = this.connection;
-		if(connection) connection.disconnect();
+		if(connection) {
+			connection.disconnect();
+			this.connection.stopPlaying();
+		}
 
 		this.data.processQueue = false;
-		this.connection.stopPlaying();
-		delete exports.managers[this.id];
+		delete Oxyl.managers[this.id];
 		delete this;
 	}
 
@@ -126,7 +118,6 @@ class MusicManager {
 
 		if(!this.data.playing && this.connection.playing) {
 			this.connection.stopPlaying();
-			return;
 		} else if(this.data.playing && this.connection.playing) {
 			return;
 		} else if(!this.data.processQueue) {
@@ -145,6 +136,7 @@ class MusicManager {
 		}
 
 		let stream = yt(`http://www.youtube.com/watch?v=${id}`, { audioonly: true });
+		connection.setVolume(0.005);
 		connection.play(stream);
 		this.sendEmbed("playing", nextQueue);
 	}
@@ -154,42 +146,39 @@ class MusicManager {
 		else if(channelID.id)	channelID = channelID.id;
 		if(!this.processQueue) this.processQueue = true;
 
-		if(bot.voiceConnections.get(this.id) && !bot.voiceConnections.get(this.id).ended) return false;
+		if(this.connection) return false;
+		if(bot.voiceConnections.guilds[this.id] && !bot.voiceConnections.guilds[this.id].ended) return false;
 		let connection = await bot.joinVoiceChannel(channelID);
-		connection.setVolume(0.05);
 		this.connection = connection;
-		await connection.ready;
 		return new Promise((resolve, reject) => {
 			if(connection.ready) {
 				resolve(connection);
-				connection.setVolume(0.05);
 			} else {
 				connection.once("ready", () => {
 					resolve(connection);
-					connection.setVolume(0.05);
 				});
 			}
 
-			let error = err => {
-				this.sendEmbed("error", err);
-			};
-			connection.on("error", error);
-
-			connection.once("end", () => {
+			let error = err => this.sendEmbed("error", err);
+			let end = () => {
 				if(this.data.extraOptions.repeat) this.data.queue.push(this.data.playing);
 				if(this.data.queue.length <= 0) this.end();
-				else this.play();
-			});
+				else setTimeout(() => this.play(), 750);
+			};
+
+			connection.on("error", error);
+			connection.on("end", end);
 
 			connection.once("disconnect", () => {
 				connection.removeListener("error", error);
+				connection.removeListener("end", end);
 				delete this.connection;
 			});
 		});
 	}
 
 	async sendEmbed(type, data) {
-		if(!this.musicChannel) return false;
+		if(!this.guild.musicChannel) return false;
 		let embed;
 
 		if(type === "playing") {
@@ -214,14 +203,14 @@ class MusicManager {
 			};
 		}
 
-		return await this.musicChannel.createMessage({ embed });
+		return await this.guild.musicChannel.createMessage({ embed });
 	}
 }
 exports.Manager = MusicManager;
 
 exports.getManager = (guild) => {
 	if(guild.id) guild = guild.id;
-	return exports.managers[guild];
+	return Oxyl.managers[guild];
 };
 
 exports.getDuration = (seconds) => {
@@ -246,7 +235,6 @@ exports.managerDump = () => {
 			let object = {};
 			object.id = manager.id;
 			object.data = manager.data;
-			object.musicChannel = manager.musicChannel ? manager.musicChannel.id : undefined;
 			object.processQueue = manager.processQueue;
 			object.channel = manager.connection ? manager.connection.channelID : undefined;
 			return object;
@@ -258,13 +246,12 @@ exports.managerDump = () => {
 exports.managerLoad = (managers) => {
 	managers.forEach(async manager => {
 		let guild = bot.guilds.get(manager.id);
-		if(!guild) return;
-		else if(!manager.data.playing) return;
-		else if(!manager.channel) return;
+		if(!guild || !manager.data.playing || !manager.channel) return;
+
 		manager.data.queue.unshift(manager.data.playing);
+		delete manager.data.playing;
 		let newManager = new MusicManager(guild, {
 			data: manager.data,
-			musicChannel: manager.musicChannel ? guild.channels.get(manager.musicChannel.id) : undefined,
 			processQueue: manager.processQueue
 		});
 

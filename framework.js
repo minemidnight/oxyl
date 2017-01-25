@@ -35,6 +35,7 @@ exports.getSetting = async (guild, setting) => {
 exports.resetSetting = (guild, setting) => {
 	exports.dbQuery(`DELETE FROM \`Settings\` WHERE \`ID\` = '${guild.id}' AND \`Name\` = ${exports.sqlEscape(setting)}`);
 	if(setting === "prefix") delete Oxyl.modScripts.commandHandler.prefixes[guild.id];
+	else if(setting === "musicchannel") delete guild.musicchannel;
 };
 
 exports.setSetting = async (guild, setting, value) => {
@@ -45,6 +46,7 @@ exports.setSetting = async (guild, setting, value) => {
 		exports.dbQuery(`INSERT INTO \`Settings\`(\`NAME\`, \`VALUE\`, \`ID\`) VALUES (${exports.sqlEscape(setting)},${exports.sqlEscape(value)},'${guild.id}')`);
 	}
 	if(setting === "prefix") Oxyl.modScripts.commandHandler.prefixes[guild.id] = value;
+	else if(setting === "musicchannel") guild.musicchannel = guild.channels.get(value);
 };
 
 exports.getRoles = async (guild, type) => {

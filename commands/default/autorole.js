@@ -36,7 +36,7 @@ async function handleRole(message, args) {
 			.filter(data => message.channel.guild.roles.has(data.ROLE))
 			.map(data => message.channel.guild.roles.get(data.ROLE).name);
 
-		return `Autoroles: ${roles.length >= 1 ? roles.join(",") : "None"}`;
+		return `Autoroles: ${roles.length >= 1 ? roles.join(", ") : "None"}`;
 	} else if(args[0].toLowerCase() === "add") {
 		let guildLevel = framework.guildLevel(message.member);
 		if(guildLevel < 3) return "You need the \`ADMINISTRATOR\` permission, or you must be the guild owner to do this.";

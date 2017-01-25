@@ -4,26 +4,38 @@ const validator = require("../modules/commandArgs.js"),
 	sse = require("../site/routes/sse.js");
 
 const prefixes = exports.prefixes = {};
-const blacklist = exports.blacklist = [];
 // wait for connection
-setTimeout(async () => {
+exports.updateThings = async () => {
 	let prefixArray = await framework.dbQuery("SELECT * FROM `Settings` WHERE `NAME` = 'prefix'");
 	prefixArray.forEach(data => {
 		prefixes[data.ID] = data.VALUE;
 	});
 
-	let blacklistedUsers = await framework.dbQuery("SELECT * FROM `Blacklist`");
-	blacklistedUsers.forEach(data => {
-		blacklist.push(data.USER);
+	let musicChannels = await framework.dbQuery("SELECT * FROM `Settings` WHERE `NAME` = 'musicchannel'");
+	musicChannels.filter(data => bot.guilds.has(data.ID) && bot.guilds.get(data.ID).channels.has(data.VALUE))
+	.forEach(data => {
+		bot.guilds.get(data.ID).musicChannel = bot.guilds.get(data.ID).channels.get(data.VALUE);
 	});
-}, 2500);
+
+	let blacklistedUsers = await framework.dbQuery("SELECT * FROM `Blacklist`");
+	blacklistedUsers.filter(data => bot.users.has(data.USER))
+	.forEach(data => {
+		bot.users.get(data.USER).blacklisted = true;
+	});
+
+	let nsfwChannels = await framework.dbQuery("SELECT * FROM `NSFW`");
+	nsfwChannels.filter(data => bot.guilds.has(data.GUILD) && bot.guilds.get(data.GUILD).channels.has(data.CHANNEL))
+	.forEach(data => {
+		bot.guilds.get(data.GUILD).channels.get(data.CHANNEL).nsfw = true;
+	});
+};
 
 const bot = Oxyl.bot,
 	commands = Oxyl.commands;
 
 bot.on("messageCreate", async (message) => {
 	sse.messageCreate(message);
-	if(message.author.bot || blacklist[message.author.id]) return;
+	if(message.author.bot || message.author.blacklisted) return;
 	let guild = message.channel.guild;
 	let msg = message.content.toLowerCase();
 
@@ -49,19 +61,25 @@ bot.on("messageCreate", async (message) => {
 	}
 
 	if(command.onCooldown(message.author)) {
-		message.channel.createMessage(framework.config.messages.onCooldown);
+		message.channel.createMessage(`This command is on cooldown for you.`);
 		return;
 	} else if((command.guildOnly && !message.channel.guild) || (command.perm && !message.channel.guild)) {
-		message.channel.createMessage(framework.config.messages.guildOnly);
+		message.channel.createMessage(`This command may only be use in guilds (servers).`);
 		return;
 	} else if(command.type === "creator" && !framework.config.creators.includes(message.author.id)) {
-		message.channel.createMessage(framework.config.messages.notCreator);
+		message.channel.createMessage(`Only creators of Oxyl can use this command.`);
 		return;
 	} else if(command.type === "admin" && framework.guildLevel(message.member) < 3) {
-		message.channel.createMessage(framework.config.messages.notGuildOwner);
+		message.channel.createMessage(`Only the guld owner, or users with the ADMINISTRATOR permission can use this command.`);
+		return;
+	} else if(command.type === "NSFW" && !message.channel.nsfw) {
+		message.channel.createMessage("This channel is not NSFW!");
+		return;
+	} else if(command.type === "music" && guild.musicChannel && guild.musicChannel !== message.channel.id) {
+		message.channel.createMessage("You cannot use music commands in this channel.");
 		return;
 	} else if(command.perm && !message.member.permission.has(command.perm)) {
-		message.channel.createMessage(framework.config.messages.invalidPerms.replace(/{PERM}/g, command.perm));
+		message.channel.createMessage(`You do not have valid permissions for this command (Requires ${command.perm}).`);
 		return;
 	}
 
@@ -105,13 +123,19 @@ bot.on("messageCreate", async (message) => {
 				try {
 					var resultmsg = await message.channel.createMessage(msg, file || null);
 				} catch(err) {
-					message.channel.createMessage("Error sending message");
+					if(err.code === 50013) {
+						let dm = await message.author.getDMChannel();
+						dm.sendMessage(`I have no permissions to send messages in **${message.guild.name}**, ` +
+									`please tell a server admin if you believe I should have permissions`);
+					} else {
+						message.channel.createMessage("Error sending message");
+					}
 				}
 			}
 		} catch(error) {
 			framework.consoleLog(`Failed command ${command.name} (${command.type})\n` +
-				`**Error:** ${framework.codeBlock(error.stack)}`, "debug");
-			message.channel.createMessage("Bot error when executing command -- error sent to Support Server");
+				`**Error:** ${framework.codeBlock(error || error.stack)}`, "debug");
+			message.channel.createMessage("Bot error when executing command, error sent to Support Server");
 		}
 	} catch(err) {
 		message.channel.createMessage(err.toString());
@@ -135,6 +159,6 @@ async function validateArgs(message, command, index = 0) {
 		message.argsPreserved[index] = newArg;
 		return await validateArgs(message, command, index + 1);
 	} catch(err) {
-		throw new Error(`${err}\nCommand terminated`);
+		throw new Error(err.toString().replace("Error:", ""));
 	}
 }

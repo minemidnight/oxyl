@@ -3,6 +3,27 @@ const Oxyl = require("../oxyl.js"),
 const config = framework.config,
 	bot = Oxyl.bot;
 
+function matchUser(user, input) {
+	let username = user.user.username.toLowerCase() || user.username.toLowerCase();
+	let nick = user.nick || null;
+	input = input.toLowerCase();
+
+	if(input.includes("#")) {
+		let index = input.lastIndexOf("#");
+		let discrim = parseInt(input.substring(index) + 1);
+		input = input.substring(0, index - 1);
+		if(isNaN(discrim)) discrim = null;
+		else if(user.discriminator !== discrim) return 0;
+	}
+
+	if(user.id === input) return 2;
+	else if(nick && nick === input) return 2;
+	else if(username === input) return 2;
+	else if(username.startsWith(input)) return 1;
+	else if(nick && nick.startsWith(input)) return 1;
+	else return 0;
+}
+
 exports.test = async (input, arg, message) => {
 	let type = arg.type;
 	if(!input || input.length === 0) return new Error("No input given");
@@ -24,42 +45,28 @@ exports.test = async (input, arg, message) => {
 		if(match && match[1]) {
 			let user = bot.users.get(match[1]);
 			if(user) return user;
-			else throw new Error("User from mention not found");
+			else throw new Error("User from mention not cached :(");
 		} else {
-			let members = bot.users, usersFound;
+			let members = bot.users;
 			if(message.channel.guild)	members = message.channel.guild.members;
 
-			usersFound = members.filter(member => {
-				if(member.user) member = member.user;
+			let hardFound = null;
+			let usersFound = members.filter(member => {
+				if(hardFound) return false;
+				let matchLevel = matchUser(member, input);
 
-				if(member.username.toLowerCase() === input.toLowerCase()) return true;
-				return false;
+				if(matchLevel === 2) hardFound = member.user || member;
+				else if(matchLevel === 1) return true;
+				else return false;
+				return true;
 			});
 
-			if(!usersFound || usersFound.length === 0) {
-				usersFound = members.filter(member => {
-					if(member.user) member = member.user;
-
-					if(member.id === input) {
-						return true;
-					} else if(member.username.substring(0, input.length).toLowerCase() === input.toLowerCase()) {
-						return true;
-					} else {
-						return false;
-					}
-				});
-			}
-
-			let i = 0;
-			usersFound.forEach(user => {
-				if(user.user) {
-					usersFound[i] = user.user;
-				} else {
-					usersFound[i] = user;
-				}
-				i++;
+			usersFound.map(user => {
+				if(user.user) return user.user;
+				else return user;
 			});
 
+			if(hardFound) return hardFound;
 			if(!usersFound || usersFound.length === 0) {
 				throw new Error("No mention or user found");
 			} else if(usersFound.length === 1) {
