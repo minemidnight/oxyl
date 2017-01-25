@@ -8,7 +8,8 @@ let settings = [
 	{ name: "musicchannel", type: "textChannel", description: "Channel where music errors, and now playing messages are shown" },
 	{ name: "userlog", type: "textChannel", description: "Where to send `userjoin` and `userleave` messages" },
 	{ name: "userjoin", type: "tag", description: "Content to send in userlog when a user joins" },
-	{ name: "userleave", type: "tag", description: "Content to send in userlog when a user leaves" }
+	{ name: "userleave", type: "tag", description: "Content to send in userlog when a user leaves" },
+	{ name: "cleverbot", type: "textChannel", description: "In this channel, all non-command messages are sent to cleverbot (even if unprefixed)" }
 ];
 exports.settings = settings;
 settings = settings.filter(setting => !setting.disabled);

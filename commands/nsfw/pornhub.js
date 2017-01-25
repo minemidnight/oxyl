@@ -15,7 +15,7 @@ var command = new Command("pornhub", async (message, bot) => {
 	if($("#noResultBigText").text() !== "") return "No results found";
 	let videos = $("li.videoBox");
 
-	for(let i = 0; i < 1; i++) {
+	for(let i = 0; i < 3; i++) {
 		let ele = videos.eq(i);
 
 		let buffer = await framework.getContent(ele.find("img").attr("data-mediabook"), { encoding: null });

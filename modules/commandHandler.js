@@ -28,6 +28,12 @@ exports.updateThings = async () => {
 	.forEach(data => {
 		bot.guilds.get(data.GUILD).channels.get(data.CHANNEL).nsfw = true;
 	});
+
+	let cleverChannels = await framework.dbQuery("SELECT * FROM `Settings` WHERE `NAME` = 'cleverbot'");
+	cleverChannels.filter(data => bot.guilds.has(data.ID) && bot.guilds.get(data.ID).channels.has(data.VALUE))
+	.forEach(data => {
+		bot.guilds.get(data.ID).cleverbot = bot.guilds.get(data.ID).channels.get(data.VALUE);
+	});
 };
 
 const bot = Oxyl.bot,
@@ -39,13 +45,14 @@ bot.on("messageCreate", async (message) => {
 	let guild = message.channel.guild;
 	let msg = message.content.toLowerCase();
 
-	let prefix = framework.config.options.prefixRegex;
-	if(guild && prefixes[guild.id]) prefix = prefix.replace("{PREFIX}", `|${framework.escapeRegex(prefixes[guild.id])}`);
-	else prefix = prefix.replace("{PREFIX}", "");
+	let prefix = "^(oxyl|<@!?255832257519026178>),?(?:\\s+)?([\\s\\S]+)";
+	if(guild && prefixes[guild.id]) prefix = `^(oxyl|<@!?255832257519026178>|${framework.escapeRegex(prefixes[guild.id])}),?(?:\\s+)?([\\s\\S]+)`;
 	prefix = new RegExp(prefix, "i");
 
-	if(msg.match(prefix) && msg.match(prefix)[2]) {
-		message.content = message.content.match(prefix)[2];
+	let match = message.content.match(prefix);
+	if(match && match[2]) {
+		let type = match[1];
+		message.content = match[2];
 
 		let cmdInfo = framework.getCmd(message.content);
 		var command = cmdInfo.cmd;
@@ -54,8 +61,19 @@ bot.on("messageCreate", async (message) => {
 			msg = message.contentPreserved.toLowerCase();
 			message.content = msg;
 		} else {
+			if(!type.match(/<@!?255832257519026178>/)) return;
+			message.channel.sendTyping();
+			let clever = await framework.cleverResponse(msg);
+			console.log(`CleverBot in ${guild.name || "DM"} by ${framework.unmention(message.author)}: ${message.content}`);
+			message.channel.createMessage(clever).catch(err => err);
 			return;
 		}
+	} else if(guild && guild.cleverbot && guild.cleverbot.id === message.channel.id) {
+		message.channel.sendTyping();
+		let clever = await framework.cleverResponse(msg);
+		console.log(`CleverBot in ${guild.name} by ${framework.unmention(message.author)}: ${message.content}`);
+		message.channel.createMessage(clever).catch(err => err);
+		return;
 	} else {
 		return;
 	}
@@ -63,7 +81,7 @@ bot.on("messageCreate", async (message) => {
 	if(command.onCooldown(message.author)) {
 		message.channel.createMessage(`This command is on cooldown for you.`);
 		return;
-	} else if((command.guildOnly && !message.channel.guild) || (command.perm && !message.channel.guild)) {
+	} else if((command.guildOnly && !guild) || (command.perm && !guild)) {
 		message.channel.createMessage(`This command may only be use in guilds (servers).`);
 		return;
 	} else if(command.type === "creator" && !framework.config.creators.includes(message.author.id)) {
@@ -75,7 +93,7 @@ bot.on("messageCreate", async (message) => {
 	} else if(command.type === "NSFW" && !message.channel.nsfw) {
 		message.channel.createMessage("This channel is not NSFW!");
 		return;
-	} else if(command.type === "music" && guild.musicChannel && guild.musicChannel !== message.channel.id) {
+	} else if(command.type === "music" && guild.musicChannel && guild.musicChannel.id !== message.channel.id) {
 		message.channel.createMessage("You cannot use music commands in this channel.");
 		return;
 	} else if(command.perm && !message.member.permission.has(command.perm)) {
@@ -102,6 +120,7 @@ bot.on("messageCreate", async (message) => {
 		});
 
 		try {
+			console.log(`${command.name} in ${guild.name} by ${framework.unmention(message.author)}: ${message.contentPreserved || "no args"}`);
 			var result = await command.run(message);
 
 			msg = { content: "" };

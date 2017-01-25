@@ -8,13 +8,12 @@ var command = new Command("xkcd", async (message, bot) => {
 	let comic = message.args[0] || Math.floor(Math.random() * 1785) + 1;
 	let body = await framework.getContent(`http://xkcd.com/${comic}/info.0.json`);
 	body = JSON.parse(body);
-	let embed = {
-		url: `http://xkcd.com/${comic}/`,
-		title: `${body.title} (#${comic})`,
-		image: { url: body.img }
-	};
 
-	return { embed };
+	let buffer = await framework.getContent(body.img, { encoding: null });
+	return [`<http://xkcd.com/${comic}>\n**${body.title}** (#${comic})`, {
+		file: buffer,
+		name: body.img.substring(body.img.lastIndexOf("/") + 1)
+	}];
 }, {
 	type: "default",
 	description: "Grab a xkcd from xkcd.com",

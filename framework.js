@@ -6,6 +6,20 @@ const Oxyl = require("./oxyl.js"),
 	EventEmitter = require("events").EventEmitter,
 	mysql = require("promise-mysql");
 
+const Cleverbot = require("cleverbot-node");
+const cleverbot = new Cleverbot();
+
+exports.cleverResponse = (input) => {
+	input = input.trim();
+	return new Promise((resolve, reject) => {
+		Cleverbot.prepare(() => {
+			cleverbot.write(input, response => {
+				resolve(response.message);
+			});
+		});
+	});
+};
+
 exports.config = yaml.safeLoad(fs.readFileSync("./private/config.yml"));
 
 let dbData = exports.config.database;
@@ -36,6 +50,7 @@ exports.resetSetting = (guild, setting) => {
 	exports.dbQuery(`DELETE FROM \`Settings\` WHERE \`ID\` = '${guild.id}' AND \`Name\` = ${exports.sqlEscape(setting)}`);
 	if(setting === "prefix") delete Oxyl.modScripts.commandHandler.prefixes[guild.id];
 	else if(setting === "musicchannel") delete guild.musicchannel;
+	else if(setting === "cleverbot") delete guild.cleverbot;
 };
 
 exports.setSetting = async (guild, setting, value) => {
@@ -47,6 +62,7 @@ exports.setSetting = async (guild, setting, value) => {
 	}
 	if(setting === "prefix") Oxyl.modScripts.commandHandler.prefixes[guild.id] = value;
 	else if(setting === "musicchannel") guild.musicchannel = guild.channels.get(value);
+	else if(setting === "cleverbot") guild.cleverbot = guild.channels.get(value);
 };
 
 exports.getRoles = async (guild, type) => {
