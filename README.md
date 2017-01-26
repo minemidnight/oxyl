@@ -1,2 +1,2 @@
 # oxyl
-Discord bot using discord.js library
+Discord bot using Eris library
