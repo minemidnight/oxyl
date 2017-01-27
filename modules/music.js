@@ -136,8 +136,8 @@ class MusicManager {
 		}
 
 		let stream = yt(`http://www.youtube.com/watch?v=${id}`, { audioonly: true });
-		connection.setVolume(0.005);
 		connection.play(stream);
+		// , { encoderArgs: ["volume", "0.25"] });
 		this.sendEmbed("playing", nextQueue);
 	}
 
@@ -177,8 +177,8 @@ class MusicManager {
 		});
 	}
 
-	async sendEmbed(type, data) {
-		if(!this.guild.musicChannel) return false;
+	sendEmbed(type, data) {
+		if(!Oxyl.modScripts.commandHandler.musicchannels[this.id]) return false;
 		let embed;
 
 		if(type === "playing") {
@@ -203,7 +203,7 @@ class MusicManager {
 			};
 		}
 
-		return await this.guild.musicChannel.createMessage({ embed });
+		return Oxyl.modScripts.commandHandler.musicchannels[this.id].createMessage({ embed });
 	}
 }
 exports.Manager = MusicManager;

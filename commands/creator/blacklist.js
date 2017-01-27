@@ -4,19 +4,19 @@ const Oxyl = require("../../oxyl.js"),
 
 async function addBlacklist(user) {
 	let data = await framework.dbQuery(`INSERT INTO \`Blacklist\`(\`USER\`) VALUES ('${user}')`);
-	Oxyl.bot.users.get(user).blacklisted = true;
+	Oxyl.modScripts.commandHandler.blacklist.push(user);
 	return true;
 }
 
 async function removeBlacklist(user) {
 	let data = await framework.dbQuery(`DELETE FROM \`Blacklist\` WHERE \`USER\` = '${user}'`);
-	delete Oxyl.bot.users.get(user).blacklisted;
+	delete Oxyl.modScripts.commandHandler.blacklist[user];
 	return true;
 }
 
 var command = new Command("blacklist", async (message, bot) => {
 	let user = message.args[0];
-	let blacklisted = user.blacklisted;
+	let blacklisted = Oxyl.modScripts.commandHandler.blacklist.indexOf(user) !== -1;
 
 	if(blacklisted) {
 		await removeBlacklist(user.id);

@@ -4,19 +4,17 @@ const Oxyl = require("../../oxyl.js"),
 
 async function addNSFW(channel) {
 	let data = await framework.dbQuery(`INSERT INTO \`NSFW\`(\`GUILD\`,\`CHANNEL\`) VALUES ('${channel.guild.id}','${channel.id}')`);
-	channel.nsfw = true;
 	return true;
 }
 
 async function removeNSFW(channel) {
 	let data = await framework.dbQuery(`DELETE FROM \`NSFW\` WHERE \`CHANNEL\` = '${channel.id}'`);
-	delete channel.nsfw;
 	return true;
 }
 
 var command = new Command("nsfw", async (message, bot) => {
 	let channel = message.channel;
-	let nsfw = channel.nsfw;
+	let nsfw = await framework.isNSFW(channel.id);
 
 	if(nsfw) {
 		await removeNSFW(channel);

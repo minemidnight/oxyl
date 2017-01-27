@@ -4,6 +4,10 @@ const validator = require("../modules/commandArgs.js"),
 	sse = require("../site/routes/sse.js");
 
 const prefixes = exports.prefixes = {};
+const musicchannels = exports.musicchannels = {};
+const blacklist = exports.blacklist = [];
+const cleverchannels = exports.clever = [];
+const ignored = exports.ignored = [];
 // wait for connection
 exports.updateThings = async () => {
 	let prefixArray = await framework.dbQuery("SELECT * FROM `Settings` WHERE `NAME` = 'prefix'");
@@ -11,28 +15,25 @@ exports.updateThings = async () => {
 		prefixes[data.ID] = data.VALUE;
 	});
 
-	let musicChannels = await framework.dbQuery("SELECT * FROM `Settings` WHERE `NAME` = 'musicchannel'");
-	musicChannels.filter(data => bot.guilds.has(data.ID) && bot.guilds.get(data.ID).channels.has(data.VALUE))
-	.forEach(data => {
-		bot.guilds.get(data.ID).musicChannel = bot.guilds.get(data.ID).channels.get(data.VALUE);
-	});
-
 	let blacklistedUsers = await framework.dbQuery("SELECT * FROM `Blacklist`");
-	blacklistedUsers.filter(data => bot.users.has(data.USER))
-	.forEach(data => {
-		bot.users.get(data.USER).blacklisted = true;
-	});
-
-	let nsfwChannels = await framework.dbQuery("SELECT * FROM `NSFW`");
-	nsfwChannels.filter(data => bot.guilds.has(data.GUILD) && bot.guilds.get(data.GUILD).channels.has(data.CHANNEL))
-	.forEach(data => {
-		bot.guilds.get(data.GUILD).channels.get(data.CHANNEL).nsfw = true;
+	blacklistedUsers.forEach(data => {
+		blacklist.push(data.USER);
 	});
 
 	let cleverChannels = await framework.dbQuery("SELECT * FROM `Settings` WHERE `NAME` = 'cleverbot'");
-	cleverChannels.filter(data => bot.guilds.has(data.ID) && bot.guilds.get(data.ID).channels.has(data.VALUE))
+	cleverChannels.forEach(data => {
+		cleverchannels.push(data.VALUE);
+	});
+
+	let musicChannels = await framework.dbQuery("SELECT * FROM `Settings` WHERE `NAME` = 'musicchannel'");
+	musicChannels.filter(data => bot.guilds.has(data.ID) && bot.guilds.get(data.ID).channels.has(data.VALUE))
 	.forEach(data => {
-		bot.guilds.get(data.ID).cleverbot = bot.guilds.get(data.ID).channels.get(data.VALUE);
+		musicchannels[data.ID] = bot.guilds.get(data.ID).channels.get(data.VALUE);
+	});
+
+	let ignoredChannels = await framework.dbQuery("SELECT `CHANNEL` FROM `Ignored`");
+	ignoredChannels.forEach(data => {
+		ignored.push(data.CHANNEL);
 	});
 };
 
@@ -41,7 +42,7 @@ const bot = Oxyl.bot,
 
 bot.on("messageCreate", async (message) => {
 	sse.messageCreate(message);
-	if(message.author.bot || message.author.blacklisted) return;
+	if(message.author.bot || blacklist.indexOf(message.author.id) !== -1) return;
 	let guild = message.channel.guild;
 	let msg = message.content.toLowerCase();
 
@@ -68,7 +69,7 @@ bot.on("messageCreate", async (message) => {
 			message.channel.createMessage(clever).catch(err => err);
 			return;
 		}
-	} else if(guild && guild.cleverbot && guild.cleverbot.id === message.channel.id) {
+	} else if(guild && cleverchannels.indexOf(message.channel.id) !== -1) {
 		message.channel.sendTyping();
 		let clever = await framework.cleverResponse(msg);
 		console.log(`CleverBot in ${guild.name} by ${framework.unmention(message.author)}: ${message.content}`);
@@ -81,19 +82,21 @@ bot.on("messageCreate", async (message) => {
 	if(command.onCooldown(message.author)) {
 		message.channel.createMessage(`This command is on cooldown for you.`);
 		return;
-	} else if((command.guildOnly && !guild) || (command.perm && !guild)) {
-		message.channel.createMessage(`This command may only be use in guilds (servers).`);
+	} else if((command.guildOnly || command.perm || command.type === "admin" || command.type === "music") && !guild) {
+		message.channel.createMessage(`This command can only be use in guilds (servers).`);
 		return;
 	} else if(command.type === "creator" && !framework.config.creators.includes(message.author.id)) {
 		message.channel.createMessage(`Only creators of Oxyl can use this command.`);
 		return;
+	} else if(ignored.indexOf(message.channel.id) !== -1 && framework.guildLevel(message.member) < 3) {
+		return;
 	} else if(command.type === "admin" && framework.guildLevel(message.member) < 3) {
 		message.channel.createMessage(`Only the guld owner, or users with the ADMINISTRATOR permission can use this command.`);
 		return;
-	} else if(command.type === "NSFW" && !message.channel.nsfw) {
+	} else if(command.type === "NSFW" && !await framework.isNSFW(message.channel.id)) {
 		message.channel.createMessage("This channel is not NSFW!");
 		return;
-	} else if(command.type === "music" && guild.musicChannel && guild.musicChannel.id !== message.channel.id) {
+	} else if(command.type === "music" && musicchannels[guild.id] && musicchannels[guild.id].id !== message.channel.id) {
 		message.channel.createMessage("You cannot use music commands in this channel.");
 		return;
 	} else if(command.perm && !message.member.permission.has(command.perm)) {

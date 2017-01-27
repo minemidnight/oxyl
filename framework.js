@@ -29,6 +29,12 @@ mysql.createConnection(dbData).then(connection => {
 	exports.dbQuery = (query) => connection.query(query);
 });
 
+exports.isNSFW = async (channel) => {
+	let data = await exports.dbQuery(`SELECT * FROM \`NSFW\` WHERE \`CHANNEL\` = '${channel}'`);
+	if(data && data[0]) return true;
+	else return false;
+};
+
 exports.guildLevel = (member) => {
 	let perms = member.permission, guild = member.guild;
 	if(exports.config.creators.includes(member.id)) return 4;
@@ -49,8 +55,8 @@ exports.getSetting = async (guild, setting) => {
 exports.resetSetting = (guild, setting) => {
 	exports.dbQuery(`DELETE FROM \`Settings\` WHERE \`ID\` = '${guild.id}' AND \`Name\` = ${exports.sqlEscape(setting)}`);
 	if(setting === "prefix") delete Oxyl.modScripts.commandHandler.prefixes[guild.id];
-	else if(setting === "musicchannel") delete guild.musicchannel;
-	else if(setting === "cleverbot") delete guild.cleverbot;
+	else if(setting === "musicchannel") delete Oxyl.modScripts.commandHandler.musicchannels[guild.id];
+	else if(setting === "cleverbot") delete Oxyl.modScripts.commandHandler.clever[guild.id];
 };
 
 exports.setSetting = async (guild, setting, value) => {
@@ -61,8 +67,8 @@ exports.setSetting = async (guild, setting, value) => {
 		exports.dbQuery(`INSERT INTO \`Settings\`(\`NAME\`, \`VALUE\`, \`ID\`) VALUES (${exports.sqlEscape(setting)},${exports.sqlEscape(value)},'${guild.id}')`);
 	}
 	if(setting === "prefix") Oxyl.modScripts.commandHandler.prefixes[guild.id] = value;
-	else if(setting === "musicchannel") guild.musicchannel = guild.channels.get(value);
-	else if(setting === "cleverbot") guild.cleverbot = guild.channels.get(value);
+	else if(setting === "musicchannel") Oxyl.modScripts.commandHandler.musicchannels[guild.id] = value;
+	else if(setting === "cleverbot") Oxyl.modScripts.commandHandler.clever.push(value);
 };
 
 exports.getRoles = async (guild, type) => {
