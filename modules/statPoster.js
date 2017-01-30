@@ -1,7 +1,5 @@
 const Oxyl = require("../oxyl.js"),
-	framework = require("../framework.js"),
-	fs = require("fs"),
-	os = require("os");
+	framework = require("../framework.js");
 
 const bot = Oxyl.bot;
 
@@ -41,11 +39,14 @@ function postDiscordlist() {
 
 	let options = {
 		method: "POST",
-		json: true,
-		body: stats
+		headers: {
+			"User-Agent": "Super Agent/0.0.1",
+			"Content-Type": "application/x-www-form-urlencoded"
+		},
+		form: stats
 	};
 
-	framework.getContent(`https://bots.discordlist.net/api`, options);
+	framework.getContent("https://bots.discordlist.net/api", options);
 }
 
 module.exports = () => {

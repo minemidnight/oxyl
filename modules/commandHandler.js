@@ -65,7 +65,7 @@ bot.on("messageCreate", async (message) => {
 			if(!type.match(/<@!?255832257519026178>/)) return;
 			message.channel.sendTyping();
 			let clever = await framework.cleverResponse(msg);
-			console.log(`CleverBot in ${guild.name || "DM"} by ${framework.unmention(message.author)}: ${message.content}`);
+			console.log(`CleverBot in ${guild ? guild.name : "DM"} by ${framework.unmention(message.author)}: ${message.content}`);
 			message.channel.createMessage(clever).catch(err => err);
 			return;
 		}
@@ -123,7 +123,7 @@ bot.on("messageCreate", async (message) => {
 		});
 
 		try {
-			console.log(`${command.name} in ${guild.name} by ${framework.unmention(message.author)}: ${message.contentPreserved || "no args"}`);
+			console.log(`${command.name} in ${guild ? guild.name : "DM"} by ${framework.unmention(message.author)}: ${message.contentPreserved || "no args"}`);
 			var result = await command.run(message);
 
 			msg = { content: "" };

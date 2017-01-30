@@ -104,8 +104,6 @@ handlebars.registerHelper("createInput", (settings, guild) => {
 				.join("");
 			returnstr += `</select>`;
 		}
-
-		returnstr += "<br />";
 	});
 
 	return new handlebars.SafeString(returnstr);
