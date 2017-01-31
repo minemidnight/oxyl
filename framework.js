@@ -52,11 +52,15 @@ exports.getSetting = async (guild, setting) => {
 	else throw new Error();
 };
 
-exports.resetSetting = (guild, setting) => {
+exports.resetSetting = async (guild, setting) => {
+	let data = await exports.dbQuery(`SELECT \`VALUE\` FROM \`Settings\` WHERE \`ID\` = '${guild.id}' AND \`Name\` = ${exports.sqlEscape(setting)}`);
+	if(data && data[0]) data = data[0].VALUE;
+	else data = false;
+
 	exports.dbQuery(`DELETE FROM \`Settings\` WHERE \`ID\` = '${guild.id}' AND \`Name\` = ${exports.sqlEscape(setting)}`);
 	if(setting === "prefix") delete Oxyl.modScripts.commandHandler.prefixes[guild.id];
 	else if(setting === "musicchannel") delete Oxyl.modScripts.commandHandler.musicchannels[guild.id];
-	else if(setting === "cleverbot") delete Oxyl.modScripts.commandHandler.clever[guild.id];
+	else if(setting === "cleverbot" && data) delete Oxyl.modScripts.commandHandler.clever[data];
 };
 
 exports.setSetting = async (guild, setting, value) => {

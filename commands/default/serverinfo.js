@@ -32,7 +32,7 @@ var command = new Command("serverinfo", async (message, bot) => {
 		`Roles: ${guild.roles.size}`,
 		`Region: ${guild.region}`,
 		`Verification Level: ${guild.verificationLevel}`,
-		`Icon: ${`<${guild.iconURL}>` || "None"}`,
+		`Icon: ${guild.iconURL ? `<${guild.iconURL}>` : "None"}`,
 		`Dashboard: http://minemidnight.work/guild/${guild.id}`
 	];
 

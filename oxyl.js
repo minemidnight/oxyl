@@ -21,7 +21,8 @@ process.on("unhandledRejection", (err) => {
 	if(!err) return;
 	try {
 		let resp = JSON.parse(err.response);
-		if(resp.code === 50013 || resp.code === 10008) return;
+		// these codes mean someone bamboozled oxyl's perms or someone's bamboozled their server
+		if(resp.code === 50013 || resp.code === 10008 || resp.code === 50001 || resp.code === 40005 || resp.code === 10003) return;
 		else throw err;
 	} catch(err2) {
 		err = err.stack.substring(0, 1900) || err;

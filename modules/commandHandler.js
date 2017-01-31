@@ -145,13 +145,7 @@ bot.on("messageCreate", async (message) => {
 				try {
 					var resultmsg = await message.channel.createMessage(msg, file || null);
 				} catch(err) {
-					if(err.code === 50013) {
-						let dm = await message.author.getDMChannel();
-						dm.sendMessage(`I have no permissions to send messages in **${message.guild.name}**, ` +
-									`please tell a server admin if you believe I should have permissions`);
-					} else {
-						message.channel.createMessage("Error sending message");
-					}
+					message.channel.createMessage("Error sending message");
 				}
 			}
 		} catch(error) {
