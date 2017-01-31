@@ -26,24 +26,25 @@ async function setDesc(user, value) {
 
 router.get("/update", async (req, res) => {
 	res.redirect("http://minemidnight.work/user/");
+	res.end();
 });
 
 router.post("/update", async (req, res) => {
-	let ip = main.getIp(req);
-
-	if(main.tokens[ip]) {
-		let loggedUser = await main.getInfo(main.tokens[ip], "users/@me");
+	if(main.tokens[req.sessionID]) {
+		let loggedUser = await main.getInfo(req.sessionID, "users/@me");
 
 		if(req.body.reset) await resetDesc(loggedUser.id);
 		else if(req.body.desc) await setDesc(loggedUser.id, req.body.desc);
 		res.redirect(`http://minemidnight.work/user/${loggedUser.id}`);
+		res.end();
 	} else {
 		res.redirect(`http://minemidnight.work/user`);
+		res.end();
 	}
 });
 
 router.get("*", async (req, res) => {
-	let ip = main.getIp(req), data = {};
+	let data = {};
 	let user = req.path.substring(1);
 
 	if(Oxyl.bot.users.has(user)) {
@@ -52,13 +53,14 @@ router.get("*", async (req, res) => {
 		user.description = await getDesc(user.id);
 		data.viewUser = user;
 
-		if(main.tokens[ip]) {
-			let loggedUser = await main.getInfo(main.tokens[ip], "users/@me");
+		if(main.tokens[req.sessionID]) {
+			let loggedUser = await main.getInfo(req.sessionID, "users/@me");
 			if(loggedUser.id === user.id) data.desc = true;
 		}
 	}
 
 	res.send(await main.parseHB("user", req, data));
+	res.end();
 });
 
 module.exports = router;

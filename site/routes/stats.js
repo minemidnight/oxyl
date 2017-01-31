@@ -40,6 +40,7 @@ router.get("/", async (req, res) => {
 	};
 
 	res.send(await main.parseHB("stats", req, data));
+	res.end();
 });
 
 module.exports = router;

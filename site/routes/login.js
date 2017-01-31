@@ -6,7 +6,6 @@ const router = express.Router(); // eslint-disable-line new-cap
 const tokens = main.tokens;
 
 router.get("/", async (req, res) => {
-	let ip = main.getIp(req);
 	let data = {
 		client_id: framework.config.botid, // eslint-disable-line camelcase
 		client_secret: framework.config.private.secret, // eslint-disable-line camelcase
@@ -24,9 +23,9 @@ router.get("/", async (req, res) => {
 									"https://minemidnight.work/login&scope=identify+guilds&client_id=255832257519026178");
 		} else {
 			body = JSON.parse(body);
-			tokens[ip] = {
+			tokens[req.sessionID] = {
 				token: body.access_token,
-				ip: ip,
+				session: req.sessionID,
 				time: Date.now(),
 				refresh: body.refresh_token
 			};

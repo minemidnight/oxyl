@@ -20,6 +20,7 @@ router.get("/", async (req, res) => {
 	}
 
 	res.send(await main.parseHB("commands", req, data));
+	res.end();
 });
 
 handlebars.registerHelper("listcmds", (commands) => {

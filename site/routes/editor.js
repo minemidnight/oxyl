@@ -21,6 +21,7 @@ router.get("/", async (req, res) => {
 	}
 
 	res.send(await main.parseHB("editor", req, data));
+	res.end();
 });
 
 module.exports = router;

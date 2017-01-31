@@ -1,5 +1,5 @@
 /* eslint-disable no-undef*/
-const es = new EventSource("http://minemidnight.work/sse"),
+const socket = new WebSocket("ws://158.69.118.207:3000/", "protocolOne"),
 	converter = new showdown.Converter({
 		omitExtraWLInCodeBlocks: true,
 		simplifiedAutoLink: true,
@@ -21,7 +21,7 @@ if(path.startsWith("/guild/")) {
 	guildID = "*";
 }
 
-es.onmessage = (event) => {
+socket.onmessage = (event) => {
 	let data = JSON.parse(event.data);
 	if(data.guildid !== guildID && guildID !== "*") return;
 	let time = getFormattedTime(new Date(parseInt(data.sent)));

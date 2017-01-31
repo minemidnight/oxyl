@@ -21,6 +21,7 @@ router.get("/", async (req, res) => {
 	}
 
 	res.send(await main.parseHB("tags", req, data));
+	res.end();
 });
 
 handlebars.registerHelper("listtags", (tags) => {

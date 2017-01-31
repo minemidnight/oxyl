@@ -6,7 +6,7 @@ const express = require("express"),
 const router = express.Router(); // eslint-disable-line new-cap
 
 router.get("*", async (req, res) => {
-	let ip = main.getIp(req), data = {};
+	let data = {};
 	let guild = req.path.substring(1);
 
 	if(Oxyl.bot.guilds.has(guild)) {
@@ -20,8 +20,8 @@ router.get("*", async (req, res) => {
 		guild.userPercent = ((guild.userCount / guild.memberCount) * 100).toFixed(2);
 		data.guild = guild;
 
-		if(main.tokens[ip]) {
-			let user = await main.getInfo(main.tokens[ip], "users/@me");
+		if(main.tokens[req.sessionID]) {
+			let user = await main.getInfo(req.sessionID, "users/@me");
 			if(guild.members.get(user.id) && framework.guildLevel(guild.members.get(user.id)) >= 3) data.panel = true;
 
 			let settings = await framework.dbQuery(`SELECT * FROM \`Settings\` WHERE \`ID\` = '${guild.id}'`);
@@ -54,18 +54,18 @@ router.get("*", async (req, res) => {
 	}
 
 	res.send(await main.parseHB("guild", req, data));
+	res.end();
 });
 
 router.post("/update", async (req, res) => {
 	let guild = Oxyl.bot.guilds.get(req.body.guildid);
-	let ip = main.getIp(req);
 	delete req.body.guildid;
-	if(!guild || !main.tokens[ip]) {
+	if(!guild || !main.tokens[req.sessionID]) {
 		res.redirect("http://minemidnight.work/select");
 		return;
 	}
 
-	let user = await main.getInfo(main.tokens[ip], "users/@me");
+	let user = await main.getInfo(req.sessionID, "users/@me");
 	if(guild.members.get(user.id) && framework.guildLevel(guild.members.get(user.id)) < 3) {
 		res.redirect("http://minemidnight.work/select");
 		return;
@@ -80,6 +80,7 @@ router.post("/update", async (req, res) => {
 	await framework.dbQuery(`DELETE from \`Settings\` WHERE \`NAME\` IN ('${deleteSettings.join("','")}') AND \`ID\` = '${guild.id}'`);
 
 	res.redirect(`http://minemidnight.work/guild/${guild.id}`);
+	res.end();
 });
 
 module.exports = router;

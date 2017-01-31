@@ -5,6 +5,7 @@ const router = express.Router(); // eslint-disable-line new-cap
 
 router.get("/", async (req, res) => {
 	res.send(main.getHTML("messages"));
+	res.end();
 });
 
 module.exports = router;

@@ -1,7 +1,6 @@
 const validator = require("../modules/commandArgs.js"),
 	Oxyl = require("../oxyl.js"),
-	framework = require("../framework.js"),
-	sse = require("../site/routes/sse.js");
+	framework = require("../framework.js");
 
 const prefixes = exports.prefixes = {};
 const musicchannels = exports.musicchannels = {};
@@ -41,7 +40,7 @@ const bot = Oxyl.bot,
 	commands = Oxyl.commands;
 
 bot.on("messageCreate", async (message) => {
-	sse.messageCreate(message);
+	Oxyl.siteScripts.website.messageCreate(message);
 	if(message.author.bot || blacklist.indexOf(message.author.id) !== -1) return;
 	let guild = message.channel.guild;
 	let msg = message.content.toLowerCase();
