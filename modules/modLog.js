@@ -59,7 +59,7 @@ exports.setReason = async (guild, casenum, reason, mod) => {
 
 	let parsed = exports.parseCase(data.ACTION, casenum, data.USER, reason, mod);
 	await message.edit(parsed);
-	await framework.dbQuery(`UPDATE \`ModLog\` SET \`RESPONSIBLE\` = '${mod.id}', REASON = ${framework.sqlEscape(reason)}`);
+	await framework.dbQuery(`UPDATE \`ModLog\` SET \`RESPONSIBLE\` = '${mod.id}', REASON = ${framework.sqlEscape(reason)} WHERE \`CASE_NUM\` = ${casenum}`);
 	return "SUCCESS";
 };
 
@@ -74,8 +74,8 @@ bot.on("guildBanRemove", async (guild, user) => {
 bot.on("guildMemberUpdate", (guild, member, oldMember) => {
 	if(!member || !oldMember) return;
 	else if(oldMember.roles === member.roles) return;
-	let oldMute = oldMember.roles.find(role => guild.roles.get(role).name.toLowerCase() === "muted");
-	let newMute = member.roles.find(role => guild.roles.get(role).name.toLowerCase() === "muted");
+	let oldMute = oldMember.roles.find(role => guild.roles.has(role) && guild.roles.get(role).name.toLowerCase() === "muted");
+	let newMute = member.roles.find(role => guild.roles.has(role) && guild.roles.get(role).name.toLowerCase() === "muted");
 
 	if(oldMute && !newMute) exports.createCase(guild, 4, member.user);
 	else if(!oldMute && newMute) exports.createCase(guild, 3, member.user);

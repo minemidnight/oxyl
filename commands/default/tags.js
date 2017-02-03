@@ -296,7 +296,7 @@ var command = new Command("tag", async (message, bot) => {
 		createTag(createData);
 		return `Tag \`${name}\` created (type: \`${createData.type}\`)`;
 	} else if(msg.toLowerCase().startsWith("test")) {
-		if(!message.content) return "You must provide tag content";
+		if(!msg.substring(4).trim() || msg.substring(4).trim() === "") return "You must provide tag content to test";
 
 		let parsed;
 		try {

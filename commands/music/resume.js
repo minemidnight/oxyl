@@ -12,7 +12,7 @@ var command = new Command("resume", async (message, bot) => {
 	} else if(!manager.connection.paused) {
 		return "The music is not paused";
 	} else {
-		manager.pause();
+		manager.resume();
 		return "Music resumed :play_pause:";
 	}
 }, {

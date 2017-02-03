@@ -102,14 +102,14 @@ exports.getHTML = (name) => fs.readFileSync(`./site/views/${name}.html`).toStrin
 
 /* LIVE CHAT */
 
-const WebSocketServer = require("uws").Server,
+const WebSocketServer = require("ws").Server,
 	twemoji = require("twemoji");
 const wss = new WebSocketServer({ port: 3000 });
 const connections = [];
 
 wss.on("connection", ws => {
 	connections.push(ws);
-	ws.connectionIndex = connections.length;
+	ws.connectionIndex = connections.indexOf(ws);
 
 	ws.on("close", () => {
 		delete connections[ws.connectionIndex];
@@ -127,9 +127,12 @@ module.exports.messageCreate = message => {
 	if(embed) content += parseEmbed(embed);
 	content = content.replace(/(?:&lt;|<):[A-Z0-9_]{2,32}:(\d{14,20})(?:&gt;|>)/gi,
 	`<img class="emoji" src="https://cdn.discordapp.com/emojis/$1.png"></img>`);
-	message.attachments.forEach(attachment => {
-		content += `\n<img src="${attachment.url}" class="attachment" alt="Attachment"></img>`;
-	});
+	if(message.attachments) {
+		message.attachments.forEach(attachment => {
+			content += `\n<img src="${attachment.url}" class="attachment" alt="Attachment"></img>`;
+		});
+	}
+
 	content = content.replace(/`([^`]+)`/g, `<code class="inline-code">$1</code>`);
 	content = content.replace(/\n/g, `<br />`);
 	content = content.trim();
@@ -137,6 +140,7 @@ module.exports.messageCreate = message => {
 	let data = {
 		content: twemoji.parse(content),
 		author: framework.unmention(message.author),
+		avatar: message.author.avatarURL,
 		guildid: message.channel.guild ? message.channel.guild.id : message.channel.id,
 		guildname: message.channel.guild ? message.channel.guild.name : "DM",
 		channelname: message.channel.name,

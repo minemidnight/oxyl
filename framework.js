@@ -54,13 +54,14 @@ exports.getSetting = async (guild, setting) => {
 
 exports.resetSetting = async (guild, setting) => {
 	let data = await exports.dbQuery(`SELECT \`VALUE\` FROM \`Settings\` WHERE \`ID\` = '${guild.id}' AND \`Name\` = ${exports.sqlEscape(setting)}`);
-	if(data && data[0]) data = data[0].VALUE;
+	if(data && data.length >= 1) data = data[0].VALUE;
 	else data = false;
 
 	exports.dbQuery(`DELETE FROM \`Settings\` WHERE \`ID\` = '${guild.id}' AND \`Name\` = ${exports.sqlEscape(setting)}`);
-	if(setting === "prefix") delete Oxyl.modScripts.commandHandler.prefixes[guild.id];
-	else if(setting === "musicchannel") delete Oxyl.modScripts.commandHandler.musicchannels[guild.id];
-	else if(setting === "cleverbot" && data) delete Oxyl.modScripts.commandHandler.clever[data];
+	let cH = Oxyl.modScripts.commandHandler;
+	if(setting === "prefix") delete cH.prefixes[guild.id];
+	else if(setting === "musicchannel") delete cH.musicchannels[guild.id];
+	else if(setting === "cleverbot" && data) delete cH.clever[cH.clever.indexOf(data)];
 };
 
 exports.setSetting = async (guild, setting, value) => {
@@ -70,9 +71,11 @@ exports.setSetting = async (guild, setting, value) => {
 	} catch(err) {
 		exports.dbQuery(`INSERT INTO \`Settings\`(\`NAME\`, \`VALUE\`, \`ID\`) VALUES (${exports.sqlEscape(setting)},${exports.sqlEscape(value)},'${guild.id}')`);
 	}
-	if(setting === "prefix") Oxyl.modScripts.commandHandler.prefixes[guild.id] = value;
-	else if(setting === "musicchannel") Oxyl.modScripts.commandHandler.musicchannels[guild.id] = value;
-	else if(setting === "cleverbot") Oxyl.modScripts.commandHandler.clever.push(value);
+
+	let cH = Oxyl.modScripts.commandHandler;
+	if(setting === "prefix") cH.prefixes[guild.id] = value;
+	else if(setting === "musicchannel") cH.musicchannels[guild.id] = guild.channels.get(value);
+	else if(setting === "cleverbot") cH.clever.push(value);
 };
 
 exports.getRoles = async (guild, type) => {
