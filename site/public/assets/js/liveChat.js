@@ -36,7 +36,7 @@ $("#pause-play").click(() => {
 });
 
 let cancelData = [];
-$("#modal-settings").click(() => {
+function saveData() {
 	cancelData = [];
 	$("form input").each((i, ele) => {
 		ele = $(ele);
@@ -47,6 +47,10 @@ $("#modal-settings").click(() => {
 			cancelData.push(ele.value || "");
 		}
 	});
+}
+
+$("#modal-settings").click(() => {
+	saveData();
 });
 
 function cancelModal() {
@@ -59,6 +63,7 @@ function cancelModal() {
 		}
 	});
 
+	cancelData = [];
 	toggleModal("settings-modal");
 }
 
@@ -75,6 +80,7 @@ $("#save-modal").click(() => {
 
 	settings.channels = [];
 	$("form").find(`input[name="channels"]:checked`).each((i, ele) => settings.channels.push(ele.value));
+	saveData();
 });
 
 $("#restore-modal").click(() => {
@@ -85,6 +91,7 @@ $("#restore-modal").click(() => {
 	settings.channels = [];
 
 	$("form").trigger("reset");
+	saveData();
 });
 
 socket.onmessage = (event) => {
