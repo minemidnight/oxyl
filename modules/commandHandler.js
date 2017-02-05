@@ -149,7 +149,7 @@ bot.on("messageCreate", async (message) => {
 			}
 		} catch(error) {
 			framework.consoleLog(`Failed command ${command.name} (${command.type})\n` +
-				`**Error:** ${framework.codeBlock(error || error.stack)}`, "debug");
+				`**Error:** ${framework.codeBlock(error.stack || error)}`, "debug");
 			message.channel.createMessage("Bot error when executing command, error sent to Support Server");
 		}
 	} catch(err) {

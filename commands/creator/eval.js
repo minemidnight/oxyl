@@ -13,9 +13,9 @@ var command = new Command("eval", async (message, bot) => {
 		var output = await eval(`(async function(){${message.argsPreserved[0]}}).call()`);
 		output = util.inspect(output, { depth: 0 }).substring(0, 1900);
 		for(var i in config.private) {
-			output = output.replace(new RegExp(config.private[i], "ig"), "xPRIVATEx");
+			output = output.replace(new RegExp(config.private[i], "ig"), "no u");
 		}
-		msg.edit(`:white_check_mark: **Output:** ${framework.codeBlock(output)}`);
+		msg.edit(`:white_check_mark: **Output:** ${framework.codeBlock(output, "js")}`);
 	} catch(error) {
 		msg.edit(`:x: **Error:** ${framework.codeBlock(error)}`);
 	}

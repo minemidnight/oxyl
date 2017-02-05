@@ -5,11 +5,18 @@ const Oxyl = require("../../oxyl.js"),
 function isBannable(member) {
 	let guild = member.guild;
 	let botMember = guild.members.get(Oxyl.bot.user.id);
-	let highestRoleBot = Math.max(botMember.roles.map(role => guild.roles.get(role).position));
-	let highestRoleMember = Math.max(member.roles.map(role => guild.roles.get(role).position));
+
+	let highestBot = botMember.roles.length >= 1 ?
+		botMember.roles.map(role => guild.roles.get(role)).sort((a, b) => b.position - a.position)[0] :
+		guild.roles.get(guild.id);
+	let highestMember = member.roles.length >= 1 ?
+		member.roles.map(role => guild.roles.get(role)).sort((a, b) => b.position - a.position)[0] :
+		guild.roles.get(guild.id);
+
 	if(member.id === guild.ownerID) return false;
 	else if(member.id === botMember.id) return false;
-	else return highestRoleBot > highestRoleMember;
+	else if(highestBot.position === highestMember.position) return highestMember.id - highestBot.id > 0;
+	else return highestBot.position - highestMember.position > 0;
 }
 
 var command = new Command("ban", async (message, bot) => {

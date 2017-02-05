@@ -13,7 +13,7 @@
 	<link rel="stylesheet" href="http://minemidnight.work/assets/css/style.css" />
 	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 	<link rel="stylesheet" href="http://minemidnight.work/assets/css/w3.css">
-	<script async src="http://minemidnight.work/assets/js/jquery.min.js"></script>
+	<script src="http://minemidnight.work/assets/js/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.5.5/showdown.min.js"></script>
 	<script async defer src="http://minemidnight.work/assets/js/main.js"></script>
 	<script async defer src="http://minemidnight.work/assets/js/liveChat.js"></script>
@@ -59,7 +59,7 @@
 	<div class="w3-overlay w3-animate-opacity" onclick="toggleNav()"></div>
 	<main class="w3-main w3-center" style="margin-left:300px">
 		<header class="w3-container">
-			<span class="w3-btn w3-black w3-round-jumbo w3-large w3-hide-large" style="position:fixed;left:20px;top:20px" onclick="toggleNav()">&#9776;</span>
+			<span class="w3-btn w3-black w3-round-jumbo w3-large w3-hide-large" style="position:fixed;left:20px;top:20px;z-index:" onclick="toggleNav()">&#9776;</span>
 			<h1 class="w3-clear w3-jumbo w3-margin-0">Guild Analytics</h1>
 		</header>
 
@@ -156,12 +156,17 @@
 			</div>
 		</div>
 
-		<div class="w3-container w3-aqua w3-margin w3-padding-bottom w3-margin-bottom">
-			<h4 class="w3-xlarge w3-left-align">Live Chat</h4>
+		<div class="w3-container w3-margin w3-padding-bottom w3-margin-bottom w3-border" style="background:#2E3136">
 			<style>
-				table {table-layout:fixed;color:#2E3136}
-				table td {display: block!important;word-wrap:break-word;background:#36393E;padding:0}
-				table span {margin:0 3px}
+				table {table-layout:fixed}
+				tr {border-bottom-color:hsla(0,0%,100%,.04)!important}
+				td {
+					display: block!important;
+					word-wrap:break-word;
+					background:#36393E;
+					padding:10px 15px!important
+				}
+				table span:not(:first-child) {margin:0 3px}
 				table code {
 					font-family: Menlo, Consolas, Monaco, monospace;
 					font-size: 14px;
@@ -199,17 +204,37 @@
 				}
 				img.emoji {width:22px;height:22px}
 				img.attachment {max-width: 520px}
-				img.avatar-large {width:40px;height:40px;background-size:40px 40px}
+				img.avatar-large {width:40px;height:40px;background-size:40px 40px;opacity:1}
 				.embed p {color:rgba(255,255,255,.7);margin:0}
-				.embed h6 {color:white;}
-				.embed a {color: #0096cf; text-decoration:none;}
-				.embed a:hover {text-decoration:underline;}
+				.embed h6 {color:white}
+				.embed a {color: #0096cf;text-decoration:none}
+				.embed a:hover {text-decoration:underline}
 				.embed img.embed-thumbnail {max-width:80px;max-height:80px;border-radius:5px}
 				.embed-image img {max-width:520px}
 				.embed img.embed-icon {height:20px;width:20px;border-radius:50%;margin-right:5px}
+				.content p {margin:0}
+
+				#chat-controls i {opacity:0.5;transition:all 1s ease;user-select:none}
+				#chat-controls i:hover {opacity:1;cursor:pointer}
+				input[name="channels"] + label {
+					display:inline-block;
+					width:20%;
+					padding:2px 5px;
+					display:inline-block;
+					white-space: nowrap;
+  				overflow: hidden;
+  				text-overflow: ellipsis;
+				}
 			</style>
-			<div class="w3-responsive" style="max-height:500px">
-				<table id="msg-table" class="w3-table-all w3-white" style="height:500px">
+			<div class="w3-responsive w3-round-large w3-row" style="height:500px">
+				<div class="w3-threequarter">
+					<h4 class="w3-xlarge w3-left-align">Live Chat</h4>
+				</div>
+				<div class="w3-quarter" id="chat-controls">
+					<i class="material-icons w3-xxlarge w3-right w3-section" id="pause-play">pause_circle_outline</i>
+					<button onclick="toggleModal('settings-modal')" class="w3-center w3-btn w3-right w3-margin" id="modal-settings">Settings</button>
+				</div>
+				<table id="msg-table" class="w3-table-all" style="max-height:500px;border:none;">
 				</table>
 			</div>
 		</div>
@@ -219,7 +244,7 @@
 				<h3 class="w3-margin w3-xlarge">Manage Settings</h3>
 				<form class="w3-container" method="post" action="update">
 				{{#createInput settings guild}}{{/createInput}}
-				<input class="w3-center w3-btn w3-section" type="submit" value="Submit">
+				<input class="w3-center w3-btn w3-section" type="submit" value="Submit" />
 				</form>
 			{{else if user}}
 				<p class="w3-margin w3-xlarge">Sorry! You don't have permissions on this guild, so you can't manage it.</p>
@@ -232,5 +257,36 @@
 		<h2 class="w3-xxlarge">Invalid guild ID</h2>
 		{{/if}}
 	</main>
+
+	<div id="settings-modal" class="w3-modal">
+		<div class="w3-modal-content w3-card-8">
+			<div class="w3-notquiteblack">
+				<span onclick="cancelModal()" style="margin-right:7.5px" class="w3-closebtn w3-hover-text-red">&times;</span>
+				<header class="w3-card-4 w3-blurple">
+					<h2 class="w3-text-white w3-margin">Settings</h2>
+				</header>
+				<form class="w3-container">
+					<label class="w3-label">Starts With</label>
+					<input class="w3-input" type="text" name="starts" />
+					<label class="w3-label">Ends With</label>
+					<input class="w3-input" type="text" name="ends" />
+					<label class="w3-label">Matches Regex</label>
+					<input class="w3-input" type="text" name="matches" />
+					<h4>Regex Flags</h4>
+					<input class="w3-check" type="checkbox" value="g" name="flags" checked />
+					<label class="w3-validate">Global</label>
+					<input class="w3-check" type="checkbox" name="flags" value="i" />
+					<label class="w3-validate">Case Insensitive</label>
+					<h4>Channels</h4>
+					{{#listChannels guild}}{{/listChannels}}
+				</form>
+				<footer class="w3-center">
+					<button onclick="toggleModal('settings-modal')" class="w3-center w3-btn w3-section w3-hover-green" id="save-modal">Save</button>
+					<button onclick="cancelModal()" class="w3-hover-red w3-center w3-btn w3-section">Cancel</button>
+					<button onclick="toggleModal('settings-modal')" class="w3-center w3-btn w3-section w3-hover-yellow" id="restore-modal">Restore Defaults</button>
+		    </footer>
+			</div>
+		</div>
+	</div>
 </body>
 </html>

@@ -16,13 +16,13 @@ var command = new Command("reason", async (message, bot) => {
 
 		if(resp === "SUCCESS") casesSet++;
 		else if(resp === "NO_CASE") errMsg = `Case \`${casenum}\` not found`;
-		else if(resp === "NO_CHANNEL") errMsg = `Mod log channel not found`;
-		else if(resp === "NO_MSG") errMsg = `Message for case \`${casenum}\` not found`;
+		else if(resp === "NO_CHANNEL") errMsg = `Mod log channel not set`;
+		else if(resp === "NO_MSG") errMsg = `Message from case \`${casenum}\` not found`;
 		else errMsg = `Unexpected error`;
 	}
 
 	let returnMsg = "";
-	if(message.args[0].length === 1) returnMsg = `:white_check_mark: Set reason for case \`${message.args[0][0]}\``;
+	if(message.args[0].length === 1 && !errMsg) returnMsg = `:white_check_mark: Set reason for case \`${message.args[0][0]}\``;
 	else if(casesSet) returnMsg = `:white_check_mark: Set reason for ${casesSet} cases`;
 	if(errMsg) returnMsg += errMsg;
 	return returnMsg;

@@ -364,7 +364,7 @@ var command = new Command("tag", async (message, bot) => {
 	cooldown: 2500,
 	type: "default",
 	aliases: ["t", "tags"],
-	description: "Create, delete, display, test or list tags (view http://minemidnight.work/tags)",
+	description: "Create, delete, display, test or list tags (view http://minemidnight.work/tags for tag info)",
 	args: [{
 		type: "text",
 		label: "<tag name>|test <content>|create <name> <content>|delete <name>|list|raw <name>|info <name>"

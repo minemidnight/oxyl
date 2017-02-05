@@ -11,3 +11,10 @@ function toggleNav() {
 function toggleAccordion(selector) {
 	$(selector).next().toggleClass("w3-show");
 }
+
+function toggleModal(selector) {
+	$(`#${selector}`).css("display", (index, currentValue) => {
+		if(currentValue === "block") return "none";
+		else if(currentValue === "none") return "block";
+	});
+}

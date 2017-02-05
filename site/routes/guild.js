@@ -22,15 +22,21 @@ router.get("*", async (req, res) => {
 
 		if(main.tokens[req.sessionID]) {
 			let user = await main.getInfo(req.sessionID, "users/@me");
-			if(guild.members.get(user.id) && framework.guildLevel(guild.members.get(user.id)) >= 3) data.panel = true;
+			let member = guild.members.get(user.id);
+			if(member && (framework.guildLevel(member) >= 3 || framework.config.creators.includes(user.id))) data.panel = true;
 
 			let settings = await framework.dbQuery(`SELECT * FROM \`Settings\` WHERE \`ID\` = '${guild.id}'`);
 			let possibleSettings = Oxyl.cmdScripts.settings.settings;
 			data.settings = settings.map(setting => {
 				let settingFound = possibleSettings.find(set => set.name === setting.NAME);
 				setting.TYPE = settingFound.type;
-				if(setting.TYPE === "textChannel") setting.valueDisplay = guild.channels.get(setting.VALUE).name;
-				else setting.valueDisplay = setting.VALUE;
+
+				if(setting.TYPE === "textChannel") {
+					if(guild.channels.has(setting.VALUE)) setting.valueDisplay = guild.channels.get(setting.VALUE).name;
+					else setting.valueDisplay = "deleted-channel";
+				} else {
+					setting.valueDisplay = setting.VALUE;
+				}
 
 				return setting;
 			});
@@ -105,6 +111,16 @@ handlebars.registerHelper("createInput", (settings, guild) => {
 				.join("");
 			returnstr += `</select>`;
 		}
+	});
+
+	return new handlebars.SafeString(returnstr);
+});
+
+handlebars.registerHelper("listChannels", guild => {
+	let returnstr = "";
+	guild.channels.forEach(channel => {
+		returnstr += `<input class="w3-check" type="checkbox" value="${channel.id}" name="channels" checked />`;
+		returnstr += `<label class="w3-validate">${channel.name}</label>`;
 	});
 
 	return new handlebars.SafeString(returnstr);

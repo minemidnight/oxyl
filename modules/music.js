@@ -189,6 +189,7 @@ class MusicManager {
 				image: { url: `https://i.ytimg.com/vi/${data.id}/hqdefault.jpg` }
 			};
 		} else if(type === "error") {
+			if(!data) return false;
 			embed = {
 				title: "Recieved Error :warning:",
 				color: 0xF1C40F,

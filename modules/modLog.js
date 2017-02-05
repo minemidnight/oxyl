@@ -13,7 +13,7 @@ exports.modChannel = async (guild) => {
 };
 
 exports.caseInfo = async (guild, casenum) => {
-	let data = await framework.dbQuery(`SELECT * FROM \`ModLog\` WHERE \`CASE_NUM\` = ${casenum}`);
+	let data = await framework.dbQuery(`SELECT * FROM \`ModLog\` WHERE \`CASE_NUM\` = ${casenum} AND \`GUILD\` = '${guild.id}'`);
 	if(data && data.length >= 1) return data[0];
 	else return false;
 };
@@ -54,12 +54,16 @@ exports.setReason = async (guild, casenum, reason, mod) => {
 	let channel = await exports.modChannel(guild);
 	if(!channel) return "NO_CHANNEL";
 
-	let message = await channel.getMessage(data.MSG);
-	if(!message) return "NO_MSG";
+	try {
+		var message = await channel.getMessage(data.MSG);
+	} catch(err) {
+		return "NO_MSG";
+	}
 
 	let parsed = exports.parseCase(data.ACTION, casenum, data.USER, reason, mod);
 	await message.edit(parsed);
-	await framework.dbQuery(`UPDATE \`ModLog\` SET \`RESPONSIBLE\` = '${mod.id}', REASON = ${framework.sqlEscape(reason)} WHERE \`CASE_NUM\` = ${casenum}`);
+	await framework.dbQuery(`UPDATE \`ModLog\` SET \`RESPONSIBLE\` = '${mod.id}', REASON = ${framework.sqlEscape(reason)} ` +
+		`WHERE \`CASE_NUM\` = ${casenum} AND \`guild\` = '${guild.id}'`);
 	return "SUCCESS";
 };
 

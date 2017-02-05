@@ -50,7 +50,7 @@ exports.getInfo = async (sesid, path) => {
 	let url = `https://discordapp.com/api/${path}`;
 	if(Date.now() - token.time >= 604800) {
 		await refreshToken(token);
-		token = exports.tokens[token.session];
+		token = exports.tokens[sesid];
 	}
 
 	let body = await framework.getContent(url, { headers: { Authorization: `Bearer ${token.token}` } });
@@ -71,7 +71,7 @@ async function refreshToken(token) {
 	}, (err, httpResponse, body) => {
 		if(err) throw err;
 		body = JSON.parse(body);
-		exports.tokens[session] = {
+		exports.tokens[token.session] = {
 			token: body.access_token,
 			session: token.session,
 			time: Date.now(),
@@ -102,19 +102,19 @@ exports.getHTML = (name) => fs.readFileSync(`./site/views/${name}.html`).toStrin
 
 /* LIVE CHAT */
 
-const WebSocketServer = require("ws").Server,
+const WebSocket = require("ws"),
 	twemoji = require("twemoji");
+
+const WebSocketServer = WebSocket.Server;
 const wss = new WebSocketServer({ port: 3000 });
-const connections = [];
 
-wss.on("connection", ws => {
-	connections.push(ws);
-	ws.connectionIndex = connections.indexOf(ws);
-
-	ws.on("close", () => {
-		delete connections[ws.connectionIndex];
+wss.broadcast = (data) => {
+	wss.clients.forEach((client) => {
+		if(client.readyState === WebSocket.OPEN) {
+			client.send(data);
+		}
 	});
-});
+};
 
 let prev;
 module.exports.messageCreate = message => {
@@ -133,9 +133,11 @@ module.exports.messageCreate = message => {
 		});
 	}
 
-	content = content.replace(/`([^`]+)`/g, `<code class="inline-code">$1</code>`);
-	content = content.replace(/\n/g, `<br />`);
-	content = content.trim();
+	content = content
+		.replace(/```\n/g, "```")
+		.replace(/`([^`]+)`/g, `<code class="inline-code">$1</code>`)
+		.replace(/\n/g, `<br />`)
+		.trim();
 
 	let data = {
 		content: twemoji.parse(content),
@@ -144,12 +146,13 @@ module.exports.messageCreate = message => {
 		guildid: message.channel.guild ? message.channel.guild.id : message.channel.id,
 		guildname: message.channel.guild ? message.channel.guild.name : "DM",
 		channelname: message.channel.name,
+		channelid: message.channel.id,
 		bot: message.author.bot,
 		sent: message.createdAt
 	};
 
 	data = JSON.stringify(data);
-	connections.forEach(ws => ws.send(data));
+	wss.broadcast(data);
 };
 
 function parseEmbed(embed) {
