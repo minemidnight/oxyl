@@ -258,7 +258,22 @@
 		{{/if}}
 	</main>
 
-	<style>@media (min-width:993px){#settings-modal{margin-left:150px!important}}</style>
+	<style>
+		@media (min-width:993px) {
+			#settings-modal {
+				margin-left: 150px!important;
+			}
+			input[name="channels"] + label {
+				width: 30%;
+			}
+		}
+
+		@media (max-width:600px) {
+			input[name="channels"] + label {
+				width: 80%;
+			}
+		}
+	</style>
 	<div id="settings-modal" class="w3-modal">
 		<div class="w3-modal-content w3-card-8">
 			<div class="w3-notquiteblack">
@@ -276,6 +291,7 @@
 					<h4>Regex Flags</h4>
 					<input class="w3-check" type="checkbox" value="g" name="flags" checked />
 					<label class="w3-validate">Global</label>
+					<br />
 					<input class="w3-check" type="checkbox" name="flags" value="i" />
 					<label class="w3-validate">Case Insensitive</label>
 					<h4>Channels</h4>
