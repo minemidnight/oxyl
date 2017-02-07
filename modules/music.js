@@ -136,8 +136,7 @@ class MusicManager {
 		}
 
 		let stream = yt(`http://www.youtube.com/watch?v=${id}`, { audioonly: true });
-		connection.play(stream);
-		// , { encoderArgs: ["volume", "0.25"] });
+		connection.play(stream, { encoderArgs: ["-af", "volume=0.1"] });
 		this.sendEmbed("playing", nextQueue);
 	}
 
