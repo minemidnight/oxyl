@@ -6,13 +6,15 @@ const Oxyl = require("../oxyl.js"),
 	request = require("request"),
 	bodyParser = require("body-parser"),
 	cookieParser = require("cookie-parser"),
-	session = require("express-session");
+	session = require("express-session"),
+	http = require("http");
 
-const app = express();
-app.use(express.static("./site/public"));
-exports.app = app;
+const app = exports.app = express();
+const server = exports.server = http.createServer(app);
+server.listen(8080);
 exports.tokens = {};
 
+app.use(express.static("./site/public"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
@@ -106,7 +108,7 @@ const WebSocket = require("ws"),
 	twemoji = require("twemoji");
 
 const WebSocketServer = WebSocket.Server;
-const wss = new WebSocketServer({ port: 3000 });
+const wss = new WebSocketServer({ server });
 
 wss.broadcast = (data) => {
 	wss.clients.forEach((client) => {

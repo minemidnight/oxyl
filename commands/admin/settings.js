@@ -155,7 +155,7 @@ const configTypes = {
 		validate: (guild, value) => value
 	},
 	tag: {
-		info: "message using the tag format (http://minemidnight.work/tags)",
+		info: "message using the tag format (http://minemidnight.work/tags for documentation)",
 		validate: (guild, value) => value
 	}
 };

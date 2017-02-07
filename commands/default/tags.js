@@ -125,6 +125,17 @@ async function parseTag(tag, message) {
 	}
 	message.tagVars = {};
 
+	let ifRegex = /{if:([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\|]+)}/i;
+	let match = tag.match(ifRegex);
+	if(match) {
+		let replace = `{if:${match[1]}|${match[2]}|${match[3]}|`;
+		replace += match[4].replace(/{/g, "&$lbph;").replace(/}/g, "&$rbph;");
+		if(match[5]) replace += `|${match[5].replace(/{/g, "&$lbph;").replace(/}/g, "&$rbph;")}`;
+		replace += "}";
+
+		tag.replace(match[0], replace);
+	}
+
 	let results = [], executions = 0;
 	while(tag.match(/{[^{}]+}/)) {
 		if(executions >= 1000) throw new Error("Prevented recursion, 1000 tag executions hit");
@@ -152,13 +163,25 @@ async function parseTag(tag, message) {
 			if(newArg && typeof newArg === "object" && newArg.argsPreserved) {
 				message = newArg;
 				newArg = "";
-			} else if(typeof newArg === "object" || typeof newArg === "undefined") {
+			} else if(typeof newArg === "object" || typeof newArg === "undefined" || typeof newArg === "number") {
 				results = [newArg];
 			} else {
 				results = [];
 			}
 
 			tag = tag.replace(originalArg, newArg);
+
+			if(argType.toLowerCase() === "if") {
+				match = tag.match(ifRegex);
+				if(match) {
+					let replace = `{if:${match[1]}|${match[2]}|${match[3]}|`;
+					replace += match[4].replace(/{/g, "&$lbph;").replace(/}/g, "&$rbph;");
+					if(match[5]) replace += `|${match[5].replace(/{/g, "&$lbph;").replace(/}/g, "&$rbph;")}`;
+					replace += "}";
+
+					tag.replace(match[0], replace);
+				}
+			}
 		} catch(err) {
 			if(message.tagVars.fallback) return message.tagVars.fallback;
 			else throw new Error(`Parsing at \`${originalArg}\`\nMore Info: ${framework.codeBlock(err.stack || err)}`);
@@ -168,9 +191,10 @@ async function parseTag(tag, message) {
 	tag = tag.replace(/@everyone/g, "@\u200Beveryone")
 		.replace(/@here/g, "@\u200Bhere")
 		.replace(/&lb;/g, "{")
-		.replace(/&rb;/g, "}");
+		.replace(/&rb;/g, "}")
+		.trim();
 
-	if(!tag || tag.length <= 0) throw new Error(`Tag has no content`);
+	if(!tag || tag.length === 0) throw new Error(`Tag has no content`);
 	else if(tag.length >= 2000) throw new Error(`Tag is over 2000 characters`);
 	else return tag;
 }
@@ -747,9 +771,9 @@ const tagParser = {
 		}
 
 		if(result) {
-			return args[3];
+			return args[3].replace(/&\$rbph;/g, "{").replace(/&\$lbph;/g, "}");
 		} else {
-			return args[4] || "";
+			return args[4] ? args[4].replace(/&\$rbph;/g, "{").replace(/&\$lbph;/g, "}") : "";
 		}
 	},
 	int: async args => Math.floor(Math.random() * (parseInt(args[1]) - parseInt(args[0]))) + parseInt(args[0]),
