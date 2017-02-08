@@ -92,9 +92,6 @@ bot.on("messageCreate", async (message) => {
 	} else if(command.type === "admin" && framework.guildLevel(message.member) < 3) {
 		message.channel.createMessage(`Only the guld owner, or users with the ADMINISTRATOR permission can use this command.`);
 		return;
-	} else if(command.type === "NSFW" && !await framework.isNSFW(message.channel.id)) {
-		message.channel.createMessage("This channel is not NSFW!");
-		return;
 	} else if(command.type === "music" && musicchannels[guild.id] && musicchannels[guild.id].id !== message.channel.id) {
 		message.channel.createMessage("You cannot use music commands in this channel.");
 		return;
