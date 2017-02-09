@@ -5,11 +5,15 @@ const express = require("express"),
 	bodyParser = require("body-parser"),
 	cookieParser = require("cookie-parser"),
 	session = require("express-session"),
-	http = require("http");
+	http = require("http"),
+	expressWs = require("express-ws"),
+	twemoji = require("twemoji"),
+	WebSocket = require("ws");
 
 const app = exports.app = express();
-const server = exports.server = http.createServer(app);
-server.listen(8080);
+const wss = expressWs(app);
+app.ws("/messages");
+app.listen(8080);
 exports.tokens = {};
 
 app.use(express.static("./site/public"));
@@ -102,17 +106,9 @@ exports.getHTML = (name) => fs.readFileSync(`./site/views/${name}.html`).toStrin
 
 /* LIVE CHAT */
 
-const WebSocket = require("ws"),
-	twemoji = require("twemoji");
-
-const WebSocketServer = WebSocket.Server;
-const wss = new WebSocketServer({ server });
-
 wss.broadcast = (data) => {
-	wss.clients.forEach((client) => {
-		if(client.readyState === WebSocket.OPEN) {
-			client.send(data);
-		}
+	wss.getWss().clients.forEach(client => {
+		if(client.readyState === WebSocket.OPEN) client.send(data);
 	});
 };
 
