@@ -1,17 +1,13 @@
-const music = require("../../modules/music.js"),
-	Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js");
+const music = require("../../modules/music.js");
 
-var command = new Command("repeat", async (message, bot) => {
+exports.cmd = new Oxyl.Command("repeat", async message => {
 	let manager = music.getManager(message.channel.guild);
 	if(!manager) {
 		return "There is currently no music playing";
 	} else if(!manager.voiceCheck(message.member)) {
 		return "You must be in the music channel to run this command";
 	} else {
-		let newValue = manager.toggleOption("repeat");
-		newValue = newValue ? "on" : "off";
+		let newValue = manager.toggleOption("repeat") ? "on" : "off";
 		return `Repeat has been turned ${newValue}`;
 	}
 }, {

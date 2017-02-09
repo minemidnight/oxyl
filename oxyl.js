@@ -1,7 +1,11 @@
-const Eris = require("eris"),
-	framework = require("./framework.js");
+const Eris = require("eris");
+global.framework = require("./framework.js");
 
-const bot = new Eris(framework.config.private.token);
+global.bot = new Eris(framework.config.private.token, {
+	maxShards: framework.config.options.shards,
+	messageLimit: 15
+});
+
 
 process.stdin.resume();
 process.on("SIGINT", () => {
@@ -55,6 +59,7 @@ exports.addCommand = (command) => {
 exports.bot = bot;
 exports.commands = {};
 
+exports.Command = require("./modules/commandCreator.js");
 exports.cmdScripts = framework.loadScripts("./commands/");
 exports.modScripts = framework.loadScripts("./modules/");
 exports.siteScripts = framework.loadScripts("./site/");

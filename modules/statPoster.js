@@ -1,8 +1,3 @@
-const Oxyl = require("../oxyl.js"),
-	framework = require("../framework.js");
-
-const bot = Oxyl.bot;
-
 function postCarbon() {
 	let stats = {
 		key: framework.config.private.carbonKey,

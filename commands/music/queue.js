@@ -1,10 +1,6 @@
-const music = require("../../modules/music.js"),
-	Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js");
-const perPage = framework.config.options.commands.queueListPerPage;
+const music = require("../../modules/music.js");
 
-var command = new Command("queue", async (message, bot) => {
+exports.cmd = new Oxyl.Command("queue", async message => {
 	let guild = message.channel.guild;
 	let manager = music.getManager(guild);
 
@@ -14,7 +10,7 @@ var command = new Command("queue", async (message, bot) => {
 		let queue = manager.data.queue;
 		let queueSize = queue.length;
 		let page = message.args[0] || 1;
-		let pageAmount = Math.ceil(queueSize / perPage);
+		let pageAmount = Math.ceil(queueSize / 15);
 		if(page > pageAmount) page = pageAmount;
 
 		let queueMsg = `Music Info for **${guild.name}**\n`;
@@ -22,15 +18,15 @@ var command = new Command("queue", async (message, bot) => {
 
 		if(queueSize > 0) {
 			let queueSongs = [];
-			for(let i = 0; i < perPage; i++) {
-				let index = ((page - 1) * perPage) + i;
+			for(let i = 0; i < 15; i++) {
+				let index = ((page - 1) * 15) + i;
 				let queueData = queue[index];
 
 				let title = queueData.title;
 				if(title && title.length > 75) title = `${title.substring(0, 71)} __**...**__`;
 
 				queueSongs.push(`[${index + 1}] ${title}`);
-				if(queueSize - 1 === index || i === perPage - 1) break;
+				if(queueSize - 1 === index || i === 14) break;
 			}
 			queueSongs = framework.listConstructor(queueSongs);
 			queueMsg += `${queueSongs}\nPage ${page} of ${pageAmount}`;

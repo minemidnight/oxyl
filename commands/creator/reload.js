@@ -1,16 +1,11 @@
-const Oxyl = require("../../oxyl.js"),
-	framework = require("../../framework.js"),
-	Command = require("../../modules/commandCreator.js");
-const loadScript = framework.loadScript;
-
-var command = new Command("reload", async (message, bot) => {
+exports.cmd = new Oxyl.Command("reload", async message => {
 	message.content = message.content.toLowerCase();
 	var reload = framework.findFile(["./commands/", "./modules/", "./site/"], message.args[0], "js");
 
 	if(!reload) {
 		return `Invalid file: ${message.args[0]}`;
 	} else {
-		loadScript(reload[0] + reload[1]);
+		framework.loadScript(reload[0] + reload[1]);
 		return `Reloaded script \`${reload[1]}\` **(**${reload[0]}${reload[1]}**)**`;
 	}
 }, {

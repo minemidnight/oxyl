@@ -1,7 +1,4 @@
-const Oxyl = require("../oxyl.js"),
-	framework = require("../framework.js");
-const config = framework.config,
-	bot = Oxyl.bot;
+const config = framework.config;
 
 function matchUser(user, input) {
 	let username = user.user.username.toLowerCase() || user.username.toLowerCase();

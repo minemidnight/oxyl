@@ -1,9 +1,6 @@
-const music = require("../../modules/music.js"),
-	Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js");
+const music = require("../../modules/music.js");
 
-var command = new Command("stop", async (message, bot) => {
+exports.cmd = new Oxyl.Command("stop", async message => {
 	let manager = music.getManager(message.channel.guild);
 	if(!manager) {
 		return "There is currently no music playing";
@@ -16,6 +13,5 @@ var command = new Command("stop", async (message, bot) => {
 }, {
 	guildOnly: true,
 	type: "music",
-	aliases: ["end"],
 	description: "Stop the music in your channel"
 });

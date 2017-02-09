@@ -8,6 +8,7 @@ const Oxyl = require("./oxyl.js"),
 
 const Cleverbot = require("cleverbot-node");
 const cleverbot = new Cleverbot();
+global.Oxyl = Oxyl;
 
 exports.cleverResponse = (input) => {
 	input = input.trim();

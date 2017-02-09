@@ -1,7 +1,4 @@
-const validator = require("../modules/commandArgs.js"),
-	Oxyl = require("../oxyl.js"),
-	framework = require("../framework.js");
-
+const validator = require("../modules/commandArgs.js");
 const prefixes = exports.prefixes = {};
 const musicchannels = exports.musicchannels = {};
 const blacklist = exports.blacklist = [];

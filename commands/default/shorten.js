@@ -1,11 +1,7 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js"),
-	googl = require("goo.gl");
-const config = framework.config;
-googl.setKey(config.private.googleKey);
+const googl = require("goo.gl");
+googl.setKey(framework.config.private.googleKey);
 
-var command = new Command("shorten", async (message, bot) => {
+exports.cmd = new Oxyl.Command("shorten", async message => {
 	message.channel.sendTyping();
 
 	let shortUrl = await googl.shorten(message.args[0], { quotaUser: message.author.id });

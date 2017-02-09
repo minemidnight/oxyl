@@ -1,8 +1,4 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js");
-
-var command = new Command("purge", async (message, bot) => {
+exports.cmd = new Oxyl.Command("purge", async message => {
 	let deletePerms = message.channel.guild.members.get(bot.user.id).permission.has("manageMessages"),
 		mentions = message.mentions;
 	if(!deletePerms) {

@@ -1,8 +1,4 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js");
-
-var command = new Command("suggest", async (message, bot) => {
+exports.cmd = new Oxyl.Command("suggest", async message => {
 	framework.consoleLog(`Suggestion from ${framework.unmention(message.author)} (${message.author.id}):` +
 		`${framework.codeBlock(message.argsPreserved[0])}`, "suggestions");
 	return "Sent suggestion!";

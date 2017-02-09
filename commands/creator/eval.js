@@ -1,10 +1,7 @@
-const util = require("util"),
-	Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js");
+const util = require("util");
 const config = framework.config;
 
-var command = new Command("eval", async (message, bot) => {
+exports.cmd = new Oxyl.Command("eval", async message => {
 	let guild = message.channel.guild, channel = message.channel, author = message.author, member = message.member;
 	// So the executor can use in eval
 

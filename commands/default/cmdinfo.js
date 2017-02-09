@@ -1,9 +1,6 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js");
 const commands = Oxyl.commands;
 
-var command = new Command("cmdinfo", async (message, bot) => {
+exports.cmd = new Oxyl.Command("cmdinfo", async message => {
 	let cmd = framework.findCommand(message.args[0]);
 	if(!cmd) return "Command not found";
 

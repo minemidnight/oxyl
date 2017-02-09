@@ -1,9 +1,6 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js"),
-	cheerio = require("cheerio");
+const cheerio = require("cheerio");
 
-var command = new Command("lyrics", async (message, bot) => {
+exports.cmd = new Oxyl.Command("lyrics", async message => {
 	message.channel.sendTyping();
 	let search = await framework.getContent(`http://search.azlyrics.com/search.php?q=${escape(message.args[0])}`);
 

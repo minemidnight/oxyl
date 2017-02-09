@@ -1,8 +1,4 @@
-const Oxyl = require("../../oxyl.js"),
-	framework = require("../../framework.js"),
-	Command = require("../../modules/commandCreator.js");
-
-var command = new Command("update", async (message, bot) => {
+exports.cmd = new Oxyl.Command("update", async message => {
 	let guild = bot.guilds.get("254768930223161344");
 	let role = guild.roles.get("265293123821895680");
 

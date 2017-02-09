@@ -1,9 +1,6 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js");
 const commands = Oxyl.commands;
 
-var command = new Command("help", async (message, bot) => {
+exports.cmd = new Oxyl.Command("help", async message => {
 	let cmds = {};
 
 	for(var cmdType in commands) {

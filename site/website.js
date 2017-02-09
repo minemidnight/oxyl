@@ -1,6 +1,4 @@
-const Oxyl = require("../oxyl.js"),
-	framework = require("../framework.js"),
-	express = require("express"),
+const express = require("express"),
 	handlebars = require("handlebars"),
 	fs = require("fs"),
 	request = require("request"),

@@ -1,7 +1,3 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js");
-
 async function addIgnore(channel) {
 	let data = await framework.dbQuery(`INSERT INTO \`Ignored\`(\`GUILD\`,\`CHANNEL\`) VALUES ('${channel.guild.id}','${channel.id}')`);
 	Oxyl.modScripts.commandHandler.ignored.push(channel.id);
@@ -14,7 +10,7 @@ async function removeIgnore(channel) {
 	return true;
 }
 
-var command = new Command("nsfw", async (message, bot) => {
+exports.cmd = new Oxyl.Command("nsfw", async message => {
 	let channel = message.channel;
 	let nsfw = Oxyl.modScripts.commandHandler.ignored.indexOf(channel.id) !== -1;
 

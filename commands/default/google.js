@@ -1,9 +1,6 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js"),
-	cheerio = require("cheerio");
+const cheerio = require("cheerio");
 
-var command = new Command("google", async (message, bot) => {
+exports.cmd = new Oxyl.Command("google", async message => {
 	message.channel.sendTyping();
 
 	let body = await framework.getContent(`https://www.google.com/search?q=${escape(message.args[0])}`);

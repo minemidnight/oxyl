@@ -1,5 +1,4 @@
 const express = require("express"),
-	framework = require("../../framework.js"),
 	request = require("request"),
 	main = require("../website.js");
 const router = express.Router(); // eslint-disable-line new-cap

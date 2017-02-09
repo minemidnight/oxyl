@@ -1,7 +1,4 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js"),
-	math = require("mathjs");
+const math = require("mathjs");
 
 let tableOrder = ["GlobalTags", "GuildTags", "ChannelTags", "UserTags", "UnlistedTags"];
 async function getTag(query, message, table = 0) {
@@ -200,7 +197,7 @@ async function parseTag(tag, message) {
 }
 exports.parseTag = parseTag;
 
-var command = new Command("tag", async (message, bot) => {
+exports.cmd = new Oxyl.Command("tag", async message => {
 	let msg = message.argsPreserved[0];
 	let guild = message.channel.guild, channel = message.channel, user = message.author;
 	if(msg.toLowerCase() === "list") {

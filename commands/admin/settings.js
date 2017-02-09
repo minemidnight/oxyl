@@ -1,7 +1,3 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js");
-
 let settings = [
 	{ name: "prefix", type: "text", description: "Prefix to trigger a command (adds on to default prefix)" },
 	{ name: "modlog", type: "textChannel", description: "Log mod actions such as bans and unbans, with settable reasons" },
@@ -71,7 +67,7 @@ async function handleConfig(message, args) {
 	}
 }
 
-var command = new Command("settings", async (message, bot) => {
+exports.cmd = new Oxyl.Command("settings", async message => {
 	let args = message.argsPreserved[0].split(" ");
 	return await handleConfig(message, args);
 }, {

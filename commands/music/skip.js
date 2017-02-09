@@ -1,9 +1,6 @@
-const music = require("../../modules/music.js"),
-	Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js");
+const music = require("../../modules/music.js");
 
-var command = new Command("skip", async (message, bot) => {
+exports.cmd = new Oxyl.Command("skip", async message => {
 	let manager = music.getManager(message.channel.guild);
 	if(!manager) {
 		return "There is currently no music playing";

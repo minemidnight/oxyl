@@ -1,7 +1,5 @@
 const express = require("express"),
-	framework = require("../../framework.js"),
-	main = require("../website.js"),
-	Oxyl = require("../../oxyl.js");
+	main = require("../website.js");
 const router = express.Router(); // eslint-disable-line new-cap
 
 async function getDesc(user) {
@@ -47,9 +45,9 @@ router.get("*", async (req, res) => {
 	let data = {};
 	let user = req.path.substring(1);
 
-	if(Oxyl.bot.users.has(user)) {
-		user = Oxyl.bot.users.get(user);
-		user.shared = Oxyl.bot.guilds.filter(guild => guild.members.has(user.id)).length;
+	if(bot.users.has(user)) {
+		user = bot.users.get(user);
+		user.shared = bot.guilds.filter(guild => guild.members.has(user.id)).length;
 		user.description = await getDesc(user.id);
 		data.viewUser = user;
 

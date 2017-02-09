@@ -1,8 +1,4 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js");
-
-var command = new Command("cat", async (message, bot) => {
+exports.cmd = new Oxyl.Command("cat", async message => {
 	message.channel.sendTyping();
 
 	let body = await framework.getContent("http://random.cat/meow");

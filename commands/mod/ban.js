@@ -1,7 +1,3 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js");
-
 function isBannable(member) {
 	let guild = member.guild;
 	let botMember = guild.members.get(Oxyl.bot.user.id);
@@ -19,7 +15,7 @@ function isBannable(member) {
 	else return highestBot.position - highestMember.position > 0;
 }
 
-var command = new Command("ban", async (message, bot) => {
+exports.cmd = new Oxyl.Command("ban", async message => {
 	let banPerms = message.channel.guild.members.get(bot.user.id).permission.has("banMembers");
 
 	if(!banPerms) {

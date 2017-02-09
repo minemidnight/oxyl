@@ -1,8 +1,4 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js");
-
-var command = new Command("codingmeme", async (message, bot) => {
+exports.cmd = new Oxyl.Command("codingmeme", async message => {
 	message.channel.sendTyping();
 
 	let body = await framework.getContent("https://www.reddit.com/r/ProgrammerHumor/random/.json");
@@ -14,5 +10,5 @@ var command = new Command("codingmeme", async (message, bot) => {
 	return { embed };
 }, {
 	type: "default",
-	description: "Grab a coding from /r/ProgrammerHumor"
+	description: "Grab a coding meme from /r/ProgrammerHumor"
 });

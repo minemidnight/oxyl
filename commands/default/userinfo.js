@@ -1,11 +1,7 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js"),
-	googl = require("goo.gl");
-const config = framework.config;
-googl.setKey(config.private.googleKey);
+const googl = require("goo.gl");
+googl.setKey(framework.config.private.googleKey);
 
-var command = new Command("userinfo", async (message, bot) => {
+exports.cmd = new Oxyl.Command("userinfo", async message => {
 	let user = message.author;
 	if(message.args[0]) user = message.args[0];
 	user = message.channel.guild.members.get(user.id);

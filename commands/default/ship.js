@@ -1,8 +1,4 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js");
-
-var command = new Command("ship", async (message, bot) => {
+exports.cmd = new Oxyl.Command("ship", async message => {
 	if(message.args[1] === undefined) message.args[1] = message.author;
 	if(message.args[0] === message.args[1]) return "You must provide 2 different people to ship";
 	if(message.args[2] && message.args[2].endsWith("-n")) var nicknames = true;

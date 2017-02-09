@@ -1,6 +1,3 @@
-const Oxyl = require("../oxyl.js");
-const bot = Oxyl.bot;
-
 class Command {
 	constructor(name, callback, options) {
 		if(!name) throw new Error("Command must have a name");
@@ -41,7 +38,7 @@ class Command {
 
 	run(message) {
 		this.addUse(message.author);
-		return this.process(message, bot);
+		return this.process(message);
 	}
 
 	addUse(user) {

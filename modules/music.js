@@ -1,8 +1,5 @@
-const Oxyl = require("../oxyl.js"),
-	framework = require("../framework.js"),
-	yt = require("ytdl-core"),
+const yt = require("ytdl-core"),
 	fs = require("fs");
-const bot = Oxyl.bot;
 const ytKey = framework.config.private.googleKey;
 
 class MusicManager {

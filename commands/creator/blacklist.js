@@ -1,7 +1,3 @@
-const Oxyl = require("../../oxyl.js"),
-	framework = require("../../framework.js"),
-	Command = require("../../modules/commandCreator.js");
-
 async function addBlacklist(user) {
 	let data = await framework.dbQuery(`INSERT INTO \`Blacklist\`(\`USER\`) VALUES ('${user}')`);
 	Oxyl.modScripts.commandHandler.blacklist.push(user);
@@ -14,7 +10,7 @@ async function removeBlacklist(user) {
 	return true;
 }
 
-var command = new Command("blacklist", async (message, bot) => {
+exports.cmd = new Oxyl.Command("blacklist", async message => {
 	let user = message.args[0];
 	let blacklisted = Oxyl.modScripts.commandHandler.blacklist.indexOf(user) !== -1;
 

@@ -1,9 +1,6 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js"),
-	Jimp = require("jimp");
+const Jimp = require("jimp");
 
-var command = new Command("discordify", async (message, bot) => {
+exports.cmd = new Oxyl.Command("discordify", async message => {
 	let image;
 	message.channel.sendTyping();
 	if(message.attachments.length >= 1 && message.attachments[0].height) {

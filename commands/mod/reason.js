@@ -1,8 +1,4 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js");
-
-var command = new Command("reason", async (message, bot) => {
+exports.cmd = new Oxyl.Command("reason", async message => {
 	if(message.args[0].includes(",")) message.args[0] = message.args[0].split(",");
 	else message.args[0] = [message.args[0]];
 	message.args[0] = message.args[0].map(int => parseInt(int));

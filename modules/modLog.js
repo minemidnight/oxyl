@@ -1,7 +1,4 @@
-const Oxyl = require("../oxyl.js"),
-	framework = require("../framework.js");
-const actions = ["BAN", "UNBAN", "KICK", "MUTE", "UNMUTE"],
-	bot = Oxyl.bot;
+const actions = ["BAN", "UNBAN", "KICK", "MUTE", "UNMUTE"];
 
 exports.modChannel = async (guild) => {
 	try {

@@ -1,8 +1,4 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js");
-
-var command = new Command("uptime", async (message, bot) => {
+exports.cmd = new Oxyl.Command("uptime", async message => {
 	let uptime = Date.now() - bot.startTime;
 
 	let days = Math.floor(uptime / 1000 / 60 / 60 / 24);

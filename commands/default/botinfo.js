@@ -1,10 +1,7 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js"),
-	os = require("os");
+const os = require("os");
 const config = framework.config;
 
-var command = new Command("botinfo", async (message, bot) => {
+exports.cmd = new Oxyl.Command("botinfo", async message => {
 	let guilds = bot.guilds;
 	let largeGuilds = guilds.filter(guild => guild.large === true).length;
 	let channels = Object.keys(bot.channelGuildMap).length;

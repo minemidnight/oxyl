@@ -1,12 +1,7 @@
-const music = require("../../modules/music.js"),
-	Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js");
-
-var command = new Command("youtube", async (message, bot) => {
+exports.cmd = new Oxyl.Command("youtube", async message => {
 	message.channel.sendTyping();
 
-	let video = await music.searchVideo(message.argsPreserved[0]);
+	let video = await Oxyl.modScripts.music.searchVideo(message.argsPreserved[0]);
 	if(video === "NO_RESULTS") return "No results found";
 	else return `http://youtube.com/watch?v=${video}`;
 }, {

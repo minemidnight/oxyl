@@ -1,8 +1,4 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js");
-
-var command = new Command("ping", async (message, bot) => {
+exports.cmd = new Oxyl.Command("ping", async message => {
 	let time = Date.now();
 	let msg = await message.channel.createMessage("Pong!");
 	msg.edit(`Pong! \`${Date.now() - time}ms\``);

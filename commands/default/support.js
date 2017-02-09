@@ -1,9 +1,6 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js");
 const config = framework.config;
 
-var command = new Command("support", async (message, bot) => {
+exports.cmd = new Oxyl.Command("support", async message => {
 	let inviteLink = config.options.inviteLink;
 	return `Support Guild: https://discord.gg/9wkTDcE\nInvite Link: ${inviteLink}`;
 }, {

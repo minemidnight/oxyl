@@ -1,22 +1,17 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js");
-const perPage = framework.config.options.commands.serverListPerPage;
-
-var command = new Command("serverlist", async (message, bot) => {
+exports.cmd = new Oxyl.Command("serverlist", async message => {
 	// convert to array
 	let guilds = bot.guilds.map(guild => guild);
 	guilds.sort((a, b) => b.memberCount - a.memberCount);
 	let page = message.args[0] || 1;
-	let pageAmount = Math.ceil(guilds.length / perPage);
+	let pageAmount = Math.ceil(guilds.length / 15);
 	if(page > pageAmount) page = pageAmount;
 	let listMsg = `**Server List:**`, guildsPage = [];
 
-	for(var i = 0; i < perPage; i++) {
-		var index = ((page - 1) * perPage) + i;
+	for(var i = 0; i < 15; i++) {
+		var index = ((page - 1) * 15) + i;
 		var guild = guilds[index];
-		guildsPage.push(`**${index + 1})** ${guild.name} - ${guild.memberCount} members`);
-		if(guilds.length - 1 === index || i === perPage - 1) break;
+		guildsPage.push(`**${index + 1})** ${guild.name} - ${guild.memberCount} members (\`${guild.id}\`)`);
+		if(guilds.length - 1 === index || i === 14) break;
 	}
 
 	guildsPage = framework.listConstructor(guildsPage);

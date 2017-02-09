@@ -1,7 +1,3 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js");
-
 function parseRole(guild, value) {
 	let roles = guild.roles;
 	let foundRole = roles.find(role => {
@@ -81,7 +77,7 @@ async function handleRole(message, args) {
 	}
 }
 
-var command = new Command("roleme", async (message, bot) => {
+exports.cmd = new Oxyl.Command("roleme", async message => {
 	let args = message.argsPreserved[0].split(" ");
 	return await handleRole(message, args);
 }, {

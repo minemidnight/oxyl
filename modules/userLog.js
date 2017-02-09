@@ -1,7 +1,4 @@
-const Oxyl = require("../oxyl.js"),
-	framework = require("../framework.js");
-const bot = Oxyl.bot,
-	parseTag = Oxyl.cmdScripts.tags.parseTag;
+const parseTag = Oxyl.cmdScripts.tags.parseTag;
 
 module.exports = async (guild, member, type) => {
 	try {

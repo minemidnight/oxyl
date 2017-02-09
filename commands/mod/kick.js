@@ -1,7 +1,3 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js");
-
 function isKickable(member) {
 	let guild = member.guild;
 	let botMember = guild.members.get(Oxyl.bot.user.id);
@@ -19,7 +15,7 @@ function isKickable(member) {
 	else return highestBot.position - highestMember.position > 0;
 }
 
-var command = new Command("kick", async (message, bot) => {
+exports.cmd = new Oxyl.Command("kick", async message => {
 	let kickPerms = message.channel.guild.members.get(bot.user.id).permission.has("kickMembers");
 
 	if(!kickPerms) {

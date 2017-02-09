@@ -1,8 +1,4 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js");
-
-var command = new Command("xkcd", async (message, bot) => {
+exports.cmd = new Oxyl.Command("xkcd", async message => {
 	message.channel.sendTyping();
 
 	let comic = message.args[0] || Math.floor(Math.random() * 1785) + 1;

@@ -1,9 +1,6 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js"),
-	Jimp = require("jimp");
+const Jimp = require("jimp");
 
-var command = new Command("dont", async (message, bot) => { // eslint-disable-line consistent-return
+exports.cmd = new Oxyl.Command("dont", async message => { // eslint-disable-line consistent-return
 	let user = message.args[0] || message.author;
 	let user2 = message.args[1] || message.author;
 	message.channel.sendTyping();

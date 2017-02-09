@@ -1,7 +1,5 @@
 const express = require("express"),
-	framework = require("../../framework.js"),
 	main = require("../website.js"),
-	Oxyl = require("../../oxyl.js"),
 	os = require("os");
 const router = express.Router(); // eslint-disable-line new-cap
 

@@ -1,9 +1,6 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js"),
-	Jimp = require("jimp");
+const Jimp = require("jimp");
 
-var command = new Command("color", async (message, bot) => {
+exports.cmd = new Oxyl.Command("color", async message => {
 	message.args[0] = message.args[0].replace(/^#/, "");
 	let color = parseInt(`${message.args[0]}FF`, 16);
 	if(message.args[0].length !== 6 || isNaN(color)) return "Invalid HEX color code";

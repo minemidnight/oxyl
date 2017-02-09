@@ -1,7 +1,5 @@
-const Duration = require("duration-js"),
-	Oxyl = require("../oxyl.js"),
-	framework = require("../framework.js");
-const runningPolls = [], bot = Oxyl.bot;
+const Duration = require("duration-js");
+const runningPolls = [];
 
 exports.newPoll = (message, time, topic) => {
 	let channel = message.channel;

@@ -1,8 +1,3 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js");
-const bot = Oxyl.bot;
-
 bot.on("channelCreate", (channel) => {
 	if(channel.type !== 0) return;
 	let mutedRole = channel.guild.roles.find(role => role.name.toLowerCase() === "muted");
@@ -35,7 +30,7 @@ async function getMutedRole(guild) {
 	}
 }
 
-var command = new Command("mute", async (message) => {
+exports.cmd = new Oxyl.Command("mute", async message => {
 	let mutedRole = await getMutedRole(message.channel.guild);
 
 	if(typeof mutedRole !== "object") return mutedRole;

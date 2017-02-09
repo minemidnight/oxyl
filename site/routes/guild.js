@@ -1,16 +1,14 @@
 const express = require("express"),
-	framework = require("../../framework.js"),
 	handlebars = require("handlebars"),
-	main = require("../website.js"),
-	Oxyl = require("../../oxyl.js");
+	main = require("../website.js");
 const router = express.Router(); // eslint-disable-line new-cap
 
 router.get("*", async (req, res) => {
 	let data = {};
 	let guild = req.path.substring(1);
 
-	if(Oxyl.bot.guilds.has(guild)) {
-		guild = Oxyl.bot.guilds.get(guild);
+	if(bot.guilds.has(guild)) {
+		guild = bot.guilds.get(guild);
 		guild.subname = guild.name.split(" ").map(str => str.charAt(0)).join("");
 		guild.owner = guild.members.get(guild.ownerID);
 		guild.onlineCount = guild.members.filter(gM => gM.status === "online").length;
@@ -64,7 +62,7 @@ router.get("*", async (req, res) => {
 });
 
 router.post("/update", async (req, res) => {
-	let guild = Oxyl.bot.guilds.get(req.body.guildid);
+	let guild = bot.guilds.get(req.body.guildid);
 	delete req.body.guildid;
 	if(!guild || !main.tokens[req.sessionID]) {
 		res.redirect("http://minemidnight.work/select");

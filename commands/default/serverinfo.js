@@ -1,8 +1,4 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js");
-
-var command = new Command("serverinfo", async (message, bot) => {
+exports.cmd = new Oxyl.Command("serverinfo", async message => {
 	let guild = bot.guilds.get(message.content) || message.channel.guild;
 
 	let textChannels = guild.channels.filter(ch => ch.type === 0).length;

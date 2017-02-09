@@ -1,7 +1,3 @@
-const Oxyl = require("../oxyl.js"),
-	framework = require("../framework.js");
-const bot = Oxyl.bot;
-
 function updateServerChannel() {
 	bot.editChannel(framework.config.channels.servers, { topic: `Server Count: ${bot.guilds.size}` });
 }

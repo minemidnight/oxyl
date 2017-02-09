@@ -1,9 +1,6 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js"),
-	math = require("mathjs");
+const math = require("mathjs");
 
-var command = new Command("math", async (message, bot) => {
+exports.cmd = new Oxyl.Command("math", async message => {
 	let result;
 	try {
 		result = math.eval(message.content);

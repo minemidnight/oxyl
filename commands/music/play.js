@@ -1,7 +1,4 @@
-const music = require("../../modules/music.js"),
-	Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js");
+const music = require("../../modules/music.js");
 const ytReg = framework.config.options.music.youtubeRegex;
 
 async function playCmdProcess(message) {
@@ -34,7 +31,7 @@ async function playCmdProcess(message) {
 	}
 }
 
-var command = new Command("play", async (message, bot) => {
+exports.cmd = new Oxyl.Command("play", async message => {
 	let voiceChannel, editMsg, manager = music.getManager(message.channel.guild);
 	if(message.member && message.member.voiceState && message.member.voiceState.channelID) {
 		voiceChannel = message.channel.guild.channels.get(message.member.voiceState.channelID);

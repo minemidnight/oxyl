@@ -1,7 +1,3 @@
-const Oxyl = require("../../oxyl.js"),
-	Command = require("../../modules/commandCreator.js"),
-	framework = require("../../framework.js");
-
 module.exports = async (guild, member) => {
 	let roles = await framework.getRoles(guild, "auto");
 	roles = roles
@@ -73,7 +69,7 @@ async function handleRole(message, args) {
 	}
 }
 
-var command = new Command("autorole", async (message, bot) => {
+exports.cmd = new Oxyl.Command("autorole", async message => {
 	let args = message.argsPreserved[0].split(" ");
 	return await handleRole(message, args);
 }, {
