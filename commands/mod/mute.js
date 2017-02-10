@@ -32,8 +32,17 @@ async function getMutedRole(guild) {
 
 exports.cmd = new Oxyl.Command("mute", async message => {
 	let mutedRole = await getMutedRole(message.channel.guild);
-
 	if(typeof mutedRole !== "object") return mutedRole;
+
+	if(message.args[1]) {
+		let modChannel = await Oxyl.modScripts.modLog.modChannel(message.channel.guild);
+		if(modChannel) {
+			Oxyl.modScripts.modLog.reasons[message.channel.guild.id] = {
+				mod: message.author,
+				reason: message.args[1]
+			};
+		}
+	}
 
 	let mention = message.channel.guild.members.get(message.args[0].id);
 	let isMuted = mention.roles.indexOf(mutedRole.id);
@@ -49,5 +58,9 @@ exports.cmd = new Oxyl.Command("mute", async message => {
 	guildOnly: true,
 	type: "moderator",
 	description: "Toggle a person's mute state in the guild (for text chat)",
-	args: [{ type: "user" }]
+	args: [{ type: "user" }, {
+		type: "text",
+		label: "reason",
+		optional: true
+	}]
 });

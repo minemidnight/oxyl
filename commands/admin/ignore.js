@@ -10,16 +10,16 @@ async function removeIgnore(channel) {
 	return true;
 }
 
-exports.cmd = new Oxyl.Command("nsfw", async message => {
+exports.cmd = new Oxyl.Command("ignore", async message => {
 	let channel = message.channel;
 	let nsfw = Oxyl.modScripts.commandHandler.ignored.indexOf(channel.id) !== -1;
 
 	if(nsfw) {
 		await removeIgnore(channel);
-		return `:white_check_mark: Disabled Oxyl in ${channel.mention}`;
+		return `:white_check_mark: Enabled Oxyl in ${channel.mention}`;
 	} else {
 		await addIgnore(channel);
-		return `:white_check_mark: Enabled Oxyl in ${channel.mention}`;
+		return `:white_check_mark: Disabled Oxyl in ${channel.mention}`;
 	}
 }, {
 	cooldown: 2500,

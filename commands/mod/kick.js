@@ -23,6 +23,17 @@ exports.cmd = new Oxyl.Command("kick", async message => {
 	} else {
 		let member = message.channel.guild.members.get(message.args[0].id);
 		if(!member) return "Error -- user not found";
+
+		if(message.args[1]) {
+			let modChannel = await Oxyl.modScripts.modLog.modChannel(message.channel.guild);
+			if(modChannel) {
+				Oxyl.modScripts.modLog.reasons[message.channel.guild.id] = {
+					mod: message.author,
+					reason: message.args[1]
+				};
+			}
+		}
+
 		let kickable = isKickable(member);
 		if(!kickable) {
 			return `${framework.unmention(member)} couldn't be kicked (has higher permissions)`;
@@ -37,5 +48,9 @@ exports.cmd = new Oxyl.Command("kick", async message => {
 	guildOnly: true,
 	type: "moderator",
 	description: "Kick a user from the guild",
-	args: [{ type: "user" }]
+	args: [{ type: "user" }, {
+		type: "text",
+		label: "reason",
+		optional: true
+	}]
 });

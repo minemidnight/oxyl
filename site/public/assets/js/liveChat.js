@@ -1,5 +1,5 @@
 /* eslint-disable no-undef*/
-const socket = new WebSocket("ws://minemidnight.work/messages/:8080"),
+const socket = new WebSocket("ws://minemidnight.work/messages/"),
 	converter = new showdown.Converter({
 		omitExtraWLInCodeBlocks: true,
 		simplifiedAutoLink: true,

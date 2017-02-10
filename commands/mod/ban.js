@@ -23,11 +23,22 @@ exports.cmd = new Oxyl.Command("ban", async message => {
 	} else {
 		let member = message.channel.guild.members.get(message.args[0].id);
 		if(!member) return "Error -- user not found";
+
+		if(message.args[1]) {
+			let modChannel = await Oxyl.modScripts.modLog.modChannel(message.channel.guild);
+			if(modChannel) {
+				Oxyl.modScripts.modLog.reasons[message.channel.guild.id] = {
+					mod: message.author,
+					reason: message.args[1]
+				};
+			}
+		}
+
 		let bannable = isBannable(member);
 		if(!bannable) {
 			return `${framework.unmention(member)} couldn't be banned (has higher permissions)`;
 		} else {
-			message.channel.guild.banMember(message.args[0].id);
+			message.channel.guild.banMember(message.args[0].id, 7);
 			return `${framework.unmention(member)} has been banned`;
 		}
 	}
@@ -36,5 +47,9 @@ exports.cmd = new Oxyl.Command("ban", async message => {
 	guildOnly: true,
 	type: "moderator",
 	description: "Ban a user from the guild",
-	args: [{ type: "user" }]
+	args: [{ type: "user" }, {
+		type: "text",
+		label: "reason",
+		optional: true
+	}]
 });

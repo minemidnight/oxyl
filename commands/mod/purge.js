@@ -8,7 +8,7 @@ exports.cmd = new Oxyl.Command("purge", async message => {
 		await message.delete();
 
 		message.channel.purge(message.args[0], msg => {
-			if(mentions && mentions.length >= 1 && mentions.includes(message.author)) return true;
+			if(mentions && mentions.length >= 1 && mentions.indexOf(msg.author) !== -1) return true;
 			else if(!mentions || mentions.length === 0) return true;
 			else return false;
 		});

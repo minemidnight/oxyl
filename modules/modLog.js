@@ -1,4 +1,11 @@
 const actions = ["BAN", "UNBAN", "KICK", "MUTE", "UNMUTE"];
+const autoReason = exports.reasons = {};
+
+exports.getCases = async (guild) => {
+	let data = await framework.dbQuery(`SELECT * FROM \`ModLog\` WHERE \`GUILD\` = '${guild.id}'`);
+	if(data && data.length >= 1) return data;
+	else return false;
+};
 
 exports.modChannel = async (guild) => {
 	try {
@@ -16,7 +23,7 @@ exports.caseInfo = async (guild, casenum) => {
 };
 
 exports.createCase = async (guild, action, user) => {
-	let casenum = await framework.dbQuery(`SELECT * FROM \`ModLog\` WHERE \`GUILD\` = '${guild.id}'`);
+	let casenum = await exports.getCases(guild) || 0;
 	casenum = casenum.length + 1;
 
 	let channel = await exports.modChannel(guild);
@@ -25,8 +32,9 @@ exports.createCase = async (guild, action, user) => {
 	let parsed = exports.parseCase(action, casenum, framework.unmention(user));
 	let msg = await channel.createMessage(parsed);
 
-	framework.dbQuery(`INSERT INTO \`ModLog\`(\`GUILD\`, \`ACTION\`, \`MSG\`, \`USER\`, \`USERID\`, \`CASE_NUM\`) ` +
-				`VALUES ('${guild.id}', ${action}, '${msg.id}', '${framework.unmention(user)}', '${user.id}', ${casenum})`);
+	await framework.dbQuery(`INSERT INTO \`ModLog\`(\`GUILD\`, \`ACTION\`, \`MSG\`, \`USER\`, \`USERID\`, \`CASE_NUM\`) ` +
+		`VALUES ('${guild.id}', ${action}, '${msg.id}', '${framework.unmention(user)}', '${user.id}', ${casenum})`);
+	if(autoReason[guild.id]) exports.setReason(guild, casenum, autoReason[guild.id].reason, autoReason[guild.id].mod);
 };
 
 exports.parseCase = (action, casenum, user, reason, mod) => {

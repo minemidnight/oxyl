@@ -106,6 +106,7 @@ exports.getHTML = (name) => fs.readFileSync(`./site/views/${name}.html`).toStrin
 
 /* LIVE CHAT */
 
+console.log(wss.getWss().options.host, wss.getWss().options.port, wss.getWss().options.path);
 wss.broadcast = (data) => {
 	wss.getWss().clients.forEach(client => {
 		if(client.readyState === WebSocket.OPEN) client.send(data);

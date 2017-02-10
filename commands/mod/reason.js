@@ -1,7 +1,13 @@
 exports.cmd = new Oxyl.Command("reason", async message => {
 	if(message.args[0].includes(",")) message.args[0] = message.args[0].split(",");
 	else message.args[0] = [message.args[0]];
-	message.args[0] = message.args[0].map(int => parseInt(int));
+
+	let casecount = await Oxyl.modScripts.modLog.getCases(message.channel.guild).length;
+	if(!casecount || casecount.length === 0) return "There have been no cases for this guild yet.";
+	message.args[0] = message.args[0].map(int => {
+		if(int === "l") return casecount;
+		else return parseInt(int);
+	});
 	if(message.args[0].some(int => isNaN(int))) return "Please only provide numbers for cases";
 
 	message.channel.sendTyping();
