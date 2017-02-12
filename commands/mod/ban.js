@@ -19,7 +19,7 @@ exports.cmd = new Oxyl.Command("ban", async message => {
 	let banPerms = message.channel.guild.members.get(bot.user.id).permission.has("banMembers");
 
 	if(!banPerms) {
-		return "Oxyl does not have permissions to ban.";
+		return "Oxyl does not have permissions to ban members.";
 	} else {
 		let member = message.channel.guild.members.get(message.args[0].id);
 		if(!member) return "Error -- user not found";
