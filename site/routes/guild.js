@@ -72,41 +72,41 @@ router.get("*", async (req, res) => {
 
 router.post("/set_case", async (req, res) => {
 	if(!main.tokens[req.sessionID]) {
-		res.send(`{error: "Not logged"}`);
+		res.send(`{"error": "Not logged"}`);
 		res.end();
 		return;
 	}
 
 	if(!req.body.case || !req.body.guildid || !req.body.reason || isNaN(parseInt(req.body.case))) {
-		res.send(`{error: "Invalid fields"}`);
+		res.send(`{"error": "Invalid fields"}`);
 		res.end();
 		return;
 	}
 
 	let guild = bot.guilds.get(req.body.guildid);
 	if(!guild) {
-		res.send(`{error: "Invalid guild"}`);
+		res.send(`{"error": "Invalid guild"}`);
 		res.end();
 		return;
 	}
 
 	let user = await main.getInfo(req.sessionID, "users/@me");
 	if(!guild.members.has(user.id)) {
-		res.send(`{error: "User not in guild or not cached"}`);
+		res.send(`{"error": "User not in guild or not cached"}`);
 		res.end();
 		return;
 	} else if(framework.guildLevel(guild.members.get(user.id)) < 2) {
-		res.send(`{error: "Invalid Perms"}`);
+		res.send(`{"error": "Invalid Perms"}`);
 		res.end();
 		return;
 	}
 
 	let resp = await Oxyl.modScripts.modLog.setReason(guild, parseInt(req.body.case), req.body.reason, guild.members.get(user.id));
-	if(resp === "SUCCESS") resp = `{success: "Reason set successfully"}`;
-	else if(resp === "NO_CASE") resp = `{error: "Case not found"}`;
-	else if(resp === "NO_CHANNEL") resp = `{error: "No mod log channel"}`;
-	else if(resp === "NO_MSG") resp = `{error: "Can't get Discord Message from case"}`;
-	else resp = `{error: "Unexpected Error"}`;
+	if(resp === "SUCCESS") resp = `{"success": "Reason set successfully"}`;
+	else if(resp === "NO_CASE") resp = `{"error": "Case not found"}`;
+	else if(resp === "NO_CHANNEL") resp = `{"error": "No mod log channel"}`;
+	else if(resp === "NO_MSG") resp = `{"error": "Can't get Discord Message from case"}`;
+	else resp = `{"error": "Unexpected Error"}`;
 
 	res.send(resp);
 	res.end();
@@ -180,6 +180,7 @@ const actions = ["BAN", "UNBAN", "KICK", "MUTE", "UNMUTE"];
 const actionIcons = ["gavel", "group_add", "exit_to_app", "volume_off", "volume_up"];
 handlebars.registerHelper("listPunishments", (guild, bans, allowedEdit) => {
 	let returnstr = "", i = 1;
+	bans.reverse();
 	bans.forEach(ban => {
 		let action = actions[ban.ACTION];
 		action = framework.capitalizeEveryFirst(action.toLowerCase());
