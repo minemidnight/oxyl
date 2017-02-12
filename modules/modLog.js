@@ -23,8 +23,7 @@ exports.caseInfo = async (guild, casenum) => {
 };
 
 exports.createCase = async (guild, action, user) => {
-	let casenum = await exports.getCases(guild) || 0;
-	casenum = casenum.length + 1;
+	let casenum = ((await exports.getCases(guild)).length || 0) + 1;
 
 	let channel = await exports.modChannel(guild);
 	if(!channel) return;

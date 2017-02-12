@@ -9,7 +9,7 @@ router.get("*", async (req, res) => {
 	if(path.endsWith("/")) path = path.substring(0, path.length - 1);
 	if(path.endsWith("/bans") || path.endsWith("/punishments") || path.endsWith("/infrictions") || path.endsWith("/modlog")) {
 		var punishments = true;
-		path = path.substring(0, path.length - 5);
+		path = path.substring(0, path.lastIndexOf("/"));
 	}
 	let guild = path.substring(1);
 
@@ -29,7 +29,7 @@ router.get("*", async (req, res) => {
 			let user = await main.getInfo(req.sessionID, "users/@me");
 			let member = guild.members.get(user.id);
 			if(member && (framework.guildLevel(member) >= 3 || framework.config.creators.includes(user.id))) data.panel = true;
-			else if(member && (framework.guildLevel(member) >= 2 || framework.config.creators.includes(user.id))) data.cases = true;
+			if(member && (framework.guildLevel(member) >= 2 || framework.config.creators.includes(user.id))) data.cases = true;
 
 			let settings = await framework.dbQuery(`SELECT * FROM \`Settings\` WHERE \`ID\` = '${guild.id}'`);
 			let possibleSettings = Oxyl.cmdScripts.settings.settings;
@@ -71,7 +71,7 @@ router.get("*", async (req, res) => {
 });
 
 router.post("/set_case", async (req, res) => {
-	if(!guild || !main.tokens[req.sessionID]) {
+	if(!main.tokens[req.sessionID]) {
 		res.send(`{error: "Not logged"}`);
 		res.end();
 		return;
@@ -92,7 +92,7 @@ router.post("/set_case", async (req, res) => {
 
 	let user = await main.getInfo(req.sessionID, "users/@me");
 	if(!guild.members.has(user.id)) {
-		res.send(`{error: "Invalid user or not cached"}`);
+		res.send(`{error: "User not in guild or not cached"}`);
 		res.end();
 		return;
 	} else if(framework.guildLevel(guild.members.get(user.id)) < 2) {
@@ -177,7 +177,7 @@ handlebars.registerHelper("listChannels", guild => {
 });
 
 const actions = ["BAN", "UNBAN", "KICK", "MUTE", "UNMUTE"];
-handlebars.registerHelper("listBans", (guild, bans, allowedEdit) => {
+handlebars.registerHelper("listPunishments", (guild, bans, allowedEdit) => {
 	let returnstr = "", i = 1;
 	bans.forEach(ban => {
 		let action = actions[ban.ACTION];
@@ -195,7 +195,7 @@ handlebars.registerHelper("listBans", (guild, bans, allowedEdit) => {
 			else returnstr += `<p><span>REASON:</span> ${ban.REASON}</p>`;
 			returnstr += `<p><span>MOD:</span> ${framework.unmention(guild.members.get(ban.RESPONSIBLE))}</p>`;
 		}
-		if(allowedEdit) returnstr += `<button onclick class="w3-center w3-btn w3-right w3-margin">Update</button>`;
+		if(allowedEdit) returnstr += `<button onclick="updateCase(${i})" class="w3-center w3-btn w3-right w3-margin">Update</button>`;
 		returnstr += "</div>";
 		i++;
 	});
