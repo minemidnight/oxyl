@@ -4,6 +4,7 @@ exports.cmd = new Oxyl.Command("purge", async message => {
 	if(!deletePerms) {
 		let msg = await message.channel.createMessage("Oxyl does not have permissions to delete messages");
 		setTimeout(() => msg.delete(), 3000);
+		return;
 	} else {
 		await message.delete();
 
@@ -12,9 +13,8 @@ exports.cmd = new Oxyl.Command("purge", async message => {
 			else if(!mentions || mentions.length === 0) return true;
 			else return false;
 		});
+		return;
 	}
-
-	return false;
 }, {
 	perm: "manageMessages",
 	guildOnly: true,

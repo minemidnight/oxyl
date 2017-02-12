@@ -19,7 +19,7 @@ exports.cmd = new Oxyl.Command("kick", async message => {
 	let kickPerms = message.channel.guild.members.get(bot.user.id).permission.has("kickMembers");
 
 	if(!kickPerms) {
-		return "Oxyl does not have permissions to kick.";
+		return "Oxyl does not have permissions to kick members.";
 	} else {
 		let member = message.channel.guild.members.get(message.args[0].id);
 		if(!member) return "Error -- user not found";
