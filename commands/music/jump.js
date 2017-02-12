@@ -18,7 +18,7 @@ exports.cmd = new Oxyl.Command("jump", async message => {
 }, {
 	guildOnly: true,
 	type: "music",
-	description: "List the current guild music queue",
+	description: "Jump to a song in the queue",
 	args: [{
 		type: "int",
 		label: "queue #",

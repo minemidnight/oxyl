@@ -3,7 +3,7 @@ exports.cmd = new Oxyl.Command("hackban", async message => {
 
 	if(!banPerms) {
 		return "Oxyl does not have permissions to ban members.";
-	} else if(message.args[0].match(/\d{17,21}/) === undefined) {
+	} else if(!message.args[0].match(/\d{17,21}/)) {
 		return "Invalid user id";
 	} else {
 		let member = message.channel.guild.members.get(message.args[0]);
