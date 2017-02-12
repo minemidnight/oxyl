@@ -15,18 +15,18 @@ exports.cmd = new Oxyl.Command("removequeue", async message => {
 			match[1] = parseInt(match[1]);
 			match[2] = parseInt(match[2]);
 			if(match[2] < match[1]) return "Invalid range given!";
-			for(let i = match[1]; i <= match[2]; i++) removed.push(i);
+			for(let i = match[1]; i < match[2]; i++) removed.push(i);
 		} else if(message.args[0].indexOf(",") !== -1) {
 			message.args[0].split(",").forEach(int => removed.push(parseInt(int)));
 		} else {
 			removed.push(parseInt(message.args[0]));
 		}
 
-		removed.filter(int => !isNaN(int)).map(int => int - 1);
+		removed = removed.filter(int => !isNaN(int)).map(int => int - 1);
 		removed.forEach(int => delete manager.data.queue[int]);
 		manager.data.queue = manager.data.queue.filter(item => item !== undefined);
 
-		return `:white_check_mark: Removed ${removed.length} songs from the queue`;
+		return `:white_check_mark: Removed ${removed.length} song${removed.length > 1 ? "s" : ""} from the queue`;
 	}
 }, {
 	guildOnly: true,
