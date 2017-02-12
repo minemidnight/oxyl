@@ -7,7 +7,7 @@ router.get("*", async (req, res) => {
 	let data = {};
 	let path = req.path;
 	if(path.endsWith("/")) path = path.substring(0, path.length - 1);
-	if(path.endsWith("/bans") || path.endsWith("/punishments") || path.endsWith("/infrictions") || path.endsWith("/modlog")) {
+	if(path.endsWith("/bans") || path.endsWith("/punishments") || path.endsWith("/infractions") || path.endsWith("/modlog")) {
 		var punishments = true;
 		path = path.substring(0, path.lastIndexOf("/"));
 	}

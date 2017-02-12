@@ -112,7 +112,7 @@ async function getTags(message, fullData, table = 0) {
 	}
 }
 
-async function parseTag(tag, message) {
+async function parseTag(tag, message, debug) {
 	tag = tag.CONTENT || tag;
 	if(message.argsPreserved[0].toLowerCase().startsWith("test")) {
 		message.argsPreserved = [];
@@ -123,15 +123,21 @@ async function parseTag(tag, message) {
 	message.tagVars = {};
 
 	let ifRegex = /{if:([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\|]+)}/i;
-	let match = tag.match(ifRegex);
-	if(match) {
-		let replace = `{if:${match[1]}|${match[2]}|${match[3]}|`;
+	let replaces = 0;
+	while(tag.match(ifRegex)) {
+		replaces++;
+		if(replaces >= 200) throw new Error("no tahts bad");
+		let match = tag.match(ifRegex);
+		let replace = `$lbrpn;if:${match[1]}|${match[2]}|${match[3]}|`;
 		replace += match[4].replace(/{/g, "&$lbph;").replace(/}/g, "&$rbph;");
 		if(match[5]) replace += `|${match[5].replace(/{/g, "&$lbph;").replace(/}/g, "&$rbph;")}`;
-		replace += "}";
+		replace += "$rbrpn;";
 
-		tag.replace(match[0], replace);
+		console.log("\nb4:", tag);
+		tag = tag.replace(match[0], replace);
+		console.log("replaced:", tag);
 	}
+	tag = tag.replace(/\$lbrpn;/, "{").replace(/\$rbrpn;/, "}");
 
 	let results = [], executions = 0;
 	while(tag.match(/{[^{}]+}/)) {
@@ -169,15 +175,20 @@ async function parseTag(tag, message) {
 			tag = tag.replace(originalArg, newArg);
 
 			if(argType.toLowerCase() === "if") {
-				match = tag.match(ifRegex);
-				if(match) {
-					let replace = `{if:${match[1]}|${match[2]}|${match[3]}|`;
+				while(tag.match(ifRegex)) {
+					replaces++;
+					if(replaces >= 200) throw new Error("no tahts bad");
+					let match = tag.match(ifRegex);
+					let replace = `$lbrpn;if:${match[1]}|${match[2]}|${match[3]}|`;
 					replace += match[4].replace(/{/g, "&$lbph;").replace(/}/g, "&$rbph;");
 					if(match[5]) replace += `|${match[5].replace(/{/g, "&$lbph;").replace(/}/g, "&$rbph;")}`;
-					replace += "}";
+					replace += "$rbrpn;";
 
-					tag.replace(match[0], replace);
+					console.log("\nb4:", tag);
+					tag = tag.replace(match[0], replace);
+					console.log("replaced:", tag);
 				}
+				tag = tag.replace(/\$lbrpn;/, "{").replace(/\$rbrpn;/, "}");
 			}
 		} catch(err) {
 			if(message.tagVars.fallback) return message.tagVars.fallback;
@@ -363,6 +374,10 @@ exports.cmd = new Oxyl.Command("tag", async message => {
 		let name = msg.split(" ", 1)[0], tag, parsed;
 		if(!name) return "Please provide the name of the tag you'd like to see, `tag [name]`";
 		name = name.toLowerCase();
+		if(name.endsWith("-debug")) {
+			var debug = true;
+			name = name.substring(0, name.length - 6).trim();
+		}
 
 		try {
 			tag = await getTag(name, message);
@@ -371,7 +386,7 @@ exports.cmd = new Oxyl.Command("tag", async message => {
 		}
 
 		try {
-			parsed = await parseTag(tag, message);
+			parsed = await parseTag(tag, message, true);
 		} catch(err) {
 			if(!err) return "Tag failed, no fail reason";
 			else return err.toString();
@@ -768,9 +783,9 @@ const tagParser = {
 		}
 
 		if(result) {
-			return args[3].replace(/&\$rbph;/g, "{").replace(/&\$lbph;/g, "}");
+			return args[3].replace(/&\$lbph;/g, "{").replace(/&\$rbph;/g, "}");
 		} else {
-			return args[4] ? args[4].replace(/&\$rbph;/g, "{").replace(/&\$lbph;/g, "}") : "";
+			return args[4] ? args[4].replace(/&\$lbph;/g, "{").replace(/&\$rbph;/g, "}") : "";
 		}
 	},
 	int: async args => Math.floor(Math.random() * (parseInt(args[1]) - parseInt(args[0]))) + parseInt(args[0]),

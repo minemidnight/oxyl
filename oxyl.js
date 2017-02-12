@@ -3,9 +3,8 @@ global.framework = require("./framework.js");
 
 global.bot = new Eris(framework.config.private.token, {
 	maxShards: framework.config.options.shards,
-	messageLimit: 15
+	messageLimit: 0
 });
-
 
 process.stdin.resume();
 process.on("SIGINT", () => {
@@ -21,7 +20,7 @@ process.on("SIGINT", () => {
 	}, 5000);
 });
 
-process.on("unhandledRejection", (err) => {
+process.on("unhandledRejection", err => {
 	if(!err) return;
 	try {
 		let resp = JSON.parse(err.response);
@@ -34,7 +33,13 @@ process.on("unhandledRejection", (err) => {
 	}
 });
 
-process.on("uncaughtException", (err) => {
+bot.on("error", (err, shard) => {
+	if(!err) return;
+	err = err.stack.substring(0, 1900) || err;
+	framework.consoleLog(`__**Shard Error ${shard.id}**__: ${framework.codeBlock(err)}`, "debug");
+});
+
+process.on("uncaughtException", err => {
 	if(!err) return;
 	err = err.stack.substring(0, 1900) || err;
 	framework.consoleLog(`__**Uncaught Exception**__: ${framework.codeBlock(err)}`, "debug");
@@ -50,6 +55,7 @@ process.on("uncaughtException", (err) => {
 		process.exit(0);
 	}, 5000);
 });
+
 
 exports.addCommand = (command) => {
 	if(!exports.commands[command.type]) exports.commands[command.type] = {};

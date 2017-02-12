@@ -15,6 +15,7 @@
 	<link rel="stylesheet" href="http://minemidnight.work/assets/css/w3.css">
 	<script async src="http://minemidnight.work/assets/js/jquery.min.js"></script>
 	<script async defer src="http://minemidnight.work/assets/js/main.js"></script>
+	<script async defer src="http://minemidnight.work/assets/js/reason.js"></script>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Oxyl - Guild Punishments</title>
@@ -77,5 +78,11 @@
 			<h2 class="w3-xxlarge">Invalid Guild ID</h2>
 		{{/if}}
 	</main>
+
+	<footer class="w3-animate-bottom w3-center" style="display:none;position:fixed;height:150px;width:100%;bottom: 0px;" display="none">
+	  <div class="w3-red" style="position:absolute;width:100%;height:150px;opacity:0.5;z-index:-5"></div>
+		<span class="w3-closebtn" style="margin-right:12px" onclick="$('footer').css('display', 'none')">×</span>
+	 	<h4 class="w3-xlarge w3-text-yellow w3-text-shadow">Some error</h4>
+	</footer>
 </body>
 </html>
