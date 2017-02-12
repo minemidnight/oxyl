@@ -151,11 +151,11 @@ bot.on("messageCreate", async (message) => {
 	}
 });
 
-async function checkArg(input, arg, message) {
+async function checkArg(input, arg, message, cmd) {
 	if(!input && arg.optional) {
 		return input;
 	} else if(!input && arg.type !== "custom") {
-		throw new Error(`No value given for ${arg.label} (type: ${arg.type})`);
+		throw new Error(`No value given for \`${arg.label}\`, correct usage: ${cmd.name} ${cmd.usage}`);
 	} else {
 		return await validator.test(input, arg, message);
 	}
@@ -164,10 +164,10 @@ async function checkArg(input, arg, message) {
 async function validateArgs(message, command, index = 0) {
 	if(index >= command.args.length) return message;
 	try {
-		var newArg = await checkArg(message.argsUnparsed[index], command.args[index], message);
+		var newArg = await checkArg(message.argsUnparsed[index], command.args[index], message, command);
 		message.argsPreserved[index] = newArg;
 		return await validateArgs(message, command, index + 1);
 	} catch(err) {
-		throw new Error(err.toString().replace("Error:", ""));
+		throw err;
 	}
 }

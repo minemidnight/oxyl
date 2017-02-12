@@ -1,6 +1,35 @@
 const music = require("../../modules/music.js");
 const ytReg = framework.config.options.music.youtubeRegex;
 
+let dfmlist = ["electro-hub", "chill-corner", "korean-madness",
+	"japanese-lounge", "classical", "retro-renegade",
+	"metal-mix", "hip-hop", "electro-swing",
+	"purely-pop", "rock-n-roll", "coffee-house-jazz"];
+async function dfmPlaylist(name, manager, voiceChannel) {
+	name = name.replace(/ /g, "-");
+	if(name === "list") {
+		return `Valid discord.fm playlists: ` +
+			`${dfmlist.map(genre => framework.capitalizeEveryFirst(genre.replace(/-/g, " "))).join(", ")}`;
+	}	else if(dfmlist.indexOf(name) === -1) {
+		return "Invalid list, use dfm:list to view the list";
+	} else {
+		if(!manager.connection) await manager.connect(voiceChannel);
+		let body = await framework.getContent(`https://temp.discord.fm/libraries/${name}/json`);
+		body = JSON.parse(body);
+
+		body.filter(video => video.service === "YouTubeVideo").forEach(video => {
+			manager.data.queue.push({
+				id: video.identifier,
+				title: video.title,
+				duration: video.length
+			});
+			if(!manager.data.playing) manager.play();
+		});
+
+		return `:white_check_mark: Added discord.fm playlist \`${framework.capitalizeEveryFirst(name.replace(/-/g, " "))}\` to the queue`;
+	}
+}
+
 async function playCmdProcess(message) {
 	let msg, query = message.argsPreserved[0];
 	let type = music.ytType(query);
@@ -45,9 +74,11 @@ exports.cmd = new Oxyl.Command("play", async message => {
 	if(manager && manager.connection && !manager.voiceCheck(message.member)) {
 		return "You must be in the music channel to run this command";
 	} else if(voiceChannel && !voiceChannel.permissionsOf(bot.user.id).has("voiceConnect")) {
-		return "I cannot join that channel";
+		return "I cannot join that channel (no permissions)";
 	} else if(voiceChannel && !voiceChannel.permissionsOf(bot.user.id).has("voiceSpeak")) {
-		return "I cannot speak in that channel";
+		return "I cannot speak in that channel (no permissions)";
+	} else if(message.args[0].startsWith("dfm:")) {
+		return await dfmPlaylist(message.args[0].substring(4), manager, voiceChannel);
 	} else {
 		let msg = await playCmdProcess(message);
 		var type = music.ytType(msg.content);
@@ -87,6 +118,6 @@ exports.cmd = new Oxyl.Command("play", async message => {
 	description: "Add a youtube video to the music queue",
 	args: [{
 		type: "text",
-		label: "yt video link/yt playlist link/search query"
+		label: "yt video link/id|yt playlist link/id|search query|dfm:list/playlist name"
 	}]
 });

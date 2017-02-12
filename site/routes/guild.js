@@ -177,6 +177,7 @@ handlebars.registerHelper("listChannels", guild => {
 });
 
 const actions = ["BAN", "UNBAN", "KICK", "MUTE", "UNMUTE"];
+const actionIcons = ["gavel", "group_add", "exit_to_app", "volume_off", "volume_up"];
 handlebars.registerHelper("listPunishments", (guild, bans, allowedEdit) => {
 	let returnstr = "", i = 1;
 	bans.forEach(ban => {
@@ -185,7 +186,7 @@ handlebars.registerHelper("listPunishments", (guild, bans, allowedEdit) => {
 
 		returnstr += `<div class="w3-container w3-card-4 w3-round w3-section w3-card-4 w3-padding" id="ban-${i}">`;
 		returnstr += `<span style="text-decoration:underline">CASE #${ban.CASE_NUM}</span>`;
-		returnstr += `<p><span>ACTION:</span> ${action}</p>`;
+		returnstr += `<p><span>ACTION:</span> ${action}<i class="material-icons w3-right">${actionIcons[ban.ACTION]}</i></p>`;
 		returnstr += `<p><span>USER:</span> ${ban.USER}</p>`;
 		if(!ban.REASON) {
 			if(allowedEdit) returnstr += `<p><span>REASON:</span> <input class="w3-input" type="text" placeholder="Not set" /></p>`;

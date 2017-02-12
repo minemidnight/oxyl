@@ -88,7 +88,7 @@ class MusicManager {
 		else return member.voiceState.channelID === this.connection.channelID;
 	}
 
-	addQueue(id) {
+	addQueue(id, data = {}) {
 		let connection = this.connection;
 		if(!connection) return;
 
@@ -104,7 +104,7 @@ class MusicManager {
 		} else if(type === "VIDEO") {
 			exports.videoInfo(id).then(info => {
 				this.data.queue.push(info);
-				if(!this.data.playing) this.play(id);
+				if(!this.data.playing) this.play();
 			});
 		}
 	}
