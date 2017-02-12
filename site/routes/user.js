@@ -43,7 +43,9 @@ router.post("/update", async (req, res) => {
 
 router.get("*", async (req, res) => {
 	let data = {};
-	let user = req.path.substring(1);
+	let path = req.path;
+	if(path.endsWith("/")) path = path.substring(0, path.length - 1);
+	let user = path.substring(1);
 
 	if(bot.users.has(user)) {
 		user = bot.users.get(user);

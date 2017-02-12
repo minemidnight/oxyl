@@ -6,15 +6,15 @@ async function addIgnore(channel) {
 
 async function removeIgnore(channel) {
 	let data = await framework.dbQuery(`DELETE FROM \`Ignored\` WHERE \`CHANNEL\` = '${channel.id}'`);
-	delete Oxyl.modScripts.commandHandler.ignored[channel.id];
+	delete Oxyl.modScripts.commandHandler.ignored[Oxyl.modScripts.commandHandler.ignored.indexOf(channel.id)];
 	return true;
 }
 
 exports.cmd = new Oxyl.Command("ignore", async message => {
 	let channel = message.channel;
-	let nsfw = Oxyl.modScripts.commandHandler.ignored.indexOf(channel.id) !== -1;
+	let ignored = Oxyl.modScripts.commandHandler.ignored.indexOf(channel.id) !== -1;
 
-	if(nsfw) {
+	if(ignored) {
 		await removeIgnore(channel);
 		return `:white_check_mark: Enabled Oxyl in ${channel.mention}`;
 	} else {

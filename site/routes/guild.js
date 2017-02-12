@@ -5,7 +5,13 @@ const router = express.Router(); // eslint-disable-line new-cap
 
 router.get("*", async (req, res) => {
 	let data = {};
-	let guild = req.path.substring(1);
+	let path = req.path;
+	if(path.endsWith("/")) path = path.substring(0, path.length - 1);
+	if(path.endsWith("/bans")) {
+		var bans = true;
+		path = path.substring(0, path.length - 5);
+	}
+	let guild = path.substring(1);
 
 	if(bot.guilds.has(guild)) {
 		guild = bot.guilds.get(guild);
@@ -16,6 +22,7 @@ router.get("*", async (req, res) => {
 		guild.botPercent = ((guild.botCount / guild.memberCount) * 100).toFixed(2);
 		guild.userCount = guild.memberCount - guild.botCount;
 		guild.userPercent = ((guild.userCount / guild.memberCount) * 100).toFixed(2);
+		if(bans) data.bans = await Oxyl.modScripts.modLog.getCases(guild);
 		data.guild = guild;
 
 		if(main.tokens[req.sessionID]) {
@@ -57,7 +64,8 @@ router.get("*", async (req, res) => {
 		}
 	}
 
-	res.send(await main.parseHB("guild", req, data));
+	if(bans) res.send(await main.parseHB("bans", req, data));
+	else res.send(await main.parseHB("guild", req, data));
 	res.end();
 });
 
@@ -119,6 +127,33 @@ handlebars.registerHelper("listChannels", guild => {
 	guild.channels.forEach(channel => {
 		returnstr += `<input class="w3-check" type="checkbox" value="${channel.id}" name="channels" checked />`;
 		returnstr += `<label class="w3-validate">${channel.name}</label>`;
+	});
+
+	return new handlebars.SafeString(returnstr);
+});
+
+const actions = ["BAN", "UNBAN", "KICK", "MUTE", "UNMUTE"];
+handlebars.registerHelper("listBans", (guild, bans, allowedEdit) => {
+	let returnstr = "", i = 1;
+	bans.forEach(ban => {
+		let action = actions[ban.ACTION];
+		action = framework.capitalizeEveryFirst(action.toLowerCase());
+
+		returnstr += `<div class="w3-container w3-card-4 w3-round w3-section w3-card-4 w3-padding" id="ban-${i}">`;
+		returnstr += `<span style="text-decoration:underline">CASE #${ban.CASE_NUM}</span>`;
+		returnstr += `<p><span>ACTION:</span> ${action}</p>`;
+		returnstr += `<p><span>USER:</span> ${ban.USER}</p>`;
+		if(!ban.REASON) {
+			if(allowedEdit) returnstr += `<p><span>REASON:</span> <input class="w3-input" type="text" placeholder="Not set" /></p>`;
+			else returnstr += `<p><span>REASON:</span> Not set</p>`;
+		} else {
+			if(allowedEdit) returnstr += `<p><span>REASON:</span> <input class="w3-input" type="text" value="${ban.REASON}" /></p>`;
+			else returnstr += `<p><span>REASON:</span> ${ban.REASON}</p>`;
+			returnstr += `<p><span>MOD:</span> ${framework.unmention(guild.members.get(ban.RESPONSIBLE))}</p>`;
+		}
+		if(allowedEdit) returnstr += `<button onclick class="w3-center w3-btn w3-right w3-margin">Update</button>`;
+		returnstr += "</div>";
+		i++;
 	});
 
 	return new handlebars.SafeString(returnstr);

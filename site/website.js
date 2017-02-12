@@ -6,14 +6,12 @@ const express = require("express"),
 	cookieParser = require("cookie-parser"),
 	session = require("express-session"),
 	http = require("http"),
-	expressWs = require("express-ws"),
 	twemoji = require("twemoji"),
 	WebSocket = require("ws");
 
 const app = exports.app = express();
-const wss = expressWs(app);
-app.ws("/messages");
-app.listen(8080);
+const server = exports.server = http.createServer(app);
+server.listen(8080);
 exports.tokens = {};
 
 app.use(express.static("./site/public"));
@@ -26,7 +24,13 @@ app.use(session({
 	saveUninitialized: true
 }));
 
-var entityMap = {
+let routes = exports.routes = framework.loadScripts("./site/routes/");
+for(let script in routes) {
+	if(script === "index") app.use("/", routes[script]);
+	else app.use(`/${script}`, routes[script]);
+}
+
+let entityMap = {
 	"&": "&amp;",
 	"<": "&lt;",
 	">": "&gt;",
@@ -37,12 +41,6 @@ var entityMap = {
 };
 
 let escapeHTML = exports.escapeHTML = (string) => String(string).replace(/[&<>"'\#/]/g, str => entityMap[str]);
-
-let routes = exports.routes = framework.loadScripts("./site/routes/");
-for(let script in routes) {
-	if(script === "index") app.use("/", routes[script]);
-	else app.use(`/${script}`, routes[script]);
-}
 
 app.get("*", async (req, res) => {
 	res.send(exports.getHTML("404"));
@@ -106,9 +104,11 @@ exports.getHTML = (name) => fs.readFileSync(`./site/views/${name}.html`).toStrin
 
 /* LIVE CHAT */
 
-console.log(wss.getWss().options.host, wss.getWss().options.port, wss.getWss().options.path);
+const wss = exports.wss = new WebSocket.Server({ server });
+console.log(wss);
+
 wss.broadcast = (data) => {
-	wss.getWss().clients.forEach(client => {
+	wss.clients.forEach(client => {
 		if(client.readyState === WebSocket.OPEN) client.send(data);
 	});
 };

@@ -17,16 +17,16 @@
 	<script async defer src="http://minemidnight.work/assets/js/main.js"></script>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Oxyl - User Profiles</title>
+	<title>Oxyl - Guild Bans</title>
 
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="author" content="minemidnight" />
-	<meta property="og:title" content="Oxyl User Profiles" />
+	<meta property="og:title" content="Oxyl Guild Bans" />
 	<meta property="og:site_name" content="Oxyl" />
-	{{#if viewUser}}
-	<meta property="og:description" content="Profile for {{viewUser.username}}" />
-	<meta property="og:image" content="{{viewUser.avatarURL}}" />
+	{{#if guild}}
+	<meta property="og:description" content="Bans for {{guild.name}}" />
+	<meta property="og:image" content="https://cdn.discordapp.com/icons/{{guild.id}}/{{guild.icon}}.jpg" />
 	{{else}}
 	<meta property="og:description" content="A multipurpose discord bot with with features from music to moderation" />
 	<meta property="og:image" content="assets/images/oxyl-logo.jpg" />
@@ -58,51 +58,23 @@
 	<main class="w3-main w3-center" style="margin-left:300px">
 		<header class="w3-container">
 			<span class="w3-btn w3-black w3-round-jumbo w3-large w3-hide-large" style="position:fixed;left:20px;top:20px" onclick="toggleNav()">&#9776;</span>
-			<h1 class="w3-clear w3-jumbo w3-margin-0">User Profiles</h1>
+			<h1 class="w3-clear w3-jumbo w3-margin-0">Guild Bans</h1>
 		</header>
 
-		{{#if viewUser}}
-		<div class="w3-row-padding w3-section">
-			<div class="w3-quarter">&#8203;</div>
-			<div class="w3-half w3-card-2">
+		{{#if guild}}
+			{{#if bans}}
+				<style>span{font-weight:bold;font-size:125%}</style>
 				<div class="w3-row">
-					<h4>{{viewUser.username}}#{{viewUser.discriminator}}</h4>
-					<div class="w3-quarter">
-						<img class="w3-circle w3-margin" style="margin-bottom:0px;width:64px" src="{{viewUser.avatarURL}}" />
-						<p class="vertical-align:bottom">Shared: {{viewUser.shared}}</p>
-					</div>
-					<div class="w3-threequarter">
-						<div class="w3-container">
-							<h4 class="w3-xlarge">Description</h4>
-							<p>{{viewUser.description}}</p>
-						</div>
+					<div class="w3-quarter">&#8203;</div>
+					<div class="w3-half w3-left-align w3-small">
+						{{#listBans guild bans panel}}{{/listBans}}
 					</div>
 				</div>
-			</div>
-		</div>
-
-		{{#if desc}}
-		<div class="w3-row">
-			<div class="w3-third">&#8203;</div>
-			<div class="w3-third">
-				<div class="w3-section w3-card-4">
-					<div class="w3-container w3-blurple w3-section">
-						<h3 class="w3-margin w3-xlarge">Change Description</h3>
-					</div>
-					<form action="http://minemidnight.work/user/update" method="post" class="w3-padding w3-left-align w3-container">
-						<label class="w3-label">New Description:</label>
-						<input class="w3-input w3-border w3-animate-input" style="width:60%" type="text" name="desc" placeholder="Bot Developer" />
-						<br />
-						<input class="w3-center w3-btn" type="submit" name="reset" value="Reset">
-						<input class="w3-center w3-btn" type="submit" value="Submit">
-					</form>
-				</div>
-			</div>
-		</div>
-		{{/if}}
-
+			{{else}}
+				<h2 class="w3-xxlarge">No bans for that guild</h2>
+			{{/if}}
 		{{else}}
-		<h2 class="w3-xxlarge">Invalid User ID, or shares no servers</h2>
+			<h2 class="w3-xxlarge">Invalid Guild ID</h2>
 		{{/if}}
 	</main>
 </body>

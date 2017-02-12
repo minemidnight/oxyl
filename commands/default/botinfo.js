@@ -15,14 +15,9 @@ exports.cmd = new Oxyl.Command("botinfo", async message => {
 		`Streaming In: ${Object.keys(Oxyl.managers).filter(man => Oxyl.managers[man].data.playing).length} Guilds`
 	];
 
-	let totalUsers = 0;
-	guilds.forEach(guild => {
-		totalUsers += guild.memberCount;
-	});
-
 	let extraInfo = [
 		`Channels: ${channels}`,
-		`Users: ${totalUsers}`
+		`Users: ${bot.users.size}`
 	];
 
 	let memoryInfo = `${((usedMemory / totalMemory) * 100).toFixed(2)}%, `;
