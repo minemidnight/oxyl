@@ -24,7 +24,7 @@ async function getMutedRole(guild) {
 		channels.forEach(channel => bot.editChannelPermission(channel.id, role.id, 0, 2048, "role"));
 		return role;
 	} else if(!rolePerms) {
-		return "Oxyl does not have permissions to add roles";
+		return "Oxyl does not have permissions to manage roles";
 	} else {
 		return mutedRole;
 	}
