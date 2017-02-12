@@ -38,13 +38,12 @@ exports.cmd = new Oxyl.Command("queue", async message => {
 			queueMsg += `\n\nPlaying: Nothing (Still queueing?)`;
 		} else {
 			var videoDuration = music.getDuration(manager.data.playing.duration);
-			var playTime = manager.parsedPlayTime();
-			queueMsg += `\n\nPlaying: ${manager.data.playing.title}`;
+			var playTime = manager.playTime;
+			queueMsg += `\n\nPlaying: ${manager.data.playing.title} **(**${playTime}/${videoDuration}**)**`;
 		}
 
 		let repeat = manager.data.extraOptions.repeat ? "on" : "off";
 		queueMsg += `\nRepeat: **${repeat}**`;
-		//* *(**${playTime}/${videoDuration}**)**`;
 
 		return queueMsg;
 	}

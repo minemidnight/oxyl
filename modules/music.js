@@ -75,11 +75,11 @@ class MusicManager {
 		delete this.connection;
 	}
 
-	parsedPlayTime() {
+	get playTime() {
 		let connection = this.connection;
 		if(!connection) return null;
 
-		let playTime = Math.floor(connection.playTime / 1000);
+		let playTime = Math.floor(connection.current.playTime / 1000);
 		return exports.getDuration(playTime);
 	}
 
