@@ -366,33 +366,47 @@ exports.listConstructor = (obj, index, follower) => {
 	for(var i = 0; i <= objSize; i++) {
 		var value = obj[i];
 		let addFollower = true;
-		let toAdd = "", constructor = "";
+		let toAdd = "", current = "";
 
 		if(index && index > 0) {
 			if(follower) {
-				constructor = "  ".repeat(index);
+				current = "  ".repeat(index);
 				// Gets the perfect spacing
 			} else {
-				constructor = "║".repeat(index);
+				current = "║".repeat(index);
 				addFollower = false;
 			}
 		} else {
 			index = 0;
 		} if(i === objSize || (Array.isArray(obj[objSize]) && i === objSize - 1)) {
-			constructor += "╚";
+			current += "╚";
 		} else {
-			constructor += "╠";
+			current += "╠";
 			addFollower = false;
 		}
 
 		if(Array.isArray(value)) {
 			toAdd = exports.listConstructor(value, index + 1, addFollower);
 		} else {
-			constructor = constructor.split("").join(" ");
-			toAdd = `\n **${constructor}** ${value}`;
+			current = current.split("").join(" ");
+			toAdd = `\n **${current}** ${value}`;
 		}
 
 		msg += toAdd;
 	}
 	return msg;
 };
+
+async function updateRemind() {
+	let waiting = await exports.dbQuery(`SELECT * FROM \`Reminders\` WHERE \`DATE\` <= ${Date.now()}`);
+	if(!waiting || waiting.length === 0) return;
+	waiting.forEach(async reminder => {
+		if(!bot.users.has(reminder.USER)) return;
+		let dm = await bot.users.get(reminder.USER).getDMChannel();
+
+		dm.createMessage(`Hello, you asked me to remind you about this on ${exports.formatDate(reminder.CREATED)}:\n\n ${reminder.MESSAGE}`);
+	});
+
+	exports.dbQuery(`DELETE FROM \`Reminders\` WHERE \`NO_DUPLICATE\` IN (${waiting.map(reminder => reminder.NO_DUPLICATE).join(",")})`);
+}
+setInterval(updateRemind, 15000);
