@@ -1,5 +1,5 @@
 /* eslint-disable no-undef*/
-const socket = new WebSocket("ws://minemidnight.work/messages/"),
+const socket = new WebSocket("ws://158.69.118.207:8085/"),
 	converter = new showdown.Converter({
 		omitExtraWLInCodeBlocks: true,
 		simplifiedAutoLink: true,
@@ -112,7 +112,7 @@ socket.onmessage = (event) => {
 	if(data.bot) prepend += `<span class="bot-tag">BOT</span>`;
 	prepend += `<span class="w3-text-blue">#${data.channelname}</span>`;
 	prepend += `<span class="w3-text-grey w3-opacity">${time}</span>`;
-	if(guildID === "*") prepend += `<a class="w3-right w3-text-black" href="/guild/${data.guildid}">${data.guildname}</a>`;
+	if(guildID === "*") prepend += `<a class="w3-right w3-text-blue" href="/guild/${data.guildid}">${data.guildname}</a>`;
 	prepend += `<span style="color:hsla(0,0%,100%,.7)" class="content">${data.content}</span>`;
 	prepend += `</div></div></td><tr>`;
 	$("#msg-table").prepend(prepend);

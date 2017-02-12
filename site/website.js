@@ -11,6 +11,7 @@ const express = require("express"),
 
 const app = exports.app = express();
 const server = exports.server = http.createServer(app);
+const wss = exports.wss = new WebSocket.Server({ port: 8085 });
 server.listen(8080);
 exports.tokens = {};
 
@@ -103,9 +104,6 @@ exports.getHTML = (name) => fs.readFileSync(`./site/views/${name}.html`).toStrin
 
 
 /* LIVE CHAT */
-
-const wss = exports.wss = new WebSocket.Server({ server });
-console.log(wss);
 
 wss.broadcast = (data) => {
 	wss.clients.forEach(client => {
