@@ -7,8 +7,8 @@ router.get("*", async (req, res) => {
 	let data = {};
 	let path = req.path;
 	if(path.endsWith("/")) path = path.substring(0, path.length - 1);
-	if(path.endsWith("/bans")) {
-		var bans = true;
+	if(path.endsWith("/bans") || path.endsWith("/punishments") || path.endsWith("/infrictions") || path.endsWith("/modlog")) {
+		var punishments = true;
 		path = path.substring(0, path.length - 5);
 	}
 	let guild = path.substring(1);
@@ -22,13 +22,14 @@ router.get("*", async (req, res) => {
 		guild.botPercent = ((guild.botCount / guild.memberCount) * 100).toFixed(2);
 		guild.userCount = guild.memberCount - guild.botCount;
 		guild.userPercent = ((guild.userCount / guild.memberCount) * 100).toFixed(2);
-		if(bans) data.bans = await Oxyl.modScripts.modLog.getCases(guild);
+		if(punishments) data.punishments = await Oxyl.modScripts.modLog.getCases(guild);
 		data.guild = guild;
 
 		if(main.tokens[req.sessionID]) {
 			let user = await main.getInfo(req.sessionID, "users/@me");
 			let member = guild.members.get(user.id);
 			if(member && (framework.guildLevel(member) >= 3 || framework.config.creators.includes(user.id))) data.panel = true;
+			else if(member && (framework.guildLevel(member) >= 2 || framework.config.creators.includes(user.id))) data.cases = true;
 
 			let settings = await framework.dbQuery(`SELECT * FROM \`Settings\` WHERE \`ID\` = '${guild.id}'`);
 			let possibleSettings = Oxyl.cmdScripts.settings.settings;
@@ -64,9 +65,52 @@ router.get("*", async (req, res) => {
 		}
 	}
 
-	if(bans) res.send(await main.parseHB("bans", req, data));
+	if(punishments) res.send(await main.parseHB("punishments", req, data));
 	else res.send(await main.parseHB("guild", req, data));
 	res.end();
+});
+
+router.post("/set_case", async (req, res) => {
+	if(!guild || !main.tokens[req.sessionID]) {
+		res.send(`{error: "Not logged"}`);
+		res.end();
+		return;
+	}
+
+	if(!req.body.case || !req.body.guildid || !req.body.reason || isNaN(parseInt(req.body.case))) {
+		res.send(`{error: "Invalid fields"}`);
+		res.end();
+		return;
+	}
+
+	let guild = bot.guilds.get(req.body.guildid);
+	if(!guild) {
+		res.send(`{error: "Invalid guild"}`);
+		res.end();
+		return;
+	}
+
+	let user = await main.getInfo(req.sessionID, "users/@me");
+	if(!guild.members.has(user.id)) {
+		res.send(`{error: "Invalid user or not cached"}`);
+		res.end();
+		return;
+	} else if(framework.guildLevel(guild.members.get(user.id)) < 2) {
+		res.send(`{error: "Invalid Perms"}`);
+		res.end();
+		return;
+	}
+
+	let resp = await Oxyl.modScripts.modLog.setReason(guild, parseInt(req.body.case), req.body.reason, guild.members.get(user.id));
+	if(resp === "SUCCESS") resp = `{success: "Reason set successfully"}`;
+	else if(resp === "NO_CASE") resp = `{error: "Case not found"}`;
+	else if(resp === "NO_CHANNEL") resp = `{error: "No mod log channel"}`;
+	else if(resp === "NO_MSG") resp = `{error: "Can't get Discord Message from case"}`;
+	else resp = `{error: "Unexpected Error"}`;
+
+	res.send(resp);
+	res.end();
+	return;
 });
 
 router.post("/update", async (req, res) => {

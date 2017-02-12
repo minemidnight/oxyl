@@ -17,15 +17,15 @@
 	<script async defer src="http://minemidnight.work/assets/js/main.js"></script>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Oxyl - Guild Bans</title>
+	<title>Oxyl - Guild Punishments</title>
 
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="author" content="minemidnight" />
-	<meta property="og:title" content="Oxyl Guild Bans" />
+	<meta property="og:title" content="Oxyl Guild Punishments" />
 	<meta property="og:site_name" content="Oxyl" />
 	{{#if guild}}
-	<meta property="og:description" content="Bans for {{guild.name}}" />
+	<meta property="og:description" content="Punishments for {{guild.name}}" />
 	<meta property="og:image" content="https://cdn.discordapp.com/icons/{{guild.id}}/{{guild.icon}}.jpg" />
 	{{else}}
 	<meta property="og:description" content="A multipurpose discord bot with with features from music to moderation" />
@@ -58,20 +58,20 @@
 	<main class="w3-main w3-center" style="margin-left:300px">
 		<header class="w3-container">
 			<span class="w3-btn w3-black w3-round-jumbo w3-large w3-hide-large" style="position:fixed;left:20px;top:20px" onclick="toggleNav()">&#9776;</span>
-			<h1 class="w3-clear w3-jumbo w3-margin-0">Guild Bans</h1>
+			<h1 class="w3-clear w3-jumbo w3-margin-0">Guild Punishments</h1>
 		</header>
 
 		{{#if guild}}
-			{{#if bans}}
+			{{#if punishments}}
 				<style>span{font-weight:bold;font-size:125%}</style>
 				<div class="w3-row">
 					<div class="w3-quarter">&#8203;</div>
 					<div class="w3-half w3-left-align w3-small">
-						{{#listBans guild bans panel}}{{/listBans}}
+						{{#listPunishments guild punishments cases}}{{/listPunishments}}
 					</div>
 				</div>
 			{{else}}
-				<h2 class="w3-xxlarge">No bans for that guild</h2>
+				<h2 class="w3-xxlarge">No punishments found (mod log not set?)</h2>
 			{{/if}}
 		{{else}}
 			<h2 class="w3-xxlarge">Invalid Guild ID</h2>
