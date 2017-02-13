@@ -155,7 +155,7 @@ async function checkArg(input, arg, message, cmd) {
 	if(!input && arg.optional) {
 		return input;
 	} else if(!input && arg.type !== "custom") {
-		throw new Error(`No value given for \`${arg.label}\`, correct usage: ${cmd.name} ${cmd.usage}`);
+		throw new Error(`Incorrect usage! Correct usage: ${cmd.name} ${cmd.usage}`);
 	} else {
 		return await validator.test(input, arg, message);
 	}

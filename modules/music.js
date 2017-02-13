@@ -149,34 +149,40 @@ class MusicManager {
 		return new Promise((resolve, reject) => {
 			if(connection.ready) {
 				resolve(connection);
+				this.addListeners();
 			} else {
 				connection.once("ready", () => {
 					resolve(connection);
+					this.addListeners();
 				});
 			}
+		});
+	}
 
-			let error = err => this.sendEmbed("error", err);
-			let end = () => {
-				if(this.data.extraOptions.repeat) this.data.queue.push(this.data.playing);
-				if(this.data.queue.length <= 0) this.end();
-				else setTimeout(() => this.play(), 750);
-			};
+	addListeners() {
+		let connection = this.connection;
+		if(!connection) return;
 
-			connection.on("error", error);
-			connection.on("end", end);
+		let error = err => this.sendEmbed("error", err);
+		let end = () => {
+			if(this.data.extraOptions.repeat) this.data.queue.push(this.data.playing);
+			if(this.data.queue.length <= 0) this.end();
+			else setTimeout(() => this.play(), 750);
+		};
 
-			connection.once("disconnect", () => {
-				connection.removeListener("error", error);
-				connection.removeListener("end", end);
-				delete this.connection;
-			});
+		connection.on("error", error);
+		connection.on("end", end);
+		connection.once("disconnect", () => {
+			connection.removeListener("error", error);
+			connection.removeListener("end", end);
+			delete this.connection;
 		});
 	}
 
 	sendEmbed(type, data) {
 		if(!Oxyl.modScripts.commandHandler.musicchannels[this.id]) return false;
-		let vc = this.guild.channels.get(this.connection.channelID).voiceMembers.filter(member => !member.user.bot).length;
-		if(vc <= 0) return false;
+		let vm = this.guild.channels.get(this.connection.channelID).voiceMembers.filter(member => !member.user.bot).length;
+		if(vm <= 0) return false;
 		let embed;
 
 		if(type === "playing") {

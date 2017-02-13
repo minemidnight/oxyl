@@ -122,6 +122,7 @@ async function parseTag(tag, message, debug) {
 	}
 	message.tagVars = {};
 
+	console.log("\n\n\nstart:", tag);
 	let ifRegex = /{if:([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\|]+)}/i;
 	let replaces = 0;
 	while(tag.match(ifRegex)) {
@@ -133,11 +134,10 @@ async function parseTag(tag, message, debug) {
 		if(match[5]) replace += `|${match[5].replace(/{/g, "&$lbph;").replace(/}/g, "&$rbph;")}`;
 		replace += "$rbrpn;";
 
-		console.log("\nb4:", tag);
 		tag = tag.replace(match[0], replace);
-		console.log("replaced:", tag);
 	}
-	tag = tag.replace(/\$lbrpn;/, "{").replace(/\$rbrpn;/, "}");
+	tag = tag.replace(/\$lbrpn;/g, "{").replace(/\$rbrpn;/g, "}");
+	console.log("\nfinish:", tag);
 
 	let results = [], executions = 0;
 	while(tag.match(/{[^{}]+}/)) {
@@ -175,6 +175,7 @@ async function parseTag(tag, message, debug) {
 			tag = tag.replace(originalArg, newArg);
 
 			if(argType.toLowerCase() === "if") {
+				console.log("\n\n\nstart:", tag);
 				while(tag.match(ifRegex)) {
 					replaces++;
 					if(replaces >= 200) throw new Error("no tahts bad");
@@ -184,11 +185,10 @@ async function parseTag(tag, message, debug) {
 					if(match[5]) replace += `|${match[5].replace(/{/g, "&$lbph;").replace(/}/g, "&$rbph;")}`;
 					replace += "$rbrpn;";
 
-					console.log("\nb4:", tag);
 					tag = tag.replace(match[0], replace);
-					console.log("replaced:", tag);
 				}
-				tag = tag.replace(/\$lbrpn;/, "{").replace(/\$rbrpn;/, "}");
+				tag = tag.replace(/\$lbrpn;/g, "{").replace(/\$rbrpn;/g, "}");
+				console.log("\nfinish:", tag);
 			}
 		} catch(err) {
 			if(message.tagVars.fallback) return message.tagVars.fallback;
@@ -734,7 +734,7 @@ module.exports.sorted = Object.keys(tagInfo).sort();
 
 const tagParser = {
 	abs: async args => Math.abs(parseFloat(args[0])),
-	allargs: async (args, message) => message.argsPreserved.length >= 0 ? message.argsPreserved.join(" ") : null,
+	allargs: async (args, message) => message.argsPreserved.length >= 0 ? message.argsPreserved.join(" ") : "",
 	arg: async (args, message) => message.argsPreserved[parseInt(args[0])],
 	argcount: async (args, message) => message.argsPreserved.length,
 	author: async (args, message) => message.author,
@@ -838,5 +838,5 @@ const tagParser = {
 	},
 	unmention: async args => framework.unmention(args[0]),
 	user: async (args, message) => message.author,
-	username: async (args, message) => args[0].user ? args[0].user.username : args[0].username
+	username: async args => args[0].user ? args[0].user.username : args[0].username
 };
