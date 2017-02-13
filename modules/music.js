@@ -175,6 +175,8 @@ class MusicManager {
 
 	sendEmbed(type, data) {
 		if(!Oxyl.modScripts.commandHandler.musicchannels[this.id]) return false;
+		let vc = this.guild.channels.get(this.connection.channelID).voiceMembers.filter(member => !member.user.bot).length;
+		if(vc <= 0) return false;
 		let embed;
 
 		if(type === "playing") {
