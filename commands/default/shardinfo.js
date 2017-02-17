@@ -1,5 +1,5 @@
 exports.cmd = new Oxyl.Command("shardinfo", async message => {
-	let returnstr = "", guilds = bot.guilds, thisShard = message.channel.guild.shard.id;
+	let returnstr = "", guilds = bot.guilds, thisShard = message.channel.guild ? message.channel.guild.shard.id : 0;
 	bot.shards.forEach(shard => {
 		let onShard = guilds.filter(guild => guild.shard.id === shard.id);
 		let shardUsers = new Set();

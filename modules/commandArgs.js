@@ -1,8 +1,7 @@
 const config = framework.config;
-
 function matchUser(user, input) {
 	let username = user.user ? user.user.username.toLowerCase() : user.username.toLowerCase();
-	let nick = user.nick || null;
+	let nick = user.nick ? user.nick.toLowerCase() : null;
 	input = input.toLowerCase();
 
 	if(input.includes("#")) {
@@ -11,6 +10,7 @@ function matchUser(user, input) {
 		input = input.substring(0, index);
 		if(isNaN(discrim)) discrim = false;
 		else if(user.user ? user.user.discriminator : user.discriminator === discrim) discrim = true;
+		else return 0;
 	}
 
 	if(user.id === input) return 3;

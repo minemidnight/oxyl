@@ -1,4 +1,3 @@
-const validator = require("../modules/commandArgs.js");
 const prefixes = exports.prefixes = {};
 const musicchannels = exports.musicchannels = {};
 const blacklist = exports.blacklist = [];
@@ -159,7 +158,7 @@ async function checkArg(input, arg, message, cmd) {
 	} else if(!input && arg.type !== "custom") {
 		throw new Error(`Incorrect usage! Correct usage: ${cmd.name} ${cmd.usage}`);
 	} else {
-		return await validator.test(input, arg, message);
+		return await Oxyl.modScripts.commandArgs.test(input, arg, message);
 	}
 }
 
