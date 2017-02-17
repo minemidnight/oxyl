@@ -42,8 +42,9 @@ bot.on("messageCreate", async (message) => {
 	let guild = message.channel.guild;
 	let msg = message.content.toLowerCase();
 
-	let prefix = "^(oxyl|<@!?255832257519026178>),?(?:\\s+)?([\\s\\S]+)";
-	if(guild && prefixes[guild.id]) prefix = `^(oxyl|<@!?255832257519026178>|${framework.escapeRegex(prefixes[guild.id])}),?(?:\\s+)?([\\s\\S]+)`;
+	let prefix = "^(o!|oxyl|<@!?255832257519026178>|<:oxyl_square:273616293775540224>|<:oxyl:273616986121043968>{GPRE}),?(?:\\s+)?([\\s\\S]+)";
+	if(guild && prefixes[guild.id]) prefix = prefix.replace("{GPRE}", `|${framework.escapeRegex(prefixes[guild.id])}`);
+	else prefix = prefix.replace("{GPRE}", "");
 	prefix = new RegExp(prefix, "i");
 
 	let match = message.content.match(prefix);
@@ -58,19 +59,20 @@ bot.on("messageCreate", async (message) => {
 			msg = message.contentPreserved.toLowerCase();
 			message.content = msg;
 		} else {
-			if(!type.match(/<@!?255832257519026178>/)) return;
-			message.channel.sendTyping();
-			let clever = await framework.cleverResponse(msg);
-			console.log(`CleverBot in ${guild ? guild.name : "DM"} by ${framework.unmention(message.author)}: ${message.content}`);
-			message.channel.createMessage(clever).catch(err => err);
 			return;
+			// if(!type.match(/<@!?255832257519026178>/)) return;
+			// message.channel.sendTyping();
+			// let clever = await framework.cleverResponse(msg);
+			// console.log(`CleverBot in ${guild ? guild.name : "DM"} by ${framework.unmention(message.author)}: ${message.content}`);
+			// message.channel.createMessage(clever).catch(err => err);
+			// return;
 		}
-	} else if(guild && cleverchannels.indexOf(message.channel.id) !== -1) {
-		message.channel.sendTyping();
-		let clever = await framework.cleverResponse(msg);
-		console.log(`CleverBot in ${guild.name} by ${framework.unmention(message.author)}: ${message.content}`);
-		message.channel.createMessage(clever).catch(err => err);
-		return;
+	// } else if(guild && cleverchannels.indexOf(message.channel.id) !== -1) {
+	// 	message.channel.sendTyping();
+	// 	let clever = await framework.cleverResponse(msg);
+	// 	console.log(`CleverBot in ${guild.name} by ${framework.unmention(message.author)}: ${message.content}`);
+	// 	message.channel.createMessage(clever).catch(err => err);
+	// 	return;
 	} else {
 		return;
 	}
@@ -147,7 +149,7 @@ bot.on("messageCreate", async (message) => {
 			message.channel.createMessage("Bot error when executing command, error sent to Support Server");
 		}
 	} catch(err) {
-		message.channel.createMessage(err.toString());
+		message.channel.createMessage(err.message);
 	}
 });
 

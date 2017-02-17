@@ -66,7 +66,7 @@ async function refreshToken(token) {
 		grant_type: "refresh_token" // eslint-disable-line camelcase
 	};
 
-	let base64 = new Buffer(`${framework.config.botid}:${framework.config.private.secret}`).toString("base64");
+	let base64 = new Buffer(`${bot.user.id}:${framework.config.private.secret}`).toString("base64");
 	request.post({
 		url: "https://discordapp.com/api/oauth2/token",
 		headers: { Authorization: `Basic ${base64}` },

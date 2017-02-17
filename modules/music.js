@@ -146,14 +146,13 @@ class MusicManager {
 		if(bot.voiceConnections.guilds[this.id] && !bot.voiceConnections.guilds[this.id].ended) return false;
 		let connection = await bot.joinVoiceChannel(channelID);
 		this.connection = connection;
+		this.addListeners();
 		return new Promise((resolve, reject) => {
 			if(connection.ready) {
 				resolve(connection);
-				this.addListeners();
 			} else {
 				connection.once("ready", () => {
 					resolve(connection);
-					this.addListeners();
 				});
 			}
 		});

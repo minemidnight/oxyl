@@ -18,7 +18,7 @@ exports.cmd = new Oxyl.Command("remind", async message => {
 		duration = duration.milliseconds();
 		if(duration < 30000 || duration > 2419200000) return "Please only create reminders for between 30 seconds and 4 weeks into the future.";
 	} catch(err) {
-		return err.toString();
+		return err.message;
 	}
 
 	let date = Date.now();

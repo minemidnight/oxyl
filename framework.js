@@ -6,22 +6,23 @@ const Oxyl = require("./oxyl.js"),
 	EventEmitter = require("events").EventEmitter,
 	mysql = require("promise-mysql");
 
-const Cleverbot = require("cleverbot-node");
-const cleverbot = new Cleverbot();
+exports.spStart = "\u26FB";
+exports.spEnd = "\u26FC";
+exports.config = yaml.safeLoad(fs.readFileSync("./private/config.yml"));
 global.Oxyl = Oxyl;
 
-exports.cleverResponse = (input) => {
-	input = input.trim();
-	return new Promise((resolve, reject) => {
-		Cleverbot.prepare(() => {
-			cleverbot.write(input, response => {
-				resolve(response.message);
-			});
-		});
-	});
-};
-
-exports.config = yaml.safeLoad(fs.readFileSync("./private/config.yml"));
+// const Cleverbot = require("cleverbot-node");
+// const cleverbot = new Cleverbot();
+// exports.cleverResponse = (input) => {
+// 	input = input.trim();
+// 	return new Promise((resolve, reject) => {
+// 		Cleverbot.prepare(() => {
+// 			cleverbot.write(input, response => {
+// 				resolve(response.message);
+// 			});
+// 		});
+// 	});
+// };
 
 let dbData = exports.config.database;
 dbData.password = exports.config.private.databasePass;
@@ -351,14 +352,22 @@ exports.loadScripts = (filePath) => {
 	}
 
 	exports.consoleLog(`Loaded scripts at ${filePath}`);
-	return scripts;
+	return scripts || false;
 };
 
 exports.loadScript = (scriptPath) => {
 	let script = path.resolve(scriptPath);
 	delete require.cache[require.resolve(script)];
+	let requirement = require(scriptPath);
 
-	return require(scriptPath);
+	let dir = script.substring(script.indexOf("oxyl/") + 5);
+	dir = dir.substring(0, dir.indexOf("/"));
+	let scriptName = script.substring(script.lastIndexOf("/") + 1, script.length - 3);
+
+	if(dir === "commands") Oxyl.cmdScripts[scriptName] = requirement;
+	else if(dir === "modules") Oxyl.modScripts[scriptName] = requirement;
+	else if(dir === "site") Oxyl.siteScripts[scriptName] = requirement;
+	return requirement;
 };
 
 exports.listConstructor = (obj, index, follower) => {

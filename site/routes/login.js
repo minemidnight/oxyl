@@ -6,7 +6,7 @@ const tokens = main.tokens;
 
 router.get("/", async (req, res) => {
 	let data = {
-		client_id: framework.config.botid, // eslint-disable-line camelcase
+		client_id: bot.user.id, // eslint-disable-line camelcase
 		client_secret: framework.config.private.secret, // eslint-disable-line camelcase
 		code: req.query.code,
 		redirect_uri: "https://minemidnight.work/login", // eslint-disable-line camelcase

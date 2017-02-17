@@ -33,7 +33,7 @@ router.get("*", async (req, res) => {
 
 			let settings = await framework.dbQuery(`SELECT * FROM \`Settings\` WHERE \`ID\` = '${guild.id}'`);
 			let possibleSettings = Oxyl.cmdScripts.settings.settings;
-			data.settings = settings.map(setting => {
+			data.settings = settings.filter(setting => possibleSettings.find(set => set.name === setting.NAME)).map(setting => {
 				let settingFound = possibleSettings.find(set => set.name === setting.NAME);
 				setting.TYPE = settingFound.type;
 

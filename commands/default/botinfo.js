@@ -28,7 +28,7 @@ exports.cmd = new Oxyl.Command("botinfo", async message => {
 		`Creator: minemidnight`,
 		`Library: Eris`,
 		`GitHub: <http://github.com/minemidnight/oxyl>`,
-		`Prefix - \`${config.options.prefixText}\``
+		`Prefix - o!, oxyl, or ${bot.user.mention}`
 	];
 
 	guildsInfo = framework.listConstructor(guildsInfo);
