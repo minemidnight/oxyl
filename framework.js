@@ -47,7 +47,7 @@ exports.guildLevel = (member) => {
 };
 
 exports.getSetting = async (guild, setting) => {
-	let query = `SELECT \`VALUE\` FROM \`Settings\` WHERE \`ID\` = '${guild.id}' AND \`Name\` = ${exports.sqlEscape(setting)}`;
+	let query = `SELECT \`VALUE\` FROM \`Settings\` WHERE \`ID\` = '${guild.id}' AND \`NAME\` = ${exports.sqlEscape(setting)}`;
 	let data = await exports.dbQuery(query);
 
 	if(data && data[0]) return data[0].VALUE;
@@ -55,11 +55,11 @@ exports.getSetting = async (guild, setting) => {
 };
 
 exports.resetSetting = async (guild, setting) => {
-	let data = await exports.dbQuery(`SELECT \`VALUE\` FROM \`Settings\` WHERE \`ID\` = '${guild.id}' AND \`Name\` = ${exports.sqlEscape(setting)}`);
+	let data = await exports.dbQuery(`SELECT \`VALUE\` FROM \`Settings\` WHERE \`ID\` = '${guild.id}' AND \`NAME\` = ${exports.sqlEscape(setting)}`);
 	if(data && data.length >= 1) data = data[0].VALUE;
 	else data = false;
 
-	exports.dbQuery(`DELETE FROM \`Settings\` WHERE \`ID\` = '${guild.id}' AND \`Name\` = ${exports.sqlEscape(setting)}`);
+	exports.dbQuery(`DELETE FROM \`Settings\` WHERE \`ID\` = '${guild.id}' AND \`NAME\` = ${exports.sqlEscape(setting)}`);
 	let cH = Oxyl.modScripts.commandHandler;
 	if(setting === "prefix") delete cH.prefixes[guild.id];
 	else if(setting === "musicchannel") delete cH.musicchannels[guild.id];
@@ -69,7 +69,8 @@ exports.resetSetting = async (guild, setting) => {
 exports.setSetting = async (guild, setting, value) => {
 	try {
 		await exports.getSetting(guild, setting);
-		exports.dbQuery(`UPDATE \`Settings\` SET \`VALUE\`=${exports.sqlEscape(value)} WHERE \`ID\` = '${guild.id}' AND \`Name\` = ${exports.sqlEscape(setting)}`);
+		exports.dbQuery(`UPDATE \`Settings\` SET \`VALUE\` = ${exports.sqlEscape(value)} ` +
+			`WHERE \`ID\` = '${guild.id}' AND \`NAME\` = ${exports.sqlEscape(setting)}`);
 	} catch(err) {
 		exports.dbQuery(`INSERT INTO \`Settings\`(\`NAME\`, \`VALUE\`, \`ID\`) VALUES (${exports.sqlEscape(setting)},${exports.sqlEscape(value)},'${guild.id}')`);
 	}
@@ -78,6 +79,23 @@ exports.setSetting = async (guild, setting, value) => {
 	if(setting === "prefix") cH.prefixes[guild.id] = value;
 	else if(setting === "musicchannel") cH.musicchannels[guild.id] = guild.channels.get(value);
 	else if(setting === "cleverbot") cH.clever.push(value);
+};
+
+exports.getCC = async (guildid, command) => {
+	let query = `SELECT \`TAG\` FROM \`CustomCommands\` WHERE \`GUILD\` = '${guildid}' AND \`COMMAND\` = ${exports.sqlEscape(command)}`;
+	let data = await exports.dbQuery(query);
+
+	if(data && data[0]) return data[0].TAG;
+	else return false;
+};
+
+exports.deleteCC = async (guildid, command) => {
+	exports.dbQuery(`DELETE FROM \`CustomCommands\` WHERE \`GUILD\` = '${guildid}' AND \`COMMAND\` = ${exports.sqlEscape(command)}`);
+};
+
+exports.createCC = async (guildid, command, tag) => {
+	exports.dbQuery(`INSERT INTO \`CustomCommands\`(\`GUILD\`, \`COMMAND\`, \`TAG\`) ` +
+		`VALUES ('${guildid}',${exports.sqlEscape(command)},${exports.sqlEscape(tag)})`);
 };
 
 exports.getRoles = async (guild, type) => {
@@ -168,11 +186,8 @@ exports.getCmd = (msgCase) => {
 	let returnData = {};
 
 	let cmdCheck;
-	if(msg.indexOf(" ") === -1) {
-		cmdCheck = msg;
-	} else {
-		cmdCheck = msg.substring(0, msg.indexOf(" "));
-	}
+	if(msg.indexOf(" ") === -1) cmdCheck = msg;
+	else cmdCheck = msg.substring(0, msg.indexOf(" "));
 
 	for(let cmdType in commands) {
 		for(let cmd in commands[cmdType]) {
@@ -209,18 +224,18 @@ exports.findCommand = (cmdSearch) => {
 };
 
 exports.formatDate = (toFormat) => {
-	var date = new Date(toFormat);
-	var months = ["January", "February", "March", "April", "May", "June", "July",
+	let date = new Date(toFormat);
+	let months = ["January", "February", "March", "April", "May", "June", "July",
 		"August", "September", "October", "November", "Decemeber"];
-	var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+	let weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-	var month = months[date.getMonth()];
-	var day = date.getDate();
-	var weekday = weekdays[date.getDay()];
-	var hour = date.getHours();
-	var min = date.getMinutes();
-	var sec = date.getSeconds();
-	var year = date.getFullYear();
+	let month = months[date.getMonth()];
+	let day = date.getDate();
+	let weekday = weekdays[date.getDay()];
+	let hour = date.getHours();
+	let min = date.getMinutes();
+	let sec = date.getSeconds();
+	let year = date.getFullYear();
 
 	day = (day < 10 ? "0" : "") + day;
 	hour = (hour < 10 ? "0" : "") + hour;
@@ -306,8 +321,8 @@ exports.awaitMessages = async (channel, filter, options) => {
 
 exports.findFile = (dirs, name, ext) => {
 	let fileName, dirName;
-	for(var i = 0; i < dirs.length; i++) {
-		var files = exports.getFiles(dirs[i]);
+	for(let i = 0; i < dirs.length; i++) {
+		let files = exports.getFiles(dirs[i]);
 
 		if(ext) {
 			fileName = files.find(file => file.substring(file.lastIndexOf("/") + 1).toLowerCase() === `${name}.${ext}`);
@@ -329,10 +344,10 @@ exports.findFile = (dirs, name, ext) => {
 };
 
 exports.getFiles = (filePath, filter = (file) => true) => {
-	var dirFiles = fs.readdirSync(filePath);
+	let dirFiles = fs.readdirSync(filePath);
 	let fullFiles = [];
 	dirFiles.forEach(file => {
-		var stats = fs.lstatSync(`${filePath}${file}`);
+		let stats = fs.lstatSync(`${filePath}${file}`);
 		if(stats.isDirectory() && file !== "public" && file !== "routes") {
 			let toAdd = exports.getFiles(`${filePath}${file}/`, filter);
 			fullFiles = fullFiles.concat(toAdd);
@@ -346,7 +361,7 @@ exports.getFiles = (filePath, filter = (file) => true) => {
 exports.loadScripts = (filePath) => {
 	let scripts = {};
 	let dirFiles = exports.getFiles(filePath, file => file.endsWith(".js"));
-	for(var i in dirFiles) {
+	for(let i in dirFiles) {
 		i = dirFiles[i];
 		scripts[i.substring(i.lastIndexOf("/") + 1, i.length - 3)] = exports.loadScript(i);
 	}
@@ -371,9 +386,9 @@ exports.loadScript = (scriptPath) => {
 };
 
 exports.listConstructor = (obj, index, follower) => {
-	var msg = "", objSize = obj.length - 1;
-	for(var i = 0; i <= objSize; i++) {
-		var value = obj[i];
+	let msg = "", objSize = obj.length - 1;
+	for(let i = 0; i <= objSize; i++) {
+		let value = obj[i];
 		let addFollower = true;
 		let toAdd = "", current = "";
 

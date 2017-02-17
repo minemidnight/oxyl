@@ -48,6 +48,7 @@ bot.on("messageCreate", async (message) => {
 
 	let match = message.content.match(prefix);
 	if(match && match[2]) {
+		console.log("match");
 		let type = match[1];
 		message.content = match[2];
 
@@ -57,7 +58,32 @@ bot.on("messageCreate", async (message) => {
 			message.contentPreserved = cmdInfo.newContent;
 			msg = message.contentPreserved.toLowerCase();
 			message.content = msg;
+		} else if(guild) {
+			console.log("no cmd");
+			let cmdCheck;
+			if(msg.indexOf(" ") === -1) cmdCheck = msg;
+			else cmdCheck = msg.substring(0, msg.indexOf(" "));
+
+			console.log(cmdCheck);
+			let cc = await framework.getCC(message.channel.guild.id, cmdCheck);
+			if(!cc) return;
+
+			try {
+				var tag = await Oxyl.modScripts.tagModule.getTag(cc, message);
+			} catch(err) {
+				return;
+			}
+
+			try {
+				Oxyl.modScripts.tagModule.addUse(tag.TYPE, tag.NAME, message);
+				let result = await Oxyl.modScripts.tagModule.executeTag(tag, message, false);
+				message.channel.createMessage(result);
+			} catch(err) {
+				message.channel.createMessage(err.messaege);
+			}
+			return;
 		} else {
+			console.log("no guild?");
 			return;
 			// if(!type.match(/<@!?255832257519026178>/)) return;
 			// message.channel.sendTyping();

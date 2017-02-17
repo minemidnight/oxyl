@@ -1,33 +1,57 @@
 const commands = Oxyl.commands;
-
 exports.cmd = new Oxyl.Command("help", async message => {
-	let cmds = {};
+	if(message.args[0]) {
+		let cmd = framework.findCommand(message.args[0]);
+		if(!cmd) return "Command not found";
 
-	for(var cmdType in commands) {
-		cmds[cmdType] = [];
-		for(var cmd in commands[cmdType]) {
-			cmd = commands[cmdType][cmd];
-			cmds[cmdType].push(cmd.name);
-			cmds[cmdType].concat(cmd.aliases);
+		let helpMsg = "", helpInfo = [];
+		helpMsg += `Info on ${message.args[0]}\n`;
+		helpMsg += `Command: ${cmd.name}`;
+		helpInfo.push(`Command Type: ${framework.capitalizeEveryFirst(cmd.type)}`);
+
+		if(cmd.aliases.length > 0) helpInfo.push(`Aliases: ${cmd.aliases.join(", ")}`);
+		else helpInfo.push(`Aliases: N/A`);
+
+		if(cmd.description) helpInfo.push(`Description: ${cmd.description}`);
+		else helpInfo.push(`Description: N/A`);
+
+		helpInfo.push(`Usage: ${cmd.usage}`);
+		helpInfo.push(`Uses since startup: ${cmd.uses}`);
+		helpMsg += framework.listConstructor(helpInfo);
+		return helpMsg;
+	} else {
+		let cmds = {};
+
+		for(let cmdType in commands) {
+			cmds[cmdType] = [];
+			for(let cmd in commands[cmdType]) {
+				cmd = commands[cmdType][cmd];
+				cmds[cmdType].push(cmd.name);
+				cmds[cmdType].concat(cmd.aliases);
+			}
 		}
+
+		let helpMsg = "", totalAmt = 0;
+
+		for(let loopType in cmds) {
+			cmds[loopType] = cmds[loopType].sort();
+			let length = Object.keys(cmds[loopType]).length;
+			totalAmt += length;
+			helpMsg += `${framework.capitalizeEveryFirst(loopType)} Commands **(${length}):** `;
+			helpMsg += `\`${cmds[loopType].join("`**,** `")}\`\n\n`;
+		}
+
+		helpMsg += `All Commands - **${totalAmt}**`;
+		helpMsg += `\nUse \`advancedhelp\` to get a advanced list of commands, or \`cmdinfo\` to get a detailed description of one`;
+
+		return helpMsg;
 	}
-
-	var helpMsg = "", totalAmt = 0;
-
-	for(var loopType in cmds) {
-		cmds[loopType] = cmds[loopType].sort();
-		var length = Object.keys(cmds[loopType]).length;
-		totalAmt += length;
-		helpMsg += `${framework.capitalizeEveryFirst(loopType)} Commands **(${length}):** `;
-		helpMsg += `\`${cmds[loopType].join("`**,** `")}\`\n\n`;
-	}
-
-	helpMsg += `All Commands - **${totalAmt}**`;
-	helpMsg += `\nUse \`advancedhelp\` to get a advanced list of commands, or \`cmdinfo\` to get a detailed description of one`;
-
-	return helpMsg;
 }, {
 	type: "default",
-	aliases: ["cmds", "commands"],
-	description: "List all registered commands"
+	description: "List commands, or get info on a single one",
+	args: [{
+		type: "text",
+		label: "command",
+		optional: true
+	}]
 });
