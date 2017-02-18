@@ -25,14 +25,5 @@ bot.on("guildDelete", async guild => {
 		`Bots: ${botcount} - Percent: ${((botcount / guild.memberCount) * 100).toFixed(2)}`, "servers");
 	updateServerChannel();
 
-	if(bot.guilds.filter(gu => gu.members.has(owner.id)).length >= 1) {
-		let dm = await owner.getDMChannel();
-
-		dm.createMessage(`I was removed from your guild **${guild.name}**, and if it is not ` +
-				`too much to ask, I would greatly appreciate if you could inform me why` +
-				`I was removed, or how I can improve. You can do this by running \`oxyl feedback <message>\``)
-		.catch(err => err);
-	}
-
 	framework.clearGuildData(guild);
 });

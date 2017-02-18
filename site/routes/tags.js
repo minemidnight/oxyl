@@ -3,11 +3,11 @@ const express = require("express"),
 	handlebars = require("handlebars");
 const router = express.Router(); // eslint-disable-line new-cap
 
-const tagReq = Oxyl.cmdScripts.tags;
+const tags = Oxyl.modScripts.tagModule;
 router.get("/", async (req, res) => {
 	let data = { tags: [] };
-	for(let i of tagReq.sorted) {
-		let tag = tagReq.info[i];
+	for(let i of tags.sorted) {
+		let tag = tags.info[i];
 		let input = `${tag.in ? tag.in.startsWith("@%") ? tag.in.substring(2) : `{${i}:${tag.in}}` : `{${i}}`}`;
 		data.tags.push({
 			name: i,
@@ -22,10 +22,10 @@ router.get("/", async (req, res) => {
 	res.end();
 });
 
-handlebars.registerHelper("listtags", (tags) => {
+handlebars.registerHelper("listtags", taglist => {
 	let returnstr = "";
-	for(let tag in tags) {
-		tag = tags[tag];
+	for(let tag in taglist) {
+		tag = taglist[tag];
 		returnstr += `<tr class="w3-hover-notquiteblack">`;
 		returnstr += `<td>${tag.name}</td>`;
 		returnstr += `<td>${tag.usage}</td>`;

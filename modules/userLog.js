@@ -1,5 +1,3 @@
-const parseTag = Oxyl.cmdScripts.tags.parseTag;
-
 module.exports = async (guild, member, type) => {
 	try {
 		let channel = await framework.getSetting(guild, "userlog");
@@ -14,7 +12,7 @@ module.exports = async (guild, member, type) => {
 			argsPreserved: [""]
 		};
 
-		let parsed = await parseTag(tag, fakemsg);
+		let parsed = await Oxyl.modScripts.tagModule.executeTag(tag, fakemsg);
 		await bot.createMessage(channel, parsed);
 	} catch(err) {
 		return;
