@@ -1,4 +1,4 @@
-const music = require("../../modules/music.js");
+const music = Oxyl.modScripts.music;
 const ytReg = framework.config.options.music.youtubeRegex;
 
 let dfmlist = ["electro-hub", "chill-corner", "korean-madness",
@@ -18,12 +18,11 @@ async function dfmPlaylist(name, manager, voiceChannel) {
 		body = JSON.parse(body);
 
 		body.filter(video => video.service === "YouTubeVideo").forEach(video => {
-			manager.data.queue.push({
+			manager.addQueue({
 				id: video.identifier,
 				title: video.title,
 				duration: video.length
 			});
-			if(!manager.data.playing) manager.play();
 		});
 
 		return `:white_check_mark: Added discord.fm playlist \`${framework.capitalizeEveryFirst(name.replace(/-/g, " "))}\` to the queue`;
@@ -31,32 +30,38 @@ async function dfmPlaylist(name, manager, voiceChannel) {
 }
 
 async function playCmdProcess(message) {
-	let msg, query = message.argsPreserved[0];
+	let query = message.argsPreserved[0];
 	let type = music.ytType(query);
 
 	if(type === "NONE") {
-		msg = await message.channel.createMessage(`Searching \`${query}\` then playing result`);
-		let searched = await music.searchVideo(query);
+		let searched = await music.searchVideo(query, message.channel.guild.shard.id);
 
-		if(searched === "NO_RESULTS") {
-			return await msg.edit(`No results found`);
-		} else {
-			let info = await music.videoInfo(searched);
-			return await msg.edit(`Adding __${info.title}__ (<http://youtube.com/watch?v=${info.id}>) to **${message.channel.guild.name}**'s queue.`);
-		}
+		if(searched === "NO_RESULTS") return "No results found";
+		let info = await music.videoInfo(searched, message.channel.guild.shard.id);
+		return {
+			type: "video",
+			display: `__${info.title}__`,
+			info
+		};
 	} else if(type === "PLAYLIST") {
-		return await message.channel.createMessage(`Adding playlist to queue: \`${query}\``);
+		return {
+			type: "playlist",
+			display: "playlist",
+			id: music.ytID(query)
+		};
 	} else if(type === "VIDEO") {
-		msg = await message.channel.createMessage(`Getting video title of: \`${query}\``);
-		let info;
 		try {
-			info = await music.videoInfo(query);
-			return await msg.edit(`Adding __${info.title}__ (<http://youtube.com/watch?v=${info.id}>) to **${message.channel.guild.name}**'s queue.`);
+			var info = await music.videoInfo(query, message.channel.guild.shard.id);
+			return {
+				type: "video",
+				display: `__${info.title}__`,
+				info
+			};
 		} catch(err) {
-			return await msg.edit("Failed to get video info");
+			return "Invalid video ID";
 		}
 	} else {
-		return message.channel.sendMessage("Unknown error");
+		return "Unknown error";
 	}
 }
 
@@ -72,7 +77,7 @@ exports.cmd = new Oxyl.Command("play", async message => {
 	else if(!manager) manager = new music.Manager(message.channel.guild);
 
 	if(manager && manager.connection && !manager.voiceCheck(message.member)) {
-		return "You must be in the music channel to run this command";
+		return "You must be listening to music to use this command";
 	} else if(voiceChannel && !voiceChannel.permissionsOf(bot.user.id).has("voiceConnect")) {
 		return "I cannot join that channel (no permissions)";
 	} else if(voiceChannel && !voiceChannel.permissionsOf(bot.user.id).has("voiceSpeak")) {
@@ -80,12 +85,12 @@ exports.cmd = new Oxyl.Command("play", async message => {
 	} else if(message.args[0].startsWith("dfm:")) {
 		return await dfmPlaylist(message.args[0].substring(4), manager, voiceChannel);
 	} else {
-		let msg = await playCmdProcess(message);
-		var type = music.ytType(msg.content);
-		let id = music.ytID(msg.content);
-		if(id === "INVALID_URL" || type === "NONE") return "Unknown error";
+		await message.channel.sendTyping();
+		let data = await playCmdProcess(message);
+		if(typeof data === "string") return data;
 
-		await msg.edit(`${msg.content}\n\n*Reply with cancel in the next 10 seconds or the command will be processed, or continue to play now*`);
+		let msg = await message.channel.createMessage(`Adding ${data.display} to queue\n` +
+			`_Reply with cancel in the next 10 seconds or the command will be processed, or continue to play now_`);
 		let responses = await framework.awaitMessages(msg.channel, newMsg => {
 			if(newMsg.author.id !== message.author.id) return false;
 			else if(newMsg.content.toLowerCase() === "cancel") return true;
@@ -94,21 +99,12 @@ exports.cmd = new Oxyl.Command("play", async message => {
 		}, { maxMatches: 1, time: 10000 });
 
 		if(responses && responses.length >= 1 && responses[0].content.toLowerCase() === "cancel") {
-			msg.edit(`Cancelled play command`);
+			msg.edit("Cancelled play command");
 		} else {
-			if(!manager.connection) {
-				await manager.connect(voiceChannel);
-				manager.addQueue(id);
-			} else {
-				manager.addQueue(id);
-			}
+			if(!manager.connection) await manager.connect(voiceChannel);
+			manager.addQueue(data.info || data.id);
 
-			if(type === "PLAYLIST") {
-				msg.edit(`Added playlist to **${message.channel.guild.name}**'s queue`);
-			} else if(type === "VIDEO") {
-				let info = await music.videoInfo(id);
-				msg.edit(`Added __${info.title}__ to **${message.channel.guild.name}**'s queue`);
-			}
+			msg.edit(`Added ${data.display} to queue`);
 		}
 		return false;
 	}

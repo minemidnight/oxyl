@@ -5,7 +5,7 @@ exports.cmd = new Oxyl.Command("skip", async message => {
 	if(!manager) {
 		return "There is currently no music playing";
 	} else if(!manager.voiceCheck(message.member)) {
-		return "You must be in the music channel to run this command";
+		return "You must be listening to music to use this command";
 	} else {
 		let next = manager.data.queue[0];
 

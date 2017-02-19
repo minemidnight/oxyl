@@ -5,7 +5,7 @@ exports.cmd = new Oxyl.Command("purge", async message => {
 		setTimeout(() => msg.delete(), 3000);
 		return false;
 	} else {
-		message.delete();
+		await message.delete();
 		if(message.args[1]) {
 			let filterList = ["bots", "images", "files", "embeds", "includes", "contains", "links", "users", "from"];
 			let filtersActive = {};
@@ -55,9 +55,9 @@ exports.cmd = new Oxyl.Command("purge", async message => {
 	guildOnly: true,
 	type: "moderator",
 	aliases: ["prune"],
-	description: "Delete up to 2500 messages by all users or a list of users",
+	description: "Delete up to 2500 messages with optional filters",
 	args: [{
-		type: "text",
+		type: "int",
 		min: 1,
 		max: 2500,
 		label: "amount"

@@ -116,29 +116,35 @@ async function getTags(message, fullData, table = 0) {
 exports.getTags = getTags;
 
 async function executeTag(tag, message) {
-	tag = tag.CONTENT || tag;
-	message.tagVars = {};
-
 	let brackets = [(tag.match(/{/g) || []).length, (tag.match(/}/g) || []).length];
-	if(brackets[0] !== brackets[1]) throw new Error("Unmatched brackets");
+	if(brackets[0] !== brackets[1]) return "Unmatched brackets";
 
 	if(message.argsPreserved[0].toLowerCase().startsWith("test")) {
 		message.argsPreserved = [];
 	} else {
 		message.argsPreserved = message.argsPreserved[0].split(" ").splice(1);
 		message.argsPreserved = message.argsPreserved.map(ele => ele
-				.replace(/\u26FB|\u26FC/, "")
+				.replace(/(\u26FB|\u26FC)/, "")
+				.replace(/\|/g, `${framework.spStart}pipeUser${framework.spEnd}`)
 				.replace(/}/g, `${framework.spStart}lb${framework.spEnd}`)
 				.replace(/{/g, `${framework.spStart}rb${framework.spEnd}`));
 	}
+	message.tagVars = {};
 
 	try {
 		let result = await parseTag(tag, message);
+		result = result.toString()
+			.replace(/@here/g, "@\u200Bhere")
+			.replace(/\u26FBlb\u26FC/g, "{")
+			.replace(/\u26FBrb\u26FC/g, "}")
+			.replace(/\u26FB(pipe|pipeUser)\u26FC/g, "|")
+			.trim();
+
 		if(!result || result.length === 0) return `Tag result is an empty message`;
 		else if(result.length >= 2000) return `Tag result is over 2000 characters`;
 		else return result;
 	} catch(err) {
-		return err.message;
+		return err.stack || err.message;
 	}
 }
 exports.executeTag = executeTag;
@@ -153,6 +159,8 @@ async function parseTag(tag, message, resultArgs = []) {
 		} else if(char === "}") {
 			depth--;
 			if(depth === 0) subtags.push(tag.substring(startBracket, i + 1));
+		} else if(char === "|") {
+			if(depth > 1) tag = `${tag.substring(0, i)}${framework.spStart}pipe${framework.spEnd}${tag.substring(i + 1)}`;
 		}
 	}
 
@@ -170,12 +178,14 @@ async function parseTag(tag, message, resultArgs = []) {
 		}
 		tagName = tagName.toLowerCase();
 
-		if(!tagManager[tagName]) throw new Error(`Invalid tag: \`${tagName}\``);
-
+		if(!tagManager[tagName]) throw new Error(`Invalid sub-tag: \`{${tagName}}\``);
 		try {
 			for(let i in passedArgs) {
 				let arg = passedArgs[i];
-				if(arg.indexOf("{") !== -1 && arg.indexOf("}") !== -1) passedArgs[i] = await parseTag(arg, message);
+				if(arg.indexOf("{") !== -1 && arg.indexOf("}") !== -1) {
+					arg = arg.replace(/\u26FBpipe\u26FC/g, "|");
+					passedArgs[i] = await parseTag(arg, message);
+				}
 			}
 
 			if(resultArgs.length >= passedArgs.length && resultArgs.length >= 1) passedArgs = resultArgs;
@@ -187,21 +197,13 @@ async function parseTag(tag, message, resultArgs = []) {
 			else resultArgs = [];
 
 			if(typeof result === "string" && result.indexOf("{") !== -1 && result.indexOf("}") !== -1) result = await parseTag(result, message, resultArgs);
-			if(typeof result === "string") tag = tag.replace(originalSub, result);
+			if(typeof result === "string" && typeof tag === "string") tag = tag.replace(originalSub, result);
 			else tag = result;
 		} catch(err) {
 			if(typeof err === "object") throw err;
 			else if(message.tagVars.fallback) throw new Error(message.tagVars.fallback);
 			else throw new Error(`Error parsing at {\`${tagName}\`}\nMore Info: ${framework.codeBlock(err.stack || err)}`);
 		}
-	}
-
-	if(typeof tag === "string") {
-		tag = tag.replace(/@everyone/g, "@\u200Beveryone")
-		.replace(/@here/g, "@\u200Bhere")
-		.replace(/\u26FBlb\u26FC/g, "{")
-		.replace(/\u26FBrb\u26FC/g, "}")
-		.trim();
 	}
 
 	return tag;
@@ -234,12 +236,12 @@ const tagManager = {
 		run: async (args, message) => message.argsPreserved.length
 	},
 	author: {
-		return: "User who sent the message",
-		out: "{ Object User }",
+		return: "User who sent the message or user from event",
+		out: "{ User Object }",
 		run: async (args, message) => message.author
 	},
 	avatar: {
-		return: "User's avatar URL",
+		return: "Avatar URL of a user",
 		in: "{author}",
 		out: `"https://cdn.discordapp.com/avatars/..."`,
 		usage: "<Member/User Object>",
@@ -261,11 +263,11 @@ const tagManager = {
 	},
 	channel: {
 		return: "Current Channel",
-		out: "{ Object Channel }",
+		out: "{ Channel Object }",
 		run: async (args, message) => message.channel
 	},
 	charat: {
-		return: "Character at a certain place",
+		return: "Character at a certain index",
 		in: "hello|0",
 		out: `"h"`,
 		usage: "<String> <Number>",
@@ -303,36 +305,36 @@ const tagManager = {
 		}
 	},
 	floor: {
-		return: "Rounded down number",
+		return: "Number rounded down",
 		in: "3.7421",
 		out: "3",
 		usage: "<Number>",
 		run: async args => Math.floor(parseFloat(args[0]))
 	},
 	game: {
-		return: "Game of a member",
+		return: `Game of a member ("None" if not playing)`,
 		in: "{member}",
 		out: `"Rocket League"`,
 		usage: "<Member Object>",
 		run: async args => args[0].game ? args[0].game.name : "None"
 	},
 	getmember: {
-		return: "Member from ID (Only searches current guild)",
+		return: "Member from ID (only searches current guild)",
 		in: "155112606661607425",
-		out: "{ Object Member }",
+		out: "{ Member Object }",
 		usage: "<Member/User ID>",
 		run: async (args, message) => message.channel.guild.members.get(args[0])
 	},
 	getuser: {
-		return: "User from ID (Only searches current guild)",
+		return: "User from ID (only searches current guild)",
 		in: "155112606661607425",
-		out: "{ Object User }",
+		out: "{ User Object }",
 		usage: "<Member/User ID>",
 		run: async (args, message) => message.channel.guild.members.get(args[0]).user
 	},
 	guild: {
 		return: "Current Guild (server)",
-		out: "{ Object Guild }",
+		out: "{ Guild Object }",
 		run: async (args, message) => message.channel.guild
 	},
 	icon: {
@@ -444,7 +446,7 @@ const tagManager = {
 	},
 	member: {
 		return: "Guild member who sent the message (can get nickname from this, but not user)",
-		out: "{ Object Member }",
+		out: "{ Member Object }",
 		run: async (args, message) => message.member
 	},
 	memberjoinedat: {
@@ -623,7 +625,7 @@ const tagManager = {
 	},
 	user: {
 		return: "Alias for author -- user who sent message / user from event",
-		out: "{ Object User }",
+		out: "{ User Object }",
 		run: async (args, message) => message.author
 	},
 	username: {

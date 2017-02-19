@@ -5,7 +5,7 @@ exports.cmd = new Oxyl.Command("shuffle", async message => {
 	if(!manager) {
 		return "There is currently no music playing";
 	} else if(!manager.voiceCheck(message.member)) {
-		return "You must be in the music channel to run this command";
+		return "You must be listening to music to use this command";
 	} else {
 		let queue = manager.data.queue;
 		queue = queue.sort(() => 0.5 - Math.random());

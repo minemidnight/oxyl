@@ -116,8 +116,9 @@ exports.cmd = new Oxyl.Command("tag", async message => {
 		tags.createTag(createData);
 		return `Tag \`${name}\` created (type: \`${createData.type}\`)`;
 	} else if(msg.toLowerCase().startsWith("test")) {
-		if(!msg.substring(4).trim() || msg.substring(4).trim() === "") return "You must provide tag content to test";
-		return await tags.executeTag(msg.substring(4).trim(), message);
+		msg = msg.substring(4).trim();
+		if(!msg || msg === "") return "You must provide tag content to test";
+		return await tags.executeTag(msg, message);
 	} else if(msg.toLowerCase().startsWith("raw")) {
 		let name = msg.split(" ", 2)[1], tag;
 		if(!name) return "Please provide the name of the tag you'd like to see, `tag raw [name]`";
@@ -161,7 +162,7 @@ exports.cmd = new Oxyl.Command("tag", async message => {
 		}
 
 		tags.addUse(tag.TYPE, tag.NAME, message);
-		return await tags.executeTag(tag, message, false);
+		return await tags.executeTag(tag.CONTENT, message);
 	}
 }, {
 	guildOnly: true,

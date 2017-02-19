@@ -1,6 +1,6 @@
 const yt = require("ytdl-core"),
 	fs = require("fs");
-const ytKey = framework.config.private.googleKey;
+const ytKeys = framework.config.private.googleKeys;
 
 class MusicManager {
 	constructor(guild, extraData) {
@@ -88,30 +88,23 @@ class MusicManager {
 		else return member.voiceState.channelID === this.connection.channelID;
 	}
 
-	addQueue(id, data = {}) {
+	async addQueue(data, shard) {
 		let connection = this.connection;
 		if(!connection) return;
 
-		if(id.startsWith("http://") || id.startsWith("https://")) id = exports.ytID(id);
-		let type = exports.ytType(id);
-
-		if(type === "PLAYLIST") {
-			exports.playlistVideos(id).then(videos => {
-				for(let videoId of videos) {
-					this.addQueue(videoId);
-				}
-			});
-		} else if(type === "VIDEO") {
-			exports.videoInfo(id).then(info => {
-				this.data.queue.push(info);
-				if(!this.data.playing) this.play();
-			});
+		if(typeof data === "object") {
+			this.data.queue.push(data);
+		} else {
+			let videos = await exports.playlistVideos(data, shard);
+			for(let video of videos) this.addQueue(video);
 		}
+		if(!this.data.playing) this.play();
 	}
 
 	play() {
 		let connection = this.connection;
 		if(!connection) return;
+		else if(!connection.ready) return;
 
 		if(!this.data.playing && this.connection.playing) {
 			this.connection.stopPlaying();
@@ -162,18 +155,14 @@ class MusicManager {
 		let connection = this.connection;
 		if(!connection) return;
 
-		let error = err => this.sendEmbed("error", err);
-		let end = () => {
+		connection.on("error", err => this.sendEmbed("error", err));
+		connection.on("end", () => {
 			if(this.data.extraOptions.repeat) this.data.queue.push(this.data.playing);
 			if(this.data.queue.length <= 0) this.end();
 			else setTimeout(() => this.play(), 750);
-		};
+		});
 
-		connection.on("error", error);
-		connection.on("end", end);
 		connection.once("disconnect", () => {
-			connection.removeListener("error", error);
-			connection.removeListener("end", end);
 			delete this.connection;
 		});
 	}
@@ -186,7 +175,7 @@ class MusicManager {
 
 		if(type === "playing") {
 			embed = {
-				title: "Now playing :arrow_forward:",
+				title: "▶ Now playing",
 				description: `[**${data.title}**](http://youtube.com/watch?v=${data.id}) (${exports.getDuration(data.duration)})`,
 				color: 0xFF0000,
 				image: { url: `https://i.ytimg.com/vi/${data.id}/hqdefault.jpg` }
@@ -194,14 +183,14 @@ class MusicManager {
 		} else if(type === "error") {
 			if(!data) return false;
 			embed = {
-				title: "Recieved Error :warning:",
+				title: "⚠ Recieved Error",
 				color: 0xF1C40F,
 				description: data.stack || data,
 				footer: { text: "Please report this to the Support Server if it is a bot issue" }
 			};
 		} else if(type === "restart") {
 			embed = {
-				title: "Oxyl Restarting :gear:",
+				title: "⚙ Oxyl Restarting",
 				color: 0xAED6F1,
 				description: "Oxyl is restarting. Your music will be paused then start playing again, from the start of the current song. This is intentional."
 			};
@@ -274,8 +263,8 @@ exports.isReady = () => {
 
 exports.ytType = id => {
 	if(id.includes("http://") || id.includes("https://")) id = exports.ytID(id);
-	if(id.length === 11 && id !== id.toLowerCase()) return "VIDEO";
-	else if((id.startsWith("PL") || id.length === 34 || id.length === 32) && id !== id.toLowerCase()) return "PLAYLIST";
+	if(id.length === 11 && id !== id.toLowerCase() && !id.includes(" ")) return "VIDEO";
+	else if(id.startsWith("PL") && (id.length === 34 || id.length === 32) && id !== id.toLowerCase() && !id.includes(" ")) return "PLAYLIST";
 	else return "NONE";
 };
 
@@ -285,9 +274,9 @@ exports.ytID = url => {
 	else return "INVALID_URL";
 };
 
-exports.searchVideo = async (query) => {
+exports.searchVideo = async (query, shard) => {
 	let url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1` +
-		`&type=video&q=${escape(query)}&key=${ytKey}`;
+		`&type=video&q=${escape(query)}&key=${ytKeys[shard]}`;
 
 	let body = await framework.getContent(url);
 	if(body.indexOf("videoId") >= 0) {
@@ -298,28 +287,24 @@ exports.searchVideo = async (query) => {
 	}
 };
 
-exports.playlistVideos = async (id, page = "", videos = []) => {
-	if(id.startsWith("http://") || id.startsWith("https://")) id = exports.ytID(id);
-	let url = `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${id}&maxResults=50&part=snippet` +
-		`&nextPageToken&pageToken=${page}&fields=nextPageToken,items(snippet(resourceId(videoId)))&key=${ytKey}`;
+exports.playlistVideos = async (id, page = "", videos = [], shard) => {
+	let url = `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${id}&maxResults=50&part=contentDetails` +
+		`&nextPageToken&pageToken=${page}&fields=nextPageToken,items(contentDetails(videoId))&key=${ytKeys[shard]}`;
 
 	let body = await framework.getContent(url);
-
 	body = JSON.parse(body);
-	let items = body.items;
-
-	for(var i = 0; i < items.length; i++) {
-		videos.push(items[i].snippet.resourceId.videoId);
+	for(let item of body.items) {
+		videos.push(exports.videoInfo(item.contentDetails.videoId, shard));
 	}
 
-	if(body.nextPageToken) return await exports.playlistVideos(id, body.nextPageToken, videos);
-	else return videos;
+	if(body.nextPageToken) return await exports.playlistVideos(id, body.nextPageToken, videos, shard);
+	videos = await Promise.all(videos);
+	return videos;
 };
 
-exports.videoInfo = async (id) => {
-	if(id.startsWith("http://") || id.startsWith("https://")) id = exports.ytID(id);
+exports.videoInfo = async (id, shard) => {
 	let url = `https://www.googleapis.com/youtube/v3/videos?id=${id}&part=snippet,` +
-		`contentDetails&fields=items(snippet(title),contentDetails(duration))&key=${ytKey}`;
+		`contentDetails&fields=items(snippet(title),contentDetails(duration))&key=${ytKeys[shard]}`;
 
 	let body = await framework.getContent(url);
 	body = JSON.parse(body).items[0];

@@ -5,7 +5,7 @@ exports.cmd = new Oxyl.Command("end", async message => {
 	if(!manager) {
 		return "There is currently no music playing";
 	} else if(!manager.voiceCheck(message.member)) {
-		return "You must be in the music channel to run this command";
+		return "You must be listening to music to use this command";
 	} else {
 		manager.end();
 		return "Music stopped :stop_button:";

@@ -6,6 +6,8 @@ exports.cmd = new Oxyl.Command("jump", async message => {
 
 	if(!manager) {
 		return "There is currently no music playing";
+	} else if(!manager.voiceCheck(message.member)) {
+		return "You must be listening to music to use this command";
 	} else {
 		let queue = manager.data.queue;
 		if(!queue || queue.length === 0) return "There is nothing queued";

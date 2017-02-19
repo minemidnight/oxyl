@@ -1,3 +1,4 @@
+const commands = Oxyl.commands;
 const prefixes = exports.prefixes = {};
 const musicchannels = exports.musicchannels = {};
 const blacklist = exports.blacklist = [];
@@ -32,14 +33,12 @@ exports.updateThings = async () => {
 	});
 };
 
-const bot = Oxyl.bot,
-	commands = Oxyl.commands;
-
 bot.on("messageCreate", async (message) => {
 	Oxyl.siteScripts.website.messageCreate(message);
-	if(message.author.bot || blacklist.indexOf(message.author.id) !== -1) return;
 	let guild = message.channel.guild;
 	let msg = message.content.toLowerCase();
+	if(message.author.bot || blacklist.indexOf(message.author.id) !== -1) return;
+	else if(ignored.indexOf(message.channel.id) !== -1 && framework.guildLevel(message.member) < 3) return;
 
 	let prefix = "^(o!|oxyl|<@!?255832257519026178>|<:oxyl_square:273616293775540224>|<:oxyl:273616986121043968>{GPRE}),?(?:\\s+)?([\\s\\S]+)";
 	if(guild && prefixes[guild.id]) prefix = prefix.replace("{GPRE}", `|${framework.escapeRegex(prefixes[guild.id])}`);
@@ -48,7 +47,6 @@ bot.on("messageCreate", async (message) => {
 
 	let match = message.content.match(prefix);
 	if(match && match[2]) {
-		console.log("match");
 		let type = match[1];
 		message.content = match[2];
 
@@ -59,31 +57,42 @@ bot.on("messageCreate", async (message) => {
 			msg = message.contentPreserved.toLowerCase();
 			message.content = msg;
 		} else if(guild) {
-			console.log("no cmd");
+			if(guild && guild.id === "254768930223161344") console.log("yes guild checking for custom");
+			msg = message.content.toLowerCase();
 			let cmdCheck;
 			if(msg.indexOf(" ") === -1) cmdCheck = msg;
 			else cmdCheck = msg.substring(0, msg.indexOf(" "));
+			if(guild && guild.id === "254768930223161344") console.log(cmdCheck);
 
-			console.log(cmdCheck);
 			let cc = await framework.getCC(message.channel.guild.id, cmdCheck);
+			if(guild && guild.id === "254768930223161344") console.log(cc);
 			if(!cc) return;
+
+			message.contentPreserved = message.content.substring(cmdCheck.length, message.content.length).trim();
+			msg = message.contentPreserved.toLowerCase();
+			message.content = msg;
 
 			try {
 				var tag = await Oxyl.modScripts.tagModule.getTag(cc, message);
+				Oxyl.modScripts.tagModule.addUse(tag.TYPE, tag.NAME, message);
+				var tagresult = await Oxyl.modScripts.tagModule.executeTag(tag.CONTENT, message);
+				if(guild && guild.id === "254768930223161344") console.log(tagresult);
 			} catch(err) {
+				console.log("error!", err.stack || err);
 				return;
 			}
 
-			try {
-				Oxyl.modScripts.tagModule.addUse(tag.TYPE, tag.NAME, message);
-				let result = await Oxyl.modScripts.tagModule.executeTag(tag, message, false);
-				message.channel.createMessage(result);
-			} catch(err) {
-				message.channel.createMessage(err.messaege);
-			}
-			return;
+			command = {
+				name: cmdCheck,
+				onCooldown: () => false,
+				run: async msg2 => tagresult,
+				type: "custom",
+				description: "Custom Command",
+				cooldowns: {},
+				usage: "[]",
+				args: []
+			};
 		} else {
-			console.log("no guild?");
 			return;
 			// if(!type.match(/<@!?255832257519026178>/)) return;
 			// message.channel.sendTyping();
@@ -105,13 +114,11 @@ bot.on("messageCreate", async (message) => {
 	if(command.onCooldown(message.author)) {
 		message.channel.createMessage(`This command is on cooldown for you.`);
 		return;
-	} else if((command.guildOnly || command.perm || command.type === "admin" || command.type === "music") && !guild) {
+	} else if((command.guildOnly || command.perm) && !guild) {
 		message.channel.createMessage(`This command can only be use in guilds (servers).`);
 		return;
 	} else if(command.type === "creator" && !framework.config.creators.includes(message.author.id)) {
 		message.channel.createMessage(`Only creators of Oxyl can use this command.`);
-		return;
-	} else if(ignored.indexOf(message.channel.id) !== -1 && framework.guildLevel(message.member) < 3) {
 		return;
 	} else if(command.type === "admin" && framework.guildLevel(message.member) < 3) {
 		message.channel.createMessage(`Only the guld owner, or users with the ADMINISTRATOR permission can use this command.`);
@@ -141,40 +148,43 @@ bot.on("messageCreate", async (message) => {
 			if(typeof ele === "string") return ele.toLowerCase();
 			else return ele;
 		});
-
-		try {
-			console.log(`${command.name} in ${guild ? guild.name : "DM"} by ${framework.unmention(message.author)}: ${message.contentPreserved || "no args"}`);
-			var result = await command.run(message);
-
-			msg = { content: "" };
-			let file;
-
-			if(Array.isArray(result)) {
-				msg.content = result[0];
-				file = result[1];
-			} else if(typeof result === "object") {
-				msg = result;
-			} else if(result) {
-				msg.content = result;
-			} else {
-				msg = false;
-			}
-
-			if(msg) {
-				if(msg.content) msg.content = msg.content.substring(0, 2000);
-				try {
-					var resultmsg = await message.channel.createMessage(msg, file || null);
-				} catch(err) {
-					message.channel.createMessage("Error sending message");
-				}
-			}
-		} catch(error) {
-			framework.consoleLog(`Failed command ${command.name} (${command.type})\n` +
-				`**Error:** ${framework.codeBlock(error.stack || error)}`, "debug");
-			message.channel.createMessage("Bot error when executing command, error sent to Support Server");
-		}
 	} catch(err) {
 		message.channel.createMessage(err.message);
+		return;
+	}
+
+	try {
+		console.log(`${command.name} in ${guild ? guild.name : "DM"} by ${framework.unmention(message.author)}: ${message.contentPreserved || "no args"}`);
+		if(guild && guild.id === "254768930223161344") console.log(command);
+		var result = await command.run(message);
+		if(guild && guild.id === "254768930223161344") console.log(result);
+
+		msg = { content: "" };
+		let file;
+
+		if(Array.isArray(result)) {
+			msg.content = result[0];
+			file = result[1];
+		} else if(typeof result === "object") {
+			msg = result;
+		} else if(result) {
+			msg.content = result;
+		} else {
+			msg = false;
+		}
+
+		if(msg) {
+			if(msg.content) msg.content = msg.content.substring(0, 2000);
+			try {
+				var resultmsg = await message.channel.createMessage(msg, file || null);
+			} catch(err) {
+				message.channel.createMessage("Error sending message");
+			}
+		}
+	} catch(error) {
+		framework.consoleLog(`Failed command ${command.name} (${command.type})\n` +
+				`**Error:** ${framework.codeBlock(error.stack || error)}`, "debug");
+		message.channel.createMessage("Bot error when executing command, error sent to Support Server");
 	}
 });
 

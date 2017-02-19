@@ -1,5 +1,5 @@
 const googl = require("goo.gl");
-googl.setKey(framework.config.private.googleKey);
+googl.setKey(framework.config.private.googleKeys[0]);
 
 exports.cmd = new Oxyl.Command("shorten", async message => {
 	message.channel.sendTyping();
