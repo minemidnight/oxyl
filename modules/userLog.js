@@ -9,7 +9,8 @@ module.exports = async (guild, member, type) => {
 			author: member.user,
 			member: member,
 			channel: guild.channels.get(channel),
-			argsPreserved: [""]
+			argsPreserved: [""],
+			tagOwner: guild.id
 		};
 
 		let parsed = await Oxyl.modScripts.tagModule.executeTag(tag, fakemsg);

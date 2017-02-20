@@ -118,6 +118,7 @@ exports.cmd = new Oxyl.Command("tag", async message => {
 	} else if(msg.toLowerCase().startsWith("test")) {
 		msg = msg.substring(4).trim();
 		if(!msg || msg === "") return "You must provide tag content to test";
+		message.tagOwner = message.author.id;
 		return await tags.executeTag(msg, message);
 	} else if(msg.toLowerCase().startsWith("raw")) {
 		let name = msg.split(" ", 2)[1], tag;
@@ -161,6 +162,7 @@ exports.cmd = new Oxyl.Command("tag", async message => {
 			return "No tag found";
 		}
 
+		message.tagOwner = tag.CREATOR;
 		tags.addUse(tag.TYPE, tag.NAME, message);
 		return await tags.executeTag(tag.CONTENT, message);
 	}

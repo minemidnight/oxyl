@@ -7,7 +7,7 @@ exports.cmd = new Oxyl.Command("purge", async message => {
 	} else {
 		await message.delete();
 		if(message.args[1]) {
-			let filterList = ["bots", "images", "files", "embeds", "includes", "contains", "links", "users", "from"];
+			let filterList = ["bots", "images", "files", "embeds", "includes", "contains", "links", "users", "from", "matches"];
 			let filtersActive = {};
 			let filters = message.args[1].split(",").map(filter => filter.toLowerCase().trim());
 			for(let filter of filters) {
@@ -30,6 +30,8 @@ exports.cmd = new Oxyl.Command("purge", async message => {
 					filtersActive.users = users;
 				} else if(filterName === "includes" || filterName === "contains") {
 					filtersActive.includes = filter.substring(filterName.length).trim();
+				} else if(filterName === "matches") {
+					filtersActive.matches = filter.substring(filterName.length).trim();
 				} else {
 					filtersActive[filterName] = true;
 				}
@@ -43,6 +45,7 @@ exports.cmd = new Oxyl.Command("purge", async message => {
 				else if(filtersActive.users && filtersActive.users.includes(msg.author.id)) return true;
 				else if(filtersActive.includes && message.content.toLowerCase().includes(filtersActive.includes)) return true;
 				else if(filtersActive.links && message.content.test(new RegExp(framework.config.options.linkFilter))) return true;
+				else if(filtersActive.matches && message.content.match(new RegExp(filtersActive.matches, "im"))) return true;
 				else return false;
 			});
 		} else {
@@ -64,6 +67,6 @@ exports.cmd = new Oxyl.Command("purge", async message => {
 	}, {
 		type: "custom",
 		optional: true,
-		label: "filters (bots, images, files, embeds, links, from <users...>, includes <text>)"
+		label: "filters (bots, images, files, embeds, links, from <users...>, includes <text>, matches <regex>)"
 	}]
 });

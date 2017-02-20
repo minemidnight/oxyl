@@ -37,8 +37,8 @@ bot.on("messageCreate", async (message) => {
 	Oxyl.siteScripts.website.messageCreate(message);
 	let guild = message.channel.guild;
 	let msg = message.content.toLowerCase();
-	if(message.author.bot || blacklist.indexOf(message.author.id) !== -1) return;
-	else if(ignored.indexOf(message.channel.id) !== -1 && framework.guildLevel(message.member) < 3) return;
+	if(message.author.bot || blacklist.includes(message.author.id)) return;
+	else if(ignored.includes(message.channel.id) && framework.guildLevel(message.member) < 3) return;
 
 	let prefix = "^(o!|oxyl|<@!?255832257519026178>|<:oxyl_square:273616293775540224>|<:oxyl:273616986121043968>{GPRE}),?(?:\\s+)?([\\s\\S]+)";
 	if(guild && prefixes[guild.id]) prefix = prefix.replace("{GPRE}", `|${framework.escapeRegex(prefixes[guild.id])}`);
@@ -57,15 +57,12 @@ bot.on("messageCreate", async (message) => {
 			msg = message.contentPreserved.toLowerCase();
 			message.content = msg;
 		} else if(guild) {
-			if(guild && guild.id === "254768930223161344") console.log("yes guild checking for custom");
 			msg = message.content.toLowerCase();
 			let cmdCheck;
 			if(msg.indexOf(" ") === -1) cmdCheck = msg;
 			else cmdCheck = msg.substring(0, msg.indexOf(" "));
-			if(guild && guild.id === "254768930223161344") console.log(cmdCheck);
 
 			let cc = await framework.getCC(message.channel.guild.id, cmdCheck);
-			if(guild && guild.id === "254768930223161344") console.log(cc);
 			if(!cc) return;
 
 			message.contentPreserved = message.content.substring(cmdCheck.length, message.content.length).trim();
@@ -74,23 +71,23 @@ bot.on("messageCreate", async (message) => {
 
 			try {
 				var tag = await Oxyl.modScripts.tagModule.getTag(cc, message);
-				Oxyl.modScripts.tagModule.addUse(tag.TYPE, tag.NAME, message);
-				var tagresult = await Oxyl.modScripts.tagModule.executeTag(tag.CONTENT, message);
-				if(guild && guild.id === "254768930223161344") console.log(tagresult);
 			} catch(err) {
-				console.log("error!", err.stack || err);
 				return;
 			}
 
 			command = {
 				name: cmdCheck,
 				onCooldown: () => false,
-				run: async msg2 => tagresult,
+				run: async msg2 => {
+					message.tagOwner = tag.CREATOR;
+					Oxyl.modScripts.tagModule.addUse(tag.TYPE, tag.NAME, msg2);
+					return await Oxyl.modScripts.tagModule.executeTag(tag.CONTENT, msg2);
+				},
 				type: "custom",
 				description: "Custom Command",
 				cooldowns: {},
-				usage: "[]",
-				args: []
+				usage: "[text]",
+				args: [{ type: "text", optional: "true" }]
 			};
 		} else {
 			return;
@@ -155,9 +152,7 @@ bot.on("messageCreate", async (message) => {
 
 	try {
 		console.log(`${command.name} in ${guild ? guild.name : "DM"} by ${framework.unmention(message.author)}: ${message.contentPreserved || "no args"}`);
-		if(guild && guild.id === "254768930223161344") console.log(command);
 		var result = await command.run(message);
-		if(guild && guild.id === "254768930223161344") console.log(result);
 
 		msg = { content: "" };
 		let file;

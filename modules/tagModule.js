@@ -119,9 +119,9 @@ async function executeTag(tag, message) {
 	let brackets = [(tag.match(/{/g) || []).length, (tag.match(/}/g) || []).length];
 	if(brackets[0] !== brackets[1]) return "Unmatched brackets";
 
-	if(message.argsPreserved[0].toLowerCase().startsWith("test")) {
+	if(message.argsPreserved.length >= 1 && message.argsPreserved[0].toLowerCase().startsWith("test")) {
 		message.argsPreserved = [];
-	} else {
+	} else if(message.argsPreserved.length >= 1) {
 		message.argsPreserved = message.argsPreserved[0].split(" ").splice(1);
 		message.argsPreserved = message.argsPreserved.map(ele => ele
 				.replace(/(\u26FB|\u26FC)/, "")
@@ -634,6 +634,28 @@ const tagManager = {
 		out: `"minemidnight"`,
 		usage: "<Member/User Object>",
 		run: async args => args[0].user ? args[0].user.username : args[0].username
+	},
+	var: {
+		return: "A variable (must be set before using). Variables are shared throughout all tags owned by a user",
+		in: "@%{var:uid|{id:{author}}} {var:uid}",
+		out: `"155112606661607425"`,
+		usage: "<String> [New Value (string)]",
+		run: async (args, message) => {
+			let tagVar = await framework.dbQuery(`SELECT * FROM \`TagVars\` WHERE ` +
+				`\`AUTHOR\` = '${message.tagOwner}' AND \`NAME\` = ${framework.sqlEscape(args[0])}`);
+			if(args[1]) {
+				if(!tagVar) {
+					framework.dbQuery(`INSERT INTO \`TagVars\`(\`NAME\`, \`AUTHOR\`, \`VALUE\`) VALUES ` +
+						`(${framework.sqlEscape(args[0])},'${message.tagOwner}',${framework.sqlEscape(args[1])})`);
+				} else {
+					framework.dbQuery(`UPDATE \`TagVars\` SET \`VALUE\`=${framework.sqlEscape(args[1])} ` +
+						`WHERE \`AUTHOR\` = '${message.tagOwner}' AND \`NAME\` = ${framework.sqlEscape(args[0])}`);
+				}
+				return false;
+			} else {
+				return tagVar[0] ? tagVar[0].VALUE : undefined;
+			}
+		}
 	}
 };
 module.exports.info = tagManager;

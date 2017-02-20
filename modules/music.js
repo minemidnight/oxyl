@@ -88,23 +88,33 @@ class MusicManager {
 		else return member.voiceState.channelID === this.connection.channelID;
 	}
 
-	async addQueue(data, shard) {
+	async addQueue(data) {
 		let connection = this.connection;
 		if(!connection) return;
 
 		if(typeof data === "object") {
 			this.data.queue.push(data);
 		} else {
-			let videos = await exports.playlistVideos(data, shard);
-			for(let video of videos) this.addQueue(video);
+			let type = exports.ytType(data);
+			if(type === "PLAYLIST") {
+				let videos = await exports.playlistVideos(data, this.guild.shard.id);
+				for(let video of videos) this.data.queue.push(video);
+			} else if(type === "VIDEO") {
+				this.data.queue.push(await exports.videoInfo(exports.ytID(data), this.guild.shard.id));
+			} else {
+				return;
+			}
 		}
 		if(!this.data.playing) this.play();
 	}
 
-	play() {
+	async play() {
 		let connection = this.connection;
-		if(!connection) return;
-		else if(!connection.ready) return;
+		if(!connection) {
+			return;
+		} else if(!connection.ready) {
+			await connectionReady(connection);
+		}
 
 		if(!this.data.playing && this.connection.playing) {
 			this.connection.stopPlaying();
@@ -140,15 +150,7 @@ class MusicManager {
 		let connection = await bot.joinVoiceChannel(channelID);
 		this.connection = connection;
 		this.addListeners();
-		return new Promise((resolve, reject) => {
-			if(connection.ready) {
-				resolve(connection);
-			} else {
-				connection.once("ready", () => {
-					resolve(connection);
-				});
-			}
-		});
+		return await connectionReady(connection);
 	}
 
 	addListeners() {
@@ -159,7 +161,7 @@ class MusicManager {
 		connection.on("end", () => {
 			if(this.data.extraOptions.repeat) this.data.queue.push(this.data.playing);
 			if(this.data.queue.length <= 0) this.end();
-			else setTimeout(() => this.play(), 750);
+			else setTimeout(() => this.play(), 250);
 		});
 
 		connection.once("disconnect", () => {
@@ -201,6 +203,13 @@ class MusicManager {
 }
 exports.Manager = MusicManager;
 
+function connectionReady(connection) {
+	return new Promise((resolve, reject) => {
+		if(connection.ready) resolve(connection);
+		else connection.once("ready", () => resolve(connection));
+	});
+}
+
 exports.getManager = (guild) => {
 	if(guild.id) guild = guild.id;
 	return Oxyl.managers[guild];
@@ -210,11 +219,8 @@ exports.getDuration = (seconds) => {
 	if(seconds >= 3600) var hours = Math.floor(seconds / 3600);
 	var mins = Math.floor(seconds % 3600 / 60);
 	var secs = Math.floor(seconds % 60);
-	if(mins < 10) {
-		mins = `0${mins}`;
-	} if(secs < 10) {
-		secs = `0${secs}`;
-	}
+	if(mins < 10) mins = `0${mins}`;
+	if(secs < 10) secs = `0${secs}`;
 
 	if(hours) return `${hours}:${mins}:${secs}`;
 	else return `${mins}:${secs}`;
@@ -287,7 +293,7 @@ exports.searchVideo = async (query, shard) => {
 	}
 };
 
-exports.playlistVideos = async (id, page = "", videos = [], shard) => {
+exports.playlistVideos = async (id, shard, page = "", videos = []) => {
 	let url = `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${id}&maxResults=50&part=contentDetails` +
 		`&nextPageToken&pageToken=${page}&fields=nextPageToken,items(contentDetails(videoId))&key=${ytKeys[shard]}`;
 
@@ -297,7 +303,7 @@ exports.playlistVideos = async (id, page = "", videos = [], shard) => {
 		videos.push(exports.videoInfo(item.contentDetails.videoId, shard));
 	}
 
-	if(body.nextPageToken) return await exports.playlistVideos(id, body.nextPageToken, videos, shard);
+	if(body.nextPageToken) return await exports.playlistVideos(id, shard, body.nextPageToken, videos);
 	videos = await Promise.all(videos);
 	return videos;
 };

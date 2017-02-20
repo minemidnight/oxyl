@@ -16,7 +16,7 @@ exports.cmd = new Oxyl.Command("customcommand", async message => {
 	}
 }, {
 	guildOnly: true,
-	type: "default",
+	type: "admin",
 	description: "Toggle a custom command which executes a tag",
 	aliases: ["cc"],
 	args: [{

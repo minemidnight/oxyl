@@ -51,7 +51,7 @@ async function playCmdProcess(message) {
 		};
 	} else if(type === "VIDEO") {
 		try {
-			var info = await music.videoInfo(query, message.channel.guild.shard.id);
+			let info = await music.videoInfo(music.ytID(query), message.channel.guild.shard.id);
 			return {
 				type: "video",
 				display: `__${info.title}__`,
