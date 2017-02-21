@@ -118,7 +118,7 @@ bot.on("messageCreate", async (message) => {
 		message.channel.createMessage(`Only creators of Oxyl can use this command.`);
 		return;
 	} else if(command.type === "admin" && framework.guildLevel(message.member) < 3) {
-		message.channel.createMessage(`Only the guld owner, or users with the ADMINISTRATOR permission can use this command.`);
+		message.channel.createMessage(`Only the guild owner, or users with the ADMINISTRATOR permission can use this command.`);
 		return;
 	} else if(command.type === "music" && musicchannels[guild.id] && musicchannels[guild.id].id !== message.channel.id) {
 		message.channel.createMessage("You cannot use music commands in this channel.");
