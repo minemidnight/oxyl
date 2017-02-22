@@ -22,7 +22,7 @@ router.get("*", async (req, res) => {
 		guild.botPercent = ((guild.botCount / guild.memberCount) * 100).toFixed(2);
 		guild.userCount = guild.memberCount - guild.botCount;
 		guild.userPercent = ((guild.userCount / guild.memberCount) * 100).toFixed(2);
-		if(punishments) data.punishments = await Oxyl.modScripts.modLog.getCases(guild);
+		data.punishments = await Oxyl.modScripts.modLog.getCases(guild);
 		data.guild = guild;
 
 		if(main.tokens[req.sessionID]) {

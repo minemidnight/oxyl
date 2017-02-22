@@ -41,8 +41,17 @@ exports.cmd = new Oxyl.Command("help", async message => {
 			helpMsg += `\`${cmds[loopType].join("`**,** `")}\`\n\n`;
 		}
 
+		if(message.channel.guild) {
+			let customs = await framework.dbQuery(`SELECT \`COMMAND\` FROM \`CustomCommands\` WHERE \`GUILD\` = '${message.channel.guild.id}'`);
+			if(customs && customs.length >= 1) {
+				customs = customs.map(cmd => cmd.COMMAND).sort();
+				helpMsg += `Custom Commands **(${customs.length}):** `;
+				helpMsg += `\`${customs.join("`**,** `")}\`\n\n`;
+			}
+		}
+
 		helpMsg += `All Commands - **${totalAmt}**`;
-		helpMsg += `\nUse \`advancedhelp\` to get a advanced list of commands, or \`cmdinfo\` to get a detailed description of one`;
+		helpMsg += `\nUse \`advancedhelp\` to get a detailed list of commands, or \`help <cmd>\` to get info on one`;
 
 		return helpMsg;
 	}

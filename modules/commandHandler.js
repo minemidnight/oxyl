@@ -68,6 +68,7 @@ bot.on("messageCreate", async (message) => {
 			message.contentPreserved = message.content.substring(cmdCheck.length, message.content.length).trim();
 			msg = message.contentPreserved.toLowerCase();
 			message.content = msg;
+			console.log(message.contentPreserved, msg);
 
 			try {
 				var tag = await Oxyl.modScripts.tagModule.getTag(cc, message);
@@ -86,7 +87,6 @@ bot.on("messageCreate", async (message) => {
 				type: "custom",
 				description: "Custom Command",
 				cooldowns: {},
-				usage: "[text]",
 				args: [{ type: "text", optional: "true" }]
 			};
 		} else {

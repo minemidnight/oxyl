@@ -61,6 +61,9 @@
 		<header class="w3-container">
 			<span class="w3-btn w3-black w3-round-jumbo w3-large w3-hide-large" style="position:fixed;left:20px;top:20px;z-index:5" onclick="toggleNav()">&#9776;</span>
 			<h1 class="w3-clear w3-jumbo w3-margin-0">Guild Analytics</h1>
+			{{#if punishments}}
+				<a class="w3-btn" style="position:absolute;right:15px;top:15px" href="/punishments">Guild Punishments</a>
+			{{/if}}
 		</header>
 
 		{{#if guild}}

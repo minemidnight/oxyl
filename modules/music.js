@@ -275,8 +275,10 @@ exports.ytType = id => {
 };
 
 exports.ytID = url => {
-	var match = url.match(framework.config.options.music.youtubeRegex);
+	let match = url.match(framework.config.options.music.youtubeRegex);
 	if(match && match[1]) return match[1];
+	else if(url.length === 11 && url !== url.toLowerCase() && !url.includes(" ")) return url;
+	else if(url.startsWith("PL") && (url.length === 34 || url.length === 32) && url !== url.toLowerCase() && !url.includes(" ")) return url;
 	else return "INVALID_URL";
 };
 
