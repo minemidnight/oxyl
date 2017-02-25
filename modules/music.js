@@ -1,7 +1,7 @@
-const fs = require("fs");
-const ProviderData = require("../modules/musicProviders.js");
+const fs = require("fs"),
+	Vibrant = require("node-vibrant"),
+	ProviderData = require("../modules/musicProviders.js");
 const providers = exports.providers = new ProviderData();
-console.log(providers);
 
 class MusicManager {
 	constructor(guild, extraData) {
@@ -153,7 +153,7 @@ class MusicManager {
 		connection.once("disconnect", () => delete this.connection);
 	}
 
-	sendEmbed(type, data) {
+	async sendEmbed(type, data) {
 		if(!Oxyl.modScripts.commandHandler.musicchannels[this.id]) return false;
 		if(this.connection) {
 			let vm = this.guild.channels.get(this.connection.channelID).voiceMembers.filter(member => !member.user.bot).length;
@@ -162,11 +162,14 @@ class MusicManager {
 
 		let embed;
 		if(type === "playing") {
+			let thumbnail = data.thumbnail || `https://i.ytimg.com/vi/${data.id}/hqdefault.jpg`;
+			let color = await getVibrant(thumbnail);
+
 			embed = {
 				title: "▶ Now playing",
 				description: `**${data.title}** (${providers.durationFormat(data.duration)})`,
-				color: 0xFF0000,
-				image: { url: data.service === "sc" ? data.thumbnail : `https://i.ytimg.com/vi/${data.id}/hqdefault.jpg` },
+				color: color,
+				image: { url: thumbnail },
 				footer: { text: `ID: ${data.id}` }
 			};
 		} else if(type === "error") {
@@ -189,6 +192,17 @@ class MusicManager {
 	}
 }
 exports.Manager = MusicManager;
+
+function getVibrant(image) {
+	return new Promise((resolve, reject) => {
+		Vibrant.from(image).getPalette((err, result) => {
+			if(err) return resolve(0xFF0000);
+			let color = result.Vibrant.rgb;
+			color = (color[0] << 16) + (color[1] << 8) + color[2];
+			return resolve(parseInt(color, 10));
+		});
+	});
+}
 
 function connectionReady(connection) {
 	return new Promise((resolve, reject) => {

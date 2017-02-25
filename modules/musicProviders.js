@@ -83,12 +83,8 @@ class ProviderData {
 			`&type=video&q=${escape(query)}&key=${ytKeys[shard]}`;
 
 		let body = await framework.getContent(url);
-		if(body.indexOf("videoId") >= 0) {
-			body = JSON.parse(body).items[0].id.videoId;
-			return body;
-		} else {
-			return "NO_RESULTS";
-		}
+		if(body.indexOf("videoId") >= 0) return this.ytData(JSON.parse(body).items[0].id.videoId, shard);
+		else return "NO_RESULTS";
 	}
 
 	durationFormat(seconds) {
@@ -111,7 +107,11 @@ class ProviderData {
 			if(!streamData.http_mp3_128_url) throw new Error("No mp3 format from soundcloud");
 			else return streamData.http_mp3_128_url;
 		} else if(data.service === "yt") {
-			return yt(`http://www.youtube.com/watch?v=${data.id}`, { audioonly: true });
+			try {
+				return yt(`http://www.youtube.com/watch?v=${data.id}`, { audioonly: true });
+			} catch(err) {
+				throw err;
+			}
 		} else {
 			return new Error("Invalid service");
 		}
