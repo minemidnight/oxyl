@@ -32,7 +32,7 @@ async function playCmdProcess(message) {
 	let result = await music.providers.queueData(message.argsPreserved[0], message.channel.guild.shard.id);
 	if(typeof result === "object") return result;
 	else if(result === "NO_RESULTS") return "Search returned no results";
-	else if(result === "NOT_TRACK") return "Please only link to songs";
+	else if(result === "INVALID_TYPE") return "Please only link to SoundCloud songs and playlists";
 	else if(result === "NO_ITEMS") return "Unexpected error";
 	else return "Unknown error";
 }

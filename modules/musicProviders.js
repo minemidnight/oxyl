@@ -67,15 +67,27 @@ class ProviderData {
 
 		let body = await framework.getContent(url);
 		body = JSON.parse(body);
-		if(body.kind !== "track") return "NOT_TRACK";
-
-		return {
-			service: "sc",
-			id: body.id,
-			title: body.title,
-			duration: Math.round(body.duration / 1000),
-			thumbnail: body.artwork_url
-		};
+		if(body.kind === "track") {
+			return {
+				service: "sc",
+				id: body.id,
+				title: body.title,
+				duration: Math.round(body.duration / 1000),
+				thumbnail: body.artwork_url
+			};
+		} else if(body.kind === "playlist") {
+			let tracks = body.tracks.map(song => ({
+				service: "sc",
+				id: song.id,
+				title: song.title,
+				duration: Math.round(song.duration / 1000),
+				thumbnail: song.artwork_url
+			}));
+			tracks.title = body.title;
+			return tracks;
+		} else {
+			return "INVALID_TYPE";
+		}
 	}
 
 	async searchVideo(query, shard) {

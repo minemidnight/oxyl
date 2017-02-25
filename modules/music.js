@@ -102,9 +102,9 @@ class MusicManager {
 		else if(!connection.ready) await connectionReady(connection);
 
 		if(!this.data) this.resetData();
-		if(!this.data.playing && this.connection.playing) this.connection.stopPlaying();
-		else if(this.data.playing && this.connection.playing) return;
+		if(this.data.playing && connection.playing) return;
 		else if(!this.data.processQueue) return;
+		else if(!this.data.playing && connection.playing) connection.stopPlaying();
 
 		let nextQueue = this.data.queue[0];
 		if(!nextQueue) {
@@ -129,7 +129,7 @@ class MusicManager {
 	async connect(channelID) { // eslint-disable-line consistent-return
 		if(!channelID) throw new Error("No channel");
 		else if(channelID.id)	channelID = channelID.id;
-		if(!this.processQueue) this.processQueue = true;
+		if(!this.data.processQueue) this.data.processQueue = true;
 
 		if(this.connection) return false;
 		if(bot.voiceConnections.guilds[this.id] && !bot.voiceConnections.guilds[this.id].ended) return false;
@@ -143,14 +143,21 @@ class MusicManager {
 		let connection = this.connection;
 		if(!connection) return;
 
-		connection.on("error", err => this.sendEmbed("error", err));
-		connection.on("end", () => {
+		let errorHandler = err => this.sendEmbed("error", err);
+		let endHandler = () => {
 			if(this.data.extraOptions.repeat) this.data.queue.push(this.data.playing);
 			if(this.data.queue.length <= 0) this.end();
-			else setTimeout(() => this.play(), 200);
-		});
+			else setTimeout(() => this.play(), 500);
+		};
 
-		connection.once("disconnect", () => delete this.connection);
+		connection.on("error", errorHandler);
+		connection.on("end", endHandler);
+
+		connection.once("disconnect", () => {
+			connection.removeListener("error", errorHandler);
+			connection.removeListener("end", endHandler);
+			delete this.connection;
+		});
 	}
 
 	async sendEmbed(type, data) {
