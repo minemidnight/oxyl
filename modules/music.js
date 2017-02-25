@@ -102,8 +102,7 @@ class MusicManager {
 		else if(!connection.ready) await connectionReady(connection);
 
 		if(!this.data) this.resetData();
-		if(this.connection.playing && this.data.playing) return;
-		else if(!this.data.playing && this.connection.playing) this.connection.stopPlaying();
+		if(!this.data.playing && this.connection.playing) this.connection.stopPlaying();
 		else if(this.data.playing && this.connection.playing) return;
 		else if(!this.data.processQueue) return;
 
@@ -148,7 +147,7 @@ class MusicManager {
 		connection.on("end", () => {
 			if(this.data.extraOptions.repeat) this.data.queue.push(this.data.playing);
 			if(this.data.queue.length <= 0) this.end();
-			else setTimeout(() => this.play(), 250);
+			else setTimeout(() => this.play(), 200);
 		});
 
 		connection.once("disconnect", () => delete this.connection);
