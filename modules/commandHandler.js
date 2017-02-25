@@ -118,9 +118,9 @@ bot.on("messageCreate", async (message) => {
 		message.channel.createMessage(`Only creators of Oxyl can use this command.`);
 		return;
 	} else if(command.type === "admin" && framework.guildLevel(message.member) < 3) {
-		message.channel.createMessage(`Only the guld owner, or users with the ADMINISTRATOR permission can use this command.`);
+		message.channel.createMessage(`Only the guild owner, or users with the ADMINISTRATOR permission can use this command.`);
 		return;
-	} else if(command.type === "music" && musicchannels[guild.id] && musicchannels[guild.id].id !== message.channel.id) {
+	} else if(command.type === "music" && guild && musicchannels[guild.id] && musicchannels[guild.id].id !== message.channel.id) {
 		message.channel.createMessage("You cannot use music commands in this channel.");
 		return;
 	} else if(command.perm && !message.member.permission.has(command.perm)) {
@@ -177,8 +177,9 @@ bot.on("messageCreate", async (message) => {
 			}
 		}
 	} catch(error) {
+		if(!error) return;
 		framework.consoleLog(`Failed command ${command.name} (${command.type})\n` +
-				`**Error:** ${framework.codeBlock(error.stack || error)}`, "debug");
+				`**Error:** ${framework.codeBlock(error.stack || error.message)}`, "debug");
 		message.channel.createMessage("Bot error when executing command, error sent to Support Server");
 	}
 });

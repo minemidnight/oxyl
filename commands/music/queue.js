@@ -1,5 +1,4 @@
-const music = require("../../modules/music.js");
-
+const music = Oxyl.modScripts.music;
 exports.cmd = new Oxyl.Command("queue", async message => {
 	let guild = message.channel.guild;
 	let manager = music.getManager(guild);
@@ -37,7 +36,7 @@ exports.cmd = new Oxyl.Command("queue", async message => {
 		if(!manager.data.playing || !manager.connection || !manager.connection.current) {
 			queueMsg += `\n\nPlaying: Nothing (Still queueing?)`;
 		} else {
-			var videoDuration = music.getDuration(manager.data.playing.duration);
+			let videoDuration = music.providers.durationFormat(manager.data.playing.duration);
 			queueMsg += `\n\nPlaying: ${manager.data.playing.title} **(**${manager.playTime}/${videoDuration}**)**`;
 		}
 

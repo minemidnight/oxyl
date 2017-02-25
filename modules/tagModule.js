@@ -144,7 +144,7 @@ async function executeTag(tag, message) {
 		else if(result.length >= 2000) return `Tag result is over 2000 characters`;
 		else return result;
 	} catch(err) {
-		return err.stack || err.message;
+		return err.message;
 	}
 }
 exports.executeTag = executeTag;
@@ -197,7 +197,7 @@ async function parseTag(tag, message, resultArgs = []) {
 			else resultArgs = [];
 
 			if(typeof result === "string" && result.indexOf("{") !== -1 && result.indexOf("}") !== -1) result = await parseTag(result, message, resultArgs);
-			if(typeof result === "string" && typeof tag === "string") tag = tag.replace(originalSub, result);
+			if(typeof tag === "string" && typeof result !== "object") tag = tag.replace(originalSub, result.toString());
 			else tag = result;
 		} catch(err) {
 			if(typeof err === "object") throw err;
@@ -644,7 +644,7 @@ const tagManager = {
 			let tagVar = await framework.dbQuery(`SELECT * FROM \`TagVars\` WHERE ` +
 				`\`AUTHOR\` = '${message.tagOwner}' AND \`NAME\` = ${framework.sqlEscape(args[0])}`);
 			if(args[1]) {
-				if(!tagVar) {
+				if(!tagVar[0]) {
 					framework.dbQuery(`INSERT INTO \`TagVars\`(\`NAME\`, \`AUTHOR\`, \`VALUE\`) VALUES ` +
 						`(${framework.sqlEscape(args[0])},'${message.tagOwner}',${framework.sqlEscape(args[1])})`);
 				} else {

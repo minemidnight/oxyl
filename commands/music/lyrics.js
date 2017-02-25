@@ -1,5 +1,4 @@
 const cheerio = require("cheerio");
-
 exports.cmd = new Oxyl.Command("lyrics", async message => {
 	message.channel.sendTyping();
 	let search = await framework.getContent(`http://search.azlyrics.com/search.php?q=${escape(message.args[0])}`);

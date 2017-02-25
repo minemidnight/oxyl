@@ -1,5 +1,4 @@
-const music = require("../../modules/music.js");
-
+const music = Oxyl.modScripts.music;
 exports.cmd = new Oxyl.Command("jump", async message => {
 	let guild = message.channel.guild;
 	let manager = music.getManager(guild);
