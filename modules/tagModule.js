@@ -119,10 +119,8 @@ async function executeTag(tag, message) {
 	let brackets = [(tag.match(/{/g) || []).length, (tag.match(/}/g) || []).length];
 	if(brackets[0] !== brackets[1]) return "Unmatched brackets";
 
-	if(message.argsPreserved.length >= 1 && message.argsPreserved[0].toLowerCase().startsWith("test")) {
-		message.argsPreserved = [];
-	} else if(message.argsPreserved.length >= 1) {
-		message.argsPreserved = message.argsPreserved[0].split(" ").splice(1);
+	if(message.argsPreserved.length >= 1) {
+		message.argsPreserved = message.argsPreserved[0].split(" ");
 		message.argsPreserved = message.argsPreserved.map(ele => ele
 				.replace(/(\u26FB|\u26FC)/, "")
 				.replace(/\|/g, `${framework.spStart}pipeUser${framework.spEnd}`)

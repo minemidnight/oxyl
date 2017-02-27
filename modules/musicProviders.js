@@ -100,14 +100,16 @@ class ProviderData {
 	}
 
 	durationFormat(seconds) {
-		if(seconds >= 3600) var hours = Math.floor(seconds / 3600);
-		let mins = Math.floor(seconds % 3600 / 60);
-		let secs = Math.floor(seconds % 60);
-		if(mins < 10) mins = `0${mins}`;
-		if(secs < 10) secs = `0${secs}`;
+		let parts = [];
+		parts.push(seconds % 60);
+		let minutes = Math.floor(seconds / 60);
+		if(minutes > 0) {
+			parts.push(minutes % 60);
+			let hours = Math.floor(minutes / 60);
+			if(hours > 0) parts.push(hours);
+		}
 
-		if(hours) return `${hours}:${mins}:${secs}`;
-		else return `${mins}:${secs}`;
+		return parts.reverse().join(":");
 	}
 
 	async getStream(data) {
@@ -116,7 +118,7 @@ class ProviderData {
 		} else if(data.service === "sc") {
 			let streamData = await framework.getContent(`https://api.soundcloud.com/i1/tracks/${data.id}/streams?client_id=${soundcloudClient}`);
 			streamData = JSON.parse(streamData);
-			if(!streamData.http_mp3_128_url) throw new Error("No mp3 format from soundcloud");
+			if(!streamData.http_mp3_128_url) throw new Error("No mp3 format from SoundCloud");
 			else return streamData.http_mp3_128_url;
 		} else if(data.service === "yt") {
 			try {

@@ -87,7 +87,7 @@ class MusicManager {
 		let connection = this.connection;
 		if(!connection) return;
 
-		if(Array.isArray(data) === "array") {
+		if(Array.isArray(data)) {
 			for(let song of data) this.data.queue.push(song);
 		} else if(typeof data === "object") {
 			this.data.queue.push(data);
@@ -102,7 +102,6 @@ class MusicManager {
 		else if(!connection.ready) await connectionReady(connection);
 
 		if(!this.data) this.resetData();
-		if(this.data.playing && connection.playing) return;
 		else if(!this.data.processQueue) return;
 		else if(!this.data.playing && connection.playing) connection.stopPlaying();
 
@@ -132,7 +131,6 @@ class MusicManager {
 		if(!this.data.processQueue) this.data.processQueue = true;
 
 		if(this.connection) return false;
-		if(bot.voiceConnections.guilds[this.id] && !bot.voiceConnections.guilds[this.id].ended) return false;
 		let connection = await bot.joinVoiceChannel(channelID);
 		this.connection = connection;
 		this.addListeners();
