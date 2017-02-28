@@ -1,11 +1,9 @@
 let settings = [
 	{ name: "prefix", type: "text", description: "Prefix to trigger a command (adds on to default prefix)" },
 	{ name: "modlog", type: "textChannel", description: "Log mod actions such as bans and unbans, with settable reasons" },
-	{ name: "musicchannel", type: "textChannel", description: "Channel where music errors, and now playing messages are shown" },
 	{ name: "userlog", type: "textChannel", description: "Where to send `userjoin` and `userleave` messages" },
 	{ name: "userjoin", type: "tag", description: "Content to send in userlog when a user joins" },
 	{ name: "userleave", type: "tag", description: "Content to send in userlog when a user leaves" }
-	// { name: "cleverbot", type: "textChannel", description: "In this channel, all non-command messages are sent to cleverbot (even if unprefixed)" }
 ];
 exports.settings = settings;
 

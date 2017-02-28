@@ -26,26 +26,7 @@ function postdBots() {
 	framework.getContent(`https://bots.discord.pw/api/bots/${bot.user.id}/stats`, options);
 }
 
-function postDiscordlist() {
-	let stats = {
-		token: framework.config.private.discordListKey,
-		servers: bot.guilds.size
-	};
-
-	let options = {
-		method: "POST",
-		headers: {
-			"User-Agent": "Super Agent/0.0.1",
-			"Content-Type": "application/x-www-form-urlencoded"
-		},
-		form: stats
-	};
-
-	framework.getContent("https://bots.discordlist.net/api", options);
-}
-
 module.exports = () => {
 	postdBots();
 	postCarbon();
-	postDiscordlist();
 };

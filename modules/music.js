@@ -4,12 +4,12 @@ const fs = require("fs"),
 const providers = exports.providers = new ProviderData();
 
 class MusicManager {
-	constructor(guild, extraData) {
+	constructor(guild, data) {
 		this.guild = guild;
 		this.id = guild.id;
 		Oxyl.managers[guild.id] = this;
 
-		if(extraData) for(let i in extraData) this[i] = extraData[i];
+		if(data) for(let i in data) this[i] = data[i];
 		else this.resetData();
 	}
 
@@ -128,6 +128,7 @@ class MusicManager {
 	async connect(channelID) { // eslint-disable-line consistent-return
 		if(!channelID) throw new Error("No channel");
 		else if(channelID.id)	channelID = channelID.id;
+		if(!this.data) this.resetData();
 		if(!this.data.processQueue) this.data.processQueue = true;
 
 		if(this.connection) return false;
@@ -159,7 +160,7 @@ class MusicManager {
 	}
 
 	async sendEmbed(type, data) {
-		if(!Oxyl.modScripts.commandHandler.musicchannels[this.id]) return false;
+		if(!this.channel) return false;
 		if(this.connection) {
 			let vm = this.guild.channels.get(this.connection.channelID).voiceMembers.filter(member => !member.user.bot).length;
 			if(vm <= 0) return false;
@@ -193,7 +194,7 @@ class MusicManager {
 			};
 		}
 
-		return Oxyl.modScripts.commandHandler.musicchannels[this.id].createMessage({ embed });
+		return this.channel.createMessage({ embed });
 	}
 }
 exports.Manager = MusicManager;
@@ -224,11 +225,12 @@ exports.getManager = (guild) => {
 exports.managerDump = () => {
 	let managers = Object.keys(Oxyl.managers)
 		.map(manager => Oxyl.managers[manager])
-		.filter(manager => manager.data.playing && manager.connection)
+		.filter(manager => manager.data.playing)
 		.map(manager => ({
 			id: manager.id,
 			data: manager.data,
-			channel: manager.connection ? manager.connection.channelID : undefined
+			channel: manager.channel.id,
+			connectionID: manager.connection ? manager.connection.channelID : undefined
 		}));
 
 	fs.writeFileSync("./managers.json", JSON.stringify(managers));
@@ -237,13 +239,16 @@ exports.managerDump = () => {
 exports.managerLoad = (managers) => {
 	managers.forEach(async manager => {
 		let guild = bot.guilds.get(manager.id);
-		if(!guild || !manager.data.playing || !manager.channel) return;
+		if(!guild || !manager.data.playing || !manager.connectionID) return;
 
 		manager.data.queue.unshift(manager.data.playing);
 		delete manager.data.playing;
-		let newManager = new MusicManager(guild, { data: manager.data });
+		let newManager = new MusicManager(guild, {
+			channel: guild.channels.get(manager.channel),
+			data: manager.data
+		});
 
-		await newManager.connect(manager.channel);
+		await newManager.connect(manager.connectionID);
 		newManager.play();
 	});
 };

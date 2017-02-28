@@ -1,8 +1,6 @@
 const commands = Oxyl.commands;
 const prefixes = exports.prefixes = {};
-const musicchannels = exports.musicchannels = {};
 const blacklist = exports.blacklist = [];
-const cleverchannels = exports.clever = [];
 const ignored = exports.ignored = [];
 // wait for connection
 exports.updateThings = async () => {
@@ -14,17 +12,6 @@ exports.updateThings = async () => {
 	let blacklistedUsers = await framework.dbQuery("SELECT * FROM `Blacklist`");
 	blacklistedUsers.forEach(data => {
 		blacklist.push(data.USER);
-	});
-
-	let cleverChannels = await framework.dbQuery("SELECT * FROM `Settings` WHERE `NAME` = 'cleverbot'");
-	cleverChannels.forEach(data => {
-		cleverchannels.push(data.VALUE);
-	});
-
-	let musicChannels = await framework.dbQuery("SELECT * FROM `Settings` WHERE `NAME` = 'musicchannel'");
-	musicChannels.filter(data => bot.guilds.has(data.ID) && bot.guilds.get(data.ID).channels.has(data.VALUE))
-	.forEach(data => {
-		musicchannels[data.ID] = bot.guilds.get(data.ID).channels.get(data.VALUE);
 	});
 
 	let ignoredChannels = await framework.dbQuery("SELECT `CHANNEL` FROM `Ignored`");
@@ -118,9 +105,6 @@ bot.on("messageCreate", async (message) => {
 		return;
 	} else if(command.type === "admin" && framework.guildLevel(message.member) < 3) {
 		message.channel.createMessage(`Only the guild owner, or users with the ADMINISTRATOR permission can use this command.`);
-		return;
-	} else if(command.type === "music" && guild && musicchannels[guild.id] && musicchannels[guild.id].id !== message.channel.id) {
-		message.channel.createMessage("You cannot use music commands in this channel.");
 		return;
 	} else if(command.perm && !message.member.permission.has(command.perm)) {
 		message.channel.createMessage(`You do not have valid permissions for this command (Requires ${command.perm}).`);

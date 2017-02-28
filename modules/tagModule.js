@@ -199,7 +199,10 @@ async function parseTag(tag, message, resultArgs = []) {
 			if(typeof result === "string" && result.indexOf("{") !== -1 && result.indexOf("}") !== -1) result = await parseTag(result, message, resultArgs);
 			if(typeof tag === "string" && typeof result !== "object") tag = tag.replace(originalSub, result.toString());
 			else tag = result;
-			if(~tag.indexOf(`${framework.spStart}return${framework.spEnd}`)) return tag.substring(0, tag.indexOf(`${framework.spStart}return${framework.spEnd}`));
+
+			if(typeof tag === "string" && ~tag.indexOf(`${framework.spStart}return${framework.spEnd}`))	{
+				return tag.substring(0, tag.indexOf(`${framework.spStart}return${framework.spEnd}`));
+			}
 		} catch(err) {
 			if(typeof err === "object") throw err;
 			else if(message.tagVars.fallback) throw new Error(message.tagVars.fallback);

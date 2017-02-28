@@ -46,7 +46,7 @@ exports.cmd = new Oxyl.Command("play", async message => {
 	}
 
 	if(!voiceChannel) return "You are not in a voice channel";
-	else if(!manager) manager = new music.Manager(message.channel.guild);
+	else if(!manager) manager = new music.Manager(message.channel.guild, { channel: message.channel });
 
 	if(manager && manager.connection && !manager.voiceCheck(message.member)) {
 		return "You must be listening to music to use this command";

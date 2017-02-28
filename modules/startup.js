@@ -1,8 +1,8 @@
 bot.once("ready", () => {
-	let timetook = Date.now() - startup;
-	let mins = Math.floor(timetook / 1000 / 60);
-	timetook -= mins * 1000 * 60;
-	let secs = Math.floor(timetook / 1000);
+	let timetook = process.uptime();
+	let secs = (timetook % 60).toFixed(2);
+	let mins = Math.floor(timetook / 60);
+	timetook -= mins * 60;
 	timetook = "";
 	if(mins > 0) timetook += `${mins}m `;
 	if(secs > 0) timetook += `${secs}s`;
@@ -16,4 +16,3 @@ bot.once("ready", () => {
 });
 
 bot.connect();
-let startup = Date.now();

@@ -47,7 +47,7 @@ process.on("uncaughtException", err => {
 	exports.modScripts.music.managerDump();
 	Object.keys(exports.managers)
 	.map(man => exports.managers[man])
-	.filter(man => man.data.playing && man.musicChannel)
+	.filter(man => man.data.playing)
 	.forEach(man => man.sendEmbed("restart"));
 
 	setTimeout(() => {
