@@ -101,7 +101,8 @@ class ProviderData {
 
 	durationFormat(seconds) {
 		let parts = [];
-		parts.push(seconds % 60);
+		if(seconds % 60 < 10) parts.push(`0${seconds % 60}`);
+		else parts.push(seconds % 60);
 		let minutes = Math.floor(seconds / 60);
 		if(minutes > 0) {
 			parts.push(minutes % 60);

@@ -31,12 +31,6 @@ mysql.createConnection(dbData).then(connection => {
 	exports.dbQuery = (query) => connection.query(query);
 });
 
-exports.isNSFW = async (channel) => {
-	let data = await exports.dbQuery(`SELECT * FROM \`NSFW\` WHERE \`CHANNEL\` = '${channel}'`);
-	if(data && data[0]) return true;
-	else return false;
-};
-
 exports.guildLevel = (member) => {
 	let perms = member.permission, guild = member.guild;
 	if(exports.config.creators.includes(member.id)) return 4;

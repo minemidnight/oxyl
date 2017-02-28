@@ -225,14 +225,11 @@ exports.managerDump = () => {
 	let managers = Object.keys(Oxyl.managers)
 		.map(manager => Oxyl.managers[manager])
 		.filter(manager => manager.data.playing && manager.connection)
-		.map(manager => {
-			let object = {};
-			object.id = manager.id;
-			object.data = manager.data;
-			object.processQueue = manager.processQueue;
-			object.channel = manager.connection ? manager.connection.channelID : undefined;
-			return object;
-		});
+		.map(manager => ({
+			id: manager.id,
+			data: manager.data,
+			channel: manager.connection ? manager.connection.channelID : undefined
+		}));
 
 	fs.writeFileSync("./managers.json", JSON.stringify(managers));
 };
@@ -244,10 +241,7 @@ exports.managerLoad = (managers) => {
 
 		manager.data.queue.unshift(manager.data.playing);
 		delete manager.data.playing;
-		let newManager = new MusicManager(guild, {
-			data: manager.data,
-			processQueue: manager.processQueue
-		});
+		let newManager = new MusicManager(guild, { data: manager.data });
 
 		await newManager.connect(manager.channel);
 		newManager.play();

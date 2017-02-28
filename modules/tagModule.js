@@ -132,10 +132,12 @@ async function executeTag(tag, message) {
 	try {
 		let result = await parseTag(tag, message);
 		result = result.toString()
-			.replace(/@here/g, "@\u200Bhere")
+		.replace(/\u26FBreturn\u26FC/g, "")
 			.replace(/\u26FBlb\u26FC/g, "{")
 			.replace(/\u26FBrb\u26FC/g, "}")
 			.replace(/\u26FB(pipe|pipeUser)\u26FC/g, "|")
+			.replace(/@here/g, "@\u200Bhere")
+			.replace(/@everyone/g, "@\u200Bhere")
 			.trim();
 
 		if(!result || result.length === 0) return `Tag result is an empty message`;
@@ -197,6 +199,7 @@ async function parseTag(tag, message, resultArgs = []) {
 			if(typeof result === "string" && result.indexOf("{") !== -1 && result.indexOf("}") !== -1) result = await parseTag(result, message, resultArgs);
 			if(typeof tag === "string" && typeof result !== "object") tag = tag.replace(originalSub, result.toString());
 			else tag = result;
+			if(~tag.indexOf(`${framework.spStart}return${framework.spEnd}`)) return tag.substring(0, tag.indexOf(`${framework.spStart}return${framework.spEnd}`));
 		} catch(err) {
 			if(typeof err === "object") throw err;
 			else if(message.tagVars.fallback) throw new Error(message.tagVars.fallback);
@@ -552,6 +555,12 @@ const tagManager = {
 		out: `"Hello earth!"`,
 		usage: "<String> <Regex> <String> [Flags <String>]",
 		run: async args => args[0].replace(new RegExp(args[1], args[3] || ""), args[2])
+	},
+	return: {
+		return: "Stops the execution of a tag",
+		in: "Hi{return} this will not show up",
+		out: `"Hi"`,
+		run: async args => `${framework.spStart}return${framework.spEnd}`
 	},
 	roles: {
 		return: "Array of ID of roles a member has",
