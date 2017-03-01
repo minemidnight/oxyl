@@ -2,6 +2,7 @@ const math = require("mathjs");
 const tableOrder = ["GlobalTags", "GuildTags", "ChannelTags", "UserTags", "UnlistedTags"];
 
 async function getTag(query, message, table = 0, loop = true) {
+	Oxyl.statsd.increment(`oxyl.tags.gettag`);
 	let tableName = tableOrder[table], dbQuery;
 
 	if(tableName === "GlobalTags") {
@@ -28,6 +29,7 @@ async function getTag(query, message, table = 0, loop = true) {
 exports.getTag = getTag;
 
 function addUse(type, name, message) {
+	Oxyl.statsd.increment(`oxyl.tags.usage`);
 	type = tableOrder.find(table => table.toLowerCase().startsWith(type));
 	if(type === "GlobalTags") {
 		framework.dbQuery(`UPDATE \`${type}\` SET \`USES\` = \`USES\` + 1 WHERE \`NAME\` = '${name}'`);
@@ -43,6 +45,7 @@ function addUse(type, name, message) {
 exports.addUse = addUse;
 
 function createTag(data) {
+	Oxyl.statsd.increment(`oxyl.tags.creation`);
 	let type = data.type;
 	type = tableOrder.find(table => table.toLowerCase().startsWith(type));
 	if(type === "GlobalTags") {
@@ -59,6 +62,7 @@ function createTag(data) {
 exports.createTag = createTag;
 
 function deleteTag(type, name, message) {
+	Oxyl.statsd.increment(`oxyl.tags.deletion`);
 	type = tableOrder.find(table => table.toLowerCase().startsWith(type));
 	if(type === "GlobalTags") {
 		framework.dbQuery(`DELETE FROM \`${type}\` WHERE \`NAME\` = ${framework.sqlEscape(name)}`);
@@ -116,6 +120,7 @@ async function getTags(message, fullData, table = 0) {
 exports.getTags = getTags;
 
 async function executeTag(tag, message) {
+	Oxyl.statsd.increment(`oxyl.tags.execute`);
 	let brackets = [(tag.match(/{/g) || []).length, (tag.match(/}/g) || []).length];
 	if(brackets[0] !== brackets[1]) return "Unmatched brackets";
 

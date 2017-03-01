@@ -15,14 +15,21 @@ async function dfmPlaylist(name, manager, voiceChannel) {
 		let body = await framework.getContent(`https://temp.discord.fm/libraries/${name}/json`);
 		body = JSON.parse(body);
 
-		body.filter(video => video.service === "YouTubeVideo").forEach(video => {
-			manager.addQueue({
-				service: "yt",
-				id: video.identifier,
-				title: video.title,
-				duration: video.length
-			});
+		let soundcloud = [];
+		body.forEach(video => {
+			if(video.service === "YouTubeVideo") {
+				manager.addQueue({
+					service: "yt",
+					id: video.identifier,
+					title: video.title,
+					duration: video.length
+				});
+			} else if(video.service === "SoundCloudTrack") {
+				soundcloud.push(music.providers.queueData(video.url, manager.guild.shard.id));
+			}
 		});
+		soundcloud = await Promise.all(soundcloud);
+		soundcloud.forEach(track => manager.addQueue(track));
 
 		return `:white_check_mark: Added discord.fm playlist \`${framework.capitalizeEveryFirst(name.replace(/-/g, " "))}\` to the queue`;
 	}

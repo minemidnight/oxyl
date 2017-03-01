@@ -3,11 +3,27 @@ global.framework = require("./framework.js");
 
 global.bot = new Eris(framework.config.private.token, {
 	maxShards: framework.config.options.shards,
-	messageLimit: 0
+	messageLimit: 0,
+	disableEvents: {
+		CHANNEL_DELETE: true,
+		CHANNEL_UPDATE: true,
+		GUILD_ROLE_CREATE: true,
+		GUILD_ROLE_DELETE: true,
+		GUILD_ROLE_UPDATE: true,
+		GUILD_UPDATE: true,
+		MESSAGE_DELETE: true,
+		MESSAGE_DELETE_BULK: true,
+		MESSAGE_UPDATE: true,
+		PRESENCE_UPDATE: true,
+		TYPING_START: true,
+		USER_UPDATE: true,
+		VOICE_STATE_UPDATE: true
+	}
 });
 
 process.stdin.resume();
 process.on("SIGINT", () => {
+	exports.statsd.timing(`oxyl.uptime`, bot.uptime);
 	exports.modScripts.music.managerDump();
 	Object.keys(exports.managers)
 	.map(man => exports.managers[man])
@@ -28,6 +44,7 @@ process.on("unhandledRejection", err => {
 		if(resp.code === 50013 || resp.code === 10008 || resp.code === 50001 || resp.code === 40005 || resp.code === 10003) return;
 		else throw err;
 	} catch(err2) {
+		exports.statsd.increment(`oxyl.errors`);
 		err = err.stack.substring(0, 1900) || err;
 		framework.consoleLog(`Unhandled Rejection: ${framework.codeBlock(err)}`, "debug");
 	}
@@ -40,10 +57,11 @@ process.on("uncaughtException", err => {
 		return;
 	}
 
-
+	exports.statsd.increment(`oxyl.errors`);
 	err = err.stack.substring(0, 1900) || err;
 	framework.consoleLog(`__**Uncaught Exception**__: ${framework.codeBlock(err)}`, "debug");
 
+	exports.statsd.timing(`oxyl.uptime`, bot.uptime);
 	exports.modScripts.music.managerDump();
 	Object.keys(exports.managers)
 	.map(man => exports.managers[man])
@@ -59,22 +77,23 @@ process.on("uncaughtException", err => {
 
 bot.on("error", (err, shardid) => {
 	if(!err) return;
+	exports.statsd.increment(`oxyl.errors`);
 	err = err.stack.substring(0, 1900) || err;
 	framework.consoleLog(`__**Shard Error ${shardid}**__: ${framework.codeBlock(err)}`, "debug");
 });
 
 bot.on("shardReady", shardid => framework.consoleLog(`Shard ${shardid} ready`));
 
+exports.commands = {};
 exports.addCommand = (command) => {
 	if(!exports.commands[command.type]) exports.commands[command.type] = {};
 	exports.commands[command.type][command.name] = command;
 };
 
-exports.bot = bot;
-exports.commands = {};
+const StatsD = require("hot-shots");
+exports.statsd = new StatsD();
 
 exports.Command = require("./modules/commandCreator.js");
-
 exports.modScripts = {};
 exports.cmdScripts = {};
 exports.siteScripts = {};
@@ -86,3 +105,11 @@ framework.loadScripts("./site/");
 
 exports.postStats = require("./modules/statPoster.js");
 setInterval(() => exports.postStats(), 1800000);
+setInterval(() => {
+	let heapUsed = (process.memoryUsage().heapUsed / Math.pow(1024, 2)).toFixed(2);
+	exports.statsd.gauge(`oxyl.heapUsed`, heapUsed);
+	bot.shards.forEach(shard => {
+		exports.statsd.timing(`oxyl.latency.${shard.id}`, shard.latency);
+		exports.statsd.timing(`oxyl.latency`, shard.latency);
+	});
+}, 120000);

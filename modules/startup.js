@@ -1,5 +1,6 @@
 bot.once("ready", () => {
 	let timetook = process.uptime();
+	Oxyl.statsd.timing(`oxyl.starttime`, timetook * 1000);
 	let secs = (timetook % 60).toFixed(2);
 	let mins = Math.floor(timetook / 60);
 	timetook -= mins * 60;

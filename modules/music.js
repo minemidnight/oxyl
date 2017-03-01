@@ -9,8 +9,8 @@ class MusicManager {
 		this.id = guild.id;
 		Oxyl.managers[guild.id] = this;
 
+		this.resetData();
 		if(data) for(let i in data) this[i] = data[i];
-		else this.resetData();
 	}
 
 	resetData() {
@@ -40,6 +40,7 @@ class MusicManager {
 
 		this.data.processQueue = false;
 		delete Oxyl.managers[this.id];
+		Oxyl.statsd.gauge(`oxyl.streams`, Object.keys(Oxyl.managers).filter(man => Oxyl.managers[man].connection).length);
 		delete this;
 	}
 
@@ -68,6 +69,7 @@ class MusicManager {
 		connection.disconnect();
 		this.data.processQueue = true;
 		delete this.connection;
+		Oxyl.statsd.gauge(`oxyl.streams`, Object.keys(Oxyl.managers).filter(man => Oxyl.managers[man].connection).length);
 	}
 
 	get playTime() {
@@ -101,7 +103,6 @@ class MusicManager {
 		if(!connection) return;
 		else if(!connection.ready) await connectionReady(connection);
 
-		if(!this.data) this.resetData();
 		else if(!this.data.processQueue) return;
 		else if(!this.data.playing && connection.playing) connection.stopPlaying();
 
@@ -128,13 +129,13 @@ class MusicManager {
 	async connect(channelID) { // eslint-disable-line consistent-return
 		if(!channelID) throw new Error("No channel");
 		else if(channelID.id)	channelID = channelID.id;
-		if(!this.data) this.resetData();
 		if(!this.data.processQueue) this.data.processQueue = true;
 
 		if(this.connection) return false;
 		let connection = await bot.joinVoiceChannel(channelID);
 		this.connection = connection;
 		this.addListeners();
+		Oxyl.statsd.gauge(`oxyl.streams`, Object.keys(Oxyl.managers).filter(man => Oxyl.managers[man].connection).length);
 		return await connectionReady(connection);
 	}
 
@@ -161,7 +162,7 @@ class MusicManager {
 
 	async sendEmbed(type, data) {
 		if(!this.channel) return false;
-		if(this.connection) {
+		if(this.connection && this.guild.channels.has(this.connection.channelID)) {
 			let vm = this.guild.channels.get(this.connection.channelID).voiceMembers.filter(member => !member.user.bot).length;
 			if(vm <= 0) return false;
 		}

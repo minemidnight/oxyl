@@ -245,7 +245,7 @@ exports.consoleLog = (message, type) => {
 	channel = exports.config.channels[channel];
 	if(!type) type = "!";
 	console.log(`[${type.toUpperCase()}] ${message}`);
-	if(channel && Oxyl.bot.uptime > 0) Oxyl.bot.createMessage(channel, message);
+	if(channel && bot.uptime > 0) bot.createMessage(channel, message);
 };
 
 class MessageCollector extends EventEmitter {
@@ -258,7 +258,7 @@ class MessageCollector extends EventEmitter {
 		this.collected = [];
 
 		this.listener = message => this.verify(message);
-		Oxyl.bot.on("messageCreate", this.listener);
+		bot.on("messageCreate", this.listener);
 		if(options.time) setTimeout(() => this.stop("time"), options.time);
 	}
 
@@ -277,7 +277,7 @@ class MessageCollector extends EventEmitter {
 	stop(reason) {
 		if(this.ended) return;
 		this.ended = true;
-		Oxyl.bot.removeListener("messageCreate", this.listener);
+		bot.removeListener("messageCreate", this.listener);
 
 		this.emit("end", this.collected, reason);
 	}

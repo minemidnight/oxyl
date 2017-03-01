@@ -10,17 +10,14 @@ exports.updateThings = async () => {
 	});
 
 	let blacklistedUsers = await framework.dbQuery("SELECT * FROM `Blacklist`");
-	blacklistedUsers.forEach(data => {
-		blacklist.push(data.USER);
-	});
+	blacklistedUsers.forEach(data => blacklist.push(data.USER));
 
 	let ignoredChannels = await framework.dbQuery("SELECT `CHANNEL` FROM `Ignored`");
-	ignoredChannels.forEach(data => {
-		ignored.push(data.CHANNEL);
-	});
+	ignoredChannels.forEach(data => ignored.push(data.CHANNEL));
 };
 
 bot.on("messageCreate", async (message) => {
+	Oxyl.statsd.increment(`oxyl.messages`);
 	Oxyl.siteScripts.website.messageCreate(message);
 	let guild = message.channel.guild;
 	let msg = message.content.toLowerCase();

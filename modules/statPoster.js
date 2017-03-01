@@ -27,6 +27,8 @@ function postdBots() {
 }
 
 module.exports = () => {
+	Oxyl.statsd.gauge(`oxyl.guilds`, bot.guilds.size);
+	Oxyl.statsd.gauge(`oxyl.shards`, bot.shards.size);
 	postdBots();
 	postCarbon();
 };

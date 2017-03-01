@@ -43,6 +43,8 @@ class Command {
 
 	addUse(user) {
 		this.uses++;
+		Oxyl.statsd.increment(`oxyl.commands`);
+		Oxyl.statsd.increment(`oxyl.commands.${this.name}`);
 		if(this.cooldown > 0) {
 			this.cooldowns[user.id] = true;
 			setTimeout(() => delete this.cooldowns[user.id], this.cooldown);

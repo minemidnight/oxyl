@@ -26,5 +26,6 @@ exports.cmd = new Oxyl.Command("lyrics", async message => {
 	args: [{
 		type: "text",
 		label: "song"
-	}]
+	}],
+	disabled: true
 });

@@ -12,7 +12,7 @@ exports.cmd = new Oxyl.Command("botinfo", async message => {
 		`Large (over 250 members): ${largeGuilds}`,
 		`Other: ${guilds.size - largeGuilds}`,
 		`Total: ${guilds.size}`,
-		`Streaming In: ${Object.keys(Oxyl.managers).filter(man => Oxyl.managers[man].data.playing).length} Guilds`
+		`Streaming In: ${Object.keys(Oxyl.managers).filter(man => Oxyl.managers[man].connection).length} Guilds`
 	];
 
 	let extraInfo = [
