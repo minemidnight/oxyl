@@ -6,7 +6,7 @@ router.get("/", async (req, res) => {
 	let data = {};
 	if(main.tokens[req.sessionID]) {
 		let guilds = await main.getInfo(req.sessionID, "users/@me/guilds");
-		guilds = guilds.filter(guild => Oxyl.bot.guilds.has(guild.id));
+		guilds = guilds.filter(guild => bot.guilds.has(guild.id));
 		guilds.forEach(guild => {
 			guild.subname = guild.name.split(" ").map(str => str.charAt(0)).join("");
 		});

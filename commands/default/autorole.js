@@ -13,6 +13,7 @@ module.exports = async (guild, member) => {
 };
 
 function parseRole(guild, value) {
+	if(value.match(/<@&(\d{17,21})>/)) value = value.match(/<@&(\d{17,21})>/)[1];
 	let roles = guild.roles;
 	let foundRole = roles.find(role => {
 		if(value === role.id || value.toLowerCase() === role.name.toLowerCase()) {

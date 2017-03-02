@@ -142,7 +142,7 @@ module.exports.messageCreate = message => {
 	let data = {
 		content: twemoji.parse(content),
 		author: framework.unmention(message.author),
-		avatar: message.author.avatarURL,
+		// avatar: message.author.avatarURL,
 		guildid: message.channel.guild ? message.channel.guild.id : message.channel.id,
 		guildname: message.channel.guild ? message.channel.guild.name : "DM",
 		channelname: message.channel.name,

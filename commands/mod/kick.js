@@ -1,6 +1,6 @@
 function isKickable(member) {
 	let guild = member.guild;
-	let botMember = guild.members.get(Oxyl.bot.user.id);
+	let botMember = guild.members.get(bot.user.id);
 
 	let highestBot = botMember.roles.length >= 1 ?
 		botMember.roles.map(role => guild.roles.get(role)).sort((a, b) => b.position - a.position)[0] :

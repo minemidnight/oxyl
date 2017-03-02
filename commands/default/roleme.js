@@ -1,4 +1,5 @@
 function parseRole(guild, value) {
+	if(value.match(/<@&(\d{17,21})>/)) value = value.match(/<@&(\d{17,21})>/)[1];
 	let roles = guild.roles;
 	let foundRole = roles.find(role => {
 		if(value === role.id || value.toLowerCase() === role.name.toLowerCase()) {
@@ -63,7 +64,7 @@ async function handleRole(message, args) {
 		let exists = await framework.getRole(message.channel.guild, "me", role);
 		if(!exists) return `\`${role.name}\` is not available role`;
 
-		let rolePerms = message.channel.guild.members.get(Oxyl.bot.user.id).permission.has("manageRoles");
+		let rolePerms = message.channel.guild.members.get(bot.user.id).permission.has("manageRoles");
 		if(!rolePerms) return "I do not have permissions to edit roles!";
 
 		let hasRole = message.member.roles.indexOf(role.id) > -1;

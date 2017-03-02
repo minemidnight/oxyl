@@ -111,7 +111,7 @@ const configTypes = {
 	role: {
 		info: "a role id, name, or mention within the guild",
 		validate: (guild, value) => {
-			if(value.match(/<@&(\d{17,21})>/)) value = value.match(/<#(\d{17,21})>/)[1];
+			if(value.match(/<@&(\d{17,21})>/)) value = value.match(/<@&(\d{17,21})>/)[1];
 			let roles = guild.roles;
 			let foundRole = roles.find(role => {
 				if(value === role.id || value.toLowerCase() === role.name.toLowerCase()) {
