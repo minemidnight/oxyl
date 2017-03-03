@@ -5,10 +5,10 @@
 		"es6": true
 	},
 	"globals": {
-    "Oxyl": false,
-    "framework": false,
+		"Oxyl": false,
+		"framework": false,
 		"bot": false
-  },
+ 	},
 	"parserOptions": {
 		"ecmaVersion": 2017
 	},
