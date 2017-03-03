@@ -40,6 +40,7 @@ bot.on("messageCreate", async (message) => {
 			message.contentPreserved = cmdInfo.newContent;
 			msg = message.contentPreserved.toLowerCase();
 			message.content = msg;
+			if(message.channel.guild) var editedinfo = await framework.editedCommandInfo(command.name, message.channel.guild);
 		} else if(guild) {
 			msg = message.content.toLowerCase();
 			let cmdCheck;
@@ -91,6 +92,8 @@ bot.on("messageCreate", async (message) => {
 		return;
 	}
 
+	if(editedinfo && editedinfo.ENABLED === 0) return;
+	if(editedinfo && editedinfo.ROLES) editedinfo.ROLES = editedinfo.ROLES.filter(role => message.channel.guild.roles.has(role));
 	if(command.onCooldown(message.author)) {
 		message.channel.createMessage(`This command is on cooldown for you.`);
 		return;
@@ -100,11 +103,15 @@ bot.on("messageCreate", async (message) => {
 	} else if(command.type === "creator" && !framework.config.creators.includes(message.author.id)) {
 		message.channel.createMessage(`Only creators of Oxyl can use this command.`);
 		return;
-	} else if(command.type === "admin" && framework.guildLevel(message.member) < 3) {
+	} else if(command.type === "admin" && (!editedinfo || !editedinfo.ROLES) && framework.guildLevel(message.member) < 3) {
 		message.channel.createMessage(`Only the guild owner, or users with the ADMINISTRATOR permission can use this command.`);
 		return;
-	} else if(command.perm && !message.member.permission.has(command.perm)) {
+	} else if(command.perm && (!editedinfo || !editedinfo.ROLES) && !message.member.permission.has(command.perm)) {
 		message.channel.createMessage(`You do not have valid permissions for this command (Requires ${command.perm}).`);
+		return;
+	} else if(editedinfo && editedinfo.ROLES && editedinfo.ROLES.every(role => ~message.member.roles.indexOf(role))) {
+		message.channel.createMessage(`You do not have all of the roles to run this command ` +
+			`(Requires the following: ${editedinfo.ROLES.map(role => message.channel.guild.roles.get(role).name)}).`);
 		return;
 	}
 
@@ -158,6 +165,7 @@ bot.on("messageCreate", async (message) => {
 		}
 	} catch(error) {
 		if(!error) return;
+		exports.statsd.increment(`oxyl.errors`);
 		framework.consoleLog(`Failed command ${command.name} (${command.type})\n` +
 				`**Error:** ${framework.codeBlock(error.stack || error.message)}`, "debug");
 		message.channel.createMessage("Bot error when executing command, error sent to Support Server");

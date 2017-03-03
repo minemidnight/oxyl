@@ -8,7 +8,7 @@ const regexes = {
 
 class ProviderData {
 	async queueData(data, shard) {
-		let id;
+		let id, ytMatch;
 		if(!data.indexOf("https://") || !data.indexOf("http://")) {
 			let match = data.match(regexes.yt);
 			if(!match) {
@@ -16,13 +16,14 @@ class ProviderData {
 				else id = data;
 			} else {
 				id = match[1];
+				ytMatch = true;
 			}
 		} else {
 			id = data;
 		}
 
-		if(id.length === 11 && id !== id.toLowerCase() && !id.includes(" ")) return this.ytData(id, shard);
-		else if(id.startsWith("PL") && (id.length === 34 || id.length === 32) && id !== id.toLowerCase() && !id.includes(" ")) return this.ytPlaylist(id, shard);
+		if(id.length === 11 && ytMatch) return this.ytData(id, shard);
+		else if(ytMatch) return this.ytPlaylist(id, shard);
 		else return this.searchVideo(id, shard);
 	}
 

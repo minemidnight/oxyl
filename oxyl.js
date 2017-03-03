@@ -5,19 +5,8 @@ global.bot = new Eris(framework.config.private.token, {
 	maxShards: framework.config.options.shards,
 	messageLimit: 0,
 	disableEvents: {
-		CHANNEL_DELETE: true,
-		CHANNEL_UPDATE: true,
-		GUILD_ROLE_CREATE: true,
-		GUILD_ROLE_DELETE: true,
-		GUILD_ROLE_UPDATE: true,
-		GUILD_UPDATE: true,
-		MESSAGE_DELETE: true,
 		MESSAGE_DELETE_BULK: true,
-		MESSAGE_UPDATE: true,
-		PRESENCE_UPDATE: true,
-		TYPING_START: true,
-		USER_UPDATE: true,
-		VOICE_STATE_UPDATE: true
+		TYPING_START: true
 	}
 });
 

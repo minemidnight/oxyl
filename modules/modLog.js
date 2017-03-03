@@ -33,7 +33,10 @@ exports.createCase = async (guild, action, user) => {
 
 	await framework.dbQuery(`INSERT INTO \`ModLog\`(\`GUILD\`, \`ACTION\`, \`MSG\`, \`USER\`, \`USERID\`, \`CASE_NUM\`) ` +
 		`VALUES ('${guild.id}', ${action}, '${msg.id}', '${framework.unmention(user)}', '${user.id}', ${casenum})`);
-	if(autoReason[guild.id]) exports.setReason(guild, casenum, autoReason[guild.id].reason, autoReason[guild.id].mod);
+	if(autoReason[guild.id]) {
+		exports.setReason(guild, casenum, autoReason[guild.id].reason, autoReason[guild.id].mod);
+		delete autoReason[guild.id];
+	}
 };
 
 exports.parseCase = (action, casenum, user, reason, mod) => {

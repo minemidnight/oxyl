@@ -27,8 +27,30 @@ exports.guildLevel = (member) => {
 	else return 0;
 };
 
+exports.resetCommand = (cmd, guild) => exports.dbQuery(`DELETE FROM EditedCommands WHERE GUILD_ID = "${guild.id}" AND COMMAND = "${cmd}"`);
+exports.editedCommandInfo = async (cmd, guild) => {
+	let data = await exports.dbQuery(`SELECT * FROM EditedCommands WHERE GUILD_ID = "${guild.id}" AND COMMAND = "${cmd}"`);
+	if(!data || data.length === 0) return false;
+	else return data;
+};
+exports.editCommand = async (cmd, options, guild) => {
+	let info = await exports.editedCommandInfo(cmd, guild);
+	if(options === "toggle") {
+		let toggle = 0;
+		if(info && info.ENABLED === 0) toggle = 1;
+		if(!info) await exports.dbQuery(`INSERT INTO EditedCommands(GUILD_ID, COMMAND, ENABLED) VALUES ("${guild.id}","${cmd}",${toggle})`);
+		else await exports.dbQuery(`UPDATE EditedCommands SET ENABLED=${toggle} WHERE GUILD_ID = "${guild.id}" AND COMMAND = "${cmd}"`);
+		return toggle;
+	} else if(Array.isArray(options)) {
+		if(!info) return await exports.dbQuery(`INSERT INTO EditedCommands(GUILD_ID, COMMAND, ROLES) VALUES ("${guild.id}","${cmd}","${options.join(",")}")`);
+		else return await exports.dbQuery(`UPDATE EditedCommands SET ROLES="${options.join(",")}" WHERE GUILD_ID = "${guild.id}" AND COMMAND = "${cmd}"`);
+	} else {
+		return false;
+	}
+};
+
 exports.getSetting = async (guild, setting) => {
-	let query = `SELECT \`VALUE\` FROM \`Settings\` WHERE \`ID\` = '${guild.id}' AND \`NAME\` = ${exports.sqlEscape(setting)}`;
+	let query = `SELECT VALUE FROM Settings WHERE ID = "${guild.id}" AND NAME = ${exports.sqlEscape(setting)}`;
 	let data = await exports.dbQuery(query);
 
 	if(data && data[0]) return data[0].VALUE;
@@ -36,11 +58,7 @@ exports.getSetting = async (guild, setting) => {
 };
 
 exports.resetSetting = async (guild, setting) => {
-	let data = await exports.dbQuery(`SELECT \`VALUE\` FROM \`Settings\` WHERE \`ID\` = '${guild.id}' AND \`NAME\` = ${exports.sqlEscape(setting)}`);
-	if(data && data.length >= 1) data = data[0].VALUE;
-	else data = false;
-
-	exports.dbQuery(`DELETE FROM \`Settings\` WHERE \`ID\` = '${guild.id}' AND \`NAME\` = ${exports.sqlEscape(setting)}`);
+	exports.dbQuery(`DELETE FROM Settings WHERE ID = '${guild.id}' AND NAME = ${exports.sqlEscape(setting)}`);
 	let cH = Oxyl.modScripts.commandHandler;
 	if(setting === "prefix") delete cH.prefixes[guild.id];
 };

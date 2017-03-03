@@ -3,7 +3,8 @@ let settings = [
 	{ name: "modlog", type: "textChannel", description: "Log mod actions such as bans and unbans, with settable reasons" },
 	{ name: "userlog", type: "textChannel", description: "Where to send `userjoin` and `userleave` messages" },
 	{ name: "userjoin", type: "tag", description: "Content to send in userlog when a user joins" },
-	{ name: "userleave", type: "tag", description: "Content to send in userlog when a user leaves" }
+	{ name: "userleave", type: "tag", description: "Content to send in userlog when a user leaves" },
+	{ name: "disable-binding", type: "boolean", description: "Stop now playing and warning messages when playing music" }
 ];
 exports.settings = settings;
 

@@ -167,6 +167,13 @@ class MusicManager {
 			if(vm <= 0) return false;
 		}
 
+		try {
+			let option = await framework.getSetting(this.guild, "disable-binding");
+			if(option === "true") return false;
+		} catch(err) {
+			let eslint = "eslint requires something be here and my option getting is bad so this is here";
+		}
+
 		let embed;
 		if(type === "playing") {
 			let thumbnail = data.thumbnail || `https://i.ytimg.com/vi/${data.id}/hqdefault.jpg`;
