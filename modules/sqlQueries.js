@@ -43,7 +43,7 @@ module.exports = {
 		set: async (guild, setting, value) => {
 			let isSet = await module.exports.settings.get(guild, setting);
 
-			if(isSet) dbQuery(`UPDATE Settings SET VALUE = ${sqlEscape(value)} WHERE ID = ""${guild.id}" AND NAME = ${sqlEscape(setting)}`);
+			if(isSet) dbQuery(`UPDATE Settings SET VALUE = ${sqlEscape(value)} WHERE ID = "${guild.id}" AND NAME = ${sqlEscape(setting)}`);
 			else dbQuery(`INSERT INTO Settings(NAME, VALUE, ID) VALUES (${sqlEscape(setting)},${sqlEscape(value)},"${guild.id}")`);
 			if(setting === "prefix") Oxyl.modScripts.commandHandler.prefixes[guild.id] = value;
 		},

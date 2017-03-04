@@ -45,8 +45,8 @@ exports.cmd = new Oxyl.Command("mute", async message => {
 	}
 
 	let mention = message.channel.guild.members.get(message.args[0].id);
-	let isMuted = mention.roles.indexOf(mutedRole.id);
-	if(isMuted === -1) {
+	let isMuted = !~mention.roles.indexOf(mutedRole.id);
+	if(isMuted) {
 		mention.addRole(mutedRole.id);
 		return `${framework.unmention(mention)} has been muted`;
 	} else {

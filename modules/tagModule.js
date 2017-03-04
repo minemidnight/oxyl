@@ -175,12 +175,12 @@ async function parseTag(tag, message, resultArgs = []) {
 
 		let tagName, passedArgs = [], originalSub = subtag;
 		subtag = subtag.substring(1, subtag.length - 1);
-		if(subtag.endsWith(":") && !subtag.includes("|")) {
+		if(subtag.endsWith(":") && ~subtag.indexOf("|")) {
 			tagName = subtag.substring(0, subtag.length - 1);
-		} else if(subtag.includes(":")) {
+		} else if(~subtag.indexOf(":")) {
 			tagName = subtag.substring(0, subtag.indexOf(":"));
 			subtag = subtag.substring(subtag.indexOf(":") + 1);
-			passedArgs = subtag.includes("|") ? passedArgs.concat(subtag.split("|")) : [subtag];
+			passedArgs = ~subtag.indexOf("|") ? passedArgs.concat(subtag.split("|")) : [subtag];
 		} else {
 			tagName = subtag;
 		}
@@ -190,7 +190,7 @@ async function parseTag(tag, message, resultArgs = []) {
 		try {
 			for(let i in passedArgs) {
 				let arg = passedArgs[i];
-				if(!~arg.indexOf("{") && !~arg.indexOf("}")) {
+				if(~arg.indexOf("{") && ~arg.indexOf("}")) {
 					arg = arg.replace(/\u26FBpipe\u26FC/g, "|");
 					passedArgs[i] = await parseTag(arg, message);
 				}
@@ -204,7 +204,7 @@ async function parseTag(tag, message, resultArgs = []) {
 			else if(typeof result === "object" || typeof result === "undefined" || typeof result === "number") resultArgs = [result];
 			else resultArgs = [];
 
-			if(typeof result === "string" && !~result.indexOf("{") && !~result.indexOf("}")) result = await parseTag(result, message, resultArgs);
+			if(typeof result === "string" && ~result.indexOf("{") && ~result.indexOf("}")) result = await parseTag(result, message, resultArgs);
 			if(typeof tag === "string" && typeof result !== "object") tag = tag.replace(originalSub, result.toString());
 			else tag = result;
 
