@@ -1,7 +1,8 @@
+const sqlQueries = Oxyl.modScripts.sqlQueries;
 exports.cmd = new Oxyl.Command("customcommand", async message => {
-	let cc = await framework.getCC(message.channel.guild.id, message.args[0]);
+	let cc = await sqlQueries.customCommands.get(message.channel.guild.id, message.args[0]);
 	if(cc) {
-		framework.deleteCC(message.channel.guild.id, message.args[0]);
+		sqlQueries.customCommands.delete(message.channel.guild.id, message.args[0]);
 		return `Removed custom command \`${message.args[0]}\``;
 	} else {
 		if(!message.args[1]) return "Provide a tag to create as a custom command";
@@ -11,7 +12,7 @@ exports.cmd = new Oxyl.Command("customcommand", async message => {
 			return "No tag found";
 		}
 
-		framework.createCC(message.channel.guild.id, message.args[0], message.args[1]);
+		sqlQueries.customCommands.create(message.channel.guild.id, message.args[0], message.args[1]);
 		return `Created custom command \`${message.args[0]}\` to execute tag \`${message.args[1]}\``;
 	}
 }, {

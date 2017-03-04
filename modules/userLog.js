@@ -1,7 +1,9 @@
+const sqlQueries = Oxyl.modScripts.sqlQueries;
 module.exports = async (guild, member, type) => {
 	try {
-		let channel = await framework.getSetting(guild, "userlog");
-		let tag = await framework.getSetting(guild, type);
+		let channel = await sqlQueries.settings.get(guild, "userlog");
+		let tag = await sqlQueries.settings.get(guild, type);
+		if(!channel || !tag) return;
 
 		if(!guild.channels.has(channel)) return;
 		let fakemsg = {

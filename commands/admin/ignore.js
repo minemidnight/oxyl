@@ -1,18 +1,19 @@
+const sqlQueries = Oxyl.modScripts.sqlQueries;
 async function addIgnore(channel) {
-	let data = await framework.dbQuery(`INSERT INTO \`Ignored\`(\`GUILD\`,\`CHANNEL\`) VALUES ('${channel.guild.id}','${channel.id}')`);
+	let data = await sqlQueries.dbQuery(`INSERT INTO Ignored(GUILD,CHANNEL) VALUES ("${channel.guild.id}","${channel.id}")`);
 	Oxyl.modScripts.commandHandler.ignored.push(channel.id);
 	return true;
 }
 
 async function removeIgnore(channel) {
-	let data = await framework.dbQuery(`DELETE FROM \`Ignored\` WHERE \`CHANNEL\` = '${channel.id}'`);
+	let data = await sqlQueries.dbQuery(`DELETE FROM Ignored WHERE CHANNEL = "${channel.id}"`);
 	delete Oxyl.modScripts.commandHandler.ignored[Oxyl.modScripts.commandHandler.ignored.indexOf(channel.id)];
 	return true;
 }
 
 exports.cmd = new Oxyl.Command("ignore", async message => {
 	let channel = message.channel;
-	let ignored = Oxyl.modScripts.commandHandler.ignored.indexOf(channel.id) !== -1;
+	let ignored = !~Oxyl.modScripts.commandHandler.ignored.indexOf(channel.id);
 
 	if(ignored) {
 		await removeIgnore(channel);

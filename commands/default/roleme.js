@@ -1,3 +1,4 @@
+const sqlQueries = Oxyl.modScripts.sqlQueries;
 function parseRole(guild, value) {
 	if(value.match(/<@&(\d{17,21})>/)) value = value.match(/<@&(\d{17,21})>/)[1];
 	let roles = guild.roles;
@@ -27,7 +28,7 @@ async function handleRole(message, args) {
 		return `Normal Users: ${framework.listConstructor(normal)}` +
 					`\nAdmins: ${framework.listConstructor(admin)}`;
 	} else if(args[0].toLowerCase() === "list") {
-		let available = await framework.getRoles(message.channel.guild, "me");
+		let available = await sqlQueries.roleSetters.get(message.channel.guild, "me");
 		available = available
 			.filter(data => message.channel.guild.roles.has(data.ROLE))
 			.map(data => message.channel.guild.roles.get(data.ROLE).name);
@@ -40,10 +41,10 @@ async function handleRole(message, args) {
 		let role = parseRole(message.channel.guild, args.splice(1).join(" "));
 		if(!role) return "Invalid role! Role not found.";
 
-		let exists = await framework.getRole(message.channel.guild, "me", role);
+		let exists = await sqlQueries.roleSetters.get(message.channel.guild, "me", role);
 		if(exists) return `\`${role.name}\` is already an available role`;
 
-		framework.addRole(message.channel.guild, "me", role);
+		sqlQueries.roleSetters.add(message.channel.guild, "me", role);
 		return `Added role \`${role.name}\` to available roles`;
 	} else if(args[0].toLowerCase() === "delete") {
 		let guildLevel = framework.guildLevel(message.member);
@@ -52,16 +53,16 @@ async function handleRole(message, args) {
 		let role = parseRole(message.channel.guild, args.splice(1).join(" "));
 		if(!role) return "Invalid role! Role not found.";
 
-		let exists = await framework.getRole(message.channel.guild, "me", role);
+		let exists = await sqlQueries.roleSetters.get(message.channel.guild, "me", role);
 		if(!exists) return `\`${role.name}\` is not available role`;
 
-		framework.deleteRole(message.channel.guild, "me", role);
+		sqlQueries.roleSetters.delete(message.channel.guild, "me", role);
 		return `Removed role \`${role.name}\` from available roles`;
 	} else {
 		let role = parseRole(message.channel.guild, args.join(" "));
 		if(!role) return "Invalid role! Role not found (view \`roleme list\`).";
 
-		let exists = await framework.getRole(message.channel.guild, "me", role);
+		let exists = await sqlQueries.roleSetters.get(message.channel.guild, "me", role);
 		if(!exists) return `\`${role.name}\` is not available role`;
 
 		let rolePerms = message.channel.guild.members.get(bot.user.id).permission.has("manageRoles");

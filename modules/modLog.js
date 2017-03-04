@@ -2,14 +2,14 @@ const actions = ["BAN", "UNBAN", "KICK", "MUTE", "UNMUTE"];
 const autoReason = exports.reasons = {};
 
 exports.getCases = async (guild) => {
-	let data = await framework.dbQuery(`SELECT * FROM \`ModLog\` WHERE \`GUILD\` = '${guild.id}'`);
+	let data = await Oxyl.modScripts.sqlQueries.dbQuery(`SELECT * FROM ModLog WHERE GUILD = "${guild.id}"`);
 	if(data && data.length >= 1) return data;
 	else return false;
 };
 
 exports.modChannel = async (guild) => {
 	try {
-		let modlog = await framework.getSetting(guild, "modlog");
+		let modlog = await Oxyl.modScripts.sqlQueries.getSetting(guild, "modlog");
 		return guild.channels.get(modlog) || false;
 	} catch(err) {
 		return false;
@@ -17,7 +17,7 @@ exports.modChannel = async (guild) => {
 };
 
 exports.caseInfo = async (guild, casenum) => {
-	let data = await framework.dbQuery(`SELECT * FROM \`ModLog\` WHERE \`CASE_NUM\` = ${casenum} AND \`GUILD\` = '${guild.id}'`);
+	let data = await Oxyl.modScripts.sqlQueries.dbQuery(`SELECT * FROM ModLog WHERE CASE_NUM = ${casenum} AND GUILD = "${guild.id}"`);
 	if(data && data.length >= 1) return data[0];
 	else return false;
 };
@@ -31,8 +31,8 @@ exports.createCase = async (guild, action, user) => {
 	let parsed = exports.parseCase(action, casenum, framework.unmention(user));
 	let msg = await channel.createMessage(parsed);
 
-	await framework.dbQuery(`INSERT INTO \`ModLog\`(\`GUILD\`, \`ACTION\`, \`MSG\`, \`USER\`, \`USERID\`, \`CASE_NUM\`) ` +
-		`VALUES ('${guild.id}', ${action}, '${msg.id}', '${framework.unmention(user)}', '${user.id}', ${casenum})`);
+	await Oxyl.modScripts.sqlQueries.dbQuery(`INSERT INTO ModLog(GUILD, ACTION, MSG, USER, USERID, CASE_NUM) ` +
+		`VALUES ("${guild.id}", ${action}, "${msg.id}", "${framework.unmention(user)}", "${user.id}", ${casenum})`);
 	if(autoReason[guild.id]) {
 		exports.setReason(guild, casenum, autoReason[guild.id].reason, autoReason[guild.id].mod);
 		delete autoReason[guild.id];
@@ -69,18 +69,13 @@ exports.setReason = async (guild, casenum, reason, mod) => {
 
 	let parsed = exports.parseCase(data.ACTION, casenum, data.USER, reason, mod);
 	await message.edit(parsed);
-	await framework.dbQuery(`UPDATE \`ModLog\` SET \`RESPONSIBLE\` = '${mod.id}', REASON = ${framework.sqlEscape(reason)} ` +
-		`WHERE \`CASE_NUM\` = ${casenum} AND \`guild\` = '${guild.id}'`);
+	await Oxyl.modScripts.sqlQueries.dbQuery(`UPDATE ModLog SET RESPONSIBLE = "${mod.id}", REASON = ${Oxyl.modScripts.sqlQueries.sqlEscape(reason)} ` +
+		`WHERE CASE_NUM = ${casenum} AND guild = "${guild.id}"`);
 	return "SUCCESS";
 };
 
-bot.on("guildBanAdd", async (guild, user) => {
-	exports.createCase(guild, 0, user);
-});
-
-bot.on("guildBanRemove", async (guild, user) => {
-	exports.createCase(guild, 1, user);
-});
+bot.on("guildBanAdd", async (guild, user) => exports.createCase(guild, 0, user));
+bot.on("guildBanRemove", async (guild, user) => exports.createCase(guild, 1, user));
 
 bot.on("guildMemberUpdate", (guild, member, oldMember) => {
 	if(!member || !oldMember) return;

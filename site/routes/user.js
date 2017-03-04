@@ -1,25 +1,26 @@
 const express = require("express"),
 	main = require("../website.js");
 const router = express.Router(); // eslint-disable-line new-cap
+const sqlQueries = Oxyl.modScripts.sqlQueries;
 
 async function getDesc(user) {
-	let query = `SELECT \`VALUE\` FROM \`Description\` WHERE \`USER\` = '${user}'`;
-	let data = await framework.dbQuery(query);
+	let query = `SELECT VALUE FROM Description WHERE USER = "${user}"`;
+	let data = await sqlQueries.dbQuery(query);
 
 	if(data && data[0]) return data[0].VALUE;
 	else return "None set";
 }
 
 async function resetDesc(user) {
-	return await framework.dbQuery(`DELETE FROM \`Description\` WHERE \`USER\` = '${user}'`);
+	return await sqlQueries.dbQuery(`DELETE FROM Description WHERE USER = "${user}"`);
 }
 
 async function setDesc(user, value) {
 	if(value === "None set") return false;
 
 	let desc = await getDesc(user);
-	if(desc === "None set") return await framework.dbQuery(`INSERT INTO \`Description\`(\`USER\`, \`VALUE\`) VALUES ('${user}',${framework.sqlEscape(value)})`);
-	else return await framework.dbQuery(`UPDATE \`Description\` SET \`VALUE\`=${framework.sqlEscape(value)} WHERE \`USER\` = '${user}'`);
+	if(desc === "None set") return await sqlQueries.dbQuery(`INSERT INTO Description(USER, VALUE) VALUES ("${user}",${sqlQueries.sqlEscape(value)})`);
+	else return await sqlQueries.dbQuery(`UPDATE Description SET VALUE=${sqlQueries.sqlEscape(value)} WHERE USER = "${user}"`);
 }
 
 router.get("/update", async (req, res) => {

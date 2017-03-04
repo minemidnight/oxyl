@@ -167,12 +167,8 @@ class MusicManager {
 			if(vm <= 0) return false;
 		}
 
-		try {
-			let option = await framework.getSetting(this.guild, "disable-binding");
-			if(option === "true") return false;
-		} catch(err) {
-			let eslint = "eslint requires something be here and my option getting is bad so this is here";
-		}
+		let messagesDisabled = await Oxyl.modScripts.sqlQueries.settings.get(this.guild, "disable-binding");
+		if(messagesDisabled === "true") return false;
 
 		let embed;
 		if(type === "playing") {

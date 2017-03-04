@@ -1,6 +1,6 @@
 exports.cmd = new Oxyl.Command("reload", async message => {
 	message.content = message.content.toLowerCase();
-	var reload = framework.findFile(["./commands/", "./modules/", "./site/"], message.args[0], "js");
+	let reload = framework.findFile(["./commands/", "./modules/", "./site/"], message.args[0], "js");
 
 	if(!reload) {
 		return `Invalid file: ${message.args[0]}`;

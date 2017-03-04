@@ -2,6 +2,7 @@ const express = require("express"),
 	handlebars = require("handlebars"),
 	main = require("../website.js");
 const router = express.Router(); // eslint-disable-line new-cap
+const sqlQueries = Oxyl.modScripts.sqlQueries;
 
 router.get("*", async (req, res) => {
 	let data = {};
@@ -31,7 +32,7 @@ router.get("*", async (req, res) => {
 			if(member && (framework.guildLevel(member) >= 3 || framework.config.creators.includes(user.id))) data.panel = true;
 			if(member && (framework.guildLevel(member) >= 2 || framework.config.creators.includes(user.id))) data.cases = true;
 
-			let settings = await framework.dbQuery(`SELECT * FROM \`Settings\` WHERE \`ID\` = '${guild.id}'`);
+			let settings = await sqlQueries.dbQuery(`SELECT * FROM Settings WHERE ID = "${guild.id}"`);
 			let possibleSettings = Oxyl.cmdScripts.settings.settings;
 			data.settings = settings.filter(setting => possibleSettings.find(set => set.name === setting.NAME)).map(setting => {
 				let settingFound = possibleSettings.find(set => set.name === setting.NAME);
@@ -57,11 +58,6 @@ router.get("*", async (req, res) => {
 					TYPE: i.type
 				});
 			}
-
-			// let roleme = await framework.getRoles(guild, "me");
-			// data.roleme = roleme.map(role => guild.roles.get(role.ID) || "Deleted Role");
-			// let autorole = await framework.getRoles(guild, "auto");
-			// data.autorole = autorole.map(role => guild.roles.get(role.ID) || "Deleted Role");
 		}
 	}
 
@@ -129,11 +125,11 @@ router.post("/update", async (req, res) => {
 
 	let deleteSettings = [];
 	for(let key in req.body) {
-		if(req.body[key] !== "undefined" && req.body[key] !== "") await framework.setSetting(guild, key, req.body[key]);
+		if(req.body[key] !== "undefined" && req.body[key] !== "") await sqlQueries.settings.set(guild, key, req.body[key]);
 		else deleteSettings.push(key);
 	}
 	if(deleteSettings.indexOf("prefix") !== -1) delete Oxyl.modScripts.commandHandler.prefixes[guild.id];
-	await framework.dbQuery(`DELETE from \`Settings\` WHERE \`NAME\` IN ('${deleteSettings.join("','")}') AND \`ID\` = '${guild.id}'`);
+	await sqlQueries.dbQuery(`DELETE from Settings WHERE NAME IN ("${deleteSettings.join(`","`)}") AND ID = "${guild.id}"`);
 
 	res.redirect(`http://minemidnight.work/guild/${guild.id}`);
 	res.end();

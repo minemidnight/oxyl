@@ -1,3 +1,4 @@
+const sqlQueries = Oxyl.modScripts.sqlQueries;
 let settings = [
 	{ name: "prefix", type: "text", description: "Prefix to trigger a command (adds on to default prefix)" },
 	{ name: "modlog", type: "textChannel", description: "Log mod actions such as bans and unbans, with settable reasons" },
@@ -22,12 +23,9 @@ async function handleConfig(message, args) {
 		if(!setting) return "Invalid setting! Setting not found.";
 
 		let msg = "";
-		try {
-			let value = await framework.getSetting(message.channel.guild, setting.name);
-			msg += `Setting \`${setting.name}\` is \`${value}\``;
-		} catch(err) {
-			msg += `Setting \`${setting.name}\` is not set`;
-		}
+		let value = await sqlQueries.settings.get(message.channel.guild, setting.name);
+		if(value) msg += `Setting \`${setting.name}\` is \`${value}\``;
+		else msg += `Setting \`${setting.name}\` is not set`;
 
 		msg += `\nType: ${setting.type} (${configTypes[setting.type].info})`;
 		msg += `\nDescription: ${setting.description}`;
@@ -38,12 +36,11 @@ async function handleConfig(message, args) {
 		let setting = settings.find(set => set.name === args[1].toLowerCase());
 		if(!setting) return "Invalid setting! Setting not found.";
 
-		let value;
-		try {
-			value = await framework.getSetting(message.channel.guild, setting.name);
-			framework.resetSetting(message.channel.guild, setting.name);
+		let value = await sqlQueries.settings.get(message.channel.guild, setting.name);
+		if(value) {
+			sqlQueries.settings.reset(message.channel.guild, setting.name);
 			return `Setting \`${setting.name}\` reset`;
-		} catch(err) {
+		} else {
 			return `Setting \`${setting.name}\` is not set`;
 		}
 	} else if(args[0].toLowerCase() === "set") {
@@ -58,10 +55,10 @@ async function handleConfig(message, args) {
 		value = configTypes[setting.type].validate(message.channel.guild, value);
 
 		if(value === null) return `Invalid input given, please provide ${configTypes[setting.type].info}`;
-		framework.setSetting(message.channel.guild, setting.name, value);
+		sqlQueries.settings.set(message.channel.guild, setting.name, value);
 		return `Set \`${setting.name}\` to \`${value}\` (success!)`;
 	} else {
-		return "Invalid argument -- view `settings help`";
+		return "Invalid argument, view `settings help`";
 	}
 }
 

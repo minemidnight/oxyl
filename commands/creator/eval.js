@@ -7,10 +7,14 @@ exports.cmd = new Oxyl.Command("eval", async message => {
 
 	let msg = await message.channel.createMessage("Executing code...");
 	try {
-		var output = await eval(`(async function(){${message.argsPreserved[0]}}).call()`);
+		let output = await eval(`(async function(){${message.argsPreserved[0]}}).call()`);
 		output = util.inspect(output, { depth: 0 }).substring(0, 1900);
-		for(var i in config.private) {
-			output = output.replace(new RegExp(config.private[i], "ig"), "no u");
+		for(let i in config.private) {
+			if(typeof i === "object") {
+				for(let i2 in config.private[i]) output = output.replace(new RegExp(config.private[i2], "ig"), "no u");
+			} else {
+				output = output.replace(new RegExp(config.private[i], "ig"), "no u");
+			}
 		}
 		msg.edit(`:white_check_mark: **Output:** ${framework.codeBlock(output, "js")}`);
 	} catch(error) {

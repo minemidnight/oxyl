@@ -1,4 +1,5 @@
 const Duration = require("duration-js");
+const sqlQueries = Oxyl.modScripts.sqlQueries;
 
 exports.cmd = new Oxyl.Command("remind", async message => {
 	if(!message.args[0].includes(" in ")) return "Please provide a time, using this format: `remind <action> in <timespan>`";
@@ -22,8 +23,8 @@ exports.cmd = new Oxyl.Command("remind", async message => {
 	}
 
 	let date = Date.now();
-	await framework.dbQuery(`INSERT INTO \`Reminders\`(\`USER\`, \`MESSAGE\`, \`DATE\`, \`CREATED\`) ` +
-		`VALUES ('${message.author.id}', '${action}', ${date + duration}, ${date})`);
+	await sqlQueries.dbQuery(`INSERT INTO Reminders(USER, MESSAGE, DATE, CREATED) ` +
+		`VALUES ("${message.author.id}", "${action}", ${date + duration}, ${date})`);
 	return `:white_check_mark: Successfully created a reminder to \`${action}\` in ${time}`;
 }, {
 	type: "default",

@@ -25,5 +25,5 @@ bot.on("guildDelete", async guild => {
 		`Bots: ${botcount} - Percent: ${((botcount / guild.memberCount) * 100).toFixed(2)}`, "servers");
 	updateServerChannel();
 
-	framework.clearGuildData(guild);
+	Oxyl.modScripts.sqlQueries.clearGuildData(guild);
 });

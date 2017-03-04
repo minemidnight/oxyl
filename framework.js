@@ -3,20 +3,12 @@ const Oxyl = require("./oxyl.js"),
 	request = require("request"),
 	yaml = require("js-yaml"),
 	path = require("path"),
-	EventEmitter = require("events").EventEmitter,
-	mysql = require("promise-mysql");
+	EventEmitter = require("events").EventEmitter;
 
 exports.spStart = "\u26FB";
 exports.spEnd = "\u26FC";
 exports.config = yaml.safeLoad(fs.readFileSync("./private/config.yml"));
 global.Oxyl = Oxyl;
-
-let dbData = exports.config.database;
-dbData.password = exports.config.private.databasePass;
-exports.sqlEscape = mysql.escape;
-mysql.createConnection(dbData).then(connection => {
-	exports.dbQuery = (query) => connection.query(query);
-});
 
 exports.guildLevel = (member) => {
 	let perms = member.permission, guild = member.guild;
@@ -25,111 +17,6 @@ exports.guildLevel = (member) => {
 	else if(perms.has("manageGuild")) return 2;
 	else if(perms.has("kickMembers") && perms.has("banMembers")) return 1;
 	else return 0;
-};
-
-exports.resetCommand = (cmd, guild) => exports.dbQuery(`DELETE FROM EditedCommands WHERE GUILD_ID = "${guild.id}" AND COMMAND = "${cmd}"`);
-exports.editedCommandInfo = async (cmd, guild) => {
-	let data = await exports.dbQuery(`SELECT * FROM EditedCommands WHERE GUILD_ID = "${guild.id}" AND COMMAND = "${cmd}"`);
-	if(!data || data.length === 0) return false;
-	else return data;
-};
-exports.editCommand = async (cmd, options, guild) => {
-	let info = await exports.editedCommandInfo(cmd, guild);
-	if(options === "toggle") {
-		let toggle = 0;
-		if(info && info.ENABLED === 0) toggle = 1;
-		if(!info) await exports.dbQuery(`INSERT INTO EditedCommands(GUILD_ID, COMMAND, ENABLED) VALUES ("${guild.id}","${cmd}",${toggle})`);
-		else await exports.dbQuery(`UPDATE EditedCommands SET ENABLED=${toggle} WHERE GUILD_ID = "${guild.id}" AND COMMAND = "${cmd}"`);
-		return toggle;
-	} else if(Array.isArray(options)) {
-		if(!info) return await exports.dbQuery(`INSERT INTO EditedCommands(GUILD_ID, COMMAND, ROLES) VALUES ("${guild.id}","${cmd}","${options.join(",")}")`);
-		else return await exports.dbQuery(`UPDATE EditedCommands SET ROLES="${options.join(",")}" WHERE GUILD_ID = "${guild.id}" AND COMMAND = "${cmd}"`);
-	} else {
-		return false;
-	}
-};
-
-exports.getSetting = async (guild, setting) => {
-	let query = `SELECT VALUE FROM Settings WHERE ID = "${guild.id}" AND NAME = ${exports.sqlEscape(setting)}`;
-	let data = await exports.dbQuery(query);
-
-	if(data && data[0]) return data[0].VALUE;
-	else throw new Error();
-};
-
-exports.resetSetting = async (guild, setting) => {
-	exports.dbQuery(`DELETE FROM Settings WHERE ID = '${guild.id}' AND NAME = ${exports.sqlEscape(setting)}`);
-	let cH = Oxyl.modScripts.commandHandler;
-	if(setting === "prefix") delete cH.prefixes[guild.id];
-};
-
-exports.setSetting = async (guild, setting, value) => {
-	try {
-		await exports.getSetting(guild, setting);
-		exports.dbQuery(`UPDATE \`Settings\` SET \`VALUE\` = ${exports.sqlEscape(value)} ` +
-			`WHERE \`ID\` = '${guild.id}' AND \`NAME\` = ${exports.sqlEscape(setting)}`);
-	} catch(err) {
-		exports.dbQuery(`INSERT INTO \`Settings\`(\`NAME\`, \`VALUE\`, \`ID\`) VALUES (${exports.sqlEscape(setting)},${exports.sqlEscape(value)},'${guild.id}')`);
-	}
-
-	let cH = Oxyl.modScripts.commandHandler;
-	if(setting === "prefix") cH.prefixes[guild.id] = value;
-};
-
-exports.getCC = async (guildid, command) => {
-	let query = `SELECT \`TAG\` FROM \`CustomCommands\` WHERE \`GUILD\` = '${guildid}' AND \`COMMAND\` = ${exports.sqlEscape(command)}`;
-	let data = await exports.dbQuery(query);
-
-	if(data && data[0]) return data[0].TAG;
-	else return false;
-};
-
-exports.deleteCC = async (guildid, command) => {
-	exports.dbQuery(`DELETE FROM \`CustomCommands\` WHERE \`GUILD\` = '${guildid}' AND \`COMMAND\` = ${exports.sqlEscape(command)}`);
-};
-
-exports.createCC = async (guildid, command, tag) => {
-	exports.dbQuery(`INSERT INTO \`CustomCommands\`(\`GUILD\`, \`COMMAND\`, \`TAG\`) ` +
-		`VALUES ('${guildid}',${exports.sqlEscape(command)},${exports.sqlEscape(tag)})`);
-};
-
-exports.getRoles = async (guild, type) => {
-	let tableName = type === "auto" ? "AutoRole" : "RoleMe";
-	let query = `SELECT * FROM \`${tableName}\` WHERE \`ID\` = '${guild.id}'`;
-	return await exports.dbQuery(query);
-};
-
-exports.getRole = async (guild, type, role) => {
-	let tableName = type === "auto" ? "AutoRole" : "RoleMe";
-	let query = `SELECT \`ROLE\` FROM \`${tableName}\` WHERE \`ID\` = '${guild.id}' AND \`ROLE\` = '${role.id}'`;
-	let data = await exports.dbQuery(query);
-
-	if(data && data[0]) return true;
-	else return false;
-};
-
-exports.addRole = async (guild, type, role) => {
-	let tableName = type === "auto" ? "AutoRole" : "RoleMe";
-	exports.dbQuery(`INSERT INTO \`${tableName}\` (\`ID\`, \`ROLE\`) VALUES ('${guild.id}','${role.id}')`);
-};
-
-exports.deleteRole = async (guild, type, role) => {
-	let tableName = type === "auto" ? "AutoRole" : "RoleMe";
-	exports.dbQuery(`DELETE FROM \`${tableName}\` WHERE \`ID\` = '${guild.id}' AND \`ROLE\` = '${role.id}'`);
-};
-
-exports.clearGuildData = async (guild) => {
-	let tables = {
-		AutoRole: "ID",
-		GuildTags: "ID",
-		RoleMe: "ID",
-		Settings: "ID",
-		ModLog: "GUILD"
-	};
-
-	for(let key in tables) {
-		await exports.dbQuery(`DELETE FROM \`${key}\` WHERE \`${tables[key]}\` = '${guild.id}'`);
-	}
 };
 
 exports.splitParts = (message) => {
@@ -247,18 +134,15 @@ exports.codeBlock = (content, lang) => {
 	return `\n\`\`\`${lang}\n${content}\n\`\`\``;
 };
 
-exports.unmention = (user) => {
+exports.unmention = user => {
 	if(user.user) user = user.user;
 	return `${user.username}#${user.discriminator}`;
 };
 
 exports.consoleLog = (message, type) => {
 	let channel;
-	if(type === "command" || type === "cmd") {
-		channel = "commands";
-	} else {
-		channel = type;
-	}
+	if(type === "command" || type === "cmd") channel = "commands";
+	else channel = type;
 
 	channel = exports.config.channels[channel];
 	if(!type) type = "!";
@@ -331,11 +215,8 @@ exports.findFile = (dirs, name, ext) => {
 			break;
 		}
 	}
-	if(!dirName && !fileName) {
-		return false;
-	} else {
-		return [dirName, fileName];
-	}
+	if(!dirName && !fileName) return false;
+	else return [dirName, fileName];
 };
 
 exports.getFiles = (filePath, filter = (file) => true) => {
@@ -417,7 +298,7 @@ exports.listConstructor = (obj, index, follower) => {
 };
 
 async function updateRemind() {
-	let waiting = await exports.dbQuery(`SELECT * FROM \`Reminders\` WHERE \`DATE\` <= ${Date.now()}`);
+	let waiting = await Oxyl.modScripts.sqlQueries.dbQuery(`SELECT * FROM Reminders WHERE DATE <= ${Date.now()}`);
 	if(!waiting || waiting.length === 0) return;
 	waiting.forEach(async reminder => {
 		if(!bot.users.has(reminder.USER)) return;
@@ -426,6 +307,6 @@ async function updateRemind() {
 		dm.createMessage(`Hello, you asked me to remind you about this on ${exports.formatDate(reminder.CREATED)}:\n\n ${reminder.MESSAGE}`);
 	});
 
-	exports.dbQuery(`DELETE FROM \`Reminders\` WHERE \`NO_DUPLICATE\` IN (${waiting.map(reminder => reminder.NO_DUPLICATE).join(",")})`);
+	Oxyl.modScripts.sqlQueries.dbQuery(`DELETE FROM Reminders WHERE NO_DUPLICATE IN (${waiting.map(reminder => reminder.NO_DUPLICATE).join(",")})`);
 }
 setInterval(updateRemind, 15000);

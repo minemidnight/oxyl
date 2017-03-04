@@ -4,15 +4,15 @@ const blacklist = exports.blacklist = [];
 const ignored = exports.ignored = [];
 // wait for connection
 exports.updateThings = async () => {
-	let prefixArray = await framework.dbQuery("SELECT * FROM `Settings` WHERE `NAME` = 'prefix'");
+	let prefixArray = await Oxyl.modScripts.sqlQueries.dbQuery(`SELECT * FROM Settings WHERE NAME = "prefix"`);
 	prefixArray.forEach(data => {
 		prefixes[data.ID] = data.VALUE;
 	});
 
-	let blacklistedUsers = await framework.dbQuery("SELECT * FROM `Blacklist`");
-	blacklistedUsers.forEach(data => blacklist.push(data.USER));
+	let blacklistedUsers = await Oxyl.modScripts.sqlQueries.dbQuery(`SELECT * FROM Blacklist`);
+	blacklistedUsers.forEach(data => Oxyl.modScripts.sqlQueries.push(data.USER));
 
-	let ignoredChannels = await framework.dbQuery("SELECT `CHANNEL` FROM `Ignored`");
+	let ignoredChannels = await Oxyl.modScripts.sqlQueries.dbQuery(`SELECT CHANNEL FROM Ignored`);
 	ignoredChannels.forEach(data => ignored.push(data.CHANNEL));
 };
 
@@ -40,14 +40,14 @@ bot.on("messageCreate", async (message) => {
 			message.contentPreserved = cmdInfo.newContent;
 			msg = message.contentPreserved.toLowerCase();
 			message.content = msg;
-			if(message.channel.guild) var editedinfo = await framework.editedCommandInfo(command.name, message.channel.guild);
+			if(message.channel.guild) var editedinfo = await Oxyl.modScripts.sqlQueries.editCommands.info(command.name, message.channel.guild);
 		} else if(guild) {
 			msg = message.content.toLowerCase();
 			let cmdCheck;
 			if(msg.indexOf(" ") === -1) cmdCheck = msg;
 			else cmdCheck = msg.substring(0, msg.indexOf(" "));
 
-			let cc = await framework.getCC(message.channel.guild.id, cmdCheck);
+			let cc = await Oxyl.modScripts.sqlQueries.customCommands.get(message.channel.guild.id, cmdCheck);
 			if(!cc) return;
 
 			message.contentPreserved = message.content.substring(cmdCheck.length, message.content.length).trim();
@@ -75,19 +75,7 @@ bot.on("messageCreate", async (message) => {
 			};
 		} else {
 			return;
-			// if(!type.match(/<@!?255832257519026178>/)) return;
-			// message.channel.sendTyping();
-			// let clever = await framework.cleverResponse(msg);
-			// console.log(`CleverBot in ${guild ? guild.name : "DM"} by ${framework.unmention(message.author)}: ${message.content}`);
-			// message.channel.createMessage(clever).catch(err => err);
-			// return;
 		}
-	// } else if(guild && cleverchannels.indexOf(message.channel.id) !== -1) {
-	// 	message.channel.sendTyping();
-	// 	let clever = await framework.cleverResponse(msg);
-	// 	console.log(`CleverBot in ${guild.name} by ${framework.unmention(message.author)}: ${message.content}`);
-	// 	message.channel.createMessage(clever).catch(err => err);
-	// 	return;
 	} else {
 		return;
 	}
@@ -138,7 +126,8 @@ bot.on("messageCreate", async (message) => {
 	}
 
 	try {
-		console.log(`${command.name} in ${guild ? guild.name : "DM"} by ${framework.unmention(message.author)}: ${message.contentPreserved || "no args"}`);
+		framework.consoleLog(`${command.name} in ${guild ? guild.name : "DM"} by ${framework.unmention(message.author)}: ` +
+			`${message.contentPreserved || "no args"}`, "commands");
 		var result = await command.run(message);
 
 		msg = { content: "" };
@@ -165,7 +154,7 @@ bot.on("messageCreate", async (message) => {
 		}
 	} catch(error) {
 		if(!error) return;
-		exports.statsd.increment(`oxyl.errors`);
+		Oxyl.statsd.increment(`oxyl.errors`);
 		framework.consoleLog(`Failed command ${command.name} (${command.type})\n` +
 				`**Error:** ${framework.codeBlock(error.stack || error.message)}`, "debug");
 		message.channel.createMessage("Bot error when executing command, error sent to Support Server");

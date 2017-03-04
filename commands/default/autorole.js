@@ -1,5 +1,6 @@
+const sqlQueries = Oxyl.modScripts.sqlQueries;
 module.exports = async (guild, member) => {
-	let roles = await framework.getRoles(guild, "auto");
+	let roles = await sqlQueries.roleSetters.get(guild, "auto");
 	roles = roles
 		.filter(data => guild.roles.has(data.ROLE))
 		.map(data => data.ROLE);
@@ -28,7 +29,7 @@ function parseRole(guild, value) {
 
 async function handleRole(message, args) {
 	if(args[0].toLowerCase() === "list") {
-		let roles = await framework.getRoles(message.channel.guild, "auto");
+		let roles = await sqlQueries.roleSetters.get(message.channel.guild, "auto");
 		roles = roles
 			.filter(data => message.channel.guild.roles.has(data.ROLE))
 			.map(data => message.channel.guild.roles.get(data.ROLE).name);
@@ -41,10 +42,10 @@ async function handleRole(message, args) {
 		let role = parseRole(message.channel.guild, args.splice(1).join(" "));
 		if(!role) return "Invalid role! Role not found.";
 
-		let exists = await framework.getRole(message.channel.guild, "auto", role);
+		let exists = await sqlQueries.roleSetters.get(message.channel.guild, "auto", role);
 		if(exists) return `\`${role.name}\` is already autorole`;
 
-		framework.addRole(message.channel.guild, "auto", role);
+		sqlQueries.roleSetters.add(message.channel.guild, "auto", role);
 		return `Added role \`${role.name}\` to autoroles`;
 	} else if(args[0].toLowerCase() === "delete") {
 		let guildLevel = framework.guildLevel(message.member);
@@ -53,10 +54,10 @@ async function handleRole(message, args) {
 		let role = parseRole(message.channel.guild, args.splice(1).join(" "));
 		if(!role) return "Invalid role! Role not found.";
 
-		let exists = await framework.getRole(message.channel.guild, "auto", role);
+		let exists = await sqlQueries.roleSetters.get(message.channel.guild, "auto", role);
 		if(!exists) return `\`${role.name}\` is not autorole`;
 
-		framework.deleteRole(message.channel.guild, "auto", role);
+		sqlQueries.roleSetters.delete(message.channel.guild, "auto", role);
 		return `Removed role \`${role.name}\` from autoroles`;
 	} else {
 		let normal = ["autorole list - list autoroles"];

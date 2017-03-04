@@ -8,7 +8,7 @@
 		"Oxyl": false,
 		"framework": false,
 		"bot": false
- 	},
+	 },
 	"parserOptions": {
 		"ecmaVersion": 2017
 	},
@@ -118,6 +118,7 @@
 		"operator-assignment": "error",
 		"operator-linebreak": ["error", "after"],
 		"padded-blocks": ["error", "never"],
+		"quotes": ["error", "double", { "allowTemplateLiterals": true, "avoidEscape": true }],
 		"quote-props": ["error", "as-needed"],
 		"semi-spacing": "error",
 		"semi": "error",
@@ -135,7 +136,7 @@
 		"no-useless-computed-key": "error",
 		"no-useless-constructor": "error",
 		"prefer-arrow-callback": "error",
-    "prefer-rest-params": "error",
+		"prefer-rest-params": "error",
 		"prefer-spread": "error",
 		"prefer-template": "error",
 		"rest-spread-spacing": "error",

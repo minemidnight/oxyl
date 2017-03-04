@@ -42,7 +42,7 @@ exports.cmd = new Oxyl.Command("help", async message => {
 		}
 
 		if(message.channel.guild) {
-			let customs = await framework.dbQuery(`SELECT \`COMMAND\` FROM \`CustomCommands\` WHERE \`GUILD\` = '${message.channel.guild.id}'`);
+			let customs = await Oxyl.modScripts.sqlQueries.dbQuery(`SELECT COMMAND FROM CustomCommands WHERE GUILD = "${message.channel.guild.id}"`);
 			if(customs && customs.length >= 1) {
 				customs = customs.map(cmd => cmd.COMMAND).sort();
 				helpMsg += `Custom Commands **(${customs.length}):** `;

@@ -1,22 +1,23 @@
-const math = require("mathjs");
+const math = require("expr-eval").Parser;
 const tableOrder = ["GlobalTags", "GuildTags", "ChannelTags", "UserTags", "UnlistedTags"];
+const sqlQueries = Oxyl.modScripts.sqlQueries;
 
 async function getTag(query, message, table = 0, loop = true) {
 	Oxyl.statsd.increment(`oxyl.tags.gettag`);
 	let tableName = tableOrder[table], dbQuery;
 
 	if(tableName === "GlobalTags") {
-		dbQuery = `SELECT * FROM \`${tableName}\` WHERE \`NAME\` = '${query}'`;
+		dbQuery = `SELECT * FROM ${tableName} WHERE NAME = "${query}"`;
 	} else if(tableName === "GuildTags" || tableName === "ChannelTags") {
 		let id = tableName === "GuildTags" ? message.channel.guild.id : message.channel.id;
-		dbQuery = `SELECT * FROM \`${tableName}\` WHERE \`NAME\` = '${query}' AND \`ID\` = '${id}'`;
+		dbQuery = `SELECT * FROM ${tableName} WHERE NAME = "${query}" AND ID = "${id}"`;
 	} else if(tableName === "UserTags") {
-		dbQuery = `SELECT * FROM \`${tableName}\` WHERE \`NAME\` = '${query}' AND \`CREATOR\` = '${message.author.id}'`;
+		dbQuery = `SELECT * FROM ${tableName} WHERE NAME = "${query}" AND CREATOR = "${message.author.id}"`;
 	} else if(tableName === "UnlistedTags") {
-		dbQuery = `SELECT * FROM \`${tableName}\` WHERE \`NAME\` = '${query}'`;
+		dbQuery = `SELECT * FROM ${tableName} WHERE NAME = "${query}"`;
 	}
 
-	let data = await framework.dbQuery(dbQuery);
+	let data = await sqlQueries.dbQuery(dbQuery);
 	if(data && data[0]) {
 		data[0].TYPE = tableName.substring(0, tableName.indexOf("Tags")).toLowerCase();
 		return data[0];
@@ -32,14 +33,14 @@ function addUse(type, name, message) {
 	Oxyl.statsd.increment(`oxyl.tags.usage`);
 	type = tableOrder.find(table => table.toLowerCase().startsWith(type));
 	if(type === "GlobalTags") {
-		framework.dbQuery(`UPDATE \`${type}\` SET \`USES\` = \`USES\` + 1 WHERE \`NAME\` = '${name}'`);
+		sqlQueries.dbQuery(`UPDATE ${type} SET USES = USES + 1 WHERE NAME = "${name}"`);
 	} else if(type === "GuildTags" || type === "ChannelTags") {
 		let id = type === "GuildTags" ? message.channel.guild.id : message.channel.id;
-		framework.dbQuery(`UPDATE \`${type}\` SET \`USES\` = \`USES\` + 1 WHERE \`NAME\` = '${name}' AND \`ID\` = '${id}'`);
+		sqlQueries.dbQuery(`UPDATE ${type} SET USES = USES + 1 WHERE NAME = "${name}" AND ID = "${id}"`);
 	} else if(type === "UserTags") {
-		framework.dbQuery(`UPDATE \`${type}\` SET \`USES\` = \`USES\` + 1 WHERE \`NAME\` = '${name}' AND \`CREATOR\` = '${message.author.id}'`);
+		sqlQueries.dbQuery(`UPDATE ${type} SET USES = USES + 1 WHERE NAME = "${name}" AND CREATOR = "${message.author.id}"`);
 	} else if(type === "UnlistedTags") {
-		framework.dbQuery(`UPDATE \`${type}\` SET \`USES\` = \`USES\` + 1 WHERE \`NAME\` = '${name}'`);
+		sqlQueries.dbQuery(`UPDATE ${type} SET USES = USES + 1 WHERE NAME = "${name}"`);
 	}
 }
 exports.addUse = addUse;
@@ -49,14 +50,14 @@ function createTag(data) {
 	let type = data.type;
 	type = tableOrder.find(table => table.toLowerCase().startsWith(type));
 	if(type === "GlobalTags") {
-		framework.dbQuery(`INSERT INTO \`${type}\`(\`CREATOR\`, \`NAME\`, \`CREATED_AT\`, \`CONTENT\`)` +
-		`VALUES ('${data.creator}',${framework.sqlEscape(data.name)},'${data.createdAt}', ${framework.sqlEscape(data.content)})`);
+		sqlQueries.dbQuery(`INSERT INTO ${type}(CREATOR, NAME, CREATED_AT, CONTENT)` +
+		`VALUES ("${data.creator}",${sqlQueries.sqlEscape(data.name)},"${data.createdAt}", ${sqlQueries.sqlEscape(data.content)})`);
 	} else if(type === "GuildTags" || type === "ChannelTags") {
-		framework.dbQuery(`INSERT INTO \`${type}\`(\`CREATOR\`, \`ID\`, \`NAME\`, \`CREATED_AT\`, \`CONTENT\`)` +
-		`VALUES ('${data.creator}','${data.id}',${framework.sqlEscape(data.name)},'${data.createdAt}',${framework.sqlEscape(data.content)})`);
+		sqlQueries.dbQuery(`INSERT INTO ${type}(CREATOR, ID, NAME, CREATED_AT, CONTENT)` +
+		`VALUES ("${data.creator}","${data.id}",${sqlQueries.sqlEscape(data.name)},"${data.createdAt}",${sqlQueries.sqlEscape(data.content)})`);
 	} else {
-		framework.dbQuery(`INSERT INTO \`${type}\`(\`CREATOR\`, \`NAME\`, \`CREATED_AT\`, \`CONTENT\`)` +
-		`VALUES ('${data.creator}',${framework.sqlEscape(data.name)},'${data.createdAt}',${framework.sqlEscape(data.content)})`);
+		sqlQueries.dbQuery(`INSERT INTO ${type}(CREATOR, NAME, CREATED_AT, CONTENT)` +
+		`VALUES ("${data.creator}",${sqlQueries.sqlEscape(data.name)},"${data.createdAt}",${sqlQueries.sqlEscape(data.content)})`);
 	}
 }
 exports.createTag = createTag;
@@ -65,20 +66,20 @@ function deleteTag(type, name, message) {
 	Oxyl.statsd.increment(`oxyl.tags.deletion`);
 	type = tableOrder.find(table => table.toLowerCase().startsWith(type));
 	if(type === "GlobalTags") {
-		framework.dbQuery(`DELETE FROM \`${type}\` WHERE \`NAME\` = ${framework.sqlEscape(name)}`);
+		sqlQueries.dbQuery(`DELETE FROM ${type} WHERE NAME = ${sqlQueries.sqlEscape(name)}`);
 	} else if(type === "GuildTags" || type === "ChannelTags") {
 		let id = type === "GuildTags" ? message.channel.guild.id : message.channel.id;
-		framework.dbQuery(`DELETE FROM \`${type}\` WHERE \`NAME\` = ${framework.sqlEscape(name)} AND \`ID\` = '${id}'`);
+		sqlQueries.dbQuery(`DELETE FROM ${type} WHERE NAME = ${sqlQueries.sqlEscape(name)} AND ID = "${id}"`);
 	} else if(type === "UserTags") {
-		framework.dbQuery(`DELETE FROM \`${type}\` WHERE \`NAME\` = ${framework.sqlEscape(name)} AND \`CREATOR\` = '${message.author.id}'`);
+		sqlQueries.dbQuery(`DELETE FROM ${type} WHERE NAME = ${sqlQueries.sqlEscape(name)} AND CREATOR = "${message.author.id}"`);
 	} else if(type === "UnlistedTags") {
-		framework.dbQuery(`DELETE FROM \`${type}\` WHERE \`NAME\` = ${framework.sqlEscape(name)}`);
+		sqlQueries.dbQuery(`DELETE FROM ${type} WHERE NAME = ${sqlQueries.sqlEscape(name)}`);
 	}
 }
 exports.deleteTag = deleteTag;
 
 async function getUnlistedTags() {
-	return await framework.dbQuery(`SELECT * FROM \`UnlistedTags\``);
+	return await sqlQueries.dbQuery(`SELECT * FROM UnlistedTags`);
 }
 exports.getUnlistedTags = getUnlistedTags;
 
@@ -94,17 +95,17 @@ async function getTags(message, fullData, table = 0) {
 	}
 
 	if(tableName === "GlobalTags") {
-		dbQuery = `SELECT * FROM \`${tableName}\``;
+		dbQuery = `SELECT * FROM ${tableName}`;
 	} else if(tableName === "GuildTags" || tableName === "ChannelTags") {
 		let id = tableName === "GuildTags" ? message.channel.guild.id : message.channel.id;
-		dbQuery = `SELECT * FROM \`${tableName}\` WHERE \`ID\` = '${id}'`;
+		dbQuery = `SELECT * FROM ${tableName} WHERE ID = "${id}"`;
 	} else if(tableName === "UserTags") {
-		dbQuery = `SELECT * FROM \`${tableName}\` WHERE \`CREATOR\` = '${message.author.id}'`;
+		dbQuery = `SELECT * FROM ${tableName} WHERE CREATOR = "${message.author.id}"`;
 	} else {
 		return fullData;
 	}
 
-	let data = await framework.dbQuery(dbQuery);
+	let data = await sqlQueries.dbQuery(dbQuery);
 	if(data && data.length >= 1) {
 		let type = tableName.substring(0, tableName.indexOf("Tags")).toLowerCase();
 		data.forEach(dataType => {
@@ -141,8 +142,6 @@ async function executeTag(tag, message) {
 			.replace(/\u26FBlb\u26FC/g, "{")
 			.replace(/\u26FBrb\u26FC/g, "}")
 			.replace(/\u26FB(pipe|pipeUser)\u26FC/g, "|")
-			.replace(/@here/g, "@\u200Bhere")
-			.replace(/@everyone/g, "@\u200Bhere")
 			.trim();
 
 		if(!result || result.length === 0) return `Tag result is an empty message`;
@@ -170,6 +169,10 @@ async function parseTag(tag, message, resultArgs = []) {
 	}
 
 	for(let subtag of subtags) {
+		if(typeof tag === "string" && ~tag.indexOf(`${framework.spStart}return${framework.spEnd}`))	{
+			return tag.substring(0, tag.indexOf(`${framework.spStart}return${framework.spEnd}`));
+		}
+
 		let tagName, passedArgs = [], originalSub = subtag;
 		subtag = subtag.substring(1, subtag.length - 1);
 		if(subtag.endsWith(":") && !subtag.includes("|")) {
@@ -187,7 +190,7 @@ async function parseTag(tag, message, resultArgs = []) {
 		try {
 			for(let i in passedArgs) {
 				let arg = passedArgs[i];
-				if(arg.indexOf("{") !== -1 && arg.indexOf("}") !== -1) {
+				if(!~arg.indexOf("{") && !~arg.indexOf("}")) {
 					arg = arg.replace(/\u26FBpipe\u26FC/g, "|");
 					passedArgs[i] = await parseTag(arg, message);
 				}
@@ -201,7 +204,7 @@ async function parseTag(tag, message, resultArgs = []) {
 			else if(typeof result === "object" || typeof result === "undefined" || typeof result === "number") resultArgs = [result];
 			else resultArgs = [];
 
-			if(typeof result === "string" && result.indexOf("{") !== -1 && result.indexOf("}") !== -1) result = await parseTag(result, message, resultArgs);
+			if(typeof result === "string" && !~result.indexOf("{") && !~result.indexOf("}")) result = await parseTag(result, message, resultArgs);
 			if(typeof tag === "string" && typeof result !== "object") tag = tag.replace(originalSub, result.toString());
 			else tag = result;
 
@@ -390,11 +393,8 @@ const tagManager = {
 				throw new Error();
 			}
 
-			if(result) {
-				return args[3];
-			} else {
-				return args[4] || "";
-			}
+			if(result) return args[3];
+			else return args[4] || "";
 		}
 	},
 	int: {
@@ -451,7 +451,7 @@ const tagManager = {
 		in: "5*9",
 		out: "45",
 		usage: "<Expression>",
-		run: async args => math.eval(args[0])
+		run: async args => math.evaluate(args[0])
 	},
 	member: {
 		return: "Guild member who sent the message (can get nickname from this, but not user)",
@@ -638,6 +638,13 @@ const tagManager = {
 		usage: "<Member/User Object>",
 		run: async args => framework.unmention(args[0])
 	},
+	upper: {
+		return: "Text converted to uppercase",
+		in: "Hello world!",
+		out: `"HELLO WORLD!"`,
+		usage: "<String>",
+		run: async args => args[0].toUpperCase()
+	},
 	user: {
 		return: "Alias for author -- user who sent message / user from event",
 		out: "{ User Object }",
@@ -656,15 +663,15 @@ const tagManager = {
 		out: `"155112606661607425"`,
 		usage: "<String> [New Value (string)]",
 		run: async (args, message) => {
-			let tagVar = await framework.dbQuery(`SELECT * FROM \`TagVars\` WHERE ` +
-				`\`AUTHOR\` = '${message.tagOwner}' AND \`NAME\` = ${framework.sqlEscape(args[0])}`);
+			let tagVar = await sqlQueries.dbQuery(`SELECT * FROM TagVars WHERE ` +
+				`AUTHOR = "${message.tagOwner}" AND NAME = ${sqlQueries.sqlEscape(args[0])}`);
 			if(args[1]) {
 				if(!tagVar[0]) {
-					framework.dbQuery(`INSERT INTO \`TagVars\`(\`NAME\`, \`AUTHOR\`, \`VALUE\`) VALUES ` +
-						`(${framework.sqlEscape(args[0])},'${message.tagOwner}',${framework.sqlEscape(args[1])})`);
+					sqlQueries.dbQuery(`INSERT INTO TagVars(NAME, AUTHOR, VALUE) VALUES ` +
+						`(${sqlQueries.sqlEscape(args[0])},"${message.tagOwner}",${sqlQueries.sqlEscape(args[1])})`);
 				} else {
-					framework.dbQuery(`UPDATE \`TagVars\` SET \`VALUE\`=${framework.sqlEscape(args[1])} ` +
-						`WHERE \`AUTHOR\` = '${message.tagOwner}' AND \`NAME\` = ${framework.sqlEscape(args[0])}`);
+					sqlQueries.dbQuery(`UPDATE TagVars SET VALUE=${sqlQueries.sqlEscape(args[1])} ` +
+						`WHERE AUTHOR = "${message.tagOwner}" AND NAME = ${sqlQueries.sqlEscape(args[0])}`);
 				}
 				return false;
 			} else {
