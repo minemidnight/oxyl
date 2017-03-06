@@ -13,7 +13,7 @@ async function removeIgnore(channel) {
 
 exports.cmd = new Oxyl.Command("ignore", async message => {
 	let channel = message.channel;
-	let ignored = !~Oxyl.modScripts.commandHandler.ignored.indexOf(channel.id);
+	let ignored = ~Oxyl.modScripts.commandHandler.ignored.indexOf(channel.id);
 
 	if(ignored) {
 		await removeIgnore(channel);

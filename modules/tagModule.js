@@ -7,14 +7,14 @@ async function getTag(query, message, table = 0, loop = true) {
 	let tableName = tableOrder[table], dbQuery;
 
 	if(tableName === "GlobalTags") {
-		dbQuery = `SELECT * FROM ${tableName} WHERE NAME = "${query}"`;
+		dbQuery = `SELECT * FROM ${tableName} WHERE NAME = ${sqlQueries.sqlEscape(query)}`;
 	} else if(tableName === "GuildTags" || tableName === "ChannelTags") {
 		let id = tableName === "GuildTags" ? message.channel.guild.id : message.channel.id;
-		dbQuery = `SELECT * FROM ${tableName} WHERE NAME = "${query}" AND ID = "${id}"`;
+		dbQuery = `SELECT * FROM ${tableName} WHERE NAME = ${sqlQueries.sqlEscape(query)} AND ID = "${id}"`;
 	} else if(tableName === "UserTags") {
-		dbQuery = `SELECT * FROM ${tableName} WHERE NAME = "${query}" AND CREATOR = "${message.author.id}"`;
+		dbQuery = `SELECT * FROM ${tableName} WHERE NAME = ${sqlQueries.sqlEscape(query)} AND CREATOR = "${message.author.id}"`;
 	} else if(tableName === "UnlistedTags") {
-		dbQuery = `SELECT * FROM ${tableName} WHERE NAME = "${query}"`;
+		dbQuery = `SELECT * FROM ${tableName} WHERE NAME = ${sqlQueries.sqlEscape(query)}`;
 	}
 
 	let data = await sqlQueries.dbQuery(dbQuery);
@@ -33,14 +33,14 @@ function addUse(type, name, message) {
 	Oxyl.statsd.increment(`oxyl.tags.usage`);
 	type = tableOrder.find(table => table.toLowerCase().startsWith(type));
 	if(type === "GlobalTags") {
-		sqlQueries.dbQuery(`UPDATE ${type} SET USES = USES + 1 WHERE NAME = "${name}"`);
+		sqlQueries.dbQuery(`UPDATE ${type} SET USES = USES + 1 WHERE NAME = ${sqlQueries.sqlEscape(name)}`);
 	} else if(type === "GuildTags" || type === "ChannelTags") {
 		let id = type === "GuildTags" ? message.channel.guild.id : message.channel.id;
-		sqlQueries.dbQuery(`UPDATE ${type} SET USES = USES + 1 WHERE NAME = "${name}" AND ID = "${id}"`);
+		sqlQueries.dbQuery(`UPDATE ${type} SET USES = USES + 1 WHERE NAME = ${sqlQueries.sqlEscape(name)} AND ID = "${id}"`);
 	} else if(type === "UserTags") {
-		sqlQueries.dbQuery(`UPDATE ${type} SET USES = USES + 1 WHERE NAME = "${name}" AND CREATOR = "${message.author.id}"`);
+		sqlQueries.dbQuery(`UPDATE ${type} SET USES = USES + 1 WHERE NAME = ${sqlQueries.sqlEscape(name)} AND CREATOR = "${message.author.id}"`);
 	} else if(type === "UnlistedTags") {
-		sqlQueries.dbQuery(`UPDATE ${type} SET USES = USES + 1 WHERE NAME = "${name}"`);
+		sqlQueries.dbQuery(`UPDATE ${type} SET USES = USES + 1 WHERE NAME = ${sqlQueries.sqlEscape(name)}`);
 	}
 }
 exports.addUse = addUse;
@@ -51,13 +51,13 @@ function createTag(data) {
 	type = tableOrder.find(table => table.toLowerCase().startsWith(type));
 	if(type === "GlobalTags") {
 		sqlQueries.dbQuery(`INSERT INTO ${type}(CREATOR, NAME, CREATED_AT, CONTENT)` +
-		`VALUES ("${data.creator}",${sqlQueries.sqlEscape(data.name)},"${data.createdAt}", ${sqlQueries.sqlEscape(data.content)})`);
+		`VALUES (${sqlQueries.sqlEscape(data.creator)},${sqlQueries.sqlEscape(data.name)},"${data.createdAt}", ${sqlQueries.sqlEscape(data.content)})`);
 	} else if(type === "GuildTags" || type === "ChannelTags") {
 		sqlQueries.dbQuery(`INSERT INTO ${type}(CREATOR, ID, NAME, CREATED_AT, CONTENT)` +
-		`VALUES ("${data.creator}","${data.id}",${sqlQueries.sqlEscape(data.name)},"${data.createdAt}",${sqlQueries.sqlEscape(data.content)})`);
+		`VALUES (${sqlQueries.sqlEscape(data.creator)},"${data.id}",${sqlQueries.sqlEscape(data.name)},"${data.createdAt}",${sqlQueries.sqlEscape(data.content)})`);
 	} else {
 		sqlQueries.dbQuery(`INSERT INTO ${type}(CREATOR, NAME, CREATED_AT, CONTENT)` +
-		`VALUES ("${data.creator}",${sqlQueries.sqlEscape(data.name)},"${data.createdAt}",${sqlQueries.sqlEscape(data.content)})`);
+		`VALUES (${sqlQueries.sqlEscape(data.creator)},${sqlQueries.sqlEscape(data.name)},"${data.createdAt}",${sqlQueries.sqlEscape(data.content)})`);
 	}
 }
 exports.createTag = createTag;

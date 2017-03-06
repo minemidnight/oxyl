@@ -11,16 +11,16 @@ async function getDesc(user) {
 	else return "None set";
 }
 
-async function resetDesc(user) {
-	return await sqlQueries.dbQuery(`DELETE FROM Description WHERE USER = "${user}"`);
+async function resetDesc(userid) {
+	return await sqlQueries.dbQuery(`DELETE FROM Description WHERE USER = "${userid}"`);
 }
 
-async function setDesc(user, value) {
+async function setDesc(userid, value) {
 	if(value === "None set") return false;
 
-	let desc = await getDesc(user);
-	if(desc === "None set") return await sqlQueries.dbQuery(`INSERT INTO Description(USER, VALUE) VALUES ("${user}",${sqlQueries.sqlEscape(value)})`);
-	else return await sqlQueries.dbQuery(`UPDATE Description SET VALUE=${sqlQueries.sqlEscape(value)} WHERE USER = "${user}"`);
+	let desc = await getDesc(userid);
+	if(desc === "None set") return await sqlQueries.dbQuery(`INSERT INTO Description(USER, VALUE) VALUES ("${userid}",${sqlQueries.sqlEscape(value)})`);
+	else return await sqlQueries.dbQuery(`UPDATE Description SET VALUE=${sqlQueries.sqlEscape(value)} WHERE USER = "${userid}"`);
 }
 
 router.get("/update", async (req, res) => {

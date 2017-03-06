@@ -5,7 +5,7 @@ module.exports = {
 	init: async () => {
 		let dbData = framework.config.database;
 		dbData.password = framework.config.private.databasePass;
-		sqlEscape = sqlEscape = mysql.escape;
+		sqlEscape = module.exports.sqlEscape = mysql.escape;
 		let connection = await mysql.createConnection(dbData);
 		dbQuery = module.exports.dbQuery = (query) => connection.query(query);
 	},
@@ -72,7 +72,7 @@ module.exports = {
 			let tableName = type === "auto" ? "AutoRole" : "RoleMe";
 			if(role) {
 				let data = await dbQuery(`SELECT ROLE FROM ${tableName} WHERE ID = "${guild.id}" AND ROLE = "${role.id}"`);
-				return data.length === 0;
+				return data.length;
 			} else {
 				return await dbQuery(`SELECT * FROM ${tableName} WHERE ID = "${guild.id}"`);
 			}

@@ -32,7 +32,7 @@ exports.createCase = async (guild, action, user) => {
 	let msg = await channel.createMessage(parsed);
 
 	await Oxyl.modScripts.sqlQueries.dbQuery(`INSERT INTO ModLog(GUILD, ACTION, MSG, USER, USERID, CASE_NUM) ` +
-		`VALUES ("${guild.id}", ${action}, "${msg.id}", "${framework.unmention(user)}", "${user.id}", ${casenum})`);
+		`VALUES ("${guild.id}", ${action}, "${msg.id}", ${Oxyl.modScripts.sqlQueries.sqlEscape(framework.unmention(user))}, "${user.id}", ${casenum})`);
 	if(autoReason[guild.id]) {
 		exports.setReason(guild, casenum, autoReason[guild.id].reason, autoReason[guild.id].mod);
 		delete autoReason[guild.id];

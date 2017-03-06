@@ -22,7 +22,7 @@ exports.cmd = new Oxyl.Command("editcommand", async message => {
 				}
 			});
 
-			return foundRole.id || undefined;
+			return foundRole ? foundRole.id : undefined;
 		}).filter(role => role !== undefined);
 		if(!roles || roles.length === 0) return "Invalid roles given, please provide role names split with a ,";
 

@@ -13,7 +13,7 @@ async function removeBlacklist(uid) {
 
 exports.cmd = new Oxyl.Command("blacklist", async message => {
 	let user = message.args[0];
-	let blacklisted = !~Oxyl.modScripts.commandHandler.blacklist.indexOf(user.id);
+	let blacklisted = ~Oxyl.modScripts.commandHandler.blacklist.indexOf(user.id);
 
 	if(blacklisted) {
 		await removeBlacklist(user.id);
