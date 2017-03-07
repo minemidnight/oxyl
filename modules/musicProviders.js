@@ -112,6 +112,8 @@ class ProviderData {
 				if(parts[1] < 10) parts[1] = `0${parts[1]}`;
 				parts.push(hours);
 			}
+		} else {
+			parts.push("00");
 		}
 
 		return parts.reverse().join(":");
