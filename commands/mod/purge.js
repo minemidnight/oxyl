@@ -44,7 +44,7 @@ exports.cmd = new Oxyl.Command("purge", async message => {
 				else if(filtersActive.embeds && msg.embeds.length >= 1) return true;
 				else if(filtersActive.users && filtersActive.users.includes(msg.author.id)) return true;
 				else if(filtersActive.includes && message.content.toLowerCase().includes(filtersActive.includes)) return true;
-				else if(filtersActive.links && message.content.test(new RegExp(framework.config.options.linkFilter))) return true;
+				else if(filtersActive.links && (new RegExp(framework.config.options.linkFilter)).test(message.content)) return true;
 				else if(filtersActive.matches && message.content.match(new RegExp(filtersActive.matches, "im"))) return true;
 				else return false;
 			});

@@ -10,7 +10,7 @@ exports.updateThings = async () => {
 	});
 
 	let blacklistedUsers = await Oxyl.modScripts.sqlQueries.dbQuery(`SELECT * FROM Blacklist`);
-	blacklistedUsers.forEach(data => Oxyl.modScripts.sqlQueries.push(data.USER));
+	blacklistedUsers.forEach(data => blacklist.push(data.USER));
 
 	let ignoredChannels = await Oxyl.modScripts.sqlQueries.dbQuery(`SELECT CHANNEL FROM Ignored`);
 	ignoredChannels.forEach(data => ignored.push(data.CHANNEL));
@@ -81,7 +81,7 @@ bot.on("messageCreate", async (message) => {
 	}
 
 	if(editedinfo && editedinfo.ENABLED === 0) return;
-	if(editedinfo && editedinfo.ROLES) editedinfo.ROLES = editedinfo.ROLES.filter(role => message.channel.guild.roles.has(role));
+	if(editedinfo && editedinfo.ROLES) editedinfo.ROLES = editedinfo.ROLES.split(",").filter(role => message.channel.guild.roles.has(role));
 	if(command.onCooldown(message.author)) {
 		message.channel.createMessage(`This command is on cooldown for you.`);
 		return;

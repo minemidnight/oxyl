@@ -74,8 +74,8 @@ exports.setReason = async (guild, casenum, reason, mod) => {
 	return "SUCCESS";
 };
 
-bot.on("guildBanAdd", async (guild, user) => exports.createCase(guild, 0, user));
-bot.on("guildBanRemove", async (guild, user) => exports.createCase(guild, 1, user));
+bot.on("guildBanAdd", (guild, user) => { exports.createCase(guild, 0, user); });
+bot.on("guildBanRemove", (guild, user) => { exports.createCase(guild, 1, user); });
 
 bot.on("guildMemberUpdate", (guild, member, oldMember) => {
 	if(!member || !oldMember) return;
