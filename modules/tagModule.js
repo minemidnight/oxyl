@@ -200,9 +200,14 @@ async function parseTag(tag, message, resultArgs = []) {
 			else if(resultArgs.length >= 1) passedArgs = resultArgs.concat(passedArgs.splice(resultArgs.length));
 
 			let result = await tagManager[tagName].run(passedArgs, message) || "";
-			if(typeof result === "object" && result.argsPreserved) message = result;
-			else if(typeof result === "object" || typeof result === "undefined" || typeof result === "number") resultArgs = [result];
-			else resultArgs = [];
+			if(typeof result === "object" && result.guild) {
+				message = result;
+				resultArgs = [message];
+			}	else if(typeof result === "object" || typeof result === "undefined" || typeof result === "number") {
+				resultArgs = [result];
+			}	else {
+				resultArgs = [];
+			}
 
 			if(typeof result === "string" && ~result.indexOf("{") && ~result.indexOf("}")) result = await parseTag(result, message, resultArgs);
 			if(typeof tag === "string" && typeof result !== "object") tag = tag.replace(originalSub, result.toString());

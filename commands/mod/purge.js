@@ -11,7 +11,7 @@ exports.cmd = new Oxyl.Command("purge", async message => {
 			let filtersActive = {};
 			let filters = message.args[1].split(",").map(filter => filter.toLowerCase().trim());
 			for(let filter of filters) {
-				let filterName = filter.indexOf(" ") === -1 ? filter : filter.split(" ")[0];
+				let filterName = !~filter.indexOf(" ") ? filter : filter.split(" ")[0];
 				if(!filterList.includes(filterName)) {
 					delete filters[filters.indexOf(filter)];
 					continue;
@@ -43,9 +43,9 @@ exports.cmd = new Oxyl.Command("purge", async message => {
 				else if(filtersActive.files && msg.attachments.length >= 1 && msg.attachments[0] && !msg.attachments[0].width) return true;
 				else if(filtersActive.embeds && msg.embeds.length >= 1) return true;
 				else if(filtersActive.users && filtersActive.users.includes(msg.author.id)) return true;
-				else if(filtersActive.includes && message.content.toLowerCase().includes(filtersActive.includes)) return true;
-				else if(filtersActive.links && (new RegExp(framework.config.options.linkFilter)).test(message.content)) return true;
-				else if(filtersActive.matches && message.content.match(new RegExp(filtersActive.matches, "im"))) return true;
+				else if(filtersActive.includes && ~msg.content.toLowerCase().indexOf(filtersActive.includes)) return true;
+				else if(filtersActive.links && (new RegExp(framework.config.options.linkFilter), "im").test(msg.content)) return true;
+				else if(filtersActive.matches && msg.content.match(new RegExp(filtersActive.matches, "im"))) return true;
 				else return false;
 			});
 		} else {
@@ -63,7 +63,7 @@ exports.cmd = new Oxyl.Command("purge", async message => {
 		type: "int",
 		min: 1,
 		max: 2500,
-		label: "amount"
+		label: "limit"
 	}, {
 		type: "custom",
 		optional: true,
