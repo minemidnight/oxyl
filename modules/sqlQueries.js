@@ -15,7 +15,8 @@ module.exports = {
 		info: async (cmd, guild) => {
 			let data = await dbQuery(`SELECT * FROM EditedCommands WHERE GUILD_ID = "${guild.id}" AND COMMAND = "${cmd}"`);
 			if(data.length === 0) return false;
-			else return data[0];
+			if(data[0].ROLES) data[0].ROLES = data[0].ROLES.split(",");
+			return data[0];
 		},
 		edit: async (cmd, options, guild) => {
 			let info = await module.exports.editCommands.info(cmd, guild);
