@@ -108,7 +108,7 @@ exports.findCommand = (cmdSearch) => {
 exports.formatDate = (toFormat) => {
 	let date = new Date(toFormat);
 	let months = ["January", "February", "March", "April", "May", "June", "July",
-		"August", "September", "October", "November", "Decemeber"];
+		"August", "September", "October", "November", "December"];
 	let weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 	let month = months[date.getMonth()];
