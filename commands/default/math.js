@@ -1,8 +1,8 @@
-const math = require("expr-eval").Parser;
+const math = require("mathjs");
 exports.cmd = new Oxyl.Command("math", async message => {
 	let result;
 	try {
-		result = math.evaluate(message.args[0]);
+		result = math.eval(message.args[0]);
 	} catch(error) {
 		result = undefined;
 	}

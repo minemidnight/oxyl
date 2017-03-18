@@ -15,7 +15,8 @@ module.exports = {
 		info: async (cmd, guild) => {
 			let data = await dbQuery(`SELECT * FROM EditedCommands WHERE GUILD_ID = "${guild.id}" AND COMMAND = "${cmd}"`);
 			if(data.length === 0) return false;
-			else return data[0];
+			if(data[0].ROLES) data[0].ROLES = data[0].ROLES.split(",");
+			return data[0];
 		},
 		edit: async (cmd, options, guild) => {
 			let info = await module.exports.editCommands.info(cmd, guild);
@@ -26,7 +27,7 @@ module.exports = {
 				else await dbQuery(`UPDATE EditedCommands SET ENABLED=${toggle} WHERE GUILD_ID = "${guild.id}" AND COMMAND = "${cmd}"`);
 				return toggle;
 			} else if(Array.isArray(options)) {
-				if(!info) return await dbQuery(`INSERT INTO EditedCommands(GUILD_ID, COMMAND, ROLES) VALUES ("${guild.id}","${cmd}","${options.join(",")}")`);
+				if(!info) return await dbQuery(`INSERT INTO EditedCommands(GUILD_ID, COMMAND, ROLES, ENABLED) VALUES("${guild.id}","${cmd}","${options.join(",")}",1)`);
 				else return await dbQuery(`UPDATE EditedCommands SET ROLES="${options.join(",")}" WHERE GUILD_ID = "${guild.id}" AND COMMAND = "${cmd}"`);
 			} else {
 				return false;

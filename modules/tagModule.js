@@ -1,4 +1,4 @@
-const math = require("expr-eval").Parser;
+const math = require("mathjs");
 const tableOrder = ["GlobalTags", "GuildTags", "ChannelTags", "UserTags", "UnlistedTags"];
 const sqlQueries = Oxyl.modScripts.sqlQueries;
 
@@ -200,9 +200,13 @@ async function parseTag(tag, message, resultArgs = []) {
 			else if(resultArgs.length >= 1) passedArgs = resultArgs.concat(passedArgs.splice(resultArgs.length));
 
 			let result = await tagManager[tagName].run(passedArgs, message) || "";
-			if(typeof result === "object" && result.argsPreserved) message = result;
-			else if(typeof result === "object" || typeof result === "undefined" || typeof result === "number") resultArgs = [result];
-			else resultArgs = [];
+			if(typeof result === "object" && result.tagVars) {
+				message = result;
+			}	else if(typeof result === "object" || typeof result === "undefined" || typeof result === "number") {
+				resultArgs = [result];
+			}	else {
+				resultArgs = [];
+			}
 
 			if(typeof result === "string" && ~result.indexOf("{") && ~result.indexOf("}")) result = await parseTag(result, message, resultArgs);
 			if(typeof tag === "string" && typeof result !== "object") tag = tag.replace(originalSub, result.toString());
@@ -451,7 +455,7 @@ const tagManager = {
 		in: "5*9",
 		out: "45",
 		usage: "<Expression>",
-		run: async args => math.evaluate(args[0])
+		run: async args => math.eval(args[0])
 	},
 	member: {
 		return: "Guild member who sent the message (can get nickname from this, but not user)",

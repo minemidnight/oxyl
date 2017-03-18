@@ -10,7 +10,7 @@ exports.updateThings = async () => {
 	});
 
 	let blacklistedUsers = await Oxyl.modScripts.sqlQueries.dbQuery(`SELECT * FROM Blacklist`);
-	blacklistedUsers.forEach(data => Oxyl.modScripts.sqlQueries.push(data.USER));
+	blacklistedUsers.forEach(data => blacklist.push(data.USER));
 
 	let ignoredChannels = await Oxyl.modScripts.sqlQueries.dbQuery(`SELECT CHANNEL FROM Ignored`);
 	ignoredChannels.forEach(data => ignored.push(data.CHANNEL));
@@ -22,9 +22,9 @@ bot.on("messageCreate", async (message) => {
 	let guild = message.channel.guild;
 	let msg = message.content.toLowerCase();
 	if(message.author.bot || blacklist.includes(message.author.id)) return;
-	else if(ignored.includes(message.channel.id) && framework.guildLevel(message.member) < 3) return;
+	else if(ignored.includes(message.channel.id) && message.member && framework.guildLevel(message.member) < 3) return;
 
-	let prefix = "^(o!|oxyl|<@!?255832257519026178>|<:oxyl_square:273616293775540224>|<:oxyl:273616986121043968>{GPRE}),?(?:\\s+)?([\\s\\S]+)";
+	let prefix = `^(o!|oxyl|<@!?${bot.user.id}>|<:oxyl_square:273616293775540224>|<:oxyl:273616986121043968>{GPRE}),?(?:\\s+)?([\\s\\S]+)`;
 	if(guild && prefixes[guild.id]) prefix = prefix.replace("{GPRE}", `|${framework.escapeRegex(prefixes[guild.id])}`);
 	else prefix = prefix.replace("{GPRE}", "");
 	prefix = new RegExp(prefix, "i");
@@ -32,6 +32,7 @@ bot.on("messageCreate", async (message) => {
 	let match = message.content.match(prefix);
 	if(match && match[2]) {
 		let type = match[1];
+		if(type.match(new RegExp(`^<@!?${bot.user.id}>`))) message.debug = true;
 		message.content = match[2];
 
 		let cmdInfo = framework.getCmd(message.content);
@@ -81,7 +82,7 @@ bot.on("messageCreate", async (message) => {
 	}
 
 	if(editedinfo && editedinfo.ENABLED === 0) return;
-	if(editedinfo && editedinfo.ROLES) editedinfo.ROLES = editedinfo.ROLES.filter(role => message.channel.guild.roles.has(role));
+	if(editedinfo && editedinfo.ROLES) editedinfo.ROLES = editedinfo.ROLES.filter(role => guild.roles.has(role));
 	if(command.onCooldown(message.author)) {
 		message.channel.createMessage(`This command is on cooldown for you.`);
 		return;
@@ -155,9 +156,17 @@ bot.on("messageCreate", async (message) => {
 	} catch(error) {
 		if(!error) return;
 		Oxyl.statsd.increment(`oxyl.errors`);
-		framework.consoleLog(`Failed command ${command.name} (${command.type})\n` +
-				`**Error:** ${framework.codeBlock(error.stack || error.message)}`, "debug");
-		message.channel.createMessage("Bot error when executing command, error sent to Support Server");
+		try {
+			let resp = JSON.parse(error.response);
+			if(resp.code === 50013 || resp.code === 10008 || resp.code === 50001 || resp.code === 40005 || resp.code === 10003) {
+				message.channel.createMessage("Command failed due to a permissions error");
+			} else {
+				throw error;
+			}
+		} catch(err) {
+			message.channel.createMessage(`Error executing this command! ` +
+				`Please report this if it is re-occuring: ${framework.codeBlock(message.debug ? err.stack : err.message)}`);
+		}
 	}
 });
 
