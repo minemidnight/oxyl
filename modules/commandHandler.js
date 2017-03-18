@@ -82,7 +82,11 @@ bot.on("messageCreate", async (message) => {
 	}
 
 	if(editedinfo && editedinfo.ENABLED === 0) return;
+<<<<<<< HEAD
 	if(editedinfo && editedinfo.ROLES) editedinfo.ROLES = editedinfo.ROLES.filter(role => guild.roles.has(role));
+=======
+	if(editedinfo && editedinfo.ROLES) editedinfo.ROLES = editedinfo.ROLES.split(",").filter(role => message.channel.guild.roles.has(role));
+>>>>>>> origin/master
 	if(command.onCooldown(message.author)) {
 		message.channel.createMessage(`This command is on cooldown for you.`);
 		return;

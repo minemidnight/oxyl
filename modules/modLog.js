@@ -8,12 +8,8 @@ exports.getCases = async (guild) => {
 };
 
 exports.modChannel = async (guild) => {
-	try {
-		let modlog = await Oxyl.modScripts.sqlQueries.getSetting(guild, "modlog");
-		return guild.channels.get(modlog) || false;
-	} catch(err) {
-		return false;
-	}
+	let modlog = await Oxyl.modScripts.sqlQueries.settings.get(guild, "modlog");
+	return guild.channels.get(modlog) || false;
 };
 
 exports.caseInfo = async (guild, casenum) => {
@@ -74,8 +70,8 @@ exports.setReason = async (guild, casenum, reason, mod) => {
 	return "SUCCESS";
 };
 
-bot.on("guildBanAdd", async (guild, user) => exports.createCase(guild, 0, user));
-bot.on("guildBanRemove", async (guild, user) => exports.createCase(guild, 1, user));
+bot.on("guildBanAdd", (guild, user) => exports.createCase(guild, 0, user));
+bot.on("guildBanRemove", (guild, user) => exports.createCase(guild, 1, user));
 
 bot.on("guildMemberUpdate", (guild, member, oldMember) => {
 	if(!member || !oldMember) return;

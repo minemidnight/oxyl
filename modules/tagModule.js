@@ -200,8 +200,14 @@ async function parseTag(tag, message, resultArgs = []) {
 			else if(resultArgs.length >= 1) passedArgs = resultArgs.concat(passedArgs.splice(resultArgs.length));
 
 			let result = await tagManager[tagName].run(passedArgs, message) || "";
+<<<<<<< HEAD
 			if(typeof result === "object" && result.tagVars) {
 				message = result;
+=======
+			if(typeof result === "object" && result.guild) {
+				message = result;
+				resultArgs = [message];
+>>>>>>> origin/master
 			}	else if(typeof result === "object" || typeof result === "undefined" || typeof result === "number") {
 				resultArgs = [result];
 			}	else {
