@@ -2,7 +2,7 @@
 Discord bot using Eris library
 
 Example config.yml:
-```
+```yml
 creators:
   - "155112606661607425"
 
