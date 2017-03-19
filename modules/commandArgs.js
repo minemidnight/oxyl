@@ -1,4 +1,4 @@
-const config = framework.config;
+let linkFilter = /^((https|http|ftp|rtsp|mms)?:\/\/)?(([0-9a-z_!~*'().&=+$%-]+:)?[0-9a-z_!~*'().&=+$%-]+@)?(([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-z_!~*'()-]+\.)*([0-9a-z][0-9a-z-]{0,61})?[0-9a-z]\.[a-z]{2,6})(:[0-9]{1,4})?((\/?)|(\/[0-9a-z_!~*'().;?:@&=+$,%#-]+)+\/?)$/im; // eslint-disable-line max-len
 function matchUser(user, input) {
 	let username = user.user ? user.user.username.toLowerCase() : user.username.toLowerCase();
 	let nick = user.nick ? user.nick.toLowerCase() : null;
@@ -53,9 +53,7 @@ exports.test = async (input, arg, message) => {
 		else if(arg.max && input > arg.max) throw new Error(`Argument provided is more than maximum amount (${arg.max})`);
 		else return input;
 	} else if(type === "link") {
-		let filter = config.options.linkFilter;
-		filter = new RegExp(filter);
-		if(!filter.test(input)) throw new Error("Invalid link");
+		if(!linkFilter.test(input)) throw new Error("Invalid link");
 		else return input;
 	} else if(type === "mention" || type === "user") {
 		let match = /<@!?(\d{14,20})>/.exec(input);

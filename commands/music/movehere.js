@@ -9,8 +9,14 @@ exports.cmd = new Oxyl.Command("movehere", async message => {
 		if(message.member && message.member.voiceState && message.member.voiceState.channelID) {
 			let memberChannel = message.channel.guild.channels.get(message.member.voiceState.channelID);
 			if(memberChannel.id !== connectionChannel) {
-				moves.push(memberChannel.name);
-				bot.joinVoiceChannel(memberChannel.id);
+				if(!memberChannel.permissionsOf(bot.user.id).has("voiceConnect")) {
+					return "I cannot join that channel (no permissions)";
+				} else if(!memberChannel.permissionsOf(bot.user.id).has("voiceSpeak")) {
+					return "I cannot speak in that channel (no permissions)";
+				} else {
+					moves.push(memberChannel.name);
+					bot.joinVoiceChannel(memberChannel.id);
+				}
 			}
 		} else {
 			return "You are not in a voice channel, you cannot use this!";

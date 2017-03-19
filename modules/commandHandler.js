@@ -24,7 +24,7 @@ bot.on("messageCreate", async (message) => {
 	if(message.author.bot || blacklist.includes(message.author.id)) return;
 	else if(ignored.includes(message.channel.id) && message.member && framework.guildLevel(message.member) < 3) return;
 
-	let prefix = `^(o!|oxyl|<@!?${bot.user.id}>|<:oxyl_square:273616293775540224>|<:oxyl:273616986121043968>{GPRE}),?(?:\\s+)?([\\s\\S]+)`;
+	let prefix = `^(o!|oxyl|<@!?${bot.user.id}>|debug!o!|<:oxyl_square:273616293775540224>|<:oxyl:273616986121043968>{GPRE}),?(?:\\s+)?([\\s\\S]+)`;
 	if(guild && prefixes[guild.id]) prefix = prefix.replace("{GPRE}", `|${framework.escapeRegex(prefixes[guild.id])}`);
 	else prefix = prefix.replace("{GPRE}", "");
 	prefix = new RegExp(prefix, "i");
@@ -32,7 +32,7 @@ bot.on("messageCreate", async (message) => {
 	let match = message.content.match(prefix);
 	if(match && match[2]) {
 		let type = match[1];
-		if(type.match(new RegExp(`^<@!?${bot.user.id}>`))) message.debug = true;
+		if(type === "debug!o!") message.debug = true;
 		message.content = match[2];
 
 		let cmdInfo = framework.getCmd(message.content);
@@ -82,11 +82,7 @@ bot.on("messageCreate", async (message) => {
 	}
 
 	if(editedinfo && editedinfo.ENABLED === 0) return;
-<<<<<<< HEAD
 	if(editedinfo && editedinfo.ROLES) editedinfo.ROLES = editedinfo.ROLES.filter(role => guild.roles.has(role));
-=======
-	if(editedinfo && editedinfo.ROLES) editedinfo.ROLES = editedinfo.ROLES.split(",").filter(role => message.channel.guild.roles.has(role));
->>>>>>> origin/master
 	if(command.onCooldown(message.author)) {
 		message.channel.createMessage(`This command is on cooldown for you.`);
 		return;
@@ -102,7 +98,7 @@ bot.on("messageCreate", async (message) => {
 	} else if(command.perm && (!editedinfo || !editedinfo.ROLES) && !message.member.permission.has(command.perm)) {
 		message.channel.createMessage(`You do not have valid permissions for this command (Requires ${command.perm}).`);
 		return;
-	} else if(editedinfo && editedinfo.ROLES && editedinfo.ROLES.every(role => ~message.member.roles.indexOf(role))) {
+	} else if(editedinfo && editedinfo.ROLES && !editedinfo.ROLES.every(role => ~message.member.roles.indexOf(role))) {
 		message.channel.createMessage(`You do not have all of the roles to run this command ` +
 			`(Requires the following: ${editedinfo.ROLES.map(role => message.channel.guild.roles.get(role).name)}).`);
 		return;
@@ -167,9 +163,9 @@ bot.on("messageCreate", async (message) => {
 			} else {
 				throw error;
 			}
-		} catch(err) {
+		} catch(err2) {
 			message.channel.createMessage(`Error executing this command! ` +
-				`Please report this if it is re-occuring: ${framework.codeBlock(message.debug ? err.stack : err.message)}`);
+				`Please report this if it is re-occuring: ${framework.codeBlock(message.debug ? error.stack : error.message)}`);
 		}
 	}
 });

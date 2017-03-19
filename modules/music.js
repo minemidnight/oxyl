@@ -123,6 +123,8 @@ class MusicManager {
 			this.sendEmbed("playing", nextQueue);
 		} catch(err) {
 			this.sendEmbed("error", err);
+			if(connection.playing) connection.stopPlaying();
+			else this.play();
 		}
 	}
 

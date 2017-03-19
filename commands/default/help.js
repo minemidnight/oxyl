@@ -7,15 +7,13 @@ exports.cmd = new Oxyl.Command("help", async message => {
 		let helpMsg = "", helpInfo = [];
 		helpMsg += `Info on ${message.args[0]}\n`;
 		helpMsg += `Command: ${cmd.name}`;
+
 		helpInfo.push(`Command Type: ${framework.capitalizeEveryFirst(cmd.type)}`);
-
-		if(cmd.aliases.length > 0) helpInfo.push(`Aliases: ${cmd.aliases.join(", ")}`);
-		else helpInfo.push(`Aliases: N/A`);
-
-		if(cmd.description) helpInfo.push(`Description: ${cmd.description}`);
-		else helpInfo.push(`Description: N/A`);
-
+		helpInfo.push(`Aliases: ${cmd.aliases ? cmd.aliases.join(", ") : "None"}`);
+		helpInfo.push(`Description: ${cmd.description || "N/A"}`);
 		helpInfo.push(`Usage: ${cmd.usage}`);
+		if(cmd.perm) helpInfo.push(`Permission Required: ${cmd.perm}`);
+		if(cmd.cooldown) helpInfo.push(`Cooldown: ${cmd.cooldown / 1000} seconds`);
 		helpInfo.push(`Uses since startup: ${cmd.uses}`);
 		helpMsg += framework.listConstructor(helpInfo);
 		return helpMsg;

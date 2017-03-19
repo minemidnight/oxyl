@@ -2,7 +2,7 @@ const Eris = require("eris");
 global.framework = require("./framework.js");
 
 global.bot = new Eris(framework.config.private.token, {
-	maxShards: framework.config.options.shards,
+	maxShards: framework.config.shards,
 	messageLimit: 0,
 	disableEvents: {
 		MESSAGE_DELETE_BULK: true,

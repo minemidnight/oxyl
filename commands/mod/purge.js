@@ -1,3 +1,4 @@
+let linkFilter = /^((https|http|ftp|rtsp|mms)?:\/\/)?(([0-9a-z_!~*'().&=+$%-]+:)?[0-9a-z_!~*'().&=+$%-]+@)?(([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-z_!~*'()-]+\.)*([0-9a-z][0-9a-z-]{0,61})?[0-9a-z]\.[a-z]{2,6})(:[0-9]{1,4})?((\/?)|(\/[0-9a-z_!~*'().;?:@&=+$,%#-]+)+\/?)$/im; // eslint-disable-line max-len
 exports.cmd = new Oxyl.Command("purge", async message => {
 	let deletePerms = message.channel.guild.members.get(bot.user.id).permission.has("manageMessages");
 	if(!deletePerms) {
@@ -44,11 +45,7 @@ exports.cmd = new Oxyl.Command("purge", async message => {
 				else if(filtersActive.embeds && msg.embeds.length >= 1) return true;
 				else if(filtersActive.users && filtersActive.users.includes(msg.author.id)) return true;
 				else if(filtersActive.includes && ~msg.content.toLowerCase().indexOf(filtersActive.includes)) return true;
-<<<<<<< HEAD
-				else if(filtersActive.links && (new RegExp(framework.config.options.linkFilter, "im")).test(msg.content)) return true;
-=======
-				else if(filtersActive.links && (new RegExp(framework.config.options.linkFilter), "im").test(msg.content)) return true;
->>>>>>> origin/master
+				else if(filtersActive.links && linkFilter.test(msg.content)) return true;
 				else if(filtersActive.matches && msg.content.match(new RegExp(filtersActive.matches, "im"))) return true;
 				else return false;
 			});

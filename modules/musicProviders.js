@@ -1,6 +1,6 @@
 const yt = require("ytdl-core");
 const ytKeys = framework.config.private.googleKeys;
-const soundcloudClient = "fDoItMDbsbZz8dY16ZzARCZmzgHBPotA";
+const soundcloudClient = "2t9loNQH90kzJcsFCODdigxfp325aq4z";
 const regexes = {
 	yt: /(?:youtube\.com.*(?:\?|&)(?:v|list)=|youtube\.com.*embed\/|youtube\.com.*v\/|youtu\.be\/)((?!videoseries)[a-zA-Z0-9_-]*)/,
 	sc: /((https:\/\/)|(http:\/\/)|(www.)|(s))+(soundcloud.com\/)+[a-zA-Z0-9-.]+(\/)+[a-zA-Z0-9-.]+/
@@ -121,7 +121,7 @@ class ProviderData {
 
 	async getStream(data) {
 		if(typeof data !== "object") {
-			throw new Error("Tried to play invalid song");
+			throw new Error("Tried to play invalid song (video deleted?)");
 		} else if(data.service === "sc") {
 			let streamData = await framework.getContent(`https://api.soundcloud.com/i1/tracks/${data.id}/streams?client_id=${soundcloudClient}`);
 			streamData = JSON.parse(streamData);
@@ -134,7 +134,7 @@ class ProviderData {
 				throw err;
 			}
 		} else {
-			return new Error("Invalid service");
+			return new Error("Invalid service type");
 		}
 	}
 }
