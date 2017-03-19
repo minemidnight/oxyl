@@ -64,7 +64,6 @@ exports.getContent = (link, options = {}) => {
 exports.getCmd = (msgCase) => {
 	let msg = msgCase.toLowerCase();
 	let commands = Oxyl.commands;
-	let prefix = exports.config.options.prefixRegex;
 	let returnData = {};
 
 	let cmdCheck;

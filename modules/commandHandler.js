@@ -92,7 +92,7 @@ bot.on("messageCreate", async (message) => {
 	} else if(command.type === "creator" && !framework.config.creators.includes(message.author.id)) {
 		message.channel.createMessage(`Only creators of Oxyl can use this command.`);
 		return;
-	} else if(command.type === "admin" && (!editedinfo || !editedinfo.ROLES) && framework.guildLevel(message.member) < 3) {
+	} else if(command.type === "admin" && message.member && (!editedinfo || !editedinfo.ROLES) && framework.guildLevel(message.member) < 3) {
 		message.channel.createMessage(`Only the guild owner, or users with the ADMINISTRATOR permission can use this command.`);
 		return;
 	} else if(command.perm && (!editedinfo || !editedinfo.ROLES) && !message.member.permission.has(command.perm)) {
