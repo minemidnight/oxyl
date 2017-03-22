@@ -14,7 +14,7 @@ bot.on("guildCreate", async guild => {
 	updateServerChannel();
 
 	guild.defaultChannel.createMessage("Thanks for adding Oxyl to your server! Here how to get started:" +
-		"\n❓ `Run `o!help` to get a list of commands. Oxyl also supports @Oxyl#7994 or `oxyl` as prefixes." +
+		"\n❓ Run `o!help` to get a list of commands. Oxyl also supports @Oxyl#7994 or `oxyl` as prefixes." +
 		"\n⚙ Feeling like configuring the bot? Use the dashboard at <http://minemidnight.work>" +
 		"\n🎵 Like music? Use the `play` command to start to queue music!" +
 		"\n💰 Feeling generous? Donate at <http://patreon.com/minemidnight>" +

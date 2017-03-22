@@ -1,9 +1,13 @@
 const yt = require("ytdl-core");
 const ytKeys = framework.config.private.googleKeys;
-const soundcloudClient = "2t9loNQH90kzJcsFCODdigxfp325aq4z";
+const clientIDs = {
+	soundcloud: "2t9loNQH90kzJcsFCODdigxfp325aq4z",
+	twitch: "jzkbprff40iqj646a697cyrvl0zt2m6"
+};
 const regexes = {
 	yt: /(?:youtube\.com.*(?:\?|&)(?:v|list)=|youtube\.com.*embed\/|youtube\.com.*v\/|youtu\.be\/)((?!videoseries)[a-zA-Z0-9_-]*)/,
-	sc: /((https:\/\/)|(http:\/\/)|(www.)|(s))+(soundcloud.com\/)+[a-zA-Z0-9-.]+(\/)+[a-zA-Z0-9-.]+/
+	sc: /((https:\/\/)|(http:\/\/)|(www.)|(s))+(soundcloud.com\/)+[a-zA-Z0-9-.]+(\/)+[a-zA-Z0-9-.]+/,
+	twitch: /https?:\/\/(?:www\.)?twitch\.tv/
 };
 
 class ProviderData {
@@ -64,7 +68,7 @@ class ProviderData {
 	}
 
 	async scData(url) {
-		url = `http://api.soundcloud.com/resolve.json?url=${url}&client_id=${soundcloudClient}`;
+		url = `http://api.soundcloud.com/resolve.json?url=${url}&client_id=${clientIDs.soundcloud}`;
 
 		let body = await framework.getContent(url);
 		body = JSON.parse(body);
@@ -123,7 +127,7 @@ class ProviderData {
 		if(typeof data !== "object") {
 			throw new Error("Tried to play invalid song (video deleted?)");
 		} else if(data.service === "sc") {
-			let streamData = await framework.getContent(`https://api.soundcloud.com/i1/tracks/${data.id}/streams?client_id=${soundcloudClient}`);
+			let streamData = await framework.getContent(`https://api.soundcloud.com/i1/tracks/${data.id}/streams?client_id=${clientIDs.sountcloud}`);
 			streamData = JSON.parse(streamData);
 			if(!streamData.http_mp3_128_url) throw new Error("No mp3 format from SoundCloud");
 			else return streamData.http_mp3_128_url;
