@@ -22,7 +22,7 @@ exports.cmd = new Oxyl.Command("ban", async message => {
 		return "Oxyl does not have permissions to ban members.";
 	} else {
 		let member = message.channel.guild.members.get(message.args[0].id);
-		if(!member) return "Error -- user not found";
+		if(!member) return "Error: user not in server";
 
 		let bannableBot = isBannable(member, bot.user.id);
 		let bannable = isBannable(member, message.author.id);

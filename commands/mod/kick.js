@@ -22,7 +22,7 @@ exports.cmd = new Oxyl.Command("kick", async message => {
 		return "Oxyl does not have permissions to kick members.";
 	} else {
 		let member = message.channel.guild.members.get(message.args[0].id);
-		if(!member) return "Error -- user not found";
+		if(!member) return "Error: user not in server";
 
 		let kickableBot = isKickable(member, bot.user.id);
 		let kickable = isKickable(member, message.author.id);

@@ -45,6 +45,7 @@ exports.cmd = new Oxyl.Command("mute", async message => {
 	}
 
 	let mention = message.channel.guild.members.get(message.args[0].id);
+	if(!mention) return "Error: user not in server";
 	let isMuted = !~mention.roles.indexOf(mutedRole.id);
 	if(isMuted) {
 		mention.addRole(mutedRole.id);

@@ -1,3 +1,4 @@
 private/
 .ftpconfig
 managers.json
+node_modules/

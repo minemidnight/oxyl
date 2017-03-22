@@ -1,13 +1,12 @@
 const Oxyl = require("./oxyl.js"),
 	fs = require("fs"),
 	request = require("request"),
-	yaml = require("js-yaml"),
 	path = require("path"),
 	EventEmitter = require("events").EventEmitter;
 
 exports.spStart = "\u26FB";
 exports.spEnd = "\u26FC";
-exports.config = yaml.safeLoad(fs.readFileSync("./private/config.yml"));
+exports.config = require("js-yaml").safeLoad(fs.readFileSync("./private/config.yml"));
 global.Oxyl = Oxyl;
 
 exports.guildLevel = (member) => {

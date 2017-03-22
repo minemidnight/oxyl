@@ -191,7 +191,7 @@ handlebars.registerHelper("listPunishments", (guild, bans, allowedEdit) => {
 		} else {
 			if(allowedEdit) returnstr += `<p><span>REASON:</span> <input class="w3-input" type="text" value="${ban.REASON}" /></p>`;
 			else returnstr += `<p><span>REASON:</span> ${ban.REASON}</p>`;
-			returnstr += `<p><span>MOD:</span> ${framework.unmention(guild.members.get(ban.RESPONSIBLE))}</p>`;
+			returnstr += `<p><span>MOD:</span> ${guild.members.has(ban.RESPONSIBLE) ? framework.unmention(guild.members.get(ban.RESPONSIBLE)) : ban.RESPONSIBLE}</p>`;
 		}
 		if(allowedEdit) returnstr += `<button onclick="updateCase(${i})" class="w3-center w3-btn w3-right w3-margin">Update</button>`;
 		returnstr += "</div>";

@@ -42,9 +42,9 @@ class ProviderData {
 		let duration = body.contentDetails.duration;
 
 		let match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
-		let hours = (parseInt(match[1]) || 0) * 3600;
-		let minutes = (parseInt(match[2]) || 0) * 60;
-		let seconds = parseInt(match[3]) || 0;
+		let hours = match && match[1] ? (parseInt(match[1]) || 0) * 3600 : 0;
+		let minutes = match && match[2] ? (parseInt(match[2]) || 0) * 60 : 0;
+		let seconds = match && match[3] ? parseInt(match[3]) || 0 : 0;
 
 		return {
 			service: "yt",
