@@ -1,6 +1,6 @@
 const express = require("express"),
-	handlebars = require("handlebars"),
-	main = require("../website.js");
+	main = require("../website.js"),
+	handlebars = require("handlebars");
 const router = express.Router(); // eslint-disable-line new-cap
 const sqlQueries = Oxyl.modScripts.sqlQueries;
 

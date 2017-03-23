@@ -4,10 +4,7 @@ global.framework = require("./framework.js");
 global.bot = new Eris(framework.config.private.token, {
 	maxShards: framework.config.shards,
 	messageLimit: 0,
-	disableEvents: {
-		MESSAGE_DELETE_BULK: true,
-		TYPING_START: true
-	}
+	disableEvents: { TYPING_START: true }
 });
 
 process.stdin.resume();

@@ -1,0 +1,43 @@
+{
+  "name": "oxyl",
+  "description": "Discord Bot",
+  "main": "oxyl.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/minemidnight/oxyl.git"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "oxyl"
+  ],
+  "author": "minemidnight",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/minemidnight/oxyl/issues"
+  },
+  "homepage": "https://github.com/minemidnight/oxyl#readme",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "cheerio": "^0.22.0",
+    "cookie-parser": "^1.4.3",
+    "duration-js": "^3.9.2",
+    "eris": "github:abalabahaha/eris#dev",
+    "express": "^4.15.2",
+    "express-session": "^1.15.1",
+    "goo.gl": "^0.1.4",
+    "handlebars": "^4.0.6",
+    "jimp": "^0.2.27",
+    "js-yaml": "^3.8.2",
+    "mathjs": "^3.10.0",
+    "node-vibrant": "^3.0.0-alpha.2",
+    "promise-mysql": "^3.0.0",
+    "request": "^2.81.0",
+    "twemoji": "^2.2.5",
+    "ws": "^2.2.2",
+    "ytdl-core": "^0.10.2"
+  }
+}

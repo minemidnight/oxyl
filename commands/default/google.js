@@ -14,9 +14,9 @@ exports.cmd = new Oxyl.Command("google", async message => {
 
 		let link = ele.find("a").attr("href");
 		if(!link) continue;
-		if(link.indexOf('/url?q=') !== -1) {
-			link = link.replace('/url?q=', '');
-			link = link.slice(0, link.indexOf('&sa'));
+		if(link.indexOf("/url?q=") !== -1) {
+			link = link.replace("/url?q=", "");
+			link = link.slice(0, link.indexOf("&sa"));
 		}
 		if(i === 0) resultmsg += link;
 		else if(i === 1) resultmsg += `\n\n**Other Results**\n<${link}>`;

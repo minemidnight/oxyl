@@ -22,7 +22,7 @@ exports.cmd = new Oxyl.Command("shardinfo", async message => {
 		];
 		returnstr += framework.listConstructor(info);
 	});
-	return `${returnstr}\nPage ${page} of ${pageAmount}`;
+	return returnstr + `\nPage ${page} of ${pageAmount}`;
 }, {
 	type: "default",
 	description: "List info about each shard of Oxyl",
