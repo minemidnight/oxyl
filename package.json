@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/minemidnight/oxyl#readme",
   "dependencies": {
+    "bluebird": "^3.5.0",
     "body-parser": "^1.17.1",
     "cheerio": "^0.22.0",
     "cookie-parser": "^1.4.3",
@@ -38,6 +39,6 @@
     "request": "^2.81.0",
     "twemoji": "^2.2.5",
     "ws": "^2.2.2",
-    "ytdl-core": "^0.10.2"
+    "youtube-dl": "^1.11.1"
   }
 }

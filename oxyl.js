@@ -1,5 +1,6 @@
 const Eris = require("eris");
 global.framework = require("./framework.js");
+global.Promise = require("bluebird");
 
 global.bot = new Eris(framework.config.private.token, {
 	maxShards: framework.config.shards,

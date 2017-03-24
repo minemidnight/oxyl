@@ -1,9 +1,6 @@
-const yt = require("ytdl-core");
+const yt = Promise.promisifyAll(require("youtube-dl"));
 const ytKeys = framework.config.private.googleKeys;
-const clientIDs = {
-	soundcloud: "2t9loNQH90kzJcsFCODdigxfp325aq4z",
-	twitch: "jzkbprff40iqj646a697cyrvl0zt2m6"
-};
+const clientIDs = { soundcloud: "2t9loNQH90kzJcsFCODdigxfp325aq4z" };
 const regexes = {
 	yt: /(?:youtube\.com.*(?:\?|&)(?:v|list)=|youtube\.com.*embed\/|youtube\.com.*v\/|youtu\.be\/)((?!videoseries)[a-zA-Z0-9_-]*)/,
 	sc: /((https:\/\/)|(http:\/\/)|(www.)|(s))+(soundcloud.com\/)+[a-zA-Z0-9-.]+(\/)+[a-zA-Z0-9-.]+/,
@@ -17,6 +14,7 @@ class ProviderData {
 			let match = data.match(regexes.yt);
 			if(!match) {
 				if(regexes.sc.test(data)) return this.scData(data);
+				else if(regexes.twitch.test(data)) return this.twitchData(data);
 				else id = data;
 			} else {
 				id = match[1];
@@ -50,7 +48,8 @@ class ProviderData {
 			service: "yt",
 			id: id,
 			title: body.snippet.title,
-			duration: hours + minutes + seconds
+			duration: hours + minutes + seconds,
+			thumbnail: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`
 		};
 	}
 
@@ -95,6 +94,22 @@ class ProviderData {
 		}
 	}
 
+	async twitchData(link) {
+		try {
+			let data = await yt.getInfoAsync(link);
+
+			return {
+				service: "twitch",
+				channel: data.uploader,
+				title: `${data.description} - ${data.uploader}`,
+				thumbnail: `https://static-cdn.jtvnw.net/previews-ttv/live_user_${data.uploader.toLowerCase()}-640x360.jpg`,
+				live: true
+			};
+		} catch(err) {
+			return "CHANNEL_OFFLINE";
+		}
+	}
+
 	async searchVideo(query, shard) {
 		let url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1` +
 			`&type=video&q=${escape(query)}&key=${ytKeys[shard]}`;
@@ -132,11 +147,9 @@ class ProviderData {
 			if(!streamData.http_mp3_128_url) throw new Error("No mp3 format from SoundCloud");
 			else return streamData.http_mp3_128_url;
 		} else if(data.service === "yt") {
-			try {
-				return yt(`http://www.youtube.com/watch?v=${data.id}`, { audioonly: true });
-			} catch(err) {
-				throw err;
-			}
+			return yt(`http://www.youtube.com/watch?v=${data.id}`);
+		} else if(data.service === "twitch") {
+			return yt(`http://twitch.tv/${data.channel}`);
 		} else {
 			return new Error("Invalid service type");
 		}

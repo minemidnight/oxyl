@@ -88,14 +88,19 @@ class MusicManager {
 	async addQueue(data) {
 		let connection = this.connection;
 		if(!connection) return;
+		if(data.live) {
+			this.data.queue = [data];
+			this.connection.stopPlaying();
+			this.play();
+		} else {
+			if(Array.isArray(data)) {
+				for(let song of data) this.data.queue.push(song);
+			} else if(typeof data === "object") {
+				this.data.queue.push(data);
+			}
 
-		if(Array.isArray(data)) {
-			for(let song of data) this.data.queue.push(song);
-		} else if(typeof data === "object") {
-			this.data.queue.push(data);
+			if(!this.data.playing) this.play();
 		}
-
-		if(!this.data.playing) this.play();
 	}
 
 	async play() {
@@ -154,7 +159,6 @@ class MusicManager {
 
 		connection.on("error", errorHandler);
 		connection.on("end", endHandler);
-
 		connection.once("disconnect", () => {
 			connection.removeListener("error", errorHandler);
 			connection.removeListener("end", endHandler);
@@ -174,16 +178,16 @@ class MusicManager {
 
 		let embed;
 		if(type === "playing") {
-			let thumbnail = data.thumbnail || `https://i.ytimg.com/vi/${data.id}/hqdefault.jpg`;
-			let color = await getVibrant(thumbnail);
-
+			let color = await getVibrant(data.thumbnail);
 			embed = {
 				title: "▶ Now playing",
-				description: `**${data.title}** (${providers.durationFormat(data.duration)})`,
+				description: `**${data.title}**`,
 				color: color,
-				image: { url: thumbnail },
-				footer: { text: `ID: ${data.id}` }
+				image: { url: data.thumbnail }
 			};
+			if(data.duration && !isNaN(data.duration)) embed.description += `(${providers.durationFormat(data.duration)})`;
+			if(data.id) embed.footer = { text: `ID: ${data.id}` };
+			else if(data.channel) embed.footer = { text: `Channel: ${data.channel}` };
 		} else if(type === "error") {
 			if(!data) return false;
 			embed = {

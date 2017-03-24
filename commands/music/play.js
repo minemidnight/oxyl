@@ -22,7 +22,8 @@ async function dfmPlaylist(name, manager, voiceChannel) {
 					service: "yt",
 					id: video.identifier,
 					title: video.title,
-					duration: video.length
+					duration: video.length,
+					thumbnail: `https://i.ytimg.com/vi/${video.identifier}/hqdefault.jpg`
 				});
 			} else if(video.service === "SoundCloudTrack") {
 				soundcloud.push(music.providers.queueData(video.url, manager.guild.shard.id));
@@ -68,7 +69,7 @@ exports.cmd = new Oxyl.Command("play", async message => {
 		let data = await playCmdProcess(message);
 		if(typeof data === "string") return data;
 
-		let msg = await message.channel.createMessage(`Adding ${`__${data.title}__` || "playlist"} to queue\n` +
+		let msg = await message.channel.createMessage(`Adding ${data.title ? `__${data.title}__` : "playlist"} to queue\n` +
 			`_Reply with cancel in the next 10 seconds or the command will be processed, or continue to play now_`);
 		let responses = await framework.awaitMessages(msg.channel, newMsg => {
 			if(newMsg.author.id !== message.author.id) return false;
@@ -83,7 +84,7 @@ exports.cmd = new Oxyl.Command("play", async message => {
 			if(!manager.connection) await manager.connect(voiceChannel);
 			manager.addQueue(data);
 
-			msg.edit(`Added ${`__${data.title}__` || "playlist"} to queue`);
+			msg.edit(`Added ${data.title ? `__${data.title}__` : "playlist"} to queue`);
 		}
 		return false;
 	}
