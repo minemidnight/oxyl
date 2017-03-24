@@ -41,7 +41,9 @@ async function playCmdProcess(message) {
 	if(typeof result === "object") return result;
 	else if(result === "NO_RESULTS") return "Search returned no results";
 	else if(result === "INVALID_TYPE") return "Please only link to SoundCloud songs and playlists";
-	else if(result === "NO_ITEMS") return "Unexpected error";
+	else if(result === "CHANNEL_OFFLINE") return "That Twitch channel is offline";
+	else if(result === "NO_VALID_FORMATS") return "There are no valid streaming formats for this channel";
+	else if(result === "NO_ITEMS") return "Unexpected error, does the video exist?";
 	else return "Unknown error";
 }
 

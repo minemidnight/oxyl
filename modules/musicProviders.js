@@ -96,14 +96,24 @@ class ProviderData {
 
 	async twitchData(link) {
 		try {
-			let data = await yt.getInfoAsync(link);
+			let data = await yt.getInfoAsync(link), format;
+
+			// thx wolke for getting format to work this is from his repo https://github.com/rem-bot-industries/rem-v2/
+			for(let i = 0; i < data.formats.length; i++) if(data.formats[i].format_id === "Audio_Only") format = data.formats[i].url;
+			if(!format) {
+				for(let i = 0; i < data.formats.length; i++) {
+					if(data.formats[i].format_id === "Medium" || data.formats[i].format_id === "High") format = data.formats[i].url;
+				}
+			}
+			if(!format) return "NO_VALID_FORMATS";
 
 			return {
 				service: "twitch",
 				channel: data.uploader,
 				title: `${data.description} - ${data.uploader}`,
 				thumbnail: `https://static-cdn.jtvnw.net/previews-ttv/live_user_${data.uploader.toLowerCase()}-640x360.jpg`,
-				live: true
+				live: true,
+				stream: format
 			};
 		} catch(err) {
 			return "CHANNEL_OFFLINE";
@@ -149,7 +159,7 @@ class ProviderData {
 		} else if(data.service === "yt") {
 			return yt(`http://www.youtube.com/watch?v=${data.id}`);
 		} else if(data.service === "twitch") {
-			return yt(`http://twitch.tv/${data.channel}`);
+			return data.stream;
 		} else {
 			return new Error("Invalid service type");
 		}

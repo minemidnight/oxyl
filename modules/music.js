@@ -1,5 +1,5 @@
 const fs = require("fs"),
-	Vibrant = require("node-vibrant"),
+	// Vibrant = require("node-vibrant"),
 	ProviderData = require("../modules/musicProviders.js");
 const providers = exports.providers = new ProviderData();
 
@@ -88,19 +88,14 @@ class MusicManager {
 	async addQueue(data) {
 		let connection = this.connection;
 		if(!connection) return;
-		if(data.live) {
-			this.data.queue = [data];
-			this.connection.stopPlaying();
-			this.play();
-		} else {
-			if(Array.isArray(data)) {
-				for(let song of data) this.data.queue.push(song);
-			} else if(typeof data === "object") {
-				this.data.queue.push(data);
-			}
 
-			if(!this.data.playing) this.play();
+		if(Array.isArray(data)) {
+			for(let song of data) this.data.queue.push(song);
+		} else if(typeof data === "object") {
+			this.data.queue.push(data);
 		}
+
+		if(!this.data.playing) this.play();
 	}
 
 	async play() {
@@ -123,8 +118,10 @@ class MusicManager {
 		}
 
 		try {
-			let stream = await providers.getStream(nextQueue);
-			connection.play(stream, { encoderArgs: ["-af", "volume=0.2"] });
+			let stream = await providers.getStream(nextQueue), volume;
+			if(nextQueue.service === "twitch") volume = 1;
+			else volume = 0.2;
+			connection.play(stream, { encoderArgs: ["-af", `volume=${volume}`] });
 			this.sendEmbed("playing", nextQueue);
 		} catch(err) {
 			this.sendEmbed("error", err);
@@ -178,11 +175,11 @@ class MusicManager {
 
 		let embed;
 		if(type === "playing") {
-			let color = await getVibrant(data.thumbnail);
+			// let color = await getVibrant(data.thumbnail);
 			embed = {
 				title: "▶ Now playing",
 				description: `**${data.title}**`,
-				color: color,
+				color: 0xFF0000,
 				image: { url: data.thumbnail }
 			};
 			if(data.duration && !isNaN(data.duration)) embed.description += `(${providers.durationFormat(data.duration)})`;
@@ -210,14 +207,14 @@ class MusicManager {
 exports.Manager = MusicManager;
 
 function getVibrant(image) {
-	return new Promise((resolve, reject) => {
-		Vibrant.from(image).getPalette((err, result) => {
-			if(err) return resolve(0xFF0000);
-			let color = result.Vibrant.rgb;
-			color = (color[0] << 16) + (color[1] << 8) + color[2];
-			return resolve(parseInt(color, 10));
-		});
-	});
+	// return new Promise((resolve, reject) => {
+	// 	Vibrant.from(image).getPalette((err, result) => {
+	// 		if(err) return resolve(0xFF0000);
+	// 		let color = result.Vibrant.rgb;
+	// 		color = (color[0] << 16) + (color[1] << 8) + color[2];
+	// 		resolve(parseInt(color, 10));
+	// 	});
+	// });
 }
 
 function connectionReady(connection) {
