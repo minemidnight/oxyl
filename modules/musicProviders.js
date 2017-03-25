@@ -133,7 +133,7 @@ class ProviderData {
 				id: data.id,
 				title: data.fulltitle,
 				thumbnail: data.thumbnail,
-				duration: data.duration
+				duration: hours + minutes + seconds
 			};
 		} catch(err) {
 			return "CHANNEL_OFFLINE";
