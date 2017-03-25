@@ -27,7 +27,7 @@ exports.cmd = new Oxyl.Command("editcommand", async message => {
 		if(!roles || roles.length === 0) return "Invalid roles given, please provide role names split with a ,";
 
 		await sqlQueries.editCommands.edit(cmd.name, roles, message.channel.guild);
-		return `Added roles (${roles.join(", ")}) to \`${cmd.name}\``;
+		return `Added roles (${roles.join(", ")}) to \`${cmd.name}\`, to execute it, it now requires at least one of those roles!`;
 	} else {
 		return "Invalid sub-command!";
 	}

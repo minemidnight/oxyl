@@ -1,6 +1,6 @@
 const fs = require("fs"),
-	// Vibrant = require("node-vibrant"),
 	ProviderData = require("../modules/musicProviders.js");
+const vibrant = Promise.promisifyAll(require("node-vibrant"));
 const providers = exports.providers = new ProviderData();
 
 class MusicManager {
@@ -119,7 +119,7 @@ class MusicManager {
 
 		try {
 			let stream = await providers.getStream(nextQueue), volume;
-			if(nextQueue.live) volume = 0.6;
+			if(nextQueue.live) volume = 0.8;
 			if(nextQueue.service === "pornhub") volume = 0.3;
 			else volume = 0.2;
 			connection.play(stream, { encoderArgs: ["-af", `volume=${volume}`] });
@@ -176,11 +176,11 @@ class MusicManager {
 
 		let embed;
 		if(type === "playing") {
-			// let color = await getVibrant(data.thumbnail);
+			let color = await getVibrant(data.thumbnail);
 			embed = {
 				title: "▶ Now playing",
 				description: `**${data.title}**`,
-				color: 0xFF0000,
+				color: color,
 				image: { url: data.thumbnail }
 			};
 			if(data.duration && !isNaN(data.duration)) embed.description += ` (${providers.durationFormat(data.duration)})`;
@@ -208,15 +208,14 @@ class MusicManager {
 }
 exports.Manager = MusicManager;
 
-function getVibrant(image) {
-	// return new Promise((resolve, reject) => {
-	// 	Vibrant.from(image).getPalette((err, result) => {
-	// 		if(err) return resolve(0xFF0000);
-	// 		let color = result.Vibrant.rgb;
-	// 		color = (color[0] << 16) + (color[1] << 8) + color[2];
-	// 		resolve(parseInt(color, 10));
-	// 	});
-	// });
+async function getVibrant(image) {
+	try {
+		let result = (await vibrant.from(image).getPaletteAsync()).Vibrant.rgb;
+		result = (result[0] << 16) + (result[1] << 8) + result[2];
+		return parseInt(result, 10);
+	} catch(err) {
+		return 0xFF0000;
+	}
 }
 
 function connectionReady(connection) {

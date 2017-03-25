@@ -69,7 +69,9 @@ bot.on("error", (err, shardid) => {
 	framework.consoleLog(`__**Shard Error ${shardid}**__: ${framework.codeBlock(err)}`, "debug");
 });
 
-bot.on("shardReady", shardid => framework.consoleLog(`Shard ${shardid} ready`));
+bot.on("shardReady", shardid => framework.consoleLog(`Shard ${shardid} ready`, "debug"));
+bot.on("shardResume", shardid => framework.consoleLog(`Shard ${shardid} resumed`, "debug"));
+bot.on("shardDisconnect", (shardid, err) => framework.consoleLog(`Shard ${shardid} disconnected${err ? `\nError: ${err.stack || err.message}` : ""}`, "debug"));
 
 exports.commands = {};
 exports.addCommand = (command) => {

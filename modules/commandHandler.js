@@ -98,8 +98,8 @@ bot.on("messageCreate", async (message) => {
 	} else if(command.perm && (!editedinfo || !editedinfo.ROLES) && !message.member.permission.has(command.perm)) {
 		message.channel.createMessage(`You do not have valid permissions for this command (Requires ${command.perm}).`);
 		return;
-	} else if(editedinfo && editedinfo.ROLES && !editedinfo.ROLES.every(role => ~message.member.roles.indexOf(role))) {
-		message.channel.createMessage(`You do not have all of the roles to run this command ` +
+	} else if(editedinfo && editedinfo.ROLES && !editedinfo.ROLES.some(role => ~message.member.roles.indexOf(role))) {
+		message.channel.createMessage(`You do not have any of the roles required to run this command ` +
 			`(Requires the following: ${editedinfo.ROLES.map(role => message.channel.guild.roles.get(role).name)}).`);
 		return;
 	}

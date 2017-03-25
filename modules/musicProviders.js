@@ -201,9 +201,9 @@ class ProviderData {
 		} else if(data.live) {
 			return data.stream;
 		} else if(data.service === "yt") {
-			return yt(`http://www.youtube.com/watch?v=${data.id}`);
+			return yt(`http://www.youtube.com/watch?v=${data.id}`, [], { maxBuffer: Infinity });
 		} else if(data.service === "pornhub") {
-			return yt(`http://www.pornhub.com/view_video.php?viewkey=${data.id}`);
+			return yt(`http://www.pornhub.com/view_video.php?viewkey=${data.id}`, [], { maxBuffer: Infinity });
 		} else {
 			return new Error("Invalid service type");
 		}
