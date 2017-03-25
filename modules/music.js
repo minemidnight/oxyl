@@ -119,7 +119,8 @@ class MusicManager {
 
 		try {
 			let stream = await providers.getStream(nextQueue), volume;
-			if(nextQueue.service === "twitch") volume = 1;
+			if(nextQueue.live) volume = 0.6;
+			if(nextQueue.service === "pornhub") volume = 0.3;
 			else volume = 0.2;
 			connection.play(stream, { encoderArgs: ["-af", `volume=${volume}`] });
 			this.sendEmbed("playing", nextQueue);
@@ -182,9 +183,10 @@ class MusicManager {
 				color: 0xFF0000,
 				image: { url: data.thumbnail }
 			};
-			if(data.duration && !isNaN(data.duration)) embed.description += `(${providers.durationFormat(data.duration)})`;
+			if(data.duration && !isNaN(data.duration)) embed.description += ` (${providers.durationFormat(data.duration)})`;
 			if(data.id) embed.footer = { text: `ID: ${data.id}` };
 			else if(data.channel) embed.footer = { text: `Channel: ${data.channel}` };
+			embed.footer.text += ` | Service: ${data.service}`;
 		} else if(type === "error") {
 			if(!data) return false;
 			embed = {

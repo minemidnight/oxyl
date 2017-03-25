@@ -42,9 +42,10 @@ async function playCmdProcess(message) {
 	else if(result === "NO_RESULTS") return "Search returned no results";
 	else if(result === "INVALID_TYPE") return "Please only link to SoundCloud songs and playlists";
 	else if(result === "CHANNEL_OFFLINE") return "That Twitch channel is offline";
-	else if(result === "NO_VALID_FORMATS") return "There are no valid streaming formats for this channel";
+	else if(result === "NO_VALID_FORMATS") return "There are no valid streaming formats for that stream";
 	else if(result === "NO_ITEMS") return "Unexpected error, does the video exist?";
-	else return "Unknown error";
+	else if(result === "NOT_FOUND") return "Video not found";
+	else return `Unknown error: ${result}`;
 }
 
 exports.cmd = new Oxyl.Command("play", async message => {
@@ -93,9 +94,9 @@ exports.cmd = new Oxyl.Command("play", async message => {
 }, {
 	guildOnly: true,
 	type: "music",
-	description: "Add a youtube video to the music queue",
+	description: "Add items to the music queue",
 	args: [{
 		type: "text",
-		label: "youtube/soundcloud link|search query|dfm:list/playlist name"
+		label: "link|search query|dfm:list/playlist name"
 	}]
 });

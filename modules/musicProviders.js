@@ -4,7 +4,8 @@ const clientIDs = { soundcloud: "2t9loNQH90kzJcsFCODdigxfp325aq4z" };
 const regexes = {
 	yt: /(?:youtube\.com.*(?:\?|&)(?:v|list)=|youtube\.com.*embed\/|youtube\.com.*v\/|youtu\.be\/)((?!videoseries)[a-zA-Z0-9_-]*)/,
 	sc: /((https:\/\/)|(http:\/\/)|(www.)|(s))+(soundcloud.com\/)+[a-zA-Z0-9-.]+(\/)+[a-zA-Z0-9-.]+/,
-	twitch: /https?:\/\/(?:www\.)?twitch\.tv/
+	twitch: /https?:\/\/(?:www\.)?twitch\.tv/,
+	pornhub: /https?:\/\/(?:(?:[a-z]+\.)?pornhub\.com\/(?:view_video\.php\?viewkey=|embed\/)|(?:www\.)?thumbzilla\.com\/video\/)[\da-z]+/
 };
 
 class ProviderData {
@@ -15,6 +16,7 @@ class ProviderData {
 			if(!match) {
 				if(regexes.sc.test(data)) return this.scData(data);
 				else if(regexes.twitch.test(data)) return this.twitchData(data);
+				else if(regexes.pornhub.test(data)) return this.pornHubData(data);
 				else id = data;
 			} else {
 				id = match[1];
@@ -31,26 +33,48 @@ class ProviderData {
 
 	async ytData(id, shard) {
 		let url = `https://www.googleapis.com/youtube/v3/videos?id=${id}&part=snippet,` +
-			`contentDetails&fields=items(snippet(title),contentDetails(duration))&key=${ytKeys[shard]}`;
+			`contentDetails&fields=items(snippet(title),snippet(liveBroadcastContent),contentDetails(duration))&key=${ytKeys[shard]}`;
 
 		let body = await framework.getContent(url);
 		body = JSON.parse(body).items[0];
-
 		if(!body) return "NO_ITEMS";
-		let duration = body.contentDetails.duration;
 
-		let match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
-		let hours = match && match[1] ? (parseInt(match[1]) || 0) * 3600 : 0;
-		let minutes = match && match[2] ? (parseInt(match[2]) || 0) * 60 : 0;
-		let seconds = match && match[3] ? parseInt(match[3]) || 0 : 0;
+		if(body.snippet.liveBroadcastContent === "live") {
+			try {
+				let data = await yt.getInfoAsync(id, [], { maxBuffer: Infinity }), format;
 
-		return {
-			service: "yt",
-			id: id,
-			title: body.snippet.title,
-			duration: hours + minutes + seconds,
-			thumbnail: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`
-		};
+				// thx wolke for getting format to work this is from his repo https://github.com/rem-bot-industries/rem-v2/
+				for(let i of data.formats) if(i.format_id === "94") format = i.url;
+				if(!format) for(let i of data.formats) if(i.format_id === "93" || i.format_id === "95") format = i.url;
+				if(!format) return "NO_VALID_FORMATS";
+
+				return {
+					service: "yt",
+					id: id,
+					title: body.snippet.title,
+					thumbnail: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
+					live: true,
+					stream: format
+				};
+			} catch(err) {
+				return "NOT_FOUND";
+			}
+		} else {
+			let duration = body.contentDetails.duration;
+
+			let match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
+			let hours = match && match[1] ? (parseInt(match[1]) || 0) * 3600 : 0;
+			let minutes = match && match[2] ? (parseInt(match[2]) || 0) * 60 : 0;
+			let seconds = match && match[3] ? parseInt(match[3]) || 0 : 0;
+
+			return {
+				service: "yt",
+				id: id,
+				title: body.snippet.title,
+				duration: hours + minutes + seconds,
+				thumbnail: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`
+			};
+		}
 	}
 
 	async ytPlaylist(id, shard, page = "", videos = []) {
@@ -94,17 +118,35 @@ class ProviderData {
 		}
 	}
 
+	async pornHubData(link) {
+		try {
+			let data = await yt.getInfoAsync(link, [], { maxBuffer: Infinity });
+
+			let duration = data.duration;
+			let match = duration.match(/(\d+:)?(\d+:)?(\d+)?/);
+			let hours = match && match[1] ? (parseInt(match[1]) || 0) * 3600 : 0;
+			let minutes = match && match[2] ? (parseInt(match[2]) || 0) * 60 : 0;
+			let seconds = match && match[3] ? parseInt(match[3]) || 0 : 0;
+
+			return {
+				service: "pornhub",
+				id: data.id,
+				title: data.fulltitle,
+				thumbnail: data.thumbnail,
+				duration: data.duration
+			};
+		} catch(err) {
+			return "CHANNEL_OFFLINE";
+		}
+	}
+
 	async twitchData(link) {
 		try {
-			let data = await yt.getInfoAsync(link), format;
+			let data = await yt.getInfoAsync(link, [], { maxBuffer: Infinity }), format;
 
 			// thx wolke for getting format to work this is from his repo https://github.com/rem-bot-industries/rem-v2/
-			for(let i = 0; i < data.formats.length; i++) if(data.formats[i].format_id === "Audio_Only") format = data.formats[i].url;
-			if(!format) {
-				for(let i = 0; i < data.formats.length; i++) {
-					if(data.formats[i].format_id === "Medium" || data.formats[i].format_id === "High") format = data.formats[i].url;
-				}
-			}
+			for(let i of data.formats) if(i.format_id === "Audio_Only") format = i.url;
+			if(!format) for(let i of data.formats) if(i.format_id === "Medium" || i.format_id === "High") format = i.url;
 			if(!format) return "NO_VALID_FORMATS";
 
 			return {
@@ -156,10 +198,12 @@ class ProviderData {
 			streamData = JSON.parse(streamData);
 			if(!streamData.http_mp3_128_url) throw new Error("No mp3 format from SoundCloud");
 			else return streamData.http_mp3_128_url;
+		} else if(data.live) {
+			return data.stream;
 		} else if(data.service === "yt") {
 			return yt(`http://www.youtube.com/watch?v=${data.id}`);
-		} else if(data.service === "twitch") {
-			return data.stream;
+		} else if(data.service === "pornhub") {
+			return yt(`http://www.pornhub.com/view_video.php?viewkey=${data.id}`);
 		} else {
 			return new Error("Invalid service type");
 		}

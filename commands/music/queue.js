@@ -36,8 +36,10 @@ exports.cmd = new Oxyl.Command("queue", async message => {
 		if(!manager.data.playing || !manager.connection || !manager.connection.current) {
 			queueMsg += `\n\nPlaying: Nothing (Still queueing?)`;
 		} else {
-			let videoDuration = music.providers.durationFormat(manager.data.playing.duration);
-			queueMsg += `\n\nPlaying: ${manager.data.playing.title} **(**${manager.playTime}/${videoDuration}**)**`;
+			if(!isNaN(manager.data.playing.duration)) var videoDuration = music.providers.durationFormat(manager.data.playing.duration);
+			queueMsg += `\n\nPlaying: ${manager.data.playing.title}`;
+			if(videoDuration) queueMsg += ` **(**${manager.playTime}/${videoDuration}**)**`;
+			else queueMsg += ` **(**${manager.playTime}/LIVE**)**`;
 		}
 
 		let repeat = manager.data.extraOptions.repeat ? "on" : "off";
