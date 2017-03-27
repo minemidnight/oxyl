@@ -1,4 +1,6 @@
 const yt = Promise.promisifyAll(require("youtube-dl"));
+const streamResume = require("stream-resume");
+
 const ytKeys = framework.config.private.googleKeys;
 const clientIDs = { soundcloud: "2t9loNQH90kzJcsFCODdigxfp325aq4z" };
 const regexes = {
@@ -9,7 +11,7 @@ const regexes = {
 };
 
 class ProviderData {
-	async queueData(data, shard) {
+	async queueData(data) {
 		let id, ytMatch;
 		if(!data.indexOf("https://") || !data.indexOf("http://")) {
 			let match = data.match(regexes.yt);
@@ -26,66 +28,70 @@ class ProviderData {
 			id = data;
 		}
 
-		if(id.length === 11 && ytMatch) return this.ytData(id, shard);
-		else if(ytMatch) return this.ytPlaylist(id, shard);
-		else return this.searchVideo(id, shard);
+		if(id.length === 11 && ytMatch) return this.ytData(id);
+		else if(ytMatch) return this.ytPlaylist(id);
+		else return this.searchVideo(id);
 	}
 
-	async ytData(id, shard) {
-		let url = `https://www.googleapis.com/youtube/v3/videos?id=${id}&part=snippet,` +
-			`contentDetails&fields=items(snippet(title),snippet(liveBroadcastContent),contentDetails(duration))&key=${ytKeys[shard]}`;
+	async ytData(id) {
+		let data, format;
+		try {
+			data = await yt.getInfoAsync(id, [], { maxBuffer: Infinity });
+		} catch(err) {
+			return "NOT_FOUND";
+		}
 
-		let body = await framework.getContent(url);
-		body = JSON.parse(body).items[0];
-		if(!body) return "NO_ITEMS";
-
-		if(body.snippet.liveBroadcastContent === "live") {
-			try {
-				let data = await yt.getInfoAsync(id, [], { maxBuffer: Infinity }), format;
-
-				// thx wolke for getting format to work this is from his repo https://github.com/rem-bot-industries/rem-v2/
-				for(let i of data.formats) if(i.format_id === "94") format = i.url;
-				if(!format) for(let i of data.formats) if(i.format_id === "93" || i.format_id === "95") format = i.url;
-				if(!format) return "NO_VALID_FORMATS";
-
-				return {
-					service: "yt",
-					id: id,
-					title: body.snippet.title,
-					thumbnail: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
-					live: true,
-					stream: format
-				};
-			} catch(err) {
-				return "NOT_FOUND";
-			}
-		} else {
-			let duration = body.contentDetails.duration;
-
-			let match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
-			let hours = match && match[1] ? (parseInt(match[1]) || 0) * 3600 : 0;
-			let minutes = match && match[2] ? (parseInt(match[2]) || 0) * 60 : 0;
-			let seconds = match && match[3] ? parseInt(match[3]) || 0 : 0;
+		if(data.is_live === "live") {
+			// thx wolke for getting format to work this is from his repo https://github.com/rem-bot-industries/rem-v2/
+			for(let i of data.formats) if(i.format_id === "94") format = i.url;
+			if(!format) for(let i of data.formats) if(i.format_id === "93" || i.format_id === "95") format = i.url;
+			if(!format) return "NO_VALID_FORMATS";
 
 			return {
 				service: "yt",
 				id: id,
-				title: body.snippet.title,
+				title: data.title,
+				thumbnail: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
+				live: true,
+				stream: format
+			};
+		} else {
+			let parts = data.duration.split(":").reverse();
+			let seconds = parseInt(parts[0]) || 0;
+			let minutes = parts[1] ? parseInt(parts[1]) * 60 : 0;
+			let hours = parts[2] ? parseInt(parts[2]) * 3600 : 0;
+
+			// thx wolke for getting format to work this is from his repo https://github.com/rem-bot-industries/rem-v2/
+			for(let i of data.formats) if(i.format_id === "250" || i.format_id === "251" || i.format_id === "249") format = i.url;
+			if(!format) {
+				for(let i of data.formats) {
+					if((i.ext === "mp4" && i.format_note === "DASH audio") || (i.ext === "webm" && i.format_note === "DASH audio")) format = i.url;
+				}
+			}
+			if(!format) for(let i of data.formats) if(i.format_note === "DASH audio") format = i.url;
+			if(!format) return "NO_VALID_FORMATS";
+
+			return {
+				service: "yt",
+				id: id,
+				title: data.title,
 				duration: hours + minutes + seconds,
-				thumbnail: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`
+				thumbnail: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
+				stream: format
 			};
 		}
 	}
 
-	async ytPlaylist(id, shard, page = "", videos = []) {
+	async ytPlaylist(id, page = "", videos = []) {
+		let randomKey = ytKeys[Math.floor(Math.random() * ytKeys.length)];
 		let url = `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${id}&maxResults=50&part=contentDetails` +
-			`&nextPageToken&pageToken=${page}&fields=nextPageToken,items(contentDetails(videoId))&key=${ytKeys[shard]}`;
+			`&nextPageToken&pageToken=${page}&fields=nextPageToken,items(contentDetails(videoId))&key=${randomKey}`;
 
 		let body = await framework.getContent(url);
 		body = JSON.parse(body);
-		for(let item of body.items) videos.push(this.ytData(item.contentDetails.videoId, shard));
+		for(let item of body.items) videos.push(this.ytData(item.contentDetails.videoId));
 
-		if(body.nextPageToken) return await this.ytPlaylist(id, shard, body.nextPageToken, videos);
+		if(body.nextPageToken) return await this.ytPlaylist(id, body.nextPageToken, videos);
 		videos = await Promise.all(videos);
 		return videos;
 	}
@@ -122,11 +128,10 @@ class ProviderData {
 		try {
 			let data = await yt.getInfoAsync(link, [], { maxBuffer: Infinity });
 
-			let duration = data.duration;
-			let match = duration.match(/(\d+:)?(\d+:)?(\d+)?/);
-			let hours = match && match[1] ? (parseInt(match[1]) || 0) * 3600 : 0;
-			let minutes = match && match[2] ? (parseInt(match[2]) || 0) * 60 : 0;
-			let seconds = match && match[3] ? parseInt(match[3]) || 0 : 0;
+			let parts = data.duration.split(":").reverse();
+			let seconds = parseInt(parts[0]) || 0;
+			let minutes = parts[1] ? parseInt(parts[1]) * 60 : 0;
+			let hours = parts[2] ? parseInt(parts[2]) * 3600 : 0;
 
 			return {
 				service: "pornhub",
@@ -162,12 +167,13 @@ class ProviderData {
 		}
 	}
 
-	async searchVideo(query, shard) {
+	async searchVideo(query) {
+		let randomKey = ytKeys[Math.floor(Math.random() * ytKeys.length)];
 		let url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1` +
-			`&type=video&q=${escape(query)}&key=${ytKeys[shard]}`;
+			`&type=video&q=${escape(query)}&key=${randomKey}`;
 
 		let body = await framework.getContent(url);
-		if(body.indexOf("videoId") >= 0) return this.ytData(JSON.parse(body).items[0].id.videoId, shard);
+		if(~body.indexOf("videoId")) return this.ytData(JSON.parse(body).items[0].id.videoId);
 		else return "NO_RESULTS";
 	}
 
@@ -194,18 +200,16 @@ class ProviderData {
 		if(typeof data !== "object") {
 			throw new Error("Tried to play invalid song (video deleted?)");
 		} else if(data.service === "sc") {
-			let streamData = await framework.getContent(`https://api.soundcloud.com/i1/tracks/${data.id}/streams?client_id=${clientIDs.sountcloud}`);
+			let streamData = await framework.getContent(`https://api.soundcloud.com/i1/tracks/${data.id}/streams?client_id=${clientIDs.soundcloud}`);
 			streamData = JSON.parse(streamData);
-			if(!streamData.http_mp3_128_url) throw new Error("No mp3 format from SoundCloud");
+			if(!streamData.http_mp3_128_url) throw new Error("No suitable format from SoundCloud");
 			else return streamData.http_mp3_128_url;
-		} else if(data.live) {
+			// else return new Promise((resolve, reject) => streamResume.get(streamData.http_mp3_128_url, resolve));
+		} else if(data.stream) {
+			// return new Promise((resolve, reject) => streamResume.get(data.stream, resolve));
 			return data.stream;
-		} else if(data.service === "yt") {
-			return yt(`http://www.youtube.com/watch?v=${data.id}`, [], { maxBuffer: Infinity });
-		} else if(data.service === "pornhub") {
-			return yt(`http://www.pornhub.com/view_video.php?viewkey=${data.id}`, [], { maxBuffer: Infinity });
 		} else {
-			return new Error("Invalid service type");
+			return new Error("No stream and/or invalid service");
 		}
 	}
 }

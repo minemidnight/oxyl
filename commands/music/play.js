@@ -26,7 +26,7 @@ async function dfmPlaylist(name, manager, voiceChannel) {
 					thumbnail: `https://i.ytimg.com/vi/${video.identifier}/hqdefault.jpg`
 				});
 			} else if(video.service === "SoundCloudTrack") {
-				soundcloud.push(music.providers.queueData(video.url, manager.guild.shard.id));
+				soundcloud.push(music.providers.queueData(video.url));
 			}
 		});
 		soundcloud = await Promise.all(soundcloud);
@@ -37,13 +37,12 @@ async function dfmPlaylist(name, manager, voiceChannel) {
 }
 
 async function playCmdProcess(message) {
-	let result = await music.providers.queueData(message.argsPreserved[0], message.channel.guild.shard.id);
+	let result = await music.providers.queueData(message.argsPreserved[0]);
 	if(typeof result === "object") return result;
 	else if(result === "NO_RESULTS") return "Search returned no results";
 	else if(result === "INVALID_TYPE") return "Please only link to SoundCloud songs and playlists";
-	else if(result === "CHANNEL_OFFLINE") return "That Twitch channel is offline";
-	else if(result === "NO_VALID_FORMATS") return "There are no valid streaming formats for that stream";
-	else if(result === "NO_ITEMS") return "Unexpected error, does the video exist?";
+	else if(result === "CHANNEL_OFFLINE") return "That channel is offline";
+	else if(result === "NO_VALID_FORMATS") return "No suitable formats were found";
 	else if(result === "NOT_FOUND") return "Video not found";
 	else return `Unknown error: ${result}`;
 }
