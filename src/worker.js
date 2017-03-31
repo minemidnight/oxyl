@@ -1,1 +1,1 @@
-console.log(`worker ${process.id} says hello bcuz it started`);
+console.log(`worker ${cluster.worker.id} says hello bcuz it started`);
