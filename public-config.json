@@ -14,5 +14,5 @@
 		"host": "localhost",
 		"port": 28016
 	},
-	"shardsPerCluster": 3
+	"shardsPerWorker": 3
 }
