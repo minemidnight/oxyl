@@ -26,7 +26,7 @@ async function dfmPlaylist(name, manager, voiceChannel) {
 					thumbnail: `https://i.ytimg.com/vi/${video.identifier}/hqdefault.jpg`
 				});
 			} else if(video.service === "SoundCloudTrack") {
-				soundcloud.push(music.providers.queueData(video.url));
+				soundcloud.push(music.providers.scData(video.url));
 			}
 		});
 		soundcloud = await Promise.all(soundcloud);

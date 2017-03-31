@@ -25,6 +25,7 @@ process.on("SIGINT", () => {
 
 process.on("unhandledRejection", err => {
 	if(!err) return;
+	else if(err.message.startsWith("Request timed out")) return;
 	try {
 		let resp = JSON.parse(err.response);
 		// these codes mean someone bamboozled oxyl's perms or someone's bamboozled their server

@@ -1,5 +1,6 @@
 const yt = Promise.promisifyAll(require("youtube-dl"));
-const streamResume = require("stream-resume");
+const BufferedStream = require("buffered2").BufferedStream;
+const superagent = require("superagent");
 
 const ytKeys = framework.config.private.googleKeys;
 const clientIDs = { soundcloud: "2t9loNQH90kzJcsFCODdigxfp325aq4z" };
@@ -203,13 +204,28 @@ class ProviderData {
 			let streamData = await framework.getContent(`https://api.soundcloud.com/i1/tracks/${data.id}/streams?client_id=${clientIDs.soundcloud}`);
 			streamData = JSON.parse(streamData);
 			if(!streamData.http_mp3_128_url) throw new Error("No suitable format from SoundCloud");
-			else return streamData.http_mp3_128_url;
-			// else return new Promise((resolve, reject) => streamResume.get(streamData.http_mp3_128_url, resolve));
+
+			let stream = superagent.get(streamData.http_mp3_128_url);
+			let buffer = new BufferedStream();
+			stream.pipe(buffer);
+			return buffer;
+		} else if(data.service === "pornhub") {
+			let stream = yt(`http://www.pornhub.com/view_video.php?viewkey=${data.id}`);
+			let buffer = new BufferedStream();
+			stream.pipe(buffer);
+			return buffer;
+		} else if(data.service === "yt" && !data.stream) {
+			let stream = yt(data.id);
+			let buffer = new BufferedStream();
+			stream.pipe(buffer);
+			return buffer;
 		} else if(data.stream) {
-			// return new Promise((resolve, reject) => streamResume.get(data.stream, resolve));
-			return data.stream;
+			let stream = superagent.get(data.stream);
+			let buffer = new BufferedStream();
+			stream.pipe(buffer);
+			return buffer;
 		} else {
-			return new Error("No stream and/or invalid service");
+			throw new Error("No stream and/or invalid service");
 		}
 	}
 }

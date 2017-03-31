@@ -23,6 +23,7 @@
   "dependencies": {
     "bluebird": "^3.5.0",
     "body-parser": "^1.17.1",
+    "buffered2": "^1.0.0",
     "cheerio": "^0.22.0",
     "cookie-parser": "^1.4.3",
     "duration-js": "^3.9.2",
@@ -31,12 +32,14 @@
     "express-session": "^1.15.1",
     "goo.gl": "^0.1.4",
     "handlebars": "^4.0.6",
+    "hot-shots": "^4.4.0",
     "jimp": "^0.2.27",
     "js-yaml": "^3.8.2",
     "mathjs": "^3.10.0",
     "node-vibrant": "^3.0.0-alpha.2",
     "promise-mysql": "^3.0.0",
     "request": "^2.81.0",
+    "superagent": "^3.5.2",
     "twemoji": "^2.2.5",
     "ws": "^2.2.2",
     "youtube-dl": "^1.11.1"

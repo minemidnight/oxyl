@@ -12,14 +12,9 @@ const express = require("express"),
 const app = exports.app = express();
 const server = exports.server = http.createServer(app);
 const wss = exports.wss = new WebSocket.Server({ port: 8085 });
-const connectDatadog = require("connect-datadog")({
-	response_code: true, // eslint-disable-line camelcase
-	tags: ["app:my_app"]
-});
 server.listen(8080);
 exports.tokens = {};
 
-app.use(connectDatadog);
 app.use(express.static("./site/public"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -142,7 +137,7 @@ module.exports.messageCreate = message => {
 	let data = {
 		content: twemoji.parse(content),
 		author: framework.unmention(message.author),
-		// avatar: message.author.avatarURL,
+		avatar: message.author.avatarURL,
 		guildid: message.channel.guild ? message.channel.guild.id : message.channel.id,
 		guildname: message.channel.guild ? message.channel.guild.name : "DM",
 		channelname: message.channel.name,

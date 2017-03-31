@@ -1,4 +1,11 @@
 const music = Oxyl.modScripts.music;
+function shuffle(array) {
+	for(let i = array.length; i; i--) {
+		let index = Math.floor(Math.random() * i);
+		[array[i - 1], array[index]] = [array[index], array[i - 1]];
+	}
+}
+
 exports.cmd = new Oxyl.Command("shuffle", async message => {
 	let manager = music.getManager(message.channel.guild);
 	if(!manager) {
@@ -6,8 +13,7 @@ exports.cmd = new Oxyl.Command("shuffle", async message => {
 	} else if(!manager.voiceCheck(message.member)) {
 		return "You must be listening to music to use this command";
 	} else {
-		let queue = manager.data.queue;
-		queue = queue.sort(() => 0.5 - Math.random());
+		shuffle(manager.data.queue);
 		return "Queue shuffled :arrows_counterclockwise:";
 	}
 }, {
