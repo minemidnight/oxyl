@@ -6,7 +6,7 @@
 	},
 	"globals": {
 		"r": false,
-		"worker": false,
+		"cluster": false,
 		"bot": false
 	 },
 	"parserOptions": {
