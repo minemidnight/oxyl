@@ -1,0 +1,18 @@
+{
+	"creators": ["155112606661607425"],
+	"datadog": true,
+	"postStats": true,
+	"channelLogging": {
+		"bugs": "266340187615920128",
+		"debug": "266011007246270465",
+		"servers": "265998475831934977",
+		"updates": "270576454117359617"
+	},
+	"defaultInvitePermissionNumber": 298183686,
+	"queueItemsPerPage": 15,
+	"database": {
+		"host": "localhost",
+		"port": 28016
+	},
+	"shardsPerCluster": 3
+}

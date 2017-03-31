@@ -5,6 +5,8 @@
 		"es6": true
 	},
 	"globals": {
+		"r": false,
+		"worker": false,
 		"bot": false
 	 },
 	"parserOptions": {
