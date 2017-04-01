@@ -47,7 +47,6 @@
 		"no-new-wrappers": "error",
 		"no-new": "error",
 		"no-octal-escape": "error",
-		"no-return-assign": "error",
 		"no-self-compare": "error",
 		"no-sequences": "error",
 		"no-throw-literal": "error",

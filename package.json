@@ -15,5 +15,9 @@
     "url": "https://github.com/minemidnight/oxyl/issues"
   },
   "homepage": "https://github.com/minemidnight/oxyl#readme",
-  "dependencies": {}
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "eris": "github:abalabahaha/eris#dev",
+    "rethinkdb": "^2.3.3"
+  }
 }

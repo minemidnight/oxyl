@@ -1,6 +1,7 @@
 global.Promise = require("bluebird");
 const Eris = require("eris");
 const fs = Promise.promisifyAll(require("fs"));
+const path = require("path");
 
 const publicConfig = JSON.parse(require("fs").readFileSync("public-config.json").toString());
 const privateConfig = JSON.parse(require("fs").readFileSync("private-config.json").toString());
@@ -24,47 +25,67 @@ async function init(shardStart, shardEnd) {
 		defaultImageSize: 256
 	});
 
-	let onceListeners = await loadScripts(`./listeners/once/`);
-	let onListeners = await loadScripts(`./listeners/on/`);
-	console.log(onceListeners);
-	console.log(onListeners);
+	bot.publicConfig = publicConfig;
+	bot.privateConfig = privateConfig;
+	bot.prefixes = new Map();
+
+	bot.utils = {};
+	let utils = await loadScripts(path.resolve("src", "utils"));
+	utils.forEach(script => bot.utils[script.name] = script.exports);
+
+	let onceListeners = await loadScripts(path.resolve("src", "listeners", "once"));
+	let onListeners = await loadScripts(path.resolve("src", "listeners", "on"));
 	onceListeners.forEach(script => bot.once(script.name, script.exports));
 	onListeners.forEach(script => bot.on(script.name, script.exports));
+
+	bot.commands = [];
+	const Command = require("./structures/command.js");
+	let commands = await loadScripts(path.resolve("src", "commands"), true);
+	commands.forEach(script => {
+		let finalPath = script.path.dir.substring(script.path.dir.lastIndexOf("/") + 1);
+		script.exports.name = script.name;
+		script.exports.type = finalPath;
+
+		let command = new Command(script.exports);
+		bot.commands.push(command);
+	});
 
 	bot.connect();
 }
 
-async function loadScripts(path, deep = false) {
-	console.log(path, fs.existsSync(path.substring(path.length - 1)));
-	if(!fs.existsSync(path)) return [];
+async function loadScripts(filepath, deep = false) {
+	if(!fs.existsSync(filepath)) return [];
 
 	let scripts = [];
-	let files = await getFiles(path, file => file.endsWith(".js"), deep);
-	console.log(files);
+	let files = await getFiles(filepath, file => file.endsWith(".js"), deep);
 
 	files.forEach(file => {
 		scripts.push({
-			name: file.substring(file.length - 3),
-			exports: require(`${path}${file}`)
+			name: file.substring(file.lastIndexOf("/") + 1, file.length - 3),
+			exports: require(file),
+			path: path.parse(file)
 		});
 	});
 
 	return scripts;
 }
 
-async function getFiles(path, filter = () => true, deep = false) {
-	let files = await fs.readdirAsync(path);
-	console.log("in getfiles", files);
+async function getFiles(filepath, filter = () => true, deep = false) {
+	let files = await fs.readdirAsync(filepath);
 	let validFiles = [];
 
 	for(let file of files) {
 		if(deep) {
-			let stats = await fs.lstatAsync(`${path}${file}`);
-			if(stats.isDirectory()) files = files.concat(getFiles(`${path}${file}/`, filter, deep));
+			let stats = await fs.lstatAsync(`${filepath}/${file}`);
+			if(stats.isDirectory()) validFiles = validFiles.concat(await getFiles(`${filepath}/${file}`, filter, deep));
 		}
 
-		if(filter(file)) validFiles.push(file);
+		if(filter(file)) validFiles.push(`${filepath}/${file}`);
 	}
 
 	return validFiles;
 }
+
+process.on("unhandledRejection", err => {
+	console.log(err.stack);
+});

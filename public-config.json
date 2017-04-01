@@ -10,9 +10,5 @@
 	},
 	"defaultInvitePermissionNumber": 298183686,
 	"queueItemsPerPage": 15,
-	"database": {
-		"host": "localhost",
-		"port": 28016
-	},
 	"shardsPerWorker": 3
 }
