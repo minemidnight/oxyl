@@ -56,7 +56,7 @@ module.exports = async message => {
 		} else if(typeof result === "object") {
 			output = result;
 		} else if(result) {
-			output.content = result;
+			output.content = result.toString();
 		} else {
 			output = false;
 		}
@@ -76,7 +76,7 @@ module.exports = async message => {
 			}
 		} catch(error) {
 			message.channel.createMessage(`Error executing this command! ` +
-				`Stack trace ${bot.utils.codeBlock(error.stack)}`);
+				`Stack trace: ${bot.utils.codeBlock(err.stack)}`);
 		}
 	}
 };

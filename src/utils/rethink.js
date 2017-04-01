@@ -1,14 +1,16 @@
-global.r = require("rethinkdb"); // eslint-disable-line id-length
+const rethinkdbdash = require("rethinkdbdash");
 module.exports = {
 	init: async () => {
-		let connection = await r.connect(bot.privateConfig.database);
+		let connectionInfo = bot.privateConfig.database;
+		connectionInfo.silent = true;
+		connectionInfo.db = "Oxyl";
+		global.r = rethinkdbdash(connectionInfo); // eslint-disable-line id-length
 
-		let dbs = r.dbList.run();
+		let dbs = await r.dbList().run();
 		if(!~dbs.indexOf("Oxyl")) {
-			console.log("Creating database Oxyl...");
+			console.info("Creating database Oxyl...");
 			await r.dbCreate("Oxyl").run();
 		}
-		connection.use("Oxyl");
 
 		let tableList = await r.tableList().run();
 		let tablesExpected = [
@@ -19,12 +21,14 @@ module.exports = {
 
 		for(let table of tablesExpected) {
 			if(!~tableList.indexOf(table)) {
-				console.log(`Creating "${table}" table...`);
+				console.info(`Creating "${table}" table...`);
 				await r.tableCreate(table).run();
 			}
 		}
+		console.startup("RethinkDB successfully started");
 
 		let prefixes = await r.table("settings").filter({ name: "prefix" }).run();
+		console.info(`Grabbing prefixes to store in cache... ${prefixes.length} found`);
 		prefixes.forEach(setting => bot.prefixes.set(setting.guildID, setting.value));
 	}
 };

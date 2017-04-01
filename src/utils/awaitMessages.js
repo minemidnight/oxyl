@@ -36,13 +36,5 @@ class MessageCollector extends EventEmitter {
 
 module.exports = async (channel, filter, options) => {
 	const collector = new MessageCollector(channel, filter, options);
-	return new Promise((resolve, reject) => {
-		collector.on("end", (collection, reason) => {
-			if(!collection || collection.size === 0) {
-				resolve(collection, reason);
-			} else {
-				resolve(collection, reason);
-			}
-		});
-	});
+	return new Promise(resolve => collector.on("end", resolve));
 };

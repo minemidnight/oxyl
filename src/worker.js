@@ -10,7 +10,14 @@ cluster.worker.on("message", async msg => {
 	if(msg.type === "startup") {
 		init(msg.shardStart, msg.shardEnd);
 	} else if(msg.type === "eval") {
-		process.send({ type: "evalResult", output: eval(msg.input) });
+		try {
+			let result = eval(msg.input);
+			process.send({ type: "output", result, id: msg.id });
+		} catch(err) {
+			process.send({ type: "output", error: err, id: msg.id });
+		}
+	} else if(msg.type === "output") {
+		cluster.worker.emit("outputMessage", msg);
 	}
 });
 
@@ -18,7 +25,7 @@ async function init(shardStart, shardEnd) {
 	global.bot = new Eris(privateConfig.token, {
 		firstShardId: shardStart,
 		lastShardId: shardEnd,
-		maxShards: publicConfig.shardsPerWorker,
+		maxShards: shardEnd - shardStart,
 		disableEvents: { TYPING_START: true },
 		messageLimit: 0,
 		defaultImageFormat: "png",
@@ -86,6 +93,4 @@ async function getFiles(filepath, filter = () => true, deep = false) {
 	return validFiles;
 }
 
-process.on("unhandledRejection", err => {
-	console.log(err.stack);
-});
+process.on("unhandledRejection", err => console.error(err.stack));

@@ -6,7 +6,7 @@ function matchUser(user, input) {
 
 	if(input.includes("#")) {
 		let index = input.lastIndexOf("#");
-		var discrim = parseInt(input.substring(index + 1));
+		var discrim = input.substring(index + 1);
 		input = input.substring(0, index);
 		if(isNaN(discrim)) discrim = false;
 		else if((user.user ? user.user.discriminator : user.discriminator) === discrim) discrim = true;
