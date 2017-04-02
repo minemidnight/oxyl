@@ -17,7 +17,7 @@ module.exports = {
 			shardInfo += `Channels: ${channelCount}\n`;
 			shardInfo += `Users: ${shardUsers.size}\n`;
 			shardInfo += `Latency: ${shard.latency}ms\n`;
-			shardInfo += `Status: ${shard.status}\n`;
+			shardInfo += `Status: ${shard.status}\n\n`;
 		});
 		return shardInfo;
 	},

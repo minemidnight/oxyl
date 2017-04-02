@@ -1,7 +1,7 @@
 const request = require("request-promise");
+let maxComic = 0;
 module.exports = {
 	process: async message => {
-		let maxComic = JSON.parse(await request("https://xkcd.com/info.0.json")).num;
 		if(message.args[0] && message.args[0] > maxComic) return `Invalid Comic! Comics available: 1-${maxComic}`;
 
 		let comic = message.args[0] || Math.floor(Math.random() * maxComic) + 1;
@@ -14,6 +14,7 @@ module.exports = {
 			name: body.img.substring(body.img.lastIndexOf("/") + 1)
 		}];
 	},
+	updateComic: async () => maxComic = JSON.parse(await request("https://xkcd.com/info.0.json")).num,
 	description: "Grab a xkcd from xkcd.com",
 	args: [{
 		label: "comic number",
@@ -22,3 +23,6 @@ module.exports = {
 		optional: true
 	}]
 };
+
+module.exports.updateComic();
+setInterval(module.exports.updateComic, 10800000);

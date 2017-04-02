@@ -2,12 +2,23 @@ const resolver = bot.utils.resolver;
 module.exports = async (message) => {
 	let command = message.command;
 	message.content = message.content.trim();
-	if(command.args.length <= 1) return [message.content];
+	if(command.args.length === 0) return [message.content.trim()];
 
 	let args = [], currentQuoted = false, startIndex = 0;
 	for(let i = 0; i < message.content.length; i++) {
+		if(command.args.length === 1) {
+			if((message.content.startsWith(`"`) && message.content.endsWith(`"`)) ||
+				(message.content.startsWith("'") && message.content.endsWith("'")) ||
+				(message.content.startsWith("`") && message.content.endsWith("`")))	{
+				args = [message.content.substring(1, message.content.length - 1).trim()];
+			} else {
+				args = [message.content.trim()];
+			}
+			break;
+		}
+
 		let char = message.content.charAt(i);
-		if(char === `"`) {
+		if(char === `"` || char === "'" || char === "`") {
 			if(currentQuoted === false) {
 				startIndex = i + 1;
 			} else {
@@ -29,12 +40,12 @@ module.exports = async (message) => {
 		}
 	}
 
-	if(args.length !== command.args.filter(arg => !arg.optional).length) {
+	if(args.length < command.args.filter(arg => !arg.optional).length) {
 		return `Invalid Usage! Please use the command as such: \`${command.name} ${command.usage}\``;
 	}
 
 	try {
-		args = args.map((arg, i) => resolver[command.args[i].type](message, arg, command.args[i]));
+		args = await Promise.all(args.map((arg, i) => resolver[command.args[i].type](message, arg, command.args[i])));
 		return args;
 	} catch(err) {
 		return err.message;

@@ -1,71 +1,79 @@
-global.Promise = require("bluebird");
-require("./modules/logger.js");
 const webhook = require("./modules/webhookStatus.js");
 const publicConfig = JSON.parse(require("fs").readFileSync("public-config.json").toString());
 const workerCrashes = [], waitingEvals = [];
 
-function handleWorker(worker, shardStart, shardEnd) {
+function handleWorker(worker) {
 	worker.on("online", () => {
-		console.startup(`Worker ${worker.id} started (hosting shards ${shardStart}-${shardEnd})`);
-		worker.send({ type: "startup", shardStart, shardEnd });
+		console.startup(`Worker ${worker.id} started (hosting shards ${worker.shardStart}-${worker.shardEnd})`);
+		worker.send({
+			type: "startup",
+			shardStart: worker.shardStart,
+			shardEnd: worker.shardEnd
+		});
 
 		webhook({
 			title: `Worker ${worker.id} started`,
 			color: 0x00FF00,
-			description: `Hosting shards ${shardStart}-${shardEnd}`,
+			description: `Hosting shards ${worker.shardStart}-${worker.shardEnd}`,
 			timestamp: new Date()
 		});
 	});
 
 	worker.on("exit", (code, signal) => {
 		if(signal) {
-			console.startup(`Worker ${worker.id} died with signal ${signal} (hosted shards ${shardStart}-${shardEnd})`);
-
-			webhook({
-				title: `Worker ${worker.id} died`,
-				color: 0xFF0000,
-				description: `Singal: ${signal}\nHosted shards ${shardStart}-${shardEnd}`,
-				timestamp: new Date()
-			});
+			return;
+			// 	console.error(`Worker ${worker.id} died with signal ${signal} ` +
+			// 		`(hosted shards ${worker.shardStart}-${worker.shardEnd})`);
+			//
+			// 	webhook({
+			// 		title: `Worker ${worker.id} died`,
+			// 		color: 0xFF0000,
+			// 		description: `Singal: ${signal}\nHosted shards ${worker.shardStart}-${worker.shardEnd}`,
+			// 		timestamp: new Date()
+			// 	});
 		} else if(code !== 0) {
-			if(workerCrashes[`${shardStart}-${shardEnd}`] && workerCrashes[`${shardStart}-${shardEnd}`] >= 4) {
-				console.startup(`Worker ${worker.id} killed due to restart loop with ` +
-					`exit code: ${code} (hosted shards ${shardStart}-${shardEnd}).`);
+			if(workerCrashes[worker.id] && workerCrashes[worker.id] >= 4) {
+				console.error(`Worker ${worker.id} killed due to restart loop with ` +
+					`exit code: ${code} (hosted shards ${worker.shardStart}-${worker.shardEnd}).`);
 
 				webhook({
 					title: `Worker ${worker.id} killed (restart loop)`,
 					color: 0xFF0000,
-					description: `Exit code: ${code}\nHosted shards ${shardStart}-${shardEnd}`,
+					description: `Exit code: ${code}\nHosted shards ${worker.shardStart}-${worker.shardEnd}`,
 					timestamp: new Date()
 				});
 			} else {
-				console.startup(`Worker ${worker.id} died with exit code ${code} ` +
-					`(hosting shards ${shardStart}-${shardEnd}). Respawning new process...`);
-				handleWorker(cluster.fork(), shardStart, shardEnd);
+				console.warn(`Worker ${worker.id} died with exit code ${code} ` +
+					`(hosting shards ${worker.shardStart}-${worker.shardEnd}). Respawning new process...`);
+				let newWorker = cluster.fork();
+				newWorker.shardStart = worker.shardStart;
+				newWorker.shardEnd = worker.shardEnd;
+				handleWorker(newWorker);
 
 				webhook({
 					title: `Worker ${worker.id} died`,
 					color: 0xFFFF00,
-					description: `Exit code: ${code}\nHosting shards ${shardStart}-${shardEnd}\nRespawning...`,
+					description: `Exit code: ${code}\nHosting shards ${worker.shardStart}-${worker.shardEnd}\n` +
+						`Respawned as ${newWorker.id}`,
 					timestamp: new Date()
 				});
 
-				if(!workerCrashes[`${shardStart}-${shardEnd}`]) workerCrashes[`${shardStart}-${shardEnd}`] = 1;
-				else workerCrashes[`${shardStart}-${shardEnd}`]++;
+				if(!workerCrashes[worker.id]) workerCrashes[worker.id] = 1;
+				else workerCrashes[worker.id]++;
 				setTimeout(() => {
-					if(!workerCrashes[`${shardStart}-${shardEnd}`]) return;
-					if(workerCrashes[`${shardStart}-${shardEnd}`] === 1) delete workerCrashes[`${shardStart}-${shardEnd}`];
-					else workerCrashes[`${shardStart}-${shardEnd}`]--;
+					if(!workerCrashes[worker.id]) return;
+					if(workerCrashes[worker.id] === 1) delete workerCrashes[worker.id];
+					else workerCrashes[worker.id]--;
 				}, 20000);
 			}
 		} else {
-			console.startup(`Worker ${worker.id} killed successfully ` +
-				`(hosted shards ${shardStart}-${shardEnd}).`);
+			console.info(`Worker ${worker.id} killed successfully ` +
+				`(hosted shards ${worker.shardStart}-${worker.shardEnd}).`);
 
 			webhook({
 				title: `Worker ${worker.id} killed`,
 				color: 0xFFFF00,
-				description: `Exit code: ${code} (success)\nHosted shards ${shardStart}-${shardEnd}`,
+				description: `Exit code: ${code} (success)\nHosted shards ${worker.shardStart}-${worker.shardEnd}`,
 				timestamp: new Date()
 			});
 		}
@@ -87,7 +95,7 @@ async function handleMessage(msg, worker) {
 			let result = eval(msg.input);
 			worker.send({ type: "output", result, id: msg.id });
 		} catch(err) {
-			worker.send({ type: "output", error: err, id: msg.id });
+			worker.send({ type: "output", error: err.stack, id: msg.id });
 		}
 	} else if(msg.type === "globalEval") {
 		let workers = getOnlineWorkers();
@@ -103,8 +111,48 @@ async function handleMessage(msg, worker) {
 				id: msg.id
 			});
 		});
+	} else if(msg.type === "eval") {
+		if(!msg.target) {
+			worker.send({ type: "output", error: "No target specified", id: msg.id });
+			return;
+		}
+		let workers = getOnlineWorkers();
+		waitingOutputs[msg.id] = {
+			expected: 1,
+			results: []
+		};
+
+		let targetWorker;
+		if(msg.target[0] === "shard") {
+			let shard = msg.target[1];
+			targetWorker = workers.find(work => work.shardStart >= shard && work.shardEnd <= shard);
+		}
+
+		if(!targetWorker) {
+			worker.send({ type: "output", error: "Target not found", id: msg.id });
+			return;
+		}
+
+		targetWorker.send({
+			type: "eval",
+			input: msg.input,
+			id: msg.id
+		});
 	} else if(msg.type === "output") {
 		if(!waitingOutputs[msg.id]) return;
+		let workers = getOnlineWorkers();
+		waitingOutputs[msg.id] = {
+			expected: workers.length,
+			results: []
+		};
+
+		workers.forEach(work => {
+			work.send({
+				type: "eval",
+				input: msg.input,
+				id: msg.id
+			});
+		});
 
 		waitingOutputs[msg.id].results.push(msg.result);
 		if(waitingOutputs[msg.id].expected === waitingOutputs[msg.id].results.length) {
@@ -123,13 +171,17 @@ function init() {
 
 	let shardCount = 1, perCluster = publicConfig.shardsPerWorker;
 	if(~process.argv.indexOf("--shards")) shardCount = parseInt(process.argv[process.argv.indexOf("--shards") + 1]);
+	if(shardCount < 1) shardCount = 1;
 
 	let workerCount = Math.ceil(shardCount / perCluster);
 	for(let i = 0; i < workerCount; i++) {
-		let shardStart = i * perCluster, shardEnd = (i + 1) * 3;
-		if(shardEnd > shardCount) shardEnd = shardCount;
+		let shardStart = i * perCluster, shardEnd = ((i + 1) * 3) - 1;
+		if(shardEnd > shardCount) shardEnd = shardCount - 1;
 
-		handleWorker(cluster.fork(), shardStart, shardEnd);
+		let worker = cluster.fork();
+		worker.shardStart = shardStart;
+		worker.shardEnd = shardEnd;
+		handleWorker(worker);
 	}
 }
 init();

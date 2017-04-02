@@ -1,15 +1,20 @@
 const rethinkdbdash = require("rethinkdbdash");
 module.exports = {
 	init: async () => {
+		if(!bot.privateConfig.database) {
+			console.warn("No RethinkDB connection info in private-config.yml, Oxyl won't work as expected");
+			return;
+		}
+		let dbName = bot.publicConfig.databaseName || "Oxyl";
 		let connectionInfo = bot.privateConfig.database;
 		connectionInfo.silent = true;
-		connectionInfo.db = "Oxyl";
+		connectionInfo.db = dbName;
 		global.r = rethinkdbdash(connectionInfo); // eslint-disable-line id-length
 
 		let dbs = await r.dbList().run();
-		if(!~dbs.indexOf("Oxyl")) {
-			console.info("Creating database Oxyl...");
-			await r.dbCreate("Oxyl").run();
+		if(!~dbs.indexOf(dbName)) {
+			console.info(`Creating database ${dbName}...`);
+			await r.dbCreate(dbName).run();
 		}
 
 		let tableList = await r.tableList().run();

@@ -1,5 +1,3 @@
-global.Promise = require("bluebird");
-require("./modules/logger.js");
 const Eris = require("eris");
 const fs = Promise.promisifyAll(require("fs"));
 const path = require("path");
@@ -9,24 +7,31 @@ const privateConfig = JSON.parse(require("fs").readFileSync("private-config.json
 
 cluster.worker.on("message", async msg => {
 	if(msg.type === "startup") {
-		init(msg.shardStart, msg.shardEnd);
+		cluster.worker.shardStart = msg.shardStart;
+		cluster.worker.shardEnd = msg.shardEnd;
+		init();
 	} else if(msg.type === "eval") {
 		try {
 			let result = eval(msg.input);
 			process.send({ type: "output", result, id: msg.id });
 		} catch(err) {
-			process.send({ type: "output", error: err, id: msg.id });
+			process.send({ type: "output", error: err.stack, id: msg.id });
 		}
 	} else if(msg.type === "output") {
 		cluster.worker.emit("outputMessage", msg);
 	}
 });
 
-async function init(shardStart, shardEnd) {
+async function init() {
+	if(!privateConfig.token) {
+		console.error("No token found in private-config.json");
+		process.exit(0);
+	}
+
 	global.bot = new Eris(privateConfig.token, {
-		firstShardId: shardStart,
-		lastShardId: shardEnd,
-		maxShards: shardEnd - shardStart,
+		firstShardID: cluster.worker.shardStart,
+		lastShardID: cluster.worker.shardEnd,
+		maxShards: cluster.worker.shardEnd - cluster.worker.shardStart,
 		disableEvents: { TYPING_START: true },
 		messageLimit: 0,
 		defaultImageFormat: "png",
@@ -55,7 +60,6 @@ async function init(shardStart, shardEnd) {
 		script.exports.type = finalPath;
 
 		let command = new Command(script.exports);
-		bot.commands.push(command);
 	});
 
 	bot.connect();

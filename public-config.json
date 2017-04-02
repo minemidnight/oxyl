@@ -8,5 +8,6 @@
 	},
 	"defaultInvitePermissionNumber": 298183686,
 	"queueItemsPerPage": 15,
-	"shardsPerWorker": 3
+	"shardsPerWorker": 3,
+	"databaseName": "OxylBeta"
 }

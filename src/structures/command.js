@@ -28,6 +28,8 @@ class Command {
 			}
 			this.usage = usage.join(" ");
 		}
+
+		bot.commands.push(this);
 	}
 
 	run(message) {
