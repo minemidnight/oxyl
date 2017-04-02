@@ -1,5 +1,6 @@
 global.Promise = require("bluebird");
-require("./utils/logger.js");
+require("./modules/logger.js");
+const webhook = require("./modules/webhookStatus.js");
 const publicConfig = JSON.parse(require("fs").readFileSync("public-config.json").toString());
 const workerCrashes = [], waitingEvals = [];
 
@@ -7,19 +8,47 @@ function handleWorker(worker, shardStart, shardEnd) {
 	worker.on("online", () => {
 		console.startup(`Worker ${worker.id} started (hosting shards ${shardStart}-${shardEnd})`);
 		worker.send({ type: "startup", shardStart, shardEnd });
+
+		webhook({
+			title: `Worker ${worker.id} started`,
+			color: 0x00FF00,
+			description: `Hosting shards ${shardStart}-${shardEnd}`,
+			timestamp: new Date()
+		});
 	});
 
 	worker.on("exit", (code, signal) => {
 		if(signal) {
-			console.startup(`Worker ${worker.id} killed with signal ${signal} (hosted shards ${shardStart}-${shardEnd})`);
+			console.startup(`Worker ${worker.id} died with signal ${signal} (hosted shards ${shardStart}-${shardEnd})`);
+
+			webhook({
+				title: `Worker ${worker.id} died`,
+				color: 0xFF0000,
+				description: `Singal: ${signal}\nHosted shards ${shardStart}-${shardEnd}`,
+				timestamp: new Date()
+			});
 		} else if(code !== 0) {
 			if(workerCrashes[`${shardStart}-${shardEnd}`] && workerCrashes[`${shardStart}-${shardEnd}`] >= 4) {
-				console.startup(`Worker ${worker.id} terminated due to restart loop with ` +
+				console.startup(`Worker ${worker.id} killed due to restart loop with ` +
 					`exit code: ${code} (hosted shards ${shardStart}-${shardEnd}).`);
+
+				webhook({
+					title: `Worker ${worker.id} killed (restart loop)`,
+					color: 0xFF0000,
+					description: `Exit code: ${code}\nHosted shards ${shardStart}-${shardEnd}`,
+					timestamp: new Date()
+				});
 			} else {
-				console.startup(`Worker ${worker.id} killed with code ${code} ` +
+				console.startup(`Worker ${worker.id} died with exit code ${code} ` +
 					`(hosting shards ${shardStart}-${shardEnd}). Respawning new process...`);
 				handleWorker(cluster.fork(), shardStart, shardEnd);
+
+				webhook({
+					title: `Worker ${worker.id} died`,
+					color: 0xFFFF00,
+					description: `Exit code: ${code}\nHosting shards ${shardStart}-${shardEnd}\nRespawning...`,
+					timestamp: new Date()
+				});
 
 				if(!workerCrashes[`${shardStart}-${shardEnd}`]) workerCrashes[`${shardStart}-${shardEnd}`] = 1;
 				else workerCrashes[`${shardStart}-${shardEnd}`]++;
@@ -32,6 +61,13 @@ function handleWorker(worker, shardStart, shardEnd) {
 		} else {
 			console.startup(`Worker ${worker.id} killed successfully ` +
 				`(hosted shards ${shardStart}-${shardEnd}).`);
+
+			webhook({
+				title: `Worker ${worker.id} killed`,
+				color: 0xFFFF00,
+				description: `Exit code: ${code} (success)\nHosted shards ${shardStart}-${shardEnd}`,
+				timestamp: new Date()
+			});
 		}
 	});
 
@@ -79,6 +115,12 @@ async function handleMessage(msg, worker) {
 }
 
 function init() {
+	webhook({
+		title: `Master started`,
+		color: 0x0000FF,
+		timestamp: new Date()
+	});
+
 	let shardCount = 1, perCluster = publicConfig.shardsPerWorker;
 	if(~process.argv.indexOf("--shards")) shardCount = parseInt(process.argv[process.argv.indexOf("--shards") + 1]);
 
@@ -93,3 +135,14 @@ function init() {
 init();
 
 process.on("unhandledRejection", err => console.error(err.stack));
+
+process.stdin.resume();
+process.on("SIGINT", async () => {
+	await webhook({
+		title: `Master Exited`,
+		color: 0x0000FF,
+		description: `Recieved SIGINT (exit via terminal)`,
+		timestamp: new Date()
+	});
+	process.exit(0);
+});

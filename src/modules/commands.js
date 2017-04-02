@@ -1,7 +1,6 @@
 const argHandler = require("./args.js");
 module.exports = async message => {
-	const guild = message.guild;
-
+	const guild = message.channel.guild;
 	let prefix = `^(?:ob!|oxylb|<@!?${bot.user.id}>|{GPRE}),?(?:\\s+)?([\\s\\S]+)`;
 	if(guild && bot.prefixes.has(guild.id)) {
 		prefix = prefix.replace("{GPRE}", `|${bot.utils.escapeRegex(bot.prefixes.get(guild.id))}`);
@@ -22,21 +21,20 @@ module.exports = async message => {
 	}
 	command = command.toLowerCase().trim();
 
-	for(let cmd of bot.commands) {
-		if(command === cmd.name || ~cmd.aliases.indexOf(command)) {
-			command = cmd;
-			break;
-		}
-	}
-	if(typeof command === "string") return;
+	command = bot.commands.find(cmd => command === cmd.name || ~cmd.aliases.indexOf(command));
+	if(!command) return;
+	else if(!command.caseSensitive) message.content = message.content.toLowerCase();
 
 
 	if((command.guildOnly || command.perm || command.type === "admin") && !guild) {
-		message.channel.createMessage("This command is for guilds (servers) only. Sorry!");
+		message.channel.createMessage("Sorry, but this command is for guilds (servers) only.");
+		return;
 	} else if(command.type === "creator" && !~bot.publicConfig.creators.indexOf(message.author.id)) {
 		message.channel.createMessage("This command can only be used by the creators of the bot.");
+		return;
 	} else if(command.perm && !message.member.permission.has(command.perm)) {
 		message.channel.createMessage(`You cannot run this command, it requires the permission ${command.perm}.`);
+		return;
 	}
 
 	message.command = command;
@@ -47,6 +45,7 @@ module.exports = async message => {
 	}
 
 	try {
+		await message.channel.sendTyping();
 		let result = await command.run(message);
 
 		let output = { content: "" }, file;
@@ -63,7 +62,7 @@ module.exports = async message => {
 
 		if(output) {
 			if(output.content) output.content = output.content.substring(0, 2000);
-			await message.channel.createMessage(output, file || null);
+			await message.channel.createMessage(output, file);
 		}
 	} catch(err) {
 		try {

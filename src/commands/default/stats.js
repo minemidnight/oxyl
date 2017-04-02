@@ -19,12 +19,12 @@ module.exports = {
 		let totalUsage = (masterUsage + results.map(res => res[2]).reduce((a, b) => a + b)) / 1024;
 
 		let shardStart = Math.min.apply(null, bot.shards.map(shard => shard.id));
-		return `__Guilds__\n` +
+		return `__**Guilds**__\n` +
 			`Large (over 250 members): ${largeGuilds}\n` +
 			`Others: ${totalGuilds - largeGuilds}\n` +
 			`Total: ${totalGuilds}\n` +
 			`Streaming In: 0\n\n` +
-			`__Other__\n` +
+			`__**Other**__\n` +
 			`Worker Memory Usage: ${workerUsage.toFixed(2)}MB\n` +
 			`Total: ${totalUsage.toFixed(2)}GB\n` +
 			`Worker: ${cluster.worker.id} (shards: ${shardStart}-${shardStart + (bot.shards.size - 1)})\n` +

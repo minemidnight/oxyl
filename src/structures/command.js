@@ -9,6 +9,7 @@ class Command {
 		this.process = data.process;
 		this.aliases = data.aliases || [];
 		this.description = data.description;
+		this.caseSensitive = !!data.caseSensitive;
 		this.args = data.args || [];
 		this.guildOnly = !!data.guildOnly;
 		this.perm = data.perm;

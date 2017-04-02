@@ -1,4 +1,5 @@
 global.Promise = require("bluebird");
+require("./modules/logger.js");
 const Eris = require("eris");
 const fs = Promise.promisifyAll(require("fs"));
 const path = require("path");

@@ -2,9 +2,7 @@
 	"creators": ["155112606661607425"],
 	"datadog": true,
 	"postStats": true,
-	"channelLogging": {
-		"bugs": "266340187615920128",
-		"debug": "266011007246270465",
+	"channels": {
 		"servers": "265998475831934977",
 		"updates": "270576454117359617"
 	},
