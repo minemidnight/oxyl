@@ -1,0 +1,7 @@
+{
+	"uid": "oxyl",
+	"append": true,
+	"watch": true,
+	"script": "src/index.js",
+	"colors": true
+}

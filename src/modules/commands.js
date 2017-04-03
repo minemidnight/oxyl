@@ -1,9 +1,17 @@
 const argHandler = require("./args.js");
+
 module.exports = async message => {
 	const guild = message.channel.guild;
-	let prefix = `^(?:ob!|oxylb|<@!?${bot.user.id}>|{GPRE}),?(?:\\s+)?([\\s\\S]+)`;
+	const prefixes = bot.publicConfig.prefixes.map(prefix => {
+		if(prefix === "mention") prefix = `<@!?${bot.user.id}>`;
+		return prefix;
+	});
+
+	let prefix = `^(?:${prefixes.join("|")}),?(?:\\s+)?([\\s\\S]+)`;
 	if(guild && bot.prefixes.has(guild.id)) {
-		prefix = prefix.replace("{GPRE}", `|${bot.utils.escapeRegex(bot.prefixes.get(guild.id))}`);
+		let insertIndex = prefix.indexOf("),?(");
+		let guildPrefix = `|${bot.utils.escapeRegex(bot.prefixes.get(guild.id))}`;
+		prefix = prefix.substring(0, insertIndex) + guildPrefix + prefix.substring(insertIndex);
 	}
 	prefix = new RegExp(prefix, "i");
 

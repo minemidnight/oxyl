@@ -9,5 +9,6 @@
 	"defaultInvitePermissionNumber": 298183686,
 	"queueItemsPerPage": 15,
 	"shardsPerWorker": 3,
-	"databaseName": "OxylBeta"
+	"databaseName": "OxylBeta",
+	"prefixes": ["ob!", "oxylb", "oxylbeta", "mention"]
 }

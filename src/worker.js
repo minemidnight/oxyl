@@ -31,17 +31,20 @@ async function init() {
 	if(!privateConfig.token) {
 		console.error("No token found in private-config.json");
 		process.exit(0);
+	} else if(!publicConfig.prefixes) {
+		console.error("No prefix(es) found in public-config.json");
+		process.exit(0);
+	} else {
+		global.bot = new Eris(privateConfig.token, {
+			firstShardID: cluster.worker.shardStart,
+			lastShardID: cluster.worker.shardEnd,
+			maxShards: cluster.worker.shardEnd - cluster.worker.shardStart,
+			disableEvents: { TYPING_START: true },
+			messageLimit: 0,
+			defaultImageFormat: "png",
+			defaultImageSize: 256
+		});
 	}
-
-	global.bot = new Eris(privateConfig.token, {
-		firstShardID: cluster.worker.shardStart,
-		lastShardID: cluster.worker.shardEnd,
-		maxShards: cluster.worker.shardEnd - cluster.worker.shardStart,
-		disableEvents: { TYPING_START: true },
-		messageLimit: 0,
-		defaultImageFormat: "png",
-		defaultImageSize: 256
-	});
 
 	bot.publicConfig = publicConfig;
 	bot.privateConfig = privateConfig;

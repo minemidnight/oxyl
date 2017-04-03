@@ -28,6 +28,6 @@ module.exports = {
 	description: "Edit the roles which users keep when they rejoin the server",
 	args: [{
 		type: "text",
-		label: "add/remove"
+		label: "add|remove"
 	}, { type: "role" }]
 };

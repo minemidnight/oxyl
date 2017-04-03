@@ -1,6 +1,6 @@
 const webhook = require("./modules/webhookStatus.js");
 const publicConfig = JSON.parse(require("fs").readFileSync("public-config.json").toString());
-const workerCrashes = [], waitingEvals = [];
+const workerCrashes = [];
 
 function handleWorker(worker) {
 	worker.on("online", () => {
@@ -45,7 +45,7 @@ function handleWorker(worker) {
 			} else {
 				console.warn(`Worker ${worker.id} died with exit code ${code} ` +
 					`(hosting shards ${worker.shardStart}-${worker.shardEnd}). Respawning new process...`);
-				let newWorker = cluster.fork();
+				const newWorker = cluster.fork();
 				newWorker.shardStart = worker.shardStart;
 				newWorker.shardEnd = worker.shardEnd;
 				handleWorker(newWorker);
@@ -88,17 +88,17 @@ function getOnlineWorkers() {
 		.filter(work => work.isConnected());
 }
 
-let waitingOutputs = {};
+const waitingOutputs = {};
 async function handleMessage(msg, worker) {
 	if(msg.type === "masterEval") {
 		try {
-			let result = eval(msg.input);
+			const result = eval(msg.input);
 			worker.send({ type: "output", result, id: msg.id });
 		} catch(err) {
 			worker.send({ type: "output", error: err.stack, id: msg.id });
 		}
 	} else if(msg.type === "globalEval") {
-		let workers = getOnlineWorkers();
+		const workers = getOnlineWorkers();
 		waitingOutputs[msg.id] = {
 			expected: workers.length,
 			results: []
@@ -116,7 +116,7 @@ async function handleMessage(msg, worker) {
 			worker.send({ type: "output", error: "No target specified", id: msg.id });
 			return;
 		}
-		let workers = getOnlineWorkers();
+		const workers = getOnlineWorkers();
 		waitingOutputs[msg.id] = {
 			expected: 1,
 			results: []
@@ -124,7 +124,7 @@ async function handleMessage(msg, worker) {
 
 		let targetWorker;
 		if(msg.target[0] === "shard") {
-			let shard = msg.target[1];
+			const shard = msg.target[1];
 			targetWorker = workers.find(work => work.shardStart >= shard && work.shardEnd <= shard);
 		}
 
@@ -140,7 +140,7 @@ async function handleMessage(msg, worker) {
 		});
 	} else if(msg.type === "output") {
 		if(!waitingOutputs[msg.id]) return;
-		let workers = getOnlineWorkers();
+		const workers = getOnlineWorkers();
 		waitingOutputs[msg.id] = {
 			expected: workers.length,
 			results: []
@@ -173,12 +173,12 @@ function init() {
 	if(~process.argv.indexOf("--shards")) shardCount = parseInt(process.argv[process.argv.indexOf("--shards") + 1]);
 	if(shardCount < 1) shardCount = 1;
 
-	let workerCount = Math.ceil(shardCount / perCluster);
+	const workerCount = Math.ceil(shardCount / perCluster);
 	for(let i = 0; i < workerCount; i++) {
 		let shardStart = i * perCluster, shardEnd = ((i + 1) * 3) - 1;
 		if(shardEnd > shardCount) shardEnd = shardCount - 1;
 
-		let worker = cluster.fork();
+		const worker = cluster.fork();
 		worker.shardStart = shardStart;
 		worker.shardEnd = shardEnd;
 		handleWorker(worker);
