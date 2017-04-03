@@ -21,7 +21,7 @@ module.exports = {
 		let tablesExpected = [
 			"autoRole", "blacklist", "editedCommands",
 			"ignoredChannels", "modLog", "musicCache",
-			"roleMe", "settings", "timedEvents"
+			"roleMe", "rolePersist", "settings", "timedEvents"
 		];
 
 		for(let table of tablesExpected) {

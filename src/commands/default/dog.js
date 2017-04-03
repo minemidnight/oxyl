@@ -6,7 +6,7 @@ module.exports = {
 		let buffer = await request({ url: body[0], encoding: null });
 		return ["", {
 			file: buffer,
-			name: body[0].substring(body.file.lastIndexOf("/") + 1)
+			name: body[0].substring(body[0].lastIndexOf("/") + 1)
 		}];
 	},
 	description: "Grab a dog image from shibe.online"

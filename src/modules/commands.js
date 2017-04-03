@@ -32,6 +32,9 @@ module.exports = async message => {
 	} else if(command.type === "creator" && !~bot.publicConfig.creators.indexOf(message.author.id)) {
 		message.channel.createMessage("This command can only be used by the creators of the bot.");
 		return;
+	} else if(command.type === "admin" && !message.member.permission.has("administrator")) {
+		message.channel.createMessage(`You cannot run this command, it requires the permission ADMINISTRATOR.`);
+		return;
 	} else if(command.perm && !message.member.permission.has(command.perm)) {
 		message.channel.createMessage(`You cannot run this command, it requires the permission ${command.perm}.`);
 		return;

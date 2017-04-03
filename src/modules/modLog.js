@@ -4,16 +4,16 @@ const readableActions = {
 	specialRoleRemove: "Special Role Removed"
 };
 module.exports = {
-	cases: guild => r.table("modLog").filter({ guildId: guild.id }).run(),
+	cases: guild => r.table("modLog").filter({ guildID: guild.id }).run(),
 	channel: async guild => {
-		let data = await r.table("settings").filter({ name: "modLog", guildId: guild.id }).run();
+		let data = await r.table("settings").filter({ name: "modLog", guildID: guild.id }).run();
 		return data[0] ? data[0].value : undefined;
 	},
-	info: async (guild, caseNum) => (await r.table("modLog").filter({ guildId: guild.id, caseNum }).run())[0],
+	info: async (guild, caseNum) => (await r.table("modLog").filter({ guildID: guild.id, caseNum }).run())[0],
 	create: async (guild, action, user) => {
 		let caseNum = ((await module.exports.cases(guild)).length || 0) + 1;
-		let channelId = await module.exports.channel(guild);
-		if(!channelId) return;
+		let channelID = await module.exports.channel(guild);
+		if(!channelID) return;
 
 		let parseData = {
 			action,
@@ -24,8 +24,8 @@ module.exports = {
 		let insertData = {
 			action,
 			caseNum,
-			guildId: guild.id,
-			userId: user.id,
+			guildID: guild.id,
+			userID: user.id,
 			userDisplay: `${user.username}#${user.discriminator}`
 		};
 
@@ -37,31 +37,31 @@ module.exports = {
 			parseData.mod = preset.mod;
 
 			insertData.reason = preset.reason;
-			insertData.modId = preset.mod.id;
+			insertData.modID = preset.mod.id;
 			insertData.modDisplay = `${preset.mod.username}#${preset.mod.discriminator}`;
 		}
 
 		let parsed = module.exports.parse(parseData);
-		let message = await bot.createMessage(channelId, parsed);
-		insertData.messageId = message.id;
+		let message = await bot.createMessage(channelID, parsed);
+		insertData.messageID = message.id;
 
 		await r.table("modLog").insert(insertData).run();
 	},
 	set: async (guild, caseNum, reason, mod) => {
-		let channelId = await module.exports.channel(guild);
-		if(!channelId) return "NO_CHANNEL";
+		let channelID = await module.exports.channel(guild);
+		if(!channelID) return "NO_CHANNEL";
 
 		let caseData = await module.exports.info(guild, caseNum);
 		if(!caseData) return "NO_DATA";
 
 		try {
-			var message = await bot.getMessage(channelId, caseData.messageId);
+			var message = await bot.getMessage(channelID, caseData.messageID);
 		} catch(err) {
 			return "NO_MSG";
 		}
 
-		let user = bot.users.has(caseData.userId) ?
-			`${bot.users.get(caseData.userId).username}#${bot.users.get(caseData.userId).discriminator}` :
+		let user = bot.users.has(caseData.userID) ?
+			`${bot.users.get(caseData.userID).username}#${bot.users.get(caseData.userID).discriminator}` :
 			caseData.userDisplay;
 		let modDisplay = `${mod.username}#${mod.discriminator}`;
 
@@ -73,10 +73,10 @@ module.exports = {
 			mod: modDisplay
 		});
 
-		await bot.editMessage(channelId, caseData.messageId, parsed);
+		await bot.editMessage(channelID, caseData.messageID, parsed);
 		await r.table("modLog").get(caseData.id).update({
 			userDisplay: user,
-			modId: mod.id,
+			modID: mod.id,
 			modDisplay,
 			reason
 		}).run();

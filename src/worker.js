@@ -5,6 +5,11 @@ const path = require("path");
 const publicConfig = JSON.parse(require("fs").readFileSync("public-config.json").toString());
 const privateConfig = JSON.parse(require("fs").readFileSync("private-config.json").toString());
 
+if(privateConfig.sentryLink) {
+	const raven = require("raven");
+	raven.config(privateConfig.sentryLink);
+}
+
 cluster.worker.on("message", async msg => {
 	if(msg.type === "startup") {
 		cluster.worker.shardStart = msg.shardStart;
@@ -56,7 +61,7 @@ async function init() {
 	let commands = await loadScripts(path.resolve("src", "commands"), true);
 	commands.forEach(script => {
 		let finalPath = script.path.dir.substring(script.path.dir.lastIndexOf("/") + 1);
-		script.exports.name = script.name;
+		script.exports.name = script.name.toLowerCase();
 		script.exports.type = finalPath;
 
 		let command = new Command(script.exports);

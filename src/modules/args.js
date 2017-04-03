@@ -24,21 +24,25 @@ module.exports = async (message) => {
 			} else {
 				args.push(message.content.substring(startIndex, i));
 				if(command.args.length === args.length - 1) {
-					args.push(message.content.substring(i + 2).trim());
+					args.push(message.content.substring(i + 1).trim());
 					break;
 				}
 				startIndex = 0;
 			}
 			currentQuoted = !currentQuoted;
-		} else if(char === " " && !currentQuoted && !startIndex) {
-			args.push(message.content.substring(startIndex, i));
+		} else if(char === " " && !currentQuoted) {
+			if((startIndex === 0 && args.length === 0) || startIndex !== 0) {
+				args.push(message.content.substring(startIndex, i));
+			}
+
 			if(command.args.length === args.length - 1) {
 				args.push(message.content.substring(i + 1).trim());
 				break;
 			}
-			startIndex = i;
+			startIndex = i + 1;
 		}
 	}
+	if(startIndex !== 0) args.push(message.content.substring(startIndex));
 
 	if(args.length < command.args.filter(arg => !arg.optional).length) {
 		return `Invalid Usage! Please use the command as such: \`${command.name} ${command.usage}\``;

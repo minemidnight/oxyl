@@ -64,7 +64,7 @@ function handleWorker(worker) {
 					if(!workerCrashes[worker.id]) return;
 					if(workerCrashes[worker.id] === 1) delete workerCrashes[worker.id];
 					else workerCrashes[worker.id]--;
-				}, 20000);
+				}, 120000);
 			}
 		} else {
 			console.info(`Worker ${worker.id} killed successfully ` +

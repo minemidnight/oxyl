@@ -43,7 +43,10 @@ function getUsers(input, users) {
 
 
 module.exports = {
-	text: (message, input) => message.content,
+	link: (message, input) => {
+		if(!linkFilter.test(input)) throw new Error("Invalid link");
+		else return input;
+	},
 	num: (message, input, options) => {
 		if(!input.match(/\d+/)) throw new Error("Argument provided is not a number");
 		else input = parseInt(input);
@@ -55,6 +58,16 @@ module.exports = {
 			return input;
 		}
 	},
+	role: (message, input) => {
+		if(input.match(/<@&(\d{17,21})>/)) input = input.match(/<@&(\d{17,21})>/)[1];
+		let foundRole = message.channel.guild.roles.find(role =>
+			input === role.id || input.toLowerCase() === role.name.toLowerCase()
+		);
+
+		if(foundRole) return foundRole;
+		else throw new Error("No role found");
+	},
+	text: (message, input) => input,
 	user: async (message, input) => {
 		let match = /<@!?(\d{14,20})>/.exec(input);
 		if(match && match[1]) {
@@ -89,9 +102,5 @@ module.exports = {
 				}
 			}
 		}
-	},
-	link: (message, input) => {
-		if(!linkFilter.test(input)) throw new Error("Invalid link");
-		else return input;
 	}
 };
