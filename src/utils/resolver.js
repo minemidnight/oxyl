@@ -68,6 +68,14 @@ module.exports = {
 		else throw new Error("No role found");
 	},
 	text: (message, input) => input,
+	textChannel: (message, input) => {
+		if(input.match(/<#(\d{17,21})>/)) input = input.match(/<#(\d{17,21})>/)[1];
+		let foundChannel = message.channel.guild.channels.filter(ch => ch.type === 0)
+			.find(ch => input === ch.id || input.toLowerCase() === ch.name.toLowerCase());
+
+		if(foundChannel) return foundChannel;
+		else throw new Error("No channel found");
+	},
 	user: async (message, input) => {
 		let match = /<@!?(\d{14,20})>/.exec(input);
 		if(match && match[1]) {

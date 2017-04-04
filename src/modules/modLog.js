@@ -6,7 +6,7 @@ const readableActions = {
 module.exports = {
 	cases: guild => r.table("modLog").filter({ guildID: guild.id }).run(),
 	channel: async guild => {
-		let data = await r.table("settings").filter({ name: "modLog", guildID: guild.id }).run();
+		let data = await r.table("settings").filter({ name: "modLog.channel", guildID: guild.id }).run();
 		return data[0] ? data[0].value : undefined;
 	},
 	info: async (guild, caseNum) => (await r.table("modLog").filter({ guildID: guild.id, caseNum }).run())[0],

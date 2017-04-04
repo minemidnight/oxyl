@@ -42,7 +42,7 @@ module.exports = async (message) => {
 			startIndex = i + 1;
 		}
 	}
-	if(startIndex !== 0) args.push(message.content.substring(startIndex));
+	if(startIndex !== 0 || (startIndex === 0 && args.length === 0)) args.push(message.content.substring(startIndex));
 
 	if(args.length < command.args.filter(arg => !arg.optional).length) {
 		return `Invalid Usage! Please use the command as such: \`${command.name} ${command.usage}\``;

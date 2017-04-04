@@ -7,7 +7,7 @@ const privateConfig = JSON.parse(require("fs").readFileSync("private-config.json
 
 if(privateConfig.sentryLink) {
 	const raven = require("raven");
-	raven.config(privateConfig.sentryLink);
+	raven.config(privateConfig.sentryLink).install();
 }
 
 cluster.worker.on("message", async msg => {
