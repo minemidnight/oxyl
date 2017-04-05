@@ -3,6 +3,7 @@ const readableActions = {
 	specialRoleAdd: "Special Role Added",
 	specialRoleRemove: "Special Role Removed"
 };
+
 module.exports = {
 	cases: guild => r.table("modLog").filter({ guildID: guild.id }).run(),
 	channel: async guild => {
@@ -10,7 +11,7 @@ module.exports = {
 		return data[0] ? data[0].value : undefined;
 	},
 	info: async (guild, caseNum) => (await r.table("modLog").filter({ guildID: guild.id, caseNum }).run())[0],
-	create: async (guild, action, user) => {
+	create: async (guild, action, user, extraData = {}) => {
 		let caseNum = ((await module.exports.cases(guild)).length || 0) + 1;
 		let channelID = await module.exports.channel(guild);
 		if(!channelID) return;
@@ -29,19 +30,23 @@ module.exports = {
 			userDisplay: `${user.username}#${user.discriminator}`
 		};
 
+		for(let key in extraData) {
+			parseData[key] = extraData[key];
+			insertData[key] = extraData[key];
+		}
+
 		if(module.exports.presetReasons[guild.id]) {
 			let preset = module.exports.presetReasons[guild.id];
 			delete module.exports.presetReasons[guild.id];
 
 			parseData.reason = preset.reason;
-			parseData.mod = preset.mod;
+			parseData.mod = insertData.modDisplay = `${preset.mod.username}#${preset.mod.discriminator}`;
 
 			insertData.reason = preset.reason;
 			insertData.modID = preset.mod.id;
-			insertData.modDisplay = `${preset.mod.username}#${preset.mod.discriminator}`;
 		}
 
-		let parsed = module.exports.parse(parseData);
+		let parsed = module.exports.parse(guild, parseData);
 		let message = await bot.createMessage(channelID, parsed);
 		insertData.messageID = message.id;
 
@@ -65,12 +70,13 @@ module.exports = {
 			caseData.userDisplay;
 		let modDisplay = `${mod.username}#${mod.discriminator}`;
 
-		let parsed = module.exports.parse({
+		let parsed = module.exports.parse(guild, {
 			action: caseData.action,
 			caseNum,
-			user,
+			mod: modDisplay,
 			reason,
-			mod: modDisplay
+			role: caseData.role,
+			user
 		});
 
 		await bot.editMessage(channelID, caseData.messageID, parsed);
@@ -82,13 +88,15 @@ module.exports = {
 		}).run();
 		return "SUCCESS";
 	},
-	parse: ({ action, caseNum, user, reason, mod }) => {
+	parse: (guild, { action, caseNum, user, reason, mod, role }) => {
 		if(readableActions[action]) action = readableActions[action];
 		action = action.substring(0, 1).toUpperCase() + action.substring(1);
 
 		let parsed = `__**CASE #${caseNum}**__\n` +
-			`**ACTION**: ${action}\n` +
-			`**USER**: ${user}\n` +
+			`**ACTION**: ${action}`;
+		if(role) parsed += ` (${guild.roles.get(role).name})`;
+
+		parsed +=	`\n**USER**: ${user}\n` +
 			`**REASON**: `;
 
 		if(reason) parsed += `${reason}\n**MOD**: ${mod}`;

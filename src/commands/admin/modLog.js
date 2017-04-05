@@ -7,6 +7,7 @@ module.exports = {
 			return `Invalid mog log setting!`;
 		} else if(!message.args[1]) {
 			let setting = settings[message.args[0]];
+			setting.name = message.args[0];
 
 			const guild = message.channel.guild;
 			let currentValue = (
@@ -54,12 +55,12 @@ module.exports = {
 
 			if(setting.name === "channel") {
 				insertData.value = resolvedInput.id;
-				if(currentValue) await r.table("settings").update({ value: insertData.value });
+				if(currentValue) await r.table("settings").get(currentValue.id).update({ value: insertData.value });
 				else await r.table("settings").insert(insertData);
 				return `Set \`${setting.name}\` to ${resolvedInput.mention}`;
 			} else if(setting.name === "style") {
 				insertData.value = resolvedInput;
-				if(currentValue) await r.table("settings").update({ value: insertData.value });
+				if(currentValue) await r.table("settings").get(currentValue.id).update({ value: insertData.value });
 				else await r.table("settings").insert(insertData);
 				return `Set \`${setting.name}\` to ${resolvedInput}`;
 			} else if(setting.name === "track") {
@@ -76,7 +77,7 @@ module.exports = {
 						currentValue.value.push(resolvedInput.id);
 					}
 
-					await r.table("settings").update({ value: currentValue.value });
+					await r.table("settings").get(currentValue.id).update({ value: currentValue.value });
 				}
 
 				return addedRole ?

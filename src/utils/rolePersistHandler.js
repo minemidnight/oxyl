@@ -1,3 +1,4 @@
+const modLog = require("../modules/modLog.js");
 module.exports = async (guild, member, type) => {
 	let persists = await r.table("rolePersist").filter({ guildID: guild.id, rule: true }).run();
 	if(persists.length === 0) return;
@@ -14,22 +15,29 @@ module.exports = async (guild, member, type) => {
 			rule: false
 		}).run();
 	} else if(type === "join") {
-		let persistData = await r.table("rolePersist").filter({
+		let persistData = (await r.table("rolePersist").filter({
 			guildID: guild.id,
 			memberID: member.id,
 			rule: false
-		}).run();
+		}).run())[0];
 
-		if(persistData.length === 0) return;
-		else persistData = persistData[0];
-
+		if(!persistData) return;
 		if(persistData.roles.length === 0) return;
 		await r.table("rolePersist").delete(persistData.id).run();
-		try {
-			// promise.all it so all errors will be handled by the try statement
-			await Promise.all(persistData.roles.map(roleID => member.addRole(roleID)));
-		} catch(err) {
-			return;
+
+		let channel = await modLog.channel(guild);
+		let trackedRoles = (await r.table("settings").filter({
+			guildID: guild.id,
+			name: "modLog.track"
+		}).run())[0];
+
+		for(let roleID of persistData.roles) {
+			if(trackedRoles && ~trackedRoles.value.indexOf(roleID) && channel) {
+				modLog.presetReasons[guild.id] = { reason: "Role Persist", mod: bot.user };
+			}
+			try {
+				await member.addRole(roleID);
+			} catch(err) {} // eslint-disable-line no-empty
 		}
 	}
 };
