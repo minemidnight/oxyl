@@ -21,8 +21,7 @@ module.exports = async (guild, member, type) => {
 			rule: false
 		}).run())[0];
 
-		if(!persistData) return;
-		if(persistData.roles.length === 0) return;
+		if(!persistData || persistData.roles.length === 0) return;
 		await r.table("rolePersist").delete(persistData.id).run();
 
 		let channel = await modLog.channel(guild);
