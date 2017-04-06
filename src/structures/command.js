@@ -3,7 +3,7 @@ class Command {
 		if(data.disabled) return;
 		if(!data.name) throw new Error("Command has no name");
 		else if(!data.process) throw new Error(`Command ${data.name} must have code`);
-		else if(!data.description) console.warn(`!! WARN !! Command ${data.name} has no description`);
+		else if(!data.description) console.warn(`Command ${data.name} has no description`);
 
 		this.name = data.name;
 		this.process = data.process;

@@ -42,16 +42,5 @@ module.exports = {
 		}
 		if(errMsg) returnMsg += errMsg;
 		return returnMsg;
-	},
-	caseSensitive: true,
-	guildOnly: true,
-	perm: "banMembers",
-	description: "Set a reason of a case (or multiple) on the mod log",
-	args: [{
-		type: "text",
-		label: "cases"
-	}, {
-		type: "text",
-		label: "reason"
-	}]
+	}
 };
