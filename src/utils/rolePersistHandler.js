@@ -22,7 +22,7 @@ module.exports = async (guild, member, type) => {
 		}).run())[0];
 
 		if(!persistData || persistData.roles.length === 0) return;
-		await r.table("rolePersist").delete(persistData.id).run();
+		await r.table("rolePersist").get(persistData.id).delete().run();
 
 		let channel = await modLog.channel(guild);
 		let trackedRoles = (await r.table("settings").filter({

@@ -7,8 +7,8 @@ const readableActions = {
 module.exports = {
 	cases: guild => r.table("modLog").filter({ guildID: guild.id }).run(),
 	channel: async guild => {
-		let data = await r.table("settings").filter({ name: "modLog.channel", guildID: guild.id }).run();
-		return data[0] ? data[0].value : undefined;
+		let data = (await r.table("settings").filter({ name: "modLog.channel", guildID: guild.id }).run())[0];
+		return data.value || false;
 	},
 	info: async (guild, caseNum) => (await r.table("modLog").filter({ guildID: guild.id, caseNum }).run())[0],
 	create: async (guild, action, user, extraData = {}) => {
@@ -46,11 +46,37 @@ module.exports = {
 			insertData.modID = preset.mod.id;
 		}
 
-		let parsed = module.exports.parse(guild, parseData);
-		let message = await bot.createMessage(channelID, parsed);
-		insertData.messageID = message.id;
+		if(action === "ban") {
+			module.exports.possibleSoftbans[`${guild.id}.${user.id}`] = caseNum;
+			setTimeout(() => delete module.exports.possibleSoftbans[`${guild.id}.${user.id}`], 120000);
+		} else if(action === "unban" && module.exports.possibleSoftbans[`${guild.id}.${user.id}`]) {
+			insertData.action = parseData.action = "softban";
+			parseData.caseNum = caseNum = module.exports.possibleSoftbans[`${guild.id}.${user.id}`];
+			delete module.exports.possibleSoftbans[`${guild.id}.${user.id}`];
+		}
 
-		await r.table("modLog").insert(insertData).run();
+		let parsed = module.exports.parse(guild, parseData);
+		if(insertData.action !== "softban") {
+			let message = await bot.createMessage(channelID, parsed);
+			insertData.messageID = message.id;
+
+			await r.table("modLog").insert(insertData).run();
+		} else {
+			let caseData = await module.exports.info(guild, caseNum);
+			if(caseData.reason) {
+				parsed = module.exports.parse(guild, {
+					action: "softban",
+					caseNum,
+					mod: caseData.modDisplay,
+					reason: caseData.reason,
+					role: caseData.role,
+					user: caseData.userDisplay
+				});
+			}
+
+			await bot.editMessage(channelID, caseData.messageID, parsed);
+			await r.table("modLog").get(caseData.id).update({ action: "softban" }).run();
+		}
 	},
 	set: async (guild, caseNum, reason, mod) => {
 		let channelID = await module.exports.channel(guild);
@@ -78,8 +104,8 @@ module.exports = {
 			role: caseData.role,
 			user
 		});
-
 		await bot.editMessage(channelID, caseData.messageID, parsed);
+
 		await r.table("modLog").get(caseData.id).update({
 			userDisplay: user,
 			modID: mod.id,
@@ -103,5 +129,6 @@ module.exports = {
 		else parsed += `Responsible moderator, set this using \`reason ${caseNum}\``;
 		return parsed;
 	},
-	presetReasons: {}
+	presetReasons: {},
+	possibleSoftbans: []
 };

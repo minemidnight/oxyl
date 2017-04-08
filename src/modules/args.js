@@ -23,7 +23,8 @@ module.exports = async (message) => {
 				startIndex = i + 1;
 			} else {
 				args.push(message.content.substring(startIndex, i));
-				if(command.args.length === args.length - 1) {
+
+				if(command.args.length - 1 === args.length) {
 					args.push(message.content.substring(i + 1).trim());
 					break;
 				}
@@ -33,11 +34,11 @@ module.exports = async (message) => {
 		} else if(char === " " && !currentQuoted) {
 			if((startIndex === 0 && args.length === 0) || startIndex !== 0) {
 				args.push(message.content.substring(startIndex, i));
-			}
 
-			if(command.args.length === args.length - 1) {
-				args.push(message.content.substring(i + 1).trim());
-				break;
+				if(command.args.length - 1 === args.length) {
+					args.push(message.content.substring(i + 1).trim());
+					break;
+				}
 			}
 			startIndex = i + 1;
 		}
@@ -52,6 +53,6 @@ module.exports = async (message) => {
 		args = await Promise.all(args.map((arg, i) => resolver[command.args[i].type](message, arg, command.args[i])));
 		return args;
 	} catch(err) {
-		return err.message;
+		return `An error occured while parsing arguments! Please report this error: ${bot.utils.codeBlock(err.stack)}`;
 	}
 };

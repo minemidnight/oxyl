@@ -23,13 +23,14 @@ module.exports = {
 				}
 			}
 
-			member.ban(7);
-			return `${member.user.username} has been banned`;
+			await member.ban(7);
+			member.unban();
+			return `${member.user.username} has been softbanned`;
 		}
 	},
 	guildOnly: true,
 	perm: "banMembers",
-	description: "Ban a user from the guild",
+	description: "Softban a user from the guild (kick with message deletion)",
 	args: [{ type: "user" }, {
 		type: "text",
 		label: "reason",

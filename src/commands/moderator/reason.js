@@ -29,7 +29,7 @@ module.exports = {
 
 			if(resp === "SUCCESS") casesSet++;
 			else if(resp === "NO_DATA") errMsg = `Case \`${caseNum}\` not found`;
-			else if(resp === "NO_CHANNEL") errMsg = `Mod log channel not set`;
+			else if(resp === "NO_CHANNEL") errMsg = `The mod log channel is not set`;
 			else if(resp === "NO_MSG") errMsg = `Message from case \`${caseNum}\` not found`;
 			else errMsg = `Unexpected error`;
 		}
@@ -42,5 +42,16 @@ module.exports = {
 		}
 		if(errMsg) returnMsg += errMsg;
 		return returnMsg;
-	}
+	},
+	caseSensitive: true,
+	guildOnly: true,
+	perm: "banMembers",
+	description: "Set a reason of a case (or multiple) on the mod log",
+	args: [{
+		type: "text",
+		label: "cases"
+	}, {
+		type: "text",
+		label: "reason"
+	}]
 };

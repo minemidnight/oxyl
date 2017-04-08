@@ -3,8 +3,8 @@ module.exports = async (guild, member, oldMember) => {
 	if(!member || !oldMember) return;
 	else if(member.roles.sort().join() === oldMember.roles.sort().join()) return;
 
-	let addedRoles = member.roles.filter(role => !~oldMember.roles.indexOf(role.id));
-	let removedRoles = oldMember.roles.filter(role => !~member.roles.indexOf(role.id));
+	let addedRoles = member.roles.filter(role => !~oldMember.roles.indexOf(role));
+	let removedRoles = oldMember.roles.filter(role => !~member.roles.indexOf(role));
 
 	let trackedRoles = (await r.table("settings").filter({
 		guildID: guild.id,

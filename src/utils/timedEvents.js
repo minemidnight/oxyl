@@ -11,7 +11,7 @@ module.exports = {
 		bot.createMessage(data.channel, `You asked me to remind you about this on ` +
 				`${bot.utils.formatDate(data.createdAt)}:\n\n${data.message}`);
 
-		r.table("timedEvents").delete(data.id).run();
+		r.table("timedEvents").get(data.id).delete().run();
 	}
 };
 setInterval(module.exports.update, 15000);

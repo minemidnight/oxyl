@@ -18,7 +18,7 @@ module.exports = {
 		} else if(message.args[0] === "remove") {
 			if(!alreadyPersisted[0]) return `Role \`${message.args[1].name}\` is not a persisted role`;
 
-			await r.table("rolePersist").delete(alreadyPersisted.id).run();
+			await r.table("rolePersist").get(alreadyPersisted.id).delete().run();
 			return `Role \`${message.args[1].name}\` deleted from persisted roles`;
 		} else {
 			return "Invalid sub-command! Please use `rolepersist add/remove <role>`";

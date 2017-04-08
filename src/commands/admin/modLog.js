@@ -44,7 +44,7 @@ module.exports = {
 			if(!currentValue && reset) {
 				return `I can't reset \`${setting.name}\` because it is not yet set`;
 			} else if(reset) {
-				await r.table("settings").delete(currentValue.id);
+				await r.table("settings").get(currentValue.id).delete().run();
 				return `Reset setting \`${setting.name}\``;
 			}
 
@@ -55,19 +55,19 @@ module.exports = {
 
 			if(setting.name === "channel") {
 				insertData.value = resolvedInput.id;
-				if(currentValue) await r.table("settings").get(currentValue.id).update({ value: insertData.value });
-				else await r.table("settings").insert(insertData);
+				if(currentValue) await r.table("settings").get(currentValue.id).update({ value: insertData.value }).run();
+				else await r.table("settings").insert(insertData).run();
 				return `Set \`${setting.name}\` to ${resolvedInput.mention}`;
 			} else if(setting.name === "style") {
 				insertData.value = resolvedInput;
-				if(currentValue) await r.table("settings").get(currentValue.id).update({ value: insertData.value });
-				else await r.table("settings").insert(insertData);
+				if(currentValue) await r.table("settings").get(currentValue.id).update({ value: insertData.value }).run();
+				else await r.table("settings").insert(insertData).run();
 				return `Set \`${setting.name}\` to ${resolvedInput}`;
 			} else if(setting.name === "track") {
 				let addedRole = true;
 				if(!currentValue) {
 					insertData.value = [resolvedInput.id];
-					await r.table("settings").insert(insertData);
+					await r.table("settings").insert(insertData).run();
 				} else {
 					let alreadyTracked = currentValue.value.indexOf(resolvedInput.id);
 					if(~alreadyTracked) {
@@ -77,7 +77,11 @@ module.exports = {
 						currentValue.value.push(resolvedInput.id);
 					}
 
-					await r.table("settings").get(currentValue.id).update({ value: currentValue.value });
+					if(currentValue.value.length === 0) {
+						await r.table("settings").get(currentValue.id).delete().run();
+					} else {
+						await r.table("settings").get(currentValue.id).update({ value: currentValue.value }).run();
+					}
 				}
 
 				return addedRole ?

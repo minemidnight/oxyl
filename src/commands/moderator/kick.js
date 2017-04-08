@@ -7,8 +7,8 @@ module.exports = {
 		let member = message.channel.guild.members.get(message.args[0].id);
 		if(!member) return "Error: user not in server";
 
-		let kickableBot = bot.utils.punishable(member, bot.user.id);
-		let kickable = bot.utils.punishable(member, message.author.id);
+		let kickableBot = bot.utils.isPunishable(member, bot.user.id);
+		let kickable = bot.utils.isPunishable(member, message.author.id);
 
 		if(!kickableBot) {
 			return `${member.user.username} couldn't be kicked, because they have higher permisions than Oxyl`;
@@ -24,16 +24,14 @@ module.exports = {
 			}
 
 			member.kick();
+			modLog.create(message.channel.guild, "kick", message.args[0]);
 			return `${member.user.username} has been kicked`;
 		}
 	},
 	guildOnly: true,
 	perm: "kickMembers",
 	description: "Kick a user from the guild",
-	args: [{
-		type: "user",
-		label: "user id"
-	}, {
+	args: [{ type: "user" }, {
 		type: "text",
 		label: "reason",
 		optional: true
