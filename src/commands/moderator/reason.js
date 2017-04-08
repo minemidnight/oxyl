@@ -45,7 +45,7 @@ module.exports = {
 	},
 	caseSensitive: true,
 	guildOnly: true,
-	perm: "banMembers",
+	perm: "kickMembers",
 	description: "Set a reason of a case (or multiple) on the mod log",
 	args: [{
 		type: "text",
