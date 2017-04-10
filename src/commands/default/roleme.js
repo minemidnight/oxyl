@@ -73,11 +73,11 @@ module.exports = {
 			} else {
 				let hasRole = ~message.member.roles.indexOf(role.id);
 				if(hasRole) {
-					await message.member.addRole(role.id);
-					return `Gave you \`${role.name}\``;
-				} else {
 					await message.member.removeRole(role.id);
 					return `Removed \`${role.name}\` from you`;
+				} else {
+					await message.member.addRole(role.id);
+					return `Gave you \`${role.name}\``;
 				}
 			}
 		}

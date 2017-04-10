@@ -37,13 +37,15 @@ module.exports = async (message) => {
 
 				if(command.args.length - 1 === args.length) {
 					args.push(message.content.substring(i + 1).trim());
+					startIndex = 0;
 					break;
 				}
 			}
 			startIndex = i + 1;
 		}
 	}
-	if(startIndex !== 0 || (startIndex === 0 && args.length === 0 && message.content.length !== 0)) {
+	if((startIndex !== 0 && args.length < command.args.length) ||
+		(startIndex === 0 && args.length === 0 && message.content.length !== 0)) {
 		args.push(message.content.substring(startIndex));
 	}
 
@@ -55,6 +57,6 @@ module.exports = async (message) => {
 		args = await Promise.all(args.map((arg, i) => resolver[command.args[i].type](message, arg, command.args[i])));
 		return args;
 	} catch(err) {
-		return err.message;
+		return bot.utils.codeBlock(err.stack);
 	}
 };

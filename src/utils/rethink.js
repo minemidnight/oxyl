@@ -30,14 +30,14 @@ module.exports = {
 				await r.tableCreate(table).run();
 			}
 		}
-		console.startup("RethinkDB successfully started");
+		console.startup(`RethinkDB successfully started on worker ${cluster.worker.id}`);
 
 		let prefixes = await r.table("settings").filter({ name: "prefix" }).run();
-		console.info(`Grabbing prefixes to store in cache... ${prefixes.length} found`);
+		console.info(`Grabbed ${prefixes.length} prefixes to store in cache (worker ${cluster.worker.id})`);
 		prefixes.forEach(setting => bot.prefixes.set(setting.guildID, setting.value));
 
 		let channels = await r.table("ignoredChannels").run();
-		console.info(`Grabbing ignored channels to store in cache... ${channels.length} found`);
+		console.info(`Grabbed ${prefixes.length} ignored channels to store in cache (worker ${cluster.worker.id})`);
 		channels.forEach(ignored => bot.ignoredChannels.set(ignored.channelID, ignored.guildID));
 	}
 };

@@ -35,19 +35,34 @@ module.exports = async message => {
 	if(!command) return;
 	else if(!command.caseSensitive) message.content = message.content.toLowerCase();
 
+	let editedInfo = {};
+	if(guild) {
+		editedInfo = (await r.table("editedCommands").filter({
+			command: command.name,
+			guildID: message.channel.guild.id
+		}))[0] || {};
+	}
 
-	if((command.guildOnly || command.perm || command.type === "admin") && !guild) {
+	if(editedInfo.enabled === false) {
+		return;
+	} else if((command.guildOnly || command.perm || command.type === "admin") && !guild) {
 		message.channel.createMessage("Sorry, but this command is for guilds (servers) only.");
 		return;
 	} else if(command.type === "creator" && !~bot.publicConfig.creators.indexOf(message.author.id)) {
 		message.channel.createMessage("This command can only be used by the creators of the bot.");
 		return;
-	} else if(command.type === "admin" &&
+	} else if(command.type === "admin" && !editedInfo.roles &&
 						!(message.member.permission.has("administrator") || message.author.id === guild.ownerID)) {
 		message.channel.createMessage(`You cannot run this command, it requires the permission ADMINISTRATOR.`);
 		return;
-	} else if(command.perm && !(message.member.permission.has(command.perm) || message.author.id === guild.ownerID)) {
+	} else if(command.perm && !editedInfo.roles &&
+						!(message.member.permission.has(command.perm) || message.author.id === guild.ownerID)) {
 		message.channel.createMessage(`You cannot run this command, it requires the permission ${command.perm}.`);
+		return;
+	} else if(editedInfo.roles && !editedInfo.roles.some(role => ~message.member.indexOf(role.id))) {
+		let roleNames = editedInfo.roles.map(roleID => guild.roles.has(roleID) ? guild.roles.get(roleID).name : roleID);
+		message.channel.createMessage(`You do not have the correct roles to use this command, ` +
+			`it requires one of the following: \`${roleNames.join("`, `")}\`.`);
 		return;
 	}
 
