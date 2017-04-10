@@ -8,7 +8,8 @@ function handleWorker(worker) {
 		worker.send({
 			type: "startup",
 			shardStart: worker.shardStart,
-			shardEnd: worker.shardEnd
+			shardEnd: worker.shardEnd,
+			totalShards: shardCount
 		});
 
 		webhook({
@@ -92,7 +93,7 @@ const waitingOutputs = {};
 async function handleMessage(msg, worker) {
 	if(msg.type === "masterEval") {
 		try {
-			const result = eval(msg.input);
+			const result = await eval(msg.input);
 			worker.send({ type: "output", result, id: msg.id });
 		} catch(err) {
 			worker.send({ type: "output", error: err.stack, id: msg.id });
@@ -140,21 +141,8 @@ async function handleMessage(msg, worker) {
 		});
 	} else if(msg.type === "output") {
 		if(!waitingOutputs[msg.id]) return;
-		const workers = getOnlineWorkers();
-		waitingOutputs[msg.id] = {
-			expected: workers.length,
-			results: []
-		};
 
-		workers.forEach(work => {
-			work.send({
-				type: "eval",
-				input: msg.input,
-				id: msg.id
-			});
-		});
-
-		waitingOutputs[msg.id].results.push(msg.result);
+		waitingOutputs[msg.id].results.push(msg.result || msg.error);
 		if(waitingOutputs[msg.id].expected === waitingOutputs[msg.id].results.length) {
 			worker.send({ type: "output", results: waitingOutputs[msg.id].results, id: msg.id });
 			setTimeout(() => delete waitingOutputs[msg.id], 5000);
@@ -162,6 +150,7 @@ async function handleMessage(msg, worker) {
 	}
 }
 
+let shardCount = 1;
 function init() {
 	webhook({
 		title: `Master started`,
@@ -169,7 +158,7 @@ function init() {
 		timestamp: new Date()
 	});
 
-	let shardCount = 1, perCluster = publicConfig.shardsPerWorker;
+	let perCluster = publicConfig.shardsPerWorker;
 	if(~process.argv.indexOf("--shards")) shardCount = parseInt(process.argv[process.argv.indexOf("--shards") + 1]);
 	if(shardCount < 1) shardCount = 1;
 

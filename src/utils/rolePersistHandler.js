@@ -2,7 +2,7 @@ const modLog = require("../modules/modLog.js");
 module.exports = async (guild, member, type) => {
 	let persists = await r.table("rolePersist").filter({ guildID: guild.id, rule: true }).run();
 	if(persists.length === 0) return;
-	persists = persists.map(data => data.roleID);
+	else persists = persists.map(data => data.roleID);
 
 	if(type === "leave") {
 		if(member.roles.length === 0) return;

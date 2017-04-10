@@ -16,8 +16,8 @@ module.exports = async message => {
 	prefix = new RegExp(prefix, "i");
 
 	let match = message.content.match(prefix);
-	if(!match) return;
-	message.content = match[1];
+	if(!match && guild) return;
+	else if(match) message.content = match[1];
 
 	let command;
 	if(!~message.content.indexOf(" ")) {
@@ -29,7 +29,9 @@ module.exports = async message => {
 	}
 	command = command.toLowerCase().trim();
 
-	command = bot.commands.find(cmd => command === cmd.name || ~cmd.aliases.indexOf(command));
+	command = Object.keys(bot.commands)
+		.map(key => bot.commands[key])
+		.find(cmd => command === cmd.name || ~cmd.aliases.indexOf(command));
 	if(!command) return;
 	else if(!command.caseSensitive) message.content = message.content.toLowerCase();
 
@@ -40,10 +42,11 @@ module.exports = async message => {
 	} else if(command.type === "creator" && !~bot.publicConfig.creators.indexOf(message.author.id)) {
 		message.channel.createMessage("This command can only be used by the creators of the bot.");
 		return;
-	} else if(command.type === "admin" && !message.member.permission.has("administrator")) {
+	} else if(command.type === "admin" &&
+						!(message.member.permission.has("administrator") || message.author.id === guild.ownerID)) {
 		message.channel.createMessage(`You cannot run this command, it requires the permission ADMINISTRATOR.`);
 		return;
-	} else if(command.perm && !message.member.permission.has(command.perm)) {
+	} else if(command.perm && !(message.member.permission.has(command.perm) || message.author.id === guild.ownerID)) {
 		message.channel.createMessage(`You cannot run this command, it requires the permission ${command.perm}.`);
 		return;
 	}

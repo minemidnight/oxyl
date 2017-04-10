@@ -28,6 +28,7 @@ module.exports = {
 			return `${member.user.username} has been kicked`;
 		}
 	},
+	caseSensitive: true,
 	guildOnly: true,
 	perm: "kickMembers",
 	description: "Kick a user from the guild",

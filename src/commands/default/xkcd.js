@@ -18,7 +18,7 @@ module.exports = {
 	description: "Grab a xkcd from xkcd.com",
 	args: [{
 		label: "comic number",
-		type: "int",
+		type: "num",
 		min: 1,
 		optional: true
 	}]

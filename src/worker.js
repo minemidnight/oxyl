@@ -5,19 +5,21 @@ const path = require("path");
 const publicConfig = JSON.parse(require("fs").readFileSync("public-config.json").toString());
 const privateConfig = JSON.parse(require("fs").readFileSync("private-config.json").toString());
 
+let raven = require("raven");
 if(privateConfig.sentryLink) {
-	const raven = require("raven");
 	raven.config(privateConfig.sentryLink).install();
+	console.startup("Using sentry error handling");
 }
 
 cluster.worker.on("message", async msg => {
 	if(msg.type === "startup") {
 		cluster.worker.shardStart = msg.shardStart;
 		cluster.worker.shardEnd = msg.shardEnd;
+		cluster.worker.totalShards = msg.totalShards;
 		init();
 	} else if(msg.type === "eval") {
 		try {
-			let result = eval(msg.input);
+			let result = await eval(msg.input);
 			process.send({ type: "output", result, id: msg.id });
 		} catch(err) {
 			process.send({ type: "output", error: err.stack, id: msg.id });
@@ -38,7 +40,7 @@ async function init() {
 		global.bot = new Eris(privateConfig.token, {
 			firstShardID: cluster.worker.shardStart,
 			lastShardID: cluster.worker.shardEnd,
-			maxShards: cluster.worker.shardEnd - cluster.worker.shardStart,
+			maxShards: cluster.worker.totalShards,
 			disableEvents: { TYPING_START: true },
 			messageLimit: 0,
 			defaultImageFormat: "png",
@@ -49,6 +51,7 @@ async function init() {
 	bot.publicConfig = publicConfig;
 	bot.privateConfig = privateConfig;
 	bot.prefixes = new Map();
+	bot.ignoredChannels = new Map();
 
 	bot.utils = {};
 	let utils = await loadScripts(path.resolve("src", "utils"));
@@ -59,7 +62,7 @@ async function init() {
 	onceListeners.forEach(script => bot.once(script.name, script.exports));
 	onListeners.forEach(script => bot.on(script.name, script.exports));
 
-	bot.commands = [];
+	bot.commands = {};
 	const Command = require("./structures/command.js");
 	let commands = await loadScripts(path.resolve("src", "commands"), true);
 	commands.forEach(script => {
@@ -106,4 +109,14 @@ async function getFiles(filepath, filter = () => true, deep = false) {
 	return validFiles;
 }
 
-process.on("unhandledRejection", err => console.error(err.stack));
+process.on("unhandledRejection", err => {
+	if(err.message.startsWith("Request timed out")) return;
+	try {
+		let resp = JSON.parse(err.response);
+		// these codes mean someone bamboozled oxyl's perms or someone's bamboozled their server
+		if(~[10003, 10008, 40005, 50001, 50013].indexOf(resp.code)) return;
+		else throw err;
+	} catch(err2) {
+		if(raven.installed) raven.captureException(err);
+	}
+});

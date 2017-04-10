@@ -26,7 +26,7 @@ module.exports = {
 				reset = true;
 			} else {
 				try {
-					var resolvedInput = bot.utils.resolver[setting.arg](message, message.args[1]);
+					var resolvedInput = bot.utils.resolver[setting.arg](message, message.args[1], setting.extra);
 				} catch(err) {
 					return err.message;
 				}
@@ -42,7 +42,7 @@ module.exports = {
 			)[0];
 
 			if(!currentValue && reset) {
-				return `I can't reset \`${setting.name}\` because it is not yet set`;
+				return `\`${setting.name}\` cannot be reset because it is not yet set`;
 			} else if(reset) {
 				await r.table("settings").get(currentValue.id).delete().run();
 				return `Reset setting \`${setting.name}\``;
@@ -53,17 +53,8 @@ module.exports = {
 				guildID: guild.id
 			};
 
-			if(setting.name === "channel") {
-				insertData.value = resolvedInput.id;
-				if(currentValue) await r.table("settings").get(currentValue.id).update({ value: insertData.value }).run();
-				else await r.table("settings").insert(insertData).run();
-				return `Set \`${setting.name}\` to ${resolvedInput.mention}`;
-			} else if(setting.name === "style") {
-				insertData.value = resolvedInput;
-				if(currentValue) await r.table("settings").get(currentValue.id).update({ value: insertData.value }).run();
-				else await r.table("settings").insert(insertData).run();
-				return `Set \`${setting.name}\` to ${resolvedInput}`;
-			} else if(setting.name === "track") {
+			if(setting.name === "channel") insertData.value = resolvedInput.id;
+			if(setting.name === "track") {
 				let addedRole = true;
 				if(!currentValue) {
 					insertData.value = [resolvedInput.id];
@@ -88,7 +79,10 @@ module.exports = {
 					`Added \`${resolvedInput.name}\` to tracked roles` :
 					`Removed \`${resolvedInput.name}\` from tracked roles`;
 			} else {
-				return "This setting is not yet supported";
+				if(!insertData.value) insertData.value = resolvedInput;
+				if(currentValue) await r.table("settings").get(currentValue.id).update({ value: insertData.value }).run();
+				else await r.table("settings").insert(insertData).run();
+				return `Set \`${setting.name}\` to ${insertData.value}`;
 			}
 		}
 	},
@@ -118,5 +112,15 @@ let settings = {
 	track: {
 		arg: "role",
 		description: "Toggle a roles to make mod log entries for (on role add/remove)"
+	},
+	kickat: {
+		arg: "num",
+		description: "Amount of warnings before a user will get kicked",
+		extra: { min: 1 }
+	},
+	banat: {
+		arg: "num",
+		description: "Amount of warnings before a user will get banned",
+		extra: { min: 1 }
 	}
 };

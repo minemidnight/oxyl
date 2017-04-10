@@ -6,8 +6,9 @@
 		"servers": "265998475831934977",
 		"updates": "270576454117359617"
 	},
+	"updatesGuild": "254768930223161344",
+	"updatesRole": "301018213616189441",
 	"defaultInvitePermissionNumber": 298183686,
-	"queueItemsPerPage": 15,
 	"shardsPerWorker": 3,
 	"databaseName": "OxylBeta",
 	"prefixes": ["ob!", "oxylb", "oxylbeta", "mention"]

@@ -1,7 +1,9 @@
 module.exports = {
 	process: async message => {
 		if(message.args[0]) {
-			let command = bot.commands.find(cmd => message.args[0] === cmd.name || ~cmd.aliases.indexOf(message.args[0]));
+			let command = Object.keys(bot.commands)
+				.map(key => bot.commands[key])
+				.find(cmd => message.args[0] === cmd.name || ~cmd.aliases.indexOf(message.args[0]));
 			if(!command) return "Command not found";
 
 			let helpMsg = `__**Command Name**__: ${command.name}\n`;
@@ -14,9 +16,10 @@ module.exports = {
 			helpMsg += `Uses: ${command.uses}`;
 			return helpMsg;
 		} else {
-			let helpMsg = `**Commands (${bot.commands.length} total)**`;
+			let helpMsg = `**Commands (${Object.keys(bot.commands).length} total)**`;
 			let commandTypes = {};
-			for(let cmd of bot.commands) {
+			for(let cmd in bot.commands) {
+				cmd = bot.commands[cmd];
 				if(!commandTypes[cmd.type]) commandTypes[cmd.type] = [];
 				commandTypes[cmd.type].push(cmd.name);
 				commandTypes[cmd.type].concat(cmd.aliases);

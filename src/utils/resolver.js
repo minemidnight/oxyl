@@ -43,6 +43,11 @@ function getUsers(input, users) {
 
 
 module.exports = {
+	boolean: (message, input) => {
+		if(~["enable", "yes", "true", "1"].indexOf(input)) return true;
+		else if(~["disable", "no", "false", "0"].indexOf(input)) return false;
+		else throw new Error("Invalid input! Please provide true/yes or false/no");
+	},
 	link: (message, input) => {
 		if(!linkFilter.test(input)) throw new Error("Invalid link");
 		else return input;
@@ -100,7 +105,7 @@ module.exports = {
 				let responses = await bot.utils.awaitMessages(message.channel,
 					newMsg => newMsg.author.id === message.author.id, { maxMatches: 1, time: 10000 });
 
-				if(responses.size === 0) {
+				if(responses.length === 0) {
 					throw new Error("No user given");
 				} else {
 					let int = parseInt(responses[0].content);

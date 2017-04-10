@@ -4,8 +4,10 @@ const EventEmitter = require("events").EventEmitter;
 class OutputHandler extends EventEmitter {
 	constructor(msg) {
 		super();
-		if(msg.input && typeof msg.input === "function") {
+		if(typeof msg.input === "function") {
 			msg.input = `(${msg.input.toString().replace(/\\(t|r|n)/gi, "")}).call()`;
+		} else if(typeof msg.input === "string") {
+			msg.input = `(async function(){${msg.input}}).call()`;
 		}
 
 		this.msg = msg;

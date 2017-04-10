@@ -14,7 +14,7 @@ module.exports = {
 	create: async (guild, action, user, extraData = {}) => {
 		let caseNum = ((await module.exports.cases(guild)).length || 0) + 1;
 		let channelID = await module.exports.channel(guild);
-		if(!channelID) return;
+		if(!channelID) return false;
 
 		let parseData = {
 			action,
@@ -77,6 +77,8 @@ module.exports = {
 			await bot.editMessage(channelID, caseData.messageID, parsed);
 			await r.table("modLog").get(caseData.id).update({ action: "softban" }).run();
 		}
+
+		return true;
 	},
 	set: async (guild, caseNum, reason, mod) => {
 		let channelID = await module.exports.channel(guild);
@@ -102,7 +104,8 @@ module.exports = {
 			mod: modDisplay,
 			reason,
 			role: caseData.role,
-			user
+			user,
+			warnCount: caseData.warnCount
 		});
 		await bot.editMessage(channelID, caseData.messageID, parsed);
 
@@ -114,16 +117,17 @@ module.exports = {
 		}).run();
 		return "SUCCESS";
 	},
-	parse: (guild, { action, caseNum, user, reason, mod, role }) => {
+	parse: (guild, { action, caseNum, user, reason, mod, role, warnCount }) => {
 		if(readableActions[action]) action = readableActions[action];
 		action = action.substring(0, 1).toUpperCase() + action.substring(1);
 
-		let parsed = `__**CASE #${caseNum}**__\n` +
-			`**ACTION**: ${action}`;
+		let parsed = `__**CASE #${caseNum}**__` +
+			`\n**ACTION**: ${action}`;
 		if(role) parsed += ` (${guild.roles.get(role).name})`;
+		else if(warnCount) parsed += `\n**TOTAL WARNINGS**: ${warnCount}`;
 
-		parsed +=	`\n**USER**: ${user}\n` +
-			`**REASON**: `;
+		parsed +=	`\n**USER**: ${user}` +
+			`\n**REASON**: `;
 
 		if(reason) parsed += `${reason}\n**MOD**: ${mod}`;
 		else parsed += `Responsible moderator, set this using \`reason ${caseNum}\``;

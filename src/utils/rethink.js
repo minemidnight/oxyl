@@ -20,8 +20,8 @@ module.exports = {
 		let tableList = await r.tableList().run();
 		let tablesExpected = [
 			"autoRole", "blacklist", "editedCommands",
-			"ignoredChannels", "modLog", "musicCache",
-			"roleMe", "rolePersist", "settings", "timedEvents"
+			"ignoredChannels", "modLog", "musicCache", "roleMe",
+			"rolePersist", "settings", "timedEvents", "warnings"
 		];
 
 		for(let table of tablesExpected) {
@@ -35,6 +35,10 @@ module.exports = {
 		let prefixes = await r.table("settings").filter({ name: "prefix" }).run();
 		console.info(`Grabbing prefixes to store in cache... ${prefixes.length} found`);
 		prefixes.forEach(setting => bot.prefixes.set(setting.guildID, setting.value));
+
+		let channels = await r.table("ignoredChannels").run();
+		console.info(`Grabbing ignored channels to store in cache... ${channels.length} found`);
+		channels.forEach(ignored => bot.ignoredChannels.set(ignored.channelID, ignored.guildID));
 	}
 };
 

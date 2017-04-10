@@ -29,7 +29,7 @@ class Command {
 			this.usage = usage.join(" ");
 		}
 
-		bot.commands.push(this);
+		bot.commands[this.name] = this;
 	}
 
 	run(message) {

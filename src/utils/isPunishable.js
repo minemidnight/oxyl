@@ -11,6 +11,7 @@ module.exports = (member, executor) => {
 
 	if(member.id === guild.ownerID) return false;
 	else if(member.id === highestExecutor.id) return false;
+	else if(executor === guild.ownerID) return true;
 	else if(highestExecutor.position === highestMember.position) return highestMember.id - highestExecutor.id > 0;
 	else return highestExecutor.position - highestMember.position > 0;
 };

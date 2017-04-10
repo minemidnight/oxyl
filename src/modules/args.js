@@ -43,7 +43,9 @@ module.exports = async (message) => {
 			startIndex = i + 1;
 		}
 	}
-	if(startIndex !== 0 || (startIndex === 0 && args.length === 0)) args.push(message.content.substring(startIndex));
+	if(startIndex !== 0 || (startIndex === 0 && args.length === 0 && message.content.length !== 0)) {
+		args.push(message.content.substring(startIndex));
+	}
 
 	if(args.length < command.args.filter(arg => !arg.optional).length) {
 		return `Invalid Usage! Please use the command as such: \`${command.name} ${command.usage}\``;
@@ -53,6 +55,6 @@ module.exports = async (message) => {
 		args = await Promise.all(args.map((arg, i) => resolver[command.args[i].type](message, arg, command.args[i])));
 		return args;
 	} catch(err) {
-		return `An error occured while parsing arguments! Please report this error: ${bot.utils.codeBlock(err.stack)}`;
+		return err.message;
 	}
 };
