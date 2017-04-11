@@ -50,8 +50,9 @@ async function init() {
 
 	bot.publicConfig = publicConfig;
 	bot.privateConfig = privateConfig;
-	bot.prefixes = new Map();
 	bot.ignoredChannels = new Map();
+	bot.players = new Map();
+	bot.prefixes = new Map();
 
 	bot.utils = {};
 	let utils = await loadScripts(path.resolve("src", "utils"));

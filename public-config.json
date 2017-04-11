@@ -1,6 +1,8 @@
 {
 	"creators": ["155112606661607425"],
-	"datadog": true,
+	"datadog": {
+		"prefix": "oxyl_beta."
+	},
 	"postStats": true,
 	"channels": {
 		"servers": "265998475831934977",

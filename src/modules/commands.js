@@ -34,6 +34,7 @@ module.exports = async message => {
 		.find(cmd => command === cmd.name || ~cmd.aliases.indexOf(command));
 	if(!command) return;
 	else if(!command.caseSensitive) message.content = message.content.toLowerCase();
+	statsd({ type: "increment", stat: "commands" });
 
 	let editedInfo = {};
 	if(guild) {

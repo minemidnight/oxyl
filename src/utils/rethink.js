@@ -19,8 +19,8 @@ module.exports = {
 
 		let tableList = await r.tableList().run();
 		let tablesExpected = [
-			"autoRole", "blacklist", "editedCommands",
-			"ignoredChannels", "modLog", "musicCache", "roleMe",
+			"autoRole", "blacklist", "donators",
+			"editedCommands", "ignoredChannels", "modLog", "roleMe",
 			"rolePersist", "settings", "timedEvents", "warnings"
 		];
 

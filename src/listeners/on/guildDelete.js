@@ -23,4 +23,10 @@ module.exports = async guild => {
 			console.err(`Failed to send message to server log: ${err.message}`);
 		}
 	}
+
+	let guilds = (await process.output({
+		type: "globalEval",
+		input: () => bot.guilds.size
+	})).results.reduce((a, b) => a + b);
+	statsd({ type: "gauge", stat: "guilds", value: guilds });
 };

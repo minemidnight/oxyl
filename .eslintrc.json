@@ -5,9 +5,10 @@
 		"es6": true
 	},
 	"globals": {
-		"r": false,
+		"bot": false,
 		"cluster": false,
-		"bot": false
+		"r": false,
+		"statsd": false
 	 },
 	"parserOptions": {
 		"ecmaVersion": 2017

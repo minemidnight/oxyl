@@ -124,7 +124,7 @@ module.exports = {
 		let parsed = `__**CASE #${caseNum}**__` +
 			`\n**ACTION**: ${action}`;
 		if(role) parsed += ` (${guild.roles.get(role).name})`;
-		else if(warnCount) parsed += `\n**TOTAL WARNINGS**: ${warnCount}`;
+		else if(warnCount !== undefined) parsed += `\n**TOTAL WARNINGS**: ${warnCount}`;
 
 		parsed +=	`\n**USER**: ${user}` +
 			`\n**REASON**: `;

@@ -7,7 +7,6 @@ module.exports = async guild => {
 	joinMessage += "💰 Feeling generous? Donate at <http://patreon.com/minemidnight>.\n";
 	joinMessage += "📎 Need support, or want to be notified about updates? ";
 	joinMessage += "Join Oxyl's Server at http://discord.gg/9wkTDcE";
-
 	guild.defaultChannel.createMessage(joinMessage);
 
 	if(bot.publicConfig.channels.servers) {
@@ -30,4 +29,10 @@ module.exports = async guild => {
 			console.err(`Failed to send message to server log: ${err.message}`);
 		}
 	}
+
+	let guilds = (await process.output({
+		type: "globalEval",
+		input: () => bot.guilds.size
+	})).results.reduce((a, b) => a + b);
+	statsd({ type: "gauge", stat: "guilds", value: guilds });
 };

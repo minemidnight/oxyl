@@ -37,6 +37,7 @@ function handleWorker(worker) {
 				console.error(`Worker ${worker.id} killed due to restart loop with ` +
 					`exit code: ${code} (hosted shards ${worker.shardStart}-${worker.shardEnd}).`);
 
+				statsd({ type: "event", stat: "worker_exit", value: `Worker ${worker.id} - restart loop` });
 				webhook({
 					title: `Worker ${worker.id} killed (restart loop)`,
 					color: 0xFF0000,
@@ -51,6 +52,7 @@ function handleWorker(worker) {
 				newWorker.shardEnd = worker.shardEnd;
 				handleWorker(newWorker);
 
+				statsd({ type: "event", stat: "worker_exit", value: `Worker ${worker.id} - code ${code} (restarting)` });
 				webhook({
 					title: `Worker ${worker.id} died`,
 					color: 0xFFFF00,
@@ -71,6 +73,7 @@ function handleWorker(worker) {
 			console.info(`Worker ${worker.id} killed successfully ` +
 				`(hosted shards ${worker.shardStart}-${worker.shardEnd}).`);
 
+			statsd({ type: "event", stat: "worker_exit", value: `Worker ${worker.id} - successfully exited` });
 			webhook({
 				title: `Worker ${worker.id} killed`,
 				color: 0xFFFF00,
@@ -161,8 +164,10 @@ function init() {
 	let perCluster = publicConfig.shardsPerWorker;
 	if(~process.argv.indexOf("--shards")) shardCount = parseInt(process.argv[process.argv.indexOf("--shards") + 1]);
 	if(shardCount < 1) shardCount = 1;
+	statsd({ type: "gauge", stat: "shards", value: shardCount });
 
 	const workerCount = Math.ceil(shardCount / perCluster);
+	statsd({ type: "gauge", stat: "workers", value: workerCount });
 	for(let i = 0; i < workerCount; i++) {
 		let shardStart = i * perCluster, shardEnd = ((i + 1) * 3) - 1;
 		if(shardEnd > shardCount) shardEnd = shardCount - 1;
@@ -174,8 +179,6 @@ function init() {
 	}
 }
 init();
-
-process.on("unhandledRejection", err => console.error(err.stack));
 
 process.stdin.resume();
 process.on("SIGINT", async () => {
