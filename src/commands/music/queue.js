@@ -3,19 +3,19 @@ module.exports = {
 		let player = bot.players.get(message.channel.guild.id);
 		if(!player) return "There is currently no music playing";
 
-		let queueMsg = `__**Music Queue (${player.queue.length})**__`;
+		let queueMsg = `__**Music Queue (${player.queue.length})**__\n`;
 		let page = message.args[0] || 1;
 		let pageAmount = Math.ceil(player.queue.length / 15);
 		if(page > pageAmount) page = pageAmount;
 
 		if(player.queue.length > 0) {
-			queueMsg += player.queue.slice((page - 1) * 15, ((page - 1) * 15) + 14)
-				.map((song, i) => `[${i}] ${song.title.length}` > 75 ? `${song.title.substring(0, 72)}...` : song.title)
+			queueMsg += player.queue.slice((page - 1) * 15, ((page - 1) * 15) + 15)
+				.map((song, i) => `[${((page - 1) * 15) + i + 1}] ${song.title}`)
 				.join("\n");
 
-			queueMsg += `\nPage ${page} of ${pageAmount}`;
+			queueMsg += `\n**Page ${page}/${pageAmount}**`;
 		} else {
-			queueMsg += `\nN/A`;
+			queueMsg += `N/A`;
 		}
 
 		if(!player.current || !player.connection) {
@@ -29,13 +29,13 @@ module.exports = {
 			else queueMsg += ` **(**${playTime}/LIVE**)**`;
 		}
 
-		queueMsg += `\nRepeat: **${player.repeat ? "on" : "off"}**`;
+		queueMsg += `\nRepeat: ${player.repeat ? "on" : "off"}`;
 		return queueMsg;
 	},
 	guildOnly: true,
 	description: "List the music queue",
 	args: [{
-		type: "int",
+		type: "num",
 		label: "page",
 		optional: true,
 		min: 1

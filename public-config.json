@@ -1,17 +1,19 @@
 {
-	"creators": ["155112606661607425"],
+	"databaseName": "OxylBeta",
 	"datadog": {
 		"prefix": "oxyl_beta."
 	},
-	"postStats": true,
+	"defaultInvitePermissionNumber": 298183686,
+	"donatorAnnouncements": "254770965018443776",
+	"donatorRole": "292657073987125249",
 	"channels": {
 		"servers": "265998475831934977",
 		"updates": "270576454117359617"
 	},
-	"updatesGuild": "254768930223161344",
-	"updatesRole": "301018213616189441",
-	"defaultInvitePermissionNumber": 298183686,
+	"creators": ["155112606661607425"],
+	"prefixes": ["ob!", "oxylb", "oxylbeta", "mention"],
+	"postStats": true,
 	"shardsPerWorker": 3,
-	"databaseName": "OxylBeta",
-	"prefixes": ["ob!", "oxylb", "oxylbeta", "mention"]
+	"updatesGuild": "254768930223161344",
+	"updatesRole": "301018213616189441"
 }

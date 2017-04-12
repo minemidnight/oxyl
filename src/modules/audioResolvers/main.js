@@ -31,15 +31,17 @@ module.exports.extract = async song => {
 		song.stream = format;
 		return song;
 	} else if(song.service === "soundcloud") {
-		return JSON.parse(
+		song.stream = JSON.parse(
 			await request(`https://api.soundcloud.com/i1/tracks/${song.id}/streams?client_id=${soundcloudClientID}`)
 		).http_mp3_128_url || "NO_VALID_FORMATS";
+		return song;
 	} else {
 		return "NO_VALID_FORMATS";
 	}
 };
 
 const resolvers = {};
-["twitch", "search", "soundcloud", "youtube", "youtubePlaylist"].forEach(provider => {
+// youtube playlist must come first to test the regex, because videos may capture playlists
+["twitch", "search", "soundcloud", "youtubePlaylist", "youtube"].forEach(provider => {
 	resolvers[provider] = require(`../audioResolvers/${provider}.js`);
 });

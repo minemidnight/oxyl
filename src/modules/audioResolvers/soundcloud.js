@@ -1,7 +1,12 @@
 const request = require("request-promise");
 const clientID = "2t9loNQH90kzJcsFCODdigxfp325aq4z";
 module.exports = async link => {
-	let data = JSON.parse(await request(`http://api.soundcloud.com/resolve.json?url=${link}&client_id=${clientID}`));
+	try {
+		var data = JSON.parse(await request(`http://api.soundcloud.com/resolve.json?url=${link}&client_id=${clientID}`));
+	} catch(err) {
+		return "NOT_FOUND";
+	}
+
 	if(data.kind === "track") {
 		return {
 			duration: Math.round(data.duration / 1000),

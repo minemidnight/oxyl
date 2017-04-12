@@ -1,19 +1,23 @@
 const request = require("request-promise");
 const main = require("../audioResolvers/main.js");
 module.exports = async link => {
-	let id = link.match(regex)[1];
-	let data = await request(`https://www.youtube.com/list_ajax?style=json&action_get_list=1&list=${id}`);
+	let id = link.match(regex)[1], data;
+	try {
+		data = JSON.parse(await request(`https://www.youtube.com/list_ajax?style=json&action_get_list=1&list=${id}`));
+	} catch(err) {
+		return "INVALID_ID";
+	}
 	if(!data || !data.video) return "INVALID_ID";
-	else data = JSON.parse(data);
 
-	let playlist = data.songs.filter(song => song.privacy !== "private").map(song => ({
+	let playlist = data.video.filter(song => song.privacy !== "private").map(song => ({
 		duration: song.length_seconds,
 		id: song.encrypted_id,
 		service: "youtube",
 		thumbnail: `https://i.ytimg.com/vi/${song.encrypted_id}/hqdefault.jpg`,
 		title: song.title
 	}));
-	playlist.songs[0] = await main.extract(playlist.songs[0]);
+
+	playlist[0] = await main.extract(playlist[0]);
 	playlist.title = data.title;
 	return playlist;
 };

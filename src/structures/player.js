@@ -20,7 +20,7 @@ class Player extends EventEmitter {
 	async addQueue(data) {
 		if(!this.connection) return false;
 		if(this.queue.length >= 2000) {
-			let donator = (await r.table("donators").filter({ userID: this.guild.ownerID }))[0];
+			let donator = (await r.table("donators").filter({ id: this.guild.ownerID }))[0];
 			if(!donator) {
 				return "You cannot add any more songs! Your queue already has 2000 songs. " +
 					"If you want an unlimited queue size, consider donating.";
@@ -32,7 +32,7 @@ class Player extends EventEmitter {
 		if(!this.current) this.play();
 
 		if(this.queue.length >= 2000) {
-			let donator = (await r.table("donators").filter({ userID: this.guild.ownerID }).run())[0];
+			let donator = (await r.table("donators").filter({ id: this.guild.ownerID }).run())[0];
 			if(!donator) {
 				this.queue = this.queue.slice(0, (donator ? 10000 : 2000) - 1);
 				if(!donator) {
@@ -55,6 +55,7 @@ class Player extends EventEmitter {
 		connection.once("disconnect", () => {
 			connection.removeListener("error", errorHandler);
 			this.queue = [];
+			delete this.connection;
 			this.destroyTimeout = setTimeout(() => this.destroy("inactivity"), 600000);
 		});
 
@@ -80,6 +81,7 @@ class Player extends EventEmitter {
 		let connection = this.connection;
 		if(!connection) return;
 		else if(!this.processQueue) return;
+		else if(this.current && connection.playing) return;
 		else if(!this.current && connection.playing) connection.stopPlaying();
 
 		let song = this.queue[0];
@@ -114,8 +116,9 @@ class Player extends EventEmitter {
 		this.emit("playing", song);
 		this.connection.once("end", () => {
 			if(this.repeat) this.queue.push(this.current);
-			setTimeout(this.play, 100);
+			setTimeout(() => this.play(), 100);
 		});
+		if(this.queue[0] && !this.queue[0].stream) this.queue[0] = await mainResolver.extract(this.queue[0]);
 	}
 
 	voiceCheck(member) {

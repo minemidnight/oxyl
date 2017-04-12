@@ -16,7 +16,7 @@ module.exports = async guild => {
 		let userCount = guild.memberCount - botCount;
 		let userPercent = ((userCount / guild.memberCount) * 100).toFixed(2);
 
-		let content = "⬜ JOINED GUILD ⬜\n";
+		let content = "✅ JOINED GUILD ✅\n";
 		content += `Guild: ${guild.name} (${guild.id})\n`;
 		content += `Owner: ${owner.username}#${owner.discriminator} (${owner.id})\n`;
 		content += `Members: ${guild.memberCount} **|** `;

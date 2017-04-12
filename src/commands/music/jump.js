@@ -17,7 +17,7 @@ module.exports = {
 	guildOnly: true,
 	description: "Stop music in your channel",
 	args: [{
-		type: "int",
+		type: "num",
 		label: "queue #",
 		min: 1
 	}]

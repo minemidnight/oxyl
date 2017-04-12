@@ -8,6 +8,7 @@ module.exports = {
 		} else {
 			let next = player.queue[0];
 			player.connection.stopPlaying();
+			if(!next) player.connection.disconnect();
 
 			return next ? `Now playing __${next.title}__` : "Song skipped, no more songs in queue";
 		}

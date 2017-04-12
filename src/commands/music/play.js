@@ -1,6 +1,19 @@
 const Player = require("../../structures/player.js");
 const mainResolver = require("../../modules/audioResolvers/main.js");
 
+const cheerio = require("cheerio");
+const request = require("request-promise");
+let playlistsDisplay, playlistsFormat;
+async function updateDFM() {
+	playlistsDisplay = [];
+	const $ = cheerio.load(await request("http://temp.discord.fm/")); // eslint-disable-line id-length
+	$("li.collection-item.avatar span").each((i, ele) => playlistsDisplay.push($(ele).text()));
+	playlistsDisplay = playlistsDisplay.map(genre => genre.substring(0, genre.indexOf("(") - 1));
+	playlistsFormat = playlistsDisplay.map(genre => genre.toLowerCase().replace(/ /g, "-"));
+}
+updateDFM();
+setInterval(updateDFM, 3600000);
+
 module.exports = {
 	process: async message => {
 		let voiceChannel, player = bot.players.get(message.channel.guild.id);
@@ -19,8 +32,41 @@ module.exports = {
 			return "I cannot join that channel (no permissions)";
 		} else if(voiceChannel && !voiceChannel.permissionsOf(bot.user.id).has("voiceSpeak")) {
 			return "I cannot speak in that channel (no permissions)";
-		// } else if(message.args[0].startsWith("dfm:")) {
-		// 	return await dfmPlaylist(message.args[0].substring(4), player, voiceChannel);
+		} else if(message.args[0].startsWith("dfm:")) {
+			message.args[0] = message.args[0].substring(4).trim();
+			if(message.args[0] === "list") {
+				return `Discord.FM playlists: ${playlistsDisplay.join(", ")}`;
+			} else if(~playlistsFormat.indexOf(message.args[0].replace(/ /g, "-"))) {
+				if(!player.connection) await player.connect(voiceChannel.id);
+				let data = JSON.parse(
+					await request(`https://temp.discord.fm/libraries/${message.args[0].replace(/ /g, "-")}/json`)
+				);
+
+				let soundcloud = [], youtube = [];
+				for(let video of data) {
+					if(video.service === "YouTubeVideo") {
+						youtube.push({
+							duration: video.length,
+							id: video.identifier,
+							service: "youtube",
+							thumbnail: `https://i.ytimg.com/vi/${video.identifier}/hqdefault.jpg`,
+							title: video.title
+						});
+					} else if(video.service === "SoundCloudTrack") {
+						soundcloud.push(mainResolver(video.url));
+					}
+				}
+
+				let res = await player.addQueue(
+					youtube.concat((await Promise.all(soundcloud)).filter(scData => typeof scData === "object"))
+				);
+				if(typeof res === "string") return res;
+
+				let display = playlistsDisplay[playlistsFormat.indexOf(message.args[0].replace(/ /g, "-"))];
+				return `Added Discord.FM playlist ${display} to queue`;
+			} else {
+				return "Invalid Discord.FM playlist, use `dfm:list` to view the list of playlists";
+			}
 		} else {
 			let result = await mainResolver(message.args[0]);
 			if(typeof result === "object") {
@@ -32,6 +78,8 @@ module.exports = {
 				return "No suitable formats were found";
 			} else if(result === "INVALID_ID") {
 				return "The ID from playlist/video link was invalid";
+			} else if(result === "NOT_FOUND") {
+				return "The resource could not be found, perhaps it has been removed?";
 			} else if(result === "INVALID_TYPE") {
 				return "Please only link to SoundCloud songs or playlists";
 			} else if(result === "CHANNEL_OFFLINE") {
@@ -43,10 +91,11 @@ module.exports = {
 			}
 		}
 	},
+	caseSensitive: true,
 	guildOnly: true,
 	description: "Add items to the music queue",
 	args: [{
 		type: "text",
-		label: "link|search query"
+		label: "link|search query|dfm:<playlist>/list"
 	}]
 };
