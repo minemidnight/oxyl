@@ -41,6 +41,7 @@ module.exports = {
 				return `\`${setting.name}\` cannot be reset because it is not yet set`;
 			} else if(reset) {
 				await r.table("settings").get(currentValue.id).delete().run();
+				if(setting.name === "prefix") bot.prefixes.delete(message.channel.guild.id);
 				return `Reset setting \`${setting.name}\``;
 			}
 
@@ -53,6 +54,7 @@ module.exports = {
 			else insertData.value = resolvedInput;
 			if(currentValue) await r.table("settings").get(currentValue.id).update({ value: insertData.value }).run();
 			else await r.table("settings").insert(insertData).run();
+			if(setting.name === "prefix") bot.prefixes.set(message.channel.guild.id, insertData.value);
 			return `Set \`${setting.name}\` to ${insertData.value}`;
 		}
 	},

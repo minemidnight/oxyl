@@ -5,9 +5,12 @@ module.exports = {
 		if(casecount.length === 0) return "There have been no cases for this guild yet.";
 
 		if(message.args[0].indexOf("-") !== -1) {
-			let match = message.args[0].match(/((?:\d|l)+)\s?-\s?((?:\d|l)+)/);
-			match[1] = match[1] === "l" ? casecount : parseInt(match[1]);
-			match[2] = match[2] === "l" ? casecount : parseInt(match[2]);
+			let match = message.args[0].match(/((?:\d|l(?:atest)?)+)\s?-\s?((?:\d|l(?:atest)?)+)/);
+			if(match[1] === "l" || match[1] === "latest") match[1] = casecount;
+			else match[1] = parseInt(match[1]);
+			if(match[2] === "l" || match[1] === "latest") match[2] = casecount;
+			else match[2] = parseInt(match[2]);
+
 			if(match[2] < match[1]) return "Invalid range given!";
 			for(let i = match[1]; i < match[2]; i++) cases.push(i);
 		} else if(message.args[0].indexOf(",") !== -1) {

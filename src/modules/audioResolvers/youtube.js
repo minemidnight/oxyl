@@ -14,7 +14,7 @@ module.exports = async link => {
 		return "INVALID_ID";
 	}
 
-	if(data.liveBroadcastContent) {
+	if(data.liveBroadcastContent === "live") {
 		return module.exports.livestream(id);
 	} else {
 		let match = data.contentDetails.duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
