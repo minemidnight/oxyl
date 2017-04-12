@@ -2,7 +2,6 @@ const EventEmitter = require("events").EventEmitter;
 const request = require("request");
 const bufferedStream = require("../modules/bufferedStream.js");
 const mainResolver = require("../modules/audioResolvers/main.js");
-const vibrant = Promise.promisifyAll(require("node-vibrant"));
 
 class Player extends EventEmitter {
 	constructor(guild, data) {
@@ -126,23 +125,6 @@ class Player extends EventEmitter {
 }
 module.exports = Player;
 
-async function getVibrant(image) {
-	try {
-		let result = (await vibrant.from(image).getPaletteAsync()).Vibrant.rgb;
-		result = (result[0] << 16) + (result[1] << 8) + result[2];
-		return parseInt(result, 10);
-	} catch(err) {
-		return 0xFF0000;
-	}
-}
-
-function durationFormat(dur) {
-	let hours = Math.floor(dur / 3600);
-	let mins = Math.floor(dur % 3600 / 60);
-	let secs = Math.floor(dur % 3600 % 60);
-	return `${(hours > 0 ? `${hours}:${mins < 10 ? "0" : ""}` : "") + mins}:${secs < 10 ? "0" : ""}${secs}`;
-}
-
 function handlePlayer(player) {
 	let createMessage = embed => {
 		if(!player.channel) return;
@@ -150,15 +132,13 @@ function handlePlayer(player) {
 	};
 
 	player.on("playing", async song => {
-		let color = await getVibrant(song.thumbnail);
 		let embed = {
-			color: color,
 			description: `**${song.title}**`,
 			image: { url: song.thumbnail },
 			footer: { text: `ID: ${song.id} | Service: ${song.service}` },
 			title: "▶ Now playing"
 		};
-		if(song.duration && !isNaN(song.duration)) embed.description += ` (${durationFormat(song.duration)})`;
+		if(song.duration && !isNaN(song.duration)) embed.description += ` (${bot.utils.secondsToDuration(song.duration)})`;
 		createMessage(embed);
 	});
 
