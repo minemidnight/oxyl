@@ -67,6 +67,23 @@ module.exports = {
 			} else {
 				return "Invalid Discord.FM playlist, use `dfm:list` to view the list of playlists";
 			}
+		} else if(message.args[0].startsWith("sq:")) {
+			message.args[0] = message.args[0].substring(3).trim();
+			let donator = (await r.table("donators").filter({ id: message.author.id }).run())[0];
+			if(!donator) return "You must be a donator to use saved queues!";
+
+			let queueNumber = parseInt(message.args[0]);
+			if(!queueNumber || queueNumber < 1 || queueNumber > 3) return "Invalid number! Valid numbers are 1, 2 or 3";
+
+			let savedQueue = (await r.table("savedQueues").filter({
+				savedID: queueNumber,
+				userID: message.author.id
+			}).run())[0];
+			if(!savedQueue) return `There is no saved queue under #${queueNumber}`;
+
+			if(!player.connection) await player.connect(voiceChannel.id);
+			await player.addQueue(await Promise.all(savedQueue.queue.map(mainResolver)));
+			return `Loaded queue #${queueNumber} (${savedQueue.queue.length} items)`;
 		} else {
 			let result = await mainResolver(message.args[0]);
 			if(typeof result === "object") {

@@ -12,7 +12,7 @@
 	},
 	"creators": ["155112606661607425"],
 	"prefixes": ["ob!", "oxylb", "oxylbeta", "mention"],
-	"postStats": true,
+	"postStats": false,
 	"shardsPerWorker": 3,
 	"updatesGuild": "254768930223161344",
 	"updatesRole": "301018213616189441"

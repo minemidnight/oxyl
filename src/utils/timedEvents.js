@@ -4,14 +4,29 @@ module.exports = {
 			r.row("date").le(Date.now())
 		).run();
 
-		waitingEvents.forEach(event => module.exports[event.type](event));
+		waitingEvents.forEach(event => {
+			module.exports[event.type](event);
+			r.table("timedEvents").get(event.id).delete().run();
+		});
 	},
 
 	reminder: data => {
-		bot.createMessage(data.channel, `You asked me to remind you about this on ` +
-				`${bot.utils.formatDate(data.createdAt)}:\n\n${data.message}`);
+		bot.createMessage(data.channelID, `You asked me to remind you about this on ` +
+				`${bot.utils.formatDate(data.createdAt)}:\n\n${data.action}`);
+	},
 
-		r.table("timedEvents").get(data.id).delete().run();
+	giveaway: async data => {
+		let entrees = await bot.getMessageReaction(data.channelID, data.messageID, "🎉")
+			.filter(user => !user.bot);
+
+		if(entrees.length === 0) {
+			bot.createMessage(data.channelID, `__**GIVEAWAY WINNER**__\n` +
+					`Sadly, nobody entered the giveaway for ${data.item}, so there is no winner.`);
+		} else {
+			let winner = entrees[Math.floor(Math.random() * entrees.length)];
+			bot.createMessage(data.channelID, `__**GIVEAWAY WINNER**__\n` +
+					`Congratulations, ${winner.mention} you have won ${data.item}!`);
+		}
 	}
 };
 setInterval(module.exports.update, 15000);

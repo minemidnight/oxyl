@@ -13,7 +13,8 @@ module.exports = async link => {
 			id: data.id,
 			service: "soundcloud",
 			thumbnail: data.artwork_url,
-			title: data.title
+			title: data.title,
+			url: data.stream_url
 		};
 	} else if(data.kind === "playlist") {
 		let tracks = data.tracks.map(song => ({
@@ -21,7 +22,8 @@ module.exports = async link => {
 			id: song.id,
 			service: "soundcloud",
 			thumbnail: song.artwork_url,
-			title: song.title
+			title: song.title,
+			url: song.permalink_url
 		}));
 		tracks.title = data.title;
 		return tracks;

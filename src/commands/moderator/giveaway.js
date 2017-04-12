@@ -2,11 +2,11 @@ const Duration = require("duration-js");
 module.exports = {
 	process: async message => {
 		if(!~message.args[0].indexOf(" in ")) {
-			return "Please provide a time, using this format: `remind <action> in <timespan>`";
+			return "Please provide a time, using this format: `giveaway <item> in <timespan>`";
 		}
 
 		let split = message.args[0].split(" in ");
-		let action = split[0].trim();
+		let item = split[0].trim();
 		let time = split[1].trim()
 			.replace(/weeks?/g, "w")
 			.replace(/days?/g, "d")
@@ -20,26 +20,32 @@ module.exports = {
 			var duration = new Duration(time);
 			duration = duration.milliseconds();
 			if(duration < 30000 || duration > 2419200000) {
-				return "Please only create reminders for between 30 seconds and 4 weeks into the future.";
+				return "Please only create giveaways for between 30 seconds and 4 weeks into the future.";
 			}
 		} catch(err) {
 			return err.message;
 		}
 
 		let date = Date.now();
-		let dmChannel = message.channel.guild ? await message.author.getDMChannel() : message.channel.id;
+		let msg = await message.channel.createMessage(`__**GIVEAWAY!**__\n` +
+			`React with 🎉 to have a chance to win ${item}\n` +
+			`Ending on: ${bot.utils.formatDate(date + duration)}`);
+		await msg.addReaction("🎉");
+
 		await r.table("timedEvents").insert({
-			action,
-			createdAt: date,
-			channelID: dmChannel.id,
+			channelID: message.channel.id,
 			date: date + duration,
-			type: "reminder"
+			item,
+			messageID: msg.id,
+			type: "giveaway"
 		});
-		return `Successfully created reminder: \`${action}\` in ${time}`;
+		return false;
 	},
-	description: "Create a reminder",
+	guildOnly: true,
+	perm: "manageChannels",
+	description: "Create a giveaway",
 	args: [{
 		type: "text",
-		label: "<action> in <timespan>"
+		label: "<item> in <timespan>"
 	}]
 };

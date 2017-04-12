@@ -4,7 +4,7 @@ module.exports = {
 			return `__**Valid mod log settings**__:\n${Object.keys(settings).join(", ")}` +
 				`\n\nRun \`modlog <setting>\` to get more info on a specific setting`;
 		} else if(!settings[message.args[0]]) {
-			return `Invalid mog log setting!`;
+			return `Invalid mod log setting!`;
 		} else if(!message.args[1]) {
 			let setting = settings[message.args[0]];
 			setting.name = message.args[0];

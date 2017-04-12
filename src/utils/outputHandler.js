@@ -33,7 +33,7 @@ class OutputHandler extends EventEmitter {
 	stop(reason) {
 		if(this.ended) return;
 		else this.ended = true;
-		cluster.worker.removeListener("outputMesage", this.listener);
+		cluster.worker.removeListener("outputMessage", this.listener);
 
 		this.emit("end", this.result, reason);
 	}

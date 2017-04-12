@@ -18,6 +18,11 @@ function handleWorker(worker) {
 			description: `Hosting shards ${worker.shardStart}-${worker.shardEnd}`,
 			timestamp: new Date()
 		});
+		statsd({
+			type: "event",
+			stat: "worker_startup",
+			value: `Worker ${worker.id}, shards ${worker.shardStart}-${worker.shardEnd}`
+		});
 	});
 
 	worker.on("exit", (code, signal) => {
@@ -182,6 +187,7 @@ init();
 
 process.stdin.resume();
 process.on("SIGINT", async () => {
+	statsd({ type: "event", stat: "master_exit", value: `Master Exited` });
 	await webhook({
 		title: `Master Exited`,
 		color: 0x0000FF,

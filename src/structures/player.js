@@ -1,6 +1,5 @@
 const EventEmitter = require("events").EventEmitter;
 const request = require("request");
-const bufferedStream = require("../modules/bufferedStream.js");
 const mainResolver = require("../modules/audioResolvers/main.js");
 
 class Player extends EventEmitter {
@@ -49,13 +48,14 @@ class Player extends EventEmitter {
 		else if(!this.processQueue) this.processQueue = true;
 
 		let connection = this.connection = await bot.joinVoiceChannel(channelID);
-		let errorHandler = err => this.emit("error", err);
-		connection.on("error", errorHandler);
+		updateStreamCount();
 
+		connection.on("error", err => this.emit("error", err));
 		connection.once("disconnect", () => {
-			connection.removeListener("error", errorHandler);
+			connection.removeAllListeners();
 			this.queue = [];
 			delete this.connection;
+			updateStreamCount();
 			this.destroyTimeout = setTimeout(() => this.destroy("inactivity"), 600000);
 		});
 
@@ -74,6 +74,7 @@ class Player extends EventEmitter {
 		bot.players.delete(this.id);
 		this.emit("destroy", reason);
 		delete this;
+		updateStreamCount();
 	}
 
 	async play() {
@@ -103,15 +104,12 @@ class Player extends EventEmitter {
 		let volume;
 		if(song.live) volume = 1;
 		else volume = 0.2;
-		let stream, options = { encoderArgs: ["-af", `volume=${volume}`] };
-		if(song.opus) {
-			stream = bufferedStream(song.stream);
-		} else {
-			stream = song.stream;
-			options.inputArgs = ["-reconnect", "1", "-reconnect_streamed", "1", "-reconnect_delay_max", "2"];
-		}
+		let options = {
+			encoderArgs: ["-af", `volume=${volume}`],
+			inputArgs: ["-reconnect", "1", "-reconnect_streamed", "1", "-reconnect_delay_max", "2"]
+		};
 
-		this.connection.play(stream, options);
+		this.connection.play(song.stream, options);
 		this.current = song;
 		this.emit("playing", song);
 		this.connection.once("end", () => {
@@ -128,10 +126,23 @@ class Player extends EventEmitter {
 }
 module.exports = Player;
 
+async function updateStreamCount() {
+	let streams = (await process.output({
+		type: "globalEval",
+		input: () => Array.from(bot.players.values()).filter(player => player.connection).length
+	})).results.reduce((a, b) => a + b);
+	statsd({ type: "gauge", stat: "streams", value: streams });
+}
+
 function handlePlayer(player) {
-	let createMessage = embed => {
+	let createMessage = async embed => {
 		if(!player.channel) return;
-		else player.channel.createMessage({ embed });
+		let announcements = (await r.table("settings").filter({ guildID: player.id, name: "musicmessages" }).run())[0];
+		if(announcements && announcements[0].value) return;
+
+		let listening = player.guild.channels.get(player.connection.channelID).voiceMembers
+			.filter(member => !member.bot && !member.voiceState.selfDeaf).length;
+		if(listening >= 1) player.channel.createMessage({ embed });
 	};
 
 	player.on("playing", async song => {

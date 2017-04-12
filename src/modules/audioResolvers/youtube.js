@@ -31,7 +31,7 @@ module.exports = async link => {
 		});
 	}
 };
-const regex = module.exports.regex = /(?:http?s?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?([a-zA-Z0-9_-]+)(&.*|)/; // eslint-disable-line max-len
+const regex = module.exports.regex = /(?:youtube\.com\/\S*(?:(?:\/e(?:mbed))?\/|watch\/??(?:\S*?&?v=))|youtu\.be\/)([a-zA-Z0-9_-]{6,11})/; // eslint-disable-line max-len
 
 module.exports.livestream = async id => {
 	let data = await youtubedl.getInfoAsync(id, [], { maxBuffer: Infinity }), format;

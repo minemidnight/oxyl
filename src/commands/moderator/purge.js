@@ -53,13 +53,16 @@ module.exports = {
 		} else {
 			await message.channel.purge(message.args[0]);
 		}
+
+		let msg = await message.channel.createMessage("👌");
+		setTimeout(() => msg.delete(), 3000);
 	},
 	guildOnly: true,
 	perm: "manageMessages",
 	aliases: ["prune"],
 	description: "Delete up to 2500 with optional filters",
 	args: [{
-		type: "int",
+		type: "num",
 		min: 1,
 		max: 2500,
 		label: "limit"

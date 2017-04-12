@@ -5,11 +5,13 @@ module.exports = {
 			input: () => [
 				bot.guilds.filter(guild => guild.large).length,
 				bot.guilds.size,
-				process.memoryUsage().heapUsed / Math.pow(1024, 2)
+				process.memoryUsage().heapUsed / Math.pow(1024, 2),
+				Array.from(bot.players.values()).filter(player => player.connection).length
 			]
 		})).results;
 		let largeGuilds = results.map(res => res[0]).reduce((a, b) => a + b);
 		let totalGuilds = results.map(res => res[1]).reduce((a, b) => a + b);
+		let streams = results.map(res => res[3]).reduce((a, b) => a + b);
 
 		let workerUsage = process.memoryUsage().heapUsed;
 		let masterUsage = (await process.output({
@@ -22,7 +24,7 @@ module.exports = {
 			`Large (over 250 members): ${largeGuilds}\n` +
 			`Others: ${totalGuilds - largeGuilds}\n` +
 			`Total: ${totalGuilds}\n` +
-			`Streaming In: 0\n\n` +
+			`Streaming In: ${streams}\n\n` +
 			`__**Other**__\n` +
 			`Worker Memory Usage: ${(workerUsage / Math.pow(1024, 2)).toFixed(2)}MB\n` +
 			`Total: ${totalUsage.toFixed(2)}GB\n` +
