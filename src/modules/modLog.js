@@ -8,7 +8,7 @@ module.exports = {
 	cases: guild => r.table("modLog").filter({ guildID: guild.id }).run(),
 	channel: async guild => {
 		let data = (await r.table("settings").filter({ name: "modLog.channel", guildID: guild.id }).run())[0];
-		return data.value || false;
+		return data ? data.value : false;
 	},
 	info: async (guild, caseNum) => (await r.table("modLog").filter({ guildID: guild.id, caseNum }).run())[0],
 	create: async (guild, action, user, extraData = {}) => {
