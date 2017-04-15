@@ -14,7 +14,7 @@ module.exports = async link => {
 			service: "soundcloud",
 			thumbnail: data.artwork_url,
 			title: data.title,
-			url: data.stream_url
+			url: data.permalink_url
 		};
 	} else if(data.kind === "playlist") {
 		let tracks = data.tracks.map(song => ({

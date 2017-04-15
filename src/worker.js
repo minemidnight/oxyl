@@ -110,14 +110,23 @@ async function getFiles(filepath, filter = () => true, deep = false) {
 	return validFiles;
 }
 
+const statPoster = require("../../modules/statPoster.js");
+statPoster();
+setInterval(statPoster, 1800000);
+
 process.on("unhandledRejection", err => {
 	if(err.message.startsWith("Request timed out")) return;
 	try {
 		let resp = JSON.parse(err.response);
-		// these codes mean someone bamboozled oxyl's perms or someone's bamboozled their server
+		// these codes mean someone bamboozled perms
 		if(~[10003, 10008, 40005, 50001, 50013].indexOf(resp.code)) return;
 		else throw err;
 	} catch(err2) {
 		if(raven.installed) raven.captureException(err);
 	}
+});
+
+process.stdin.resume();
+process.on("SIGINT", async () => {
+	process.exit(0);
 });

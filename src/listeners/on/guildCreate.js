@@ -1,3 +1,4 @@
+const statPoster = require("../../modules/statPoster.js");
 module.exports = async guild => {
 	let joinMessage = "Thanks for adding Oxyl Beta to your server! Here is how to get started:\n";
 	joinMessage += "❓ Run `ob!help` to get a list of commands.";
@@ -9,7 +10,7 @@ module.exports = async guild => {
 	joinMessage += "Join Oxyl's Server at http://discord.gg/9wkTDcE";
 	guild.defaultChannel.createMessage(joinMessage);
 
-	if(bot.publicConfig.channels.servers) {
+	if(bot.publicConfig.serverChannel) {
 		let owner = bot.users.get(guild.ownerID);
 		let botCount = guild.members.filter(member => member.bot).length;
 		let botPercent = ((botCount / guild.memberCount) * 100).toFixed(2);
@@ -24,15 +25,11 @@ module.exports = async guild => {
 		content += `Bots: ${botCount} (${botPercent}%)`;
 
 		try {
-			await bot.createMessage(bot.publicConfig.channels.servers, content);
+			await bot.createMessage(bot.publicConfig.serverChannel, content);
 		} catch(err) {
-			console.err(`Failed to send message to server log: ${err.message}`);
+			console.error(`Failed to send message to server log: ${err.message}`);
 		}
 	}
 
-	let guilds = (await process.output({
-		type: "globalEval",
-		input: () => bot.guilds.size
-	})).results.reduce((a, b) => a + b);
-	statsd({ type: "gauge", stat: "guilds", value: guilds });
+	statPoster();
 };

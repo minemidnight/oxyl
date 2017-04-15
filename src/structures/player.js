@@ -10,9 +10,8 @@ class Player extends EventEmitter {
 
 		this.queue = data.queue || [];
 		this.repeat = !!data.repeat;
-		this.processQueue = !!data.processQueue;
 		this.channel = data.channel || null;
-		bot.players.set(guild.id, this);
+		bot.players.set(this.id, this);
 		handlePlayer(this);
 	}
 
@@ -45,7 +44,6 @@ class Player extends EventEmitter {
 
 	async connect(channelID) {
 		if(this.connection) return false;
-		else if(!this.processQueue) this.processQueue = true;
 
 		let connection = this.connection = await bot.joinVoiceChannel(channelID);
 		updateStreamCount();
@@ -65,13 +63,9 @@ class Player extends EventEmitter {
 
 	destroy(reason) {
 		let connection = this.connection;
-		if(connection) {
-			connection.disconnect();
-			connection.stopPlaying();
-		}
-
-		this.processQueue = false;
+		if(connection) connection.disconnect();
 		bot.players.delete(this.id);
+
 		this.emit("destroy", reason);
 		delete this;
 		updateStreamCount();
@@ -81,12 +75,10 @@ class Player extends EventEmitter {
 		clearTimeout(this.destroyTimeout);
 		let connection = this.connection;
 		if(!connection) return;
-		else if(!this.processQueue) return;
 		else if(this.current && connection.playing) return;
-		else if(!this.current && connection.playing) connection.stopPlaying();
 
 		let song = this.queue[0];
-		if(!song) {
+		if(!song && !this.current) {
 			this.destroy("no_queue");
 			return;
 		}
@@ -99,22 +91,31 @@ class Player extends EventEmitter {
 			this.emit("error", new Error("No suitable formats were found"));
 			this.play();
 			return;
+		} else if(song.stream.startsWith("ERROR:")) {
+			this.emit("error", song.stream);
+			this.play();
+			return;
 		}
 
 		let volume;
 		if(song.live) volume = 1;
-		else volume = 0.2;
-		let options = {
-			encoderArgs: ["-af", `volume=${volume}`],
-			inputArgs: ["-reconnect", "1", "-reconnect_streamed", "1", "-reconnect_delay_max", "2"]
-		};
+		else volume = 0.3;
+		let options = {};
 
+		if(song.opus) {
+			options.format = "webm";
+			options.frameDuration = 20;
+		} else {
+			options.encoderArgs = ["-af", `volume=${volume}`];
+			options.inputArgs = ["-reconnect", "1", "-reconnect_streamed", "1", "-reconnect_delay_max", "2"];
+		}
 		this.connection.play(song.stream, options);
 		this.current = song;
 		this.emit("playing", song);
 		this.connection.once("end", () => {
 			if(this.repeat) this.queue.push(this.current);
-			setTimeout(() => this.play(), 100);
+			if(this.queue.length === 0) this.destroy("no_queue");
+			else setTimeout(() => this.play(), 100);
 		});
 		if(this.queue[0] && !this.queue[0].stream) this.queue[0] = await mainResolver.extract(this.queue[0]);
 	}

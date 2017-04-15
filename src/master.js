@@ -160,6 +160,7 @@ async function handleMessage(msg, worker) {
 
 let shardCount = 1;
 function init() {
+	statsd({ type: "event", stat: "master_started", value: `Master started up` });
 	webhook({
 		title: `Master started`,
 		color: 0x0000FF,

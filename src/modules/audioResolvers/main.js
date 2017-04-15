@@ -16,7 +16,13 @@ module.exports = async data => {
 const soundcloudClientID = "2t9loNQH90kzJcsFCODdigxfp325aq4z";
 module.exports.extract = async song => {
 	if(song.service === "youtube") {
-		let formats = (await ytdlcore.getInfoAsync(`https://youtube.com/watch?v=${song.id}`)).formats, format, opus = false;
+		try {
+			var info = await ytdlcore.getInfoAsync(`https://youtube.com/watch?v=${song.id}`);
+		} catch(err) {
+			return `ERROR: \`${err.message}\``;
+		}
+
+		let formats = info.formats, format, opus = false;
 		for(let i of formats) if(~["249", "250", "251"].indexOf(i.itag)) format = i.url;
 		if(format) opus = true;
 		if(!format) {
