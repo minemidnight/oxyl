@@ -1,6 +1,7 @@
 # oxyl
 
 [![Greenkeeper badge](https://badges.greenkeeper.io/minemidnight/oxyl.svg)](https://greenkeeper.io/)
+
 Discord bot using Eris library
 
 Example config.yml:
