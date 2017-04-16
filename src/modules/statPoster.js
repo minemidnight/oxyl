@@ -4,7 +4,11 @@ module.exports = async () => {
 		type: "globalEval",
 		input: () => bot.guilds.size
 	})).results.reduce((a, b) => a + b);
+
 	statsd({ type: "gauge", stat: "guilds", value: guilds });
+	if(bot.publicConfig.serverChannel) {
+		bot.editChannel(bot.publicConfig.serverChannel, { topic: `Server Count: ${guilds}` });
+	}
 
 	if(!bot.publicConfig.postStats) return;
 	if(bot.privateConfig.dbotsKey) {

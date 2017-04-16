@@ -87,11 +87,15 @@ class Player extends EventEmitter {
 		else this.queue = [];
 
 		if(!song.stream) song = await mainResolver.extract(song);
-		if(song.stream === "NO_VALID_FORMATS") {
+		if(!song.stream) {
+			this.emit("error", new Error("No stream returned after extraction"));
+			this.play();
+			return;
+		} else if(typeof song.stream === "string" && song.stream === "NO_VALID_FORMATS") {
 			this.emit("error", new Error("No suitable formats were found"));
 			this.play();
 			return;
-		} else if(song.stream.startsWith("ERROR:")) {
+		} else if(typeof song.stream === "string" && song.stream.startsWith("ERROR:")) {
 			this.emit("error", song.stream);
 			this.play();
 			return;

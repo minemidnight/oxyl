@@ -67,7 +67,7 @@ module.exports = {
 		max: 2500,
 		label: "limit"
 	}, {
-		type: "custom",
+		type: "text",
 		optional: true,
 		label: "filters (bots, images, files, embeds, links, from <users...>, includes <text>, matches <regex>)"
 	}]
