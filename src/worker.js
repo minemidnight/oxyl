@@ -110,7 +110,7 @@ async function getFiles(filepath, filter = () => true, deep = false) {
 	return validFiles;
 }
 
-const statPoster = require("../../modules/statPoster.js");
+const statPoster = require("./modules/webhookStatus");
 statPoster();
 setInterval(statPoster, 1800000);
 

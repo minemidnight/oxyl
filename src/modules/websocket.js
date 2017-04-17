@@ -1,0 +1,50 @@
+const publicConfig = JSON.parse(require("fs").readFileSync("public-config.json").toString());
+if(!publicConfig.websocketServer) return;
+const privateConfig = JSON.parse(require("fs").readFileSync("private-config.json").toString());
+const WebSocket = require("ws");
+const webhook = require("../modules/webhookStatus.js");
+
+const wss = new WebSocket.Server({
+	perMessageDeflate: false,
+	port: 7025,
+	verifyClient: info => info.req.headers.authorization === privateConfig.secret
+});
+console.startup("Websocket server started on port 7025 (authorization: bot secret)");
+webhook({
+	title: `Websocket Server Started`,
+	color: 0x00FF00,
+	description: `Port: 7025\nAuthorization: Bot secret`,
+	timestamp: new Date()
+});
+
+wss.on("connection", ws => {
+	console.info(`Websocket connection`);
+	webhook({
+		title: `Websocket Connection`,
+		color: 0x00FF00,
+		description: `Passed verification`,
+		timestamp: new Date()
+	});
+
+	ws.on("message", async message => {
+		let data = JSON.parse(message);
+		if(data.type === "masterEval") {
+			try {
+				let result = await eval(data.input);
+				ws.send(JSON.parse({ type: "output", result, id: data.id }));
+			} catch(err) {
+				ws.send(JSON.parse({ type: "output", error: err.stack, id: data.id }));
+			}
+		} else if(data.type === "guildEval") {
+			let shard = ~~((data.guildID / 4194304) % process.shardCount);
+			let workers = cluster.onlineWorkers;
+			let worker = workers.find(work => work.shardStart >= shard && work.shardEnd <= shard);
+			process.waitingOutputs[data.id] = {
+				expected: 1,
+				results: [],
+				callback: results => ws.send(JSON.parse({ type: "output", result: results[0], id: data.id }))
+			};
+			process.handleMessage(data);
+		}
+	});
+});

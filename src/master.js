@@ -1,4 +1,5 @@
 const webhook = require("./modules/webhookStatus.js");
+const websocket = require("./modules/websocket.js");
 const publicConfig = JSON.parse(require("fs").readFileSync("public-config.json").toString());
 const workerCrashes = [];
 
@@ -88,29 +89,30 @@ function handleWorker(worker) {
 		}
 	});
 
-	worker.on("message", msg => handleMessage(msg, worker));
+	worker.on("message", msg => process.handleMessage(msg, worker));
 }
 
-function getOnlineWorkers() {
-	return Object.keys(cluster.workers)
-		.map(id => cluster.workers[id])
-		.filter(work => work.isConnected());
-}
+Object.defineProperty(cluster, "onlineWorkers", {
+	get: () => Object.keys(cluster.workers)
+			.map(id => cluster.workers[id])
+			.filter(work => work.isConnected())
+});
 
-const waitingOutputs = {};
-async function handleMessage(msg, worker) {
+const waitingOutputs = process.waitingOutputs = {};
+process.handleMessage = async (msg, worker) => {
 	if(msg.type === "masterEval") {
 		try {
-			const result = await eval(msg.input);
+			let result = await eval(msg.input);
 			worker.send({ type: "output", result, id: msg.id });
 		} catch(err) {
 			worker.send({ type: "output", error: err.stack, id: msg.id });
 		}
 	} else if(msg.type === "globalEval") {
-		const workers = getOnlineWorkers();
+		let workers = cluster.onlineWorkers;
 		waitingOutputs[msg.id] = {
 			expected: workers.length,
-			results: []
+			results: [],
+			callback: results => worker.send({ type: "output", results, id: msg.id })
 		};
 
 		workers.forEach(work => {
@@ -122,23 +124,26 @@ async function handleMessage(msg, worker) {
 		});
 	} else if(msg.type === "eval") {
 		if(!msg.target) {
-			worker.send({ type: "output", error: "No target specified", id: msg.id });
+			if(worker) worker.send({ type: "output", error: "No target specified", id: msg.id });
 			return;
 		}
-		const workers = getOnlineWorkers();
-		waitingOutputs[msg.id] = {
-			expected: 1,
-			results: []
-		};
+		let workers = cluster.onlineWorkers;
+		if(worker) {
+			waitingOutputs[msg.id] = {
+				expected: 1,
+				results: [],
+				callback: results => worker.send({ type: "output", result: results[0], id: msg.id })
+			};
+		}
 
 		let targetWorker;
 		if(msg.target[0] === "shard") {
-			const shard = msg.target[1];
+			let shard = msg.target[1];
 			targetWorker = workers.find(work => work.shardStart >= shard && work.shardEnd <= shard);
 		}
 
 		if(!targetWorker) {
-			worker.send({ type: "output", error: "Target not found", id: msg.id });
+			if(worker) worker.send({ type: "output", error: "Target not found", id: msg.id });
 			return;
 		}
 
@@ -152,11 +157,11 @@ async function handleMessage(msg, worker) {
 
 		waitingOutputs[msg.id].results.push(msg.result || msg.error);
 		if(waitingOutputs[msg.id].expected === waitingOutputs[msg.id].results.length) {
-			worker.send({ type: "output", results: waitingOutputs[msg.id].results, id: msg.id });
+			waitingOutputs[msg.id].callback(waitingOutputs[msg.id].results);
 			setTimeout(() => delete waitingOutputs[msg.id], 5000);
 		}
 	}
-}
+};
 
 let shardCount = 1;
 function init() {
@@ -170,6 +175,7 @@ function init() {
 	let perCluster = publicConfig.shardsPerWorker;
 	if(~process.argv.indexOf("--shards")) shardCount = parseInt(process.argv[process.argv.indexOf("--shards") + 1]);
 	if(shardCount < 1) shardCount = 1;
+	process.shardCount = shardCount;
 	statsd({ type: "gauge", stat: "shards", value: shardCount });
 
 	const workerCount = Math.ceil(shardCount / perCluster);

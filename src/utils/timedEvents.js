@@ -5,7 +5,7 @@ module.exports = {
 		).run();
 
 		waitingEvents.forEach(event => {
-			if(!module.exports[event.type]) console.error(`${event.type} not in exports`);
+			if(!module.exports[event.type] || !event || !event.type) console.log(event);
 			else module.exports[event.type](event);
 			r.table("timedEvents").get(event.id).delete().run();
 		});
