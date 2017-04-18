@@ -136,9 +136,10 @@ process.handleMessage = async (msg, worker) => {
 			};
 		}
 
-		let targetWorker;
-		if(msg.target[0] === "shard") {
-			let shard = msg.target[1];
+		let targetWorker, shard;
+		if(msg.target[0] === "shard" || msg.target[0] === "guild") {
+			if(msg.target[0] === "guild") shard = ~~((msg.guildID / 4194304) % process.shardCount);
+			else shard = msg.target[1];
 			targetWorker = workers.find(work => work.shardStart >= shard && work.shardEnd <= shard);
 		}
 
@@ -155,7 +156,7 @@ process.handleMessage = async (msg, worker) => {
 	} else if(msg.type === "output") {
 		if(!waitingOutputs[msg.id]) return;
 
-		waitingOutputs[msg.id].results.push(msg.result || msg.error);
+		waitingOutputs[msg.id].results.push(msg.error || msg.result);
 		if(waitingOutputs[msg.id].expected === waitingOutputs[msg.id].results.length) {
 			waitingOutputs[msg.id].callback(waitingOutputs[msg.id].results);
 			setTimeout(() => delete waitingOutputs[msg.id], 5000);

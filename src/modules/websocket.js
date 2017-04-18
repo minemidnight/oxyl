@@ -36,13 +36,12 @@ wss.on("connection", ws => {
 				ws.send(JSON.parse({ type: "output", error: err.stack, id: data.id }));
 			}
 		} else if(data.type === "guildEval") {
-			let shard = ~~((data.guildID / 4194304) % process.shardCount);
-			let workers = cluster.onlineWorkers;
-			let worker = workers.find(work => work.shardStart >= shard && work.shardEnd <= shard);
+			data.target = ["guild", data.guildID];
+			data.type = "eval";
 			process.waitingOutputs[data.id] = {
 				expected: 1,
 				results: [],
-				callback: results => ws.send(JSON.parse({ type: "output", result: results[0], id: data.id }))
+				callback: results => ws.send(JSON.stringify({ type: "output", result: results[0], id: data.id }))
 			};
 			process.handleMessage(data);
 		}
