@@ -99,7 +99,7 @@ module.exports = {
 	}]
 };
 
-let settings = {
+let settings = module.exports.settings = {
 	channel: {
 		arg: "textChannel",
 		description: "Set the mod log channel to log moderator actions"

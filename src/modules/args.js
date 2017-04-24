@@ -57,6 +57,6 @@ module.exports = async (message) => {
 		args = await Promise.all(args.map((arg, i) => resolver[command.args[i].type](message, arg, command.args[i])));
 		return args;
 	} catch(err) {
-		return bot.utils.codeBlock(err.stack);
+		return err.message;
 	}
 };

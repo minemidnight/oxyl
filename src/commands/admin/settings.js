@@ -79,7 +79,7 @@ module.exports = {
 	}]
 };
 
-let settings = {
+let settings = module.exports.settings = {
 	farewell: {
 		arg: "text",
 		description: "Message sent in user log when a user leaves " +
