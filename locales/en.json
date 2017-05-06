@@ -114,7 +114,7 @@
 				"success": "__**Guild**__: {{guild}}\nChannels: {{channels}}\nMembers: {{members}}\nUsers: {{users}} ({{userPercent}}%)\nBots: {{bots}} ({{botPercent}}%)\nCreation Date: {{creationDate}}\nOwner: {{owner}} (ID: {{ownerID}})\nIcon: {{icon}}"
 			},
 			"shardInfo": {
-				"success": "__**Shard {{shard}}**__\nGuilds: {{guilds}}\nChannels: {{channels}}\nUsers: {{users}}\nLatency: {{latency}}ms\nStatus: {{status}}",
+				"success": "__**Shard {{shard}}**__\nGuilds: {{guilds}}\nChannels: {{channels}}\nUsers: {{users}}\nLatency: {{latency}}ms\nStatus: {{status}}"
 			},
 			"stats": {
 				"success": "__**Guilds**__\nLarge (over 250 members): {{largeGuilds}}\nOthers: {{smallGuilds}}\nTotal: {{totalGuilds}}\nStreaming In: {{streamCount}}\n\n__**Other**__\nWorker Memory Usage: {{workerUsage}}MiB\nTotal Memory Usage: {{totalUsage}}GiB\nWorker: {{worker}} (Shards: {{shardRange}})\nUptime: {{uptime}}\nWebsite: {{website}}"
