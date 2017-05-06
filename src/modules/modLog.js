@@ -1,5 +1,4 @@
 const readableActions = {
-	rolePersist: "Role Persistance",
 	specialRoleAdd: "Special Role Added",
 	specialRoleRemove: "Special Role Removed"
 };

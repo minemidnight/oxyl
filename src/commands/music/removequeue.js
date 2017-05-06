@@ -17,7 +17,7 @@ module.exports = {
 				else match[2] = parseInt(match[2]);
 
 				if(match[2] < match[1]) return "Invalid range given!";
-				for(let i = match[1]; i < match[2]; i++) toRemove.push(i);
+				for(let i = match[1]; i <= match[2]; i++) toRemove.push(i);
 			} else if(message.args[0].indexOf(",") !== -1) {
 				message.args[0].split(",").forEach(toRemove.push);
 			} else {

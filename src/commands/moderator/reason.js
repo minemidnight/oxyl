@@ -12,7 +12,7 @@ module.exports = {
 			else match[2] = parseInt(match[2]);
 
 			if(match[2] < match[1]) return "Invalid range given!";
-			for(let i = match[1]; i < match[2]; i++) cases.push(i);
+			for(let i = match[1]; i <= match[2]; i++) cases.push(i);
 		} else if(message.args[0].indexOf(",") !== -1) {
 			message.args[0].split(",").forEach(cases.push);
 		} else {
@@ -34,7 +34,7 @@ module.exports = {
 			else if(resp === "NO_DATA") errMsg = `Case \`${caseNum}\` not found`;
 			else if(resp === "NO_CHANNEL") errMsg = `The mod log channel is not set`;
 			else if(resp === "NO_MSG") errMsg = `Message from case \`${caseNum}\` not found`;
-			else errMsg = `Unexpected error`;
+			else errMsg = resp;
 		}
 
 		let returnMsg = "";

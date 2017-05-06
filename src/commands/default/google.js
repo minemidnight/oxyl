@@ -5,7 +5,7 @@ module.exports = {
 	process: async message => {
 		let body = await request(`https://www.google.com/search?q=${escape(message.args[0])}`);
 		let $ = cheerio.load(body); // eslint-disable-line id-length
-		if($("div.mnr-c div.med.card-section").length >= 1) return "No results found";
+		if($("div.mnr-c div.med.card-section").eq(0)) return "No results found";
 
 		let results = $(".r"), resultmsg = "";
 		for(let i = 0; i < 3; i++) {
