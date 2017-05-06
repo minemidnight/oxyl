@@ -54,6 +54,14 @@ async function init() {
 	bot.players = new Map();
 	bot.prefixes = new Map();
 
+	if(bot.publicConfig.locales) {
+		let locales = await getFiles(path.resolve("locales"), file => file.endsWith(".json"));
+		locales = locales.map(file => file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".")));
+		bot.locales = locales;
+		bot.localeCache = new Map();
+		require("./modules/locales.js");
+	}
+
 	bot.utils = {};
 	let utils = await loadScripts(path.resolve("src", "utils"));
 	utils.forEach(script => bot.utils[script.name] = script.exports);
@@ -110,8 +118,7 @@ async function getFiles(filepath, filter = () => true, deep = false) {
 	return validFiles;
 }
 
-const statPoster = require("./modules/webhookStatus");
-statPoster();
+const statPoster = require("./modules/webhookStatus.js");
 setInterval(statPoster, 1800000);
 
 process.on("unhandledRejection", err => {

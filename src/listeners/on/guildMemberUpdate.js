@@ -1,7 +1,7 @@
 const modLog = require("../../modules/modLog.js");
 module.exports = async (guild, member, oldMember) => {
 	if(!member || !oldMember) return;
-	else if(member.roles.sort().join() === oldMember.roles.sort().join()) return;
+	else if(member.roles === oldMember.roles) return;
 
 	let addedRoles = member.roles.filter(role => !~oldMember.roles.indexOf(role));
 	let removedRoles = oldMember.roles.filter(role => !~member.roles.indexOf(role));

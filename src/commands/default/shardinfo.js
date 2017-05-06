@@ -1,4 +1,3 @@
-const shardsPerPage = 3;
 module.exports = {
 	process: async message => {
 		let shardInfo = "";
@@ -11,13 +10,15 @@ module.exports = {
 			let channelCount = 0;
 			onShard.forEach(guild => channelCount += guild.channels.size);
 
-			shardInfo += `__**Shard ${shard.id}**__`;
-			if(thisShard === shard.id) shardInfo += " (shard of guild)";
-			shardInfo += `\nGuilds: ${onShard.length}\n`;
-			shardInfo += `Channels: ${channelCount}\n`;
-			shardInfo += `Users: ${shardUsers.size}\n`;
-			shardInfo += `Latency: ${shard.latency}ms\n`;
-			shardInfo += `Status: ${shard.status}\n\n`;
+			shardInfo += __("commands.default.shardInfo.success", message, {
+				shard: thisShard === shard.id ? `\* ${shard.id}` : shard.id,
+				guilds: onShard.length,
+				channels: channelCount,
+				users: shardUsers.size,
+				latency: shard.latency,
+				status: shard.status
+			});
+			shardInfo += `\n\n`;
 		});
 		return shardInfo;
 	},

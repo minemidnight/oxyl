@@ -5,7 +5,7 @@
 				"add": {
 					"noArg": "Please provide a role to add to the autoroles!",
 					"alreadyAutorole": "Role `{{role}}` is already an autorole",
-					"success": "Role {{role}} added to autoroles"
+					"success": "Role `{{role}}` added to autoroles"
 				},
 				"remove": {
 					"noArg": "Please provide a role to remove from the autoroles!",
@@ -29,8 +29,8 @@
 					"success": "Reset command `{{command}}`"
 				},
 				"toggle": {
-					"disabled": "Disabled command {{command}}",
-					"enabled": "Enabled command {{command}}"
+					"disabled": "Disabled command `{{command}}`",
+					"enabled": "Enabled command `{{command}}`"
 				},
 				"roles": {
 					"noArg": "Please provide some roles to restrict this command to! Split each with a ,",

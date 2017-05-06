@@ -4,7 +4,7 @@ module.exports = {
 			let command = Object.keys(bot.commands)
 				.map(key => bot.commands[key])
 				.find(cmd => message.args[0] === cmd.name || ~cmd.aliases.indexOf(message.args[0]));
-			if(!command) return "Command not found";
+			if(!command) return __("commands.default.help.commandNotFound", message);
 
 			let helpMsg = `__**Command Name**__: ${command.name}\n`;
 			helpMsg += `Category: ${command.type}\n`;
@@ -14,10 +14,19 @@ module.exports = {
 			if(command.perm) helpMsg += `Required Permission: ${command.perm}\n`;
 			else if(command.guildOnly) helpMsg += `This command will only work in guilds\n`;
 			helpMsg += `Uses: ${command.uses}`;
-			return helpMsg;
+
+			return __("commands.default.help.commandInfo", message, {
+				command: command.name,
+				category: command.type,
+				usage: command.usage,
+				aliases: command.aliases.length ?
+					command.aliases.join(", ") :
+					__("words.none", message).charAt(0).toUpperCase + __("words.none", message).substring(1),
+				description: command.description || __("phrases.noneProvided", message),
+				requiredPermission: command.perm || __("phrases.noneRequired", message)
+			});
 		} else {
-			let helpMsg = `**Commands (${Object.keys(bot.commands).length} total)**`;
-			let commandTypes = {};
+			let commandMsg = "", commandTypes = {};
 			for(let cmd in bot.commands) {
 				cmd = bot.commands[cmd];
 				if(!commandTypes[cmd.type]) commandTypes[cmd.type] = [];
@@ -27,13 +36,15 @@ module.exports = {
 
 			for(let category in commandTypes) {
 				commandTypes[category].sort();
-				helpMsg += `\n__${category.substring(0, 1).toUpperCase() + category.substring(1)}__\n`;
-				helpMsg += commandTypes[category].join(", ");
-				helpMsg += `\n`;
+				commandMsg += `\n__${category.substring(0, 1).toUpperCase() + category.substring(1)}__\n`;
+				commandMsg += commandTypes[category].join(", ");
+				commandMsg += `\n`;
 			}
 
-			helpMsg += `\nUse \`help <command>\` to get more information on a command`;
-			return helpMsg;
+			return __("commands.default.help.commandList", message, {
+				count: Object.keys(bot.commands).length,
+				commands: commandMsg
+			});
 		}
 	},
 	description: "List commands, or get info on one",

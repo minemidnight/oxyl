@@ -8,7 +8,7 @@ module.exports = {
 				guildID: message.channel.guild.id
 			}).delete().run();
 
-			return `Enabled Oxyl in ${message.channel.mention}`;
+			return __("commands.admin.ignore.enabled", message, { channel: message.channel.mention });
 		} else {
 			bot.ignoredChannels.set(message.channel.id, message.channel.guild.id);
 			await r.table("ignoredChannels").insert({
@@ -16,7 +16,7 @@ module.exports = {
 				guildID: message.channel.guild.id
 			}).run();
 
-			return `Disabled Oxyl in ${message.channel.mention}`;
+			return __("commands.admin.ignore.disabled", message, { channel: message.channel.mention });
 		}
 	},
 	guildOnly: true,

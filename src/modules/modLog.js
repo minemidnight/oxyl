@@ -62,6 +62,7 @@ module.exports = {
 			await r.table("modLog").insert(insertData).run();
 		} else {
 			let caseData = await module.exports.info(guild, caseNum);
+			if(!caseData) return false;
 			if(caseData.reason) {
 				parsed = module.exports.parse(guild, {
 					action: "softban",

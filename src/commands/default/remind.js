@@ -2,7 +2,7 @@ const Duration = require("duration-js");
 module.exports = {
 	process: async message => {
 		if(!~message.args[0].indexOf(" in ")) {
-			return "Please provide a time, using this format: `remind <action> in <timespan>`";
+			return __("commands.default.remind.noTime", message);
 		}
 
 		let split = message.args[0].split(" in ");
@@ -20,7 +20,7 @@ module.exports = {
 			var duration = new Duration(time);
 			duration = duration.milliseconds();
 			if(duration < 30000 || duration > 2419200000) {
-				return "Please only create reminders for between 30 seconds and 4 weeks into the future.";
+				return __("commands.default.remind.invalidTime", message);
 			}
 		} catch(err) {
 			return err.message;
@@ -35,7 +35,8 @@ module.exports = {
 			date: date + duration,
 			type: "reminder"
 		});
-		return `Successfully created reminder: \`${action}\` in ${time}`;
+
+		return __("commands.default.remind.success", message, { action, time });
 	},
 	description: "Create a reminder",
 	args: [{

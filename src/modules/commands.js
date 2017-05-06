@@ -60,7 +60,7 @@ module.exports = async message => {
 						!(message.member.permission.has(command.perm) || message.author.id === guild.ownerID)) {
 		message.channel.createMessage(`You cannot run this command, it requires the permission ${command.perm}.`);
 		return;
-	} else if(editedInfo.roles && !editedInfo.roles.some(role => ~message.member.indexOf(role.id))) {
+	} else if(editedInfo.roles && !editedInfo.roles.some(role => ~message.member.roles.indexOf(role.id))) {
 		let roleNames = editedInfo.roles.map(roleID => guild.roles.has(roleID) ? guild.roles.get(roleID).name : roleID);
 		message.channel.createMessage(`You do not have the correct roles to use this command, ` +
 			`it requires one of the following: \`${roleNames.join("`, `")}\`.`);

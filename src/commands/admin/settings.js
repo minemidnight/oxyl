@@ -1,10 +1,9 @@
 module.exports = {
 	process: async message => {
 		if(!message.args[0]) {
-			return `__**Valid settings**__:\n${Object.keys(settings).join(", ")}` +
-				`\n\nRun \`setting <setting>\` to get more info on a specific setting`;
+			return __("commands.admin.settings.noArgs", message, { settings: Object.keys(settings).join(", ") });
 		} else if(!settings[message.args[0]]) {
-			return `Invalid setting!`;
+			return __("commands.admin.settings.invalidSetting", message);
 		} else if(!message.args[1]) {
 			let setting = settings[message.args[0]];
 			setting.name = message.args[0];
@@ -14,10 +13,12 @@ module.exports = {
 				await r.table("settings").filter({ name: setting.name, guildID: guild.id }).run()
 			)[0];
 
-			return `__**Setting**__: ${message.args[0]}\n` +
-				`Description: ${setting.description}\n` +
-				`Accepted Values: \`${setting.label || `<${setting.arg}>`}|reset\`\n` +
-				`Current Value: \`${currentValue ? currentValue.value : "no value"}\``;
+			return __("commands.admin.settings.settingInfo", message, {
+				setting: message.args[0],
+				description: settings.description,
+				accepted: `${setting.label || `<${setting.arg}>`}|reset`,
+				current: currentValue ? currentValue.value : __("words.noValue", message)
+			});
 		} else {
 			let setting = settings[message.args[0]], reset = false;
 			setting.name = message.args[0];
@@ -38,11 +39,11 @@ module.exports = {
 			)[0];
 
 			if(!currentValue && reset) {
-				return `\`${setting.name}\` cannot be reset because it is not yet set`;
+				return __("commands.admin.setings.cantReset", message, { setting: setting.name });
 			} else if(reset || (setting.type === "boolean")) {
 				await r.table("settings").get(currentValue.id).delete().run();
 				if(setting.name === "prefix") bot.prefixes.delete(message.channel.guild.id);
-				return `Reset setting \`${setting.name}\``;
+				return __("commands.admin.settings.resetSuccess", message, { setting: setting.name });
 			}
 
 			let insertData = {
@@ -61,7 +62,10 @@ module.exports = {
 			}
 
 			if(setting.name === "prefix") bot.prefixes.set(message.channel.guild.id, insertData.value);
-			return `Set \`${setting.name}\` to ${insertData.value}`;
+			return __("commands.admin.settings.setSuccess", message, {
+				setting: setting.name,
+				value: insertData.value
+			});
 		}
 	},
 	caseSensitive: true,

@@ -20,8 +20,8 @@ module.exports = {
 		let tableList = await r.tableList().run();
 		let tablesExpected = [
 			"autoRole", "blacklist", "donators", "editedCommands",
-			"ignoredChannels", "modLog", "roleMe", "rolePersist",
-			"savedQueues", "settings", "timedEvents", "warnings"
+			"ignoredChannels", "locales", "modLog", "roleMe",
+			"rolePersist", "savedQueues", "settings", "timedEvents", "warnings"
 		];
 
 		for(let table of tablesExpected) {
@@ -33,12 +33,32 @@ module.exports = {
 		console.startup(`RethinkDB successfully started on worker ${cluster.worker.id}`);
 
 		let prefixes = await r.table("settings").filter({ name: "prefix" }).run();
-		console.info(`Grabbed ${prefixes.length} prefixes to store in cache (worker ${cluster.worker.id})`);
-		prefixes.forEach(setting => bot.prefixes.set(setting.guildID, setting.value));
+		prefixes.forEach(setting => {
+			let shard = ~~((setting.guildID / 4194304) % cluster.worker.maxShards);
+			if(cluster.worker.shardStart >= shard && cluster.worker.shardEnd <= shard) {
+				bot.prefixes.set(setting.guildID, setting.value);
+			}
+		});
 
 		let channels = await r.table("ignoredChannels").run();
-		console.info(`Grabbed ${prefixes.length} ignored channels to store in cache (worker ${cluster.worker.id})`);
-		channels.forEach(ignored => bot.ignoredChannels.set(ignored.channelID, ignored.guildID));
+		channels.forEach(ignored => {
+			let shard = ~~((ignored.guildID / 4194304) % cluster.worker.maxShards);
+			if(cluster.worker.shardStart >= shard && cluster.worker.shardEnd <= shard) {
+				bot.ignoredChannels.set(ignored.channelID, ignored.guildID);
+			}
+		});
+
+		let locales = await r.table("locales").run();
+		locales.forEach(locale => {
+			if(locale.guild) {
+				let shard = ~~((locale.id / 4194304) % cluster.worker.maxShards);
+				if(cluster.worker.shardStart >= shard && cluster.worker.shardEnd <= shard) {
+					bot.localeCache.set(locale.id, locale.lang);
+				}
+			} else {
+				bot.localeCache.set(locale.id, locale.lang);
+			}
+		});
 	}
 };
 

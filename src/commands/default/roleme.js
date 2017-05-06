@@ -2,16 +2,15 @@ module.exports = {
 	process: async message => {
 		if(message.args[0] === "list") {
 			let roleList = await r.table("roleMe").filter({ guildID: message.channel.guild.id }).run();
-			if(roleList.length === 0) return "There are currently no available roles";
+			if(roleList.length === 0) return __("commands.default.roleMe.list.noneAvailable", message);
 
 			let roles = roleList
 				.filter(data => message.channel.guild.roles.has(data.roleID))
 				.map(data => message.channel.guild.roles.get(data.roleID).name);
-			return `List of available roles: \`${roles.join("`, `")}\``;
+			return __("commands.default.roleMe.list.success", message, { roles: `\`${roles.join("`, `")}\`` });
 		} else if(message.args[0].startsWith("add ")) {
 			if(!(message.member.permission.has("administrator") || message.author.id === message.channel.guild.ownerID)) {
-				return "You do not have correct permission to add roleme's, " +
-					"you must have the permission ADMINISTRATOR or be the server owner";
+				return __("commands.default.roleMe.noPerms", message);
 			}
 
 			let role;
@@ -25,17 +24,16 @@ module.exports = {
 				guildID: message.channel.guild.id,
 				roleID: role.id
 			}).run())[0];
-			if(roleAvailable) return "That role is already available";
+			if(roleAvailable) return __("commands.default.roleMe.add.alreadyAvailable", message);
 
 			await r.table("roleMe").insert({
 				guildID: message.channel.guild.id,
 				roleID: role.id
 			});
-			return `Added \`${role.name}\` to available roles`;
+			return __("commands.default.roleMe.add.success", message, { role: role.name });
 		} else if(message.args[0].startsWith("remove ")) {
 			if(!(message.member.permission.has("administrator") || message.author.id === message.channel.guild.ownerID)) {
-				return "You do not have correct permission to add roleme's, " +
-					"you must have the permission ADMINISTRATOR or be the server owner";
+				return __("commands.default.roleMe.noPerms", message);
 			}
 
 			let role;
@@ -49,10 +47,10 @@ module.exports = {
 				guildID: message.channel.guild.id,
 				roleID: role.id
 			}).run())[0];
-			if(!roleAvailable) return "That role is not available";
+			if(!roleAvailable) return __("commands.default.roleMe.notAvailable", message);
 
 			await r.table("roleMe").get(roleAvailable.id).delete().run();
-			return `Removed \`${role.name}\` from available roles`;
+			return __("commands.default.roleMe.remove.success", message, { role: role.name });
 		} else {
 			let role;
 			try {
@@ -67,17 +65,17 @@ module.exports = {
 			}).run())[0];
 
 			if(!roleAvailable) {
-				return "That role is not available";
+				return __("commands.default.roleMe.notAvailable", message);
 			} else if(!bot.utils.canAddRole(message.channel.guild, role)) {
-				return "Either I do not have permissions, or the muted role's position is higher than mine!";
+				return __("commands.default.roleMe.invalidBotPerms", message);
 			} else {
 				let hasRole = ~message.member.roles.indexOf(role.id);
 				if(hasRole) {
 					await message.member.removeRole(role.id);
-					return `Removed \`${role.name}\` from you`;
+					return __("commands.default.roleMe.removedRole", message, { role: role.name });
 				} else {
 					await message.member.addRole(role.id);
-					return `Gave you \`${role.name}\``;
+					return __("commands.default.roleMe.gaveRole", message, { role: role });
 				}
 			}
 		}

@@ -1,4 +1,4 @@
 module.exports = {
-	process: async message => `Thank you for considering donating.\nPatreon Page: https://patreon.com/minemidnight`,
+	process: async message => __("commands.default.donate.success", message),
 	description: "Get an link to Oxyl's patreon"
 };

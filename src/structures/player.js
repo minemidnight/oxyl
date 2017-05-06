@@ -81,6 +81,9 @@ class Player extends EventEmitter {
 		if(!song && !this.current) {
 			this.destroy("no_queue");
 			return;
+		} else if(!song) {
+			setTimeout(() => this.play(), 100);
+			return;
 		}
 
 		if(this.queue.length > 1) this.queue.shift();
@@ -143,7 +146,7 @@ function handlePlayer(player) {
 	let createMessage = async embed => {
 		if(!player.channel) return;
 		let announcements = (await r.table("settings").filter({ guildID: player.id, name: "musicmessages" }).run())[0];
-		if(announcements && announcements[0].value) return;
+		if(announcements[0] && announcements[0].value) return;
 
 		let listening = player.guild.channels.get(player.connection.channelID).voiceMembers
 			.filter(member => !member.bot && !member.voiceState.selfDeaf).length;

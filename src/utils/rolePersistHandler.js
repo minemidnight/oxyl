@@ -5,7 +5,7 @@ module.exports = async (guild, member, type) => {
 	else persists = persists.map(data => data.roleID);
 
 	if(type === "leave") {
-		if(member.roles.length === 0) return;
+		if(member.roles && member.roles.length === 0) return;
 
 		let toPersist = member.roles.filter(roleID => ~persists.indexOf(roleID));
 		await r.table("rolePersist").insert({

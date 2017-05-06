@@ -3,8 +3,11 @@ module.exports = {
 		let command = Object.keys(bot.commands)
 			.map(key => bot.commands[key])
 			.find(cmd => message.args[0] === cmd.name || ~cmd.aliases.indexOf(message.args[0]));
-		if(!command) return "Command not found";
-		else if(command.name === "editcommand" || command.type === "creator") return "You cannot edit this command";
+		if(!command) {
+			return __("commands.admin.editCommand.commandNotFound", message);
+		} else if(command.name === "editcommand" || command.type === "creator") {
+			__("commands.admin.editCommand.cantEdit", message);
+		}
 
 		if(message.args[1] === "info") {
 			let editedInfo = (await r.table("editedCommands").filter({
@@ -13,22 +16,23 @@ module.exports = {
 			}))[0];
 
 			if(!editedInfo) {
-				return "There are no edits to this command";
+				return __("commands.admin.editCommand.info.noEdits", message);
 			} else {
 				let roleNames = editedInfo.roles.map(roleID => message.channel.guild.roles.has(roleID) ?
 					message.channel.guild.roles.get(roleID).name : roleID);
 
-				let infoMessage = `__**Command**__: ${command.name}\n`;
-				infoMessage += `Enabled: ${editedInfo.enabled}\n`;
-				infoMessage += `Roles: ${editedInfo.roles.length === 0 ? "None required" : `\`${roleNames.join("`, `")}\``}`;
-				return infoMessage;
+				return __("commands.admin.editCommand.success", message, {
+					command: command.name,
+					enabled: editedInfo.enabled,
+					roles: editedInfo.roles.length === 0 ? __("phrases.noneRequired", message) : `\`${roleNames.join("`, `")}\``
+				});
 			}
 		} else if(message.args[1] === "reset") {
 			await r.table("editedCommands").filter({
 				command: command.name,
 				guildID: message.channel.guild.id
 			}).delete().run();
-			return `Reset command \`${command.name}\``;
+			return __("commands.admin.editCommand.reset.success", message, { command: command.name });
 		} else if(message.args[1] === "toggle") {
 			let editedInfo = (await r.table("editedCommands").filter({
 				command: command.name,
@@ -43,20 +47,21 @@ module.exports = {
 					roles: []
 				});
 
-				return `Disabled command \`${command.name}\``;
+				return __("commands.admin.editCommand.toggle.disabled", message, { command: command.name });
 			} else {
 				await r.table("editedCommands").get(editedInfo.id).update({ enabled: !editedInfo.enabled });
 
-				return `${!editedInfo.enabled ? "En" : "Dis"}abled command \`${command.name}\``;
+				return __(`commands.admin.editCommand.toggle.${!editedInfo.enabled ? "en" : "dis"}abled`,
+					message, { command: command.name });
 			}
 		} else if(message.args[1] === "roles") {
-			if(!message.args[2]) return "Please provide some roles to require! Split each with a ,";
+			if(!message.args[2]) return __("commands.admin.editCommand.roles.noArg", message);
 
 			let roles;
 			try {
 				roles = message.args[2].split(",").map(input => bot.utils.resolver.role(message, input));
 			} catch(err) {
-				return "Invalid roles given, please provide role names split with a ,";
+				return __("commands.admin.editCommand.roles.invalidRoles", message);
 			}
 
 			let editedInfo = (await r.table("editedCommands").filter({
@@ -74,11 +79,13 @@ module.exports = {
 			} else {
 				await r.table("editedCommands").get(editedInfo.id).update({ roles: roles.map(role => role.id) });
 			}
-			return `Command \`${command.name}\` now requires one of the following roles: ` +
-				`\`${roles.map(role => role.name).join("`, `")}\``;
+
+			return __("commands.admin.editCommand.roles.success", message, {
+				command: command.name,
+				roles: `\`${roles.map(role => role.name).join("`, `")}\``
+			});
 		} else {
-			return "Invalid sub-command! Please use the command as such: " +
-				"`editcommand <command name> <info|reset|toggle|roles> [<roles (split with ,)>]`";
+			return __("commands.admin.editCommand.invalidSubCommand", message);
 		}
 	},
 	description: "Edit a command by toggling it or requiring roles",

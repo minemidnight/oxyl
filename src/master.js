@@ -173,16 +173,16 @@ function init() {
 		timestamp: new Date()
 	});
 
-	let perCluster = publicConfig.shardsPerWorker;
+	let shardsPerWorker = publicConfig.shardsPerWorker;
 	if(~process.argv.indexOf("--shards")) shardCount = parseInt(process.argv[process.argv.indexOf("--shards") + 1]);
 	if(shardCount < 1) shardCount = 1;
 	process.shardCount = shardCount;
 	statsd({ type: "gauge", stat: "shards", value: shardCount });
 
-	const workerCount = Math.ceil(shardCount / perCluster);
+	const workerCount = Math.ceil(shardCount / shardsPerWorker);
 	statsd({ type: "gauge", stat: "workers", value: workerCount });
 	for(let i = 0; i < workerCount; i++) {
-		let shardStart = i * perCluster, shardEnd = ((i + 1) * 3) - 1;
+		let shardStart = i * shardsPerWorker, shardEnd = ((i + 1) * shardsPerWorker) - 1;
 		if(shardEnd > shardCount) shardEnd = shardCount - 1;
 
 		const worker = cluster.fork();
