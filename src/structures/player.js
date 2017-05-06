@@ -146,7 +146,7 @@ function handlePlayer(player) {
 	let createMessage = async embed => {
 		if(!player.channel) return;
 		let announcements = (await r.table("settings").filter({ guildID: player.id, name: "musicmessages" }).run())[0];
-		if(announcements[0] && announcements[0].value) return;
+		if(announcements && announcements.value) return;
 
 		let listening = player.guild.channels.get(player.connection.channelID).voiceMembers
 			.filter(member => !member.bot && !member.voiceState.selfDeaf).length;
