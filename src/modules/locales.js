@@ -20,10 +20,12 @@ global.__ = (context, message = { locale: "en" }, values = {}) => {
 	}
 
 	let placeholders = string.match(/{{[^{}]+}}/g);
-	placeholders.forEach(placeholder => {
-		placeholder = placeholder.substring(2, placeholder.length - 2);
-		string = string.replace(new RegExp(`{{${placeholder}}}`, "gi"), values[placeholder] || "**INVALID PLACEHOLDER**");
-	});
+	if(placeholders) {
+		placeholders.forEach(placeholder => {
+			placeholder = placeholder.substring(2, placeholder.length - 2);
+			string = string.replace(new RegExp(`{{${placeholder}}}`, "gi"), values[placeholder] || "**INVALID PLACEHOLDER**");
+		});
+	}
 
 	return string;
 };
