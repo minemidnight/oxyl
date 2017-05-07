@@ -1,23 +1,23 @@
 const modLog = require("../../modules/modLog.js");
-async function getMutedRole(guild) {
+async function getMutedRole(message) {
+	const guild = message.channel.guild;
 	let botMember = guild.members.get(bot.user.id);
-	let mutedRole = guild.roles.find(role => role.name.toLowerCase() === "muted");
+	let mutedRole = guild.roles.find(role => role.name.toLowerCase() === __("words.muted", guild));
 
 	if(mutedRole && !bot.utils.canAddRole(guild, mutedRole)) {
-		return "Either I do not have permissions, or the muted role's position is higher than mine!";
+		return __("commands.moderator.mute.roleError", message);
 	} else if(!mutedRole) {
 		let rolePerms = botMember.permission.has("manageRoles");
 		let channelPerms = botMember.permission.has("manageChannels");
 		if(!rolePerms && !channelPerms) {
-			return "I do not have permissions to create and configure a Muted role " +
-				"(needed: `Manage Roles` and `Manage Channels`)";
+			return __("commands.moderator.mute.missingBothPerms", message);
 		} else if(!rolePerms) {
-			return "I do not have permissions to create the Muted role (needed: `Manage Roles`)";
+			return __("commands.moderator.mute.missingRolePerms", message);
 		} else if(!channelPerms) {
-			return "I cannot correctly configure the Muted role (needed: `Manage Channels`)";
+			return __("commands.moderator.mute.missingChannelPerms", message);
 		} else {
 			mutedRole = await guild.createRole({
-				name: "Muted",
+				name: __("words.muted", guild, {}, true),
 				permissions: 0,
 				color: 0xDF4242
 			});
@@ -35,7 +35,7 @@ async function getMutedRole(guild) {
 
 module.exports = {
 	process: async message => {
-		let mutedRole = await getMutedRole(message.channel.guild);
+		let mutedRole = await getMutedRole(message);
 		if(typeof mutedRole === "string") return mutedRole;
 
 		if(message.args[1]) {
@@ -48,14 +48,14 @@ module.exports = {
 		}
 
 		let member = message.channel.guild.members.get(message.args[0].id);
-		if(!member) return "Error: user not in server";
+		if(!member) return __("phrases.notInGuild", message);
 		let isMuted = ~member.roles.indexOf(mutedRole.id);
 		if(isMuted) {
 			await member.removeRole(mutedRole.id);
-			return `${member.user.username} has been unmuted`;
+			return __("commands.moderator.mute.unmuted", message, { user: member.user.username });
 		} else {
 			await member.addRole(mutedRole.id);
-			return `${member.user.username} has been muted`;
+			return __("commands.moderator.mute.muted", message, { user: member.user.username });
 		}
 	},
 	guildOnly: true,

@@ -1,15 +1,15 @@
 module.exports = {
 	process: async message => {
 		let donator = (await r.table("donators").filter({ id: message.author.id }).run())[0];
-		if(!donator) return "You must be a donator to use this command!";
+		if(!donator) return __("commands.music.savequeue.donatorOnly", message);
 
 		let player = bot.players.get(message.channel.guild.id);
 		if(!player) {
-			return "There is currently no music playing";
+			return __("phrases.noMusic", message);
 		} else if(!player.voiceCheck(message.member)) {
-			return "You must be listening to music to use this command";
+			return __("phrases.notListening", message);
 		} else if(player.queue.length === 0) {
-			return "There is nothing queued!";
+			return __("phrases.noQueue", message);
 		} else {
 			let trimmedQueue = player.queue.map(song => {
 				if(song.service === "twitch") return `https://twitch.tv/${song.id}`;
@@ -33,8 +33,10 @@ module.exports = {
 				}).run();
 			}
 
-			return `Saved ${player.queue.length} items under saved queue #${message.args[0]}!\n` +
-				`Use \`play sq:${message.args[0]}\` to load the queue at a later time`;
+			return __("commands.music.savequeue.success", message, {
+				itemCount: player.queue.length,
+				queueNumber: message.args[0]
+			});
 		}
 	},
 	guildOnly: true,

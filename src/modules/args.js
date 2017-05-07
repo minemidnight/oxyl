@@ -50,7 +50,7 @@ module.exports = async (message) => {
 	}
 
 	if(args.length < command.args.filter(arg => !arg.optional).length) {
-		return `Invalid Usage! Please use the command as such: \`${command.name} ${command.usage}\``;
+		return __("modules.args.usageError", message, { command: command.name, usage: command.usage });
 	}
 
 	try {

@@ -23,19 +23,19 @@ module.exports = {
 			voiceChannel = undefined;
 		}
 
-		if(!voiceChannel) return "You are not in a voice channel";
+		if(!voiceChannel) return __("commands.music.play.notInVoice", message);
 		else if(!player) player = new Player(message.channel.guild, { channel: message.channel });
 
 		if(player && player.connection && !player.voiceCheck(message.member)) {
-			return "You must be listening to music to use this command";
+			return __("phrases.notListening", message);
 		} else if(voiceChannel && !voiceChannel.permissionsOf(bot.user.id).has("voiceConnect")) {
-			return "I cannot join that channel (no permissions)";
+			return __("phrases.cantJoin", message);
 		} else if(voiceChannel && !voiceChannel.permissionsOf(bot.user.id).has("voiceSpeak")) {
-			return "I cannot speak in that channel (no permissions)";
+			return __("phrases.cantSpeak", message);
 		} else if(message.args[0].startsWith("dfm:")) {
 			message.args[0] = message.args[0].substring(4).trim();
 			if(message.args[0] === "list") {
-				return `Discord.FM playlists: ${playlistsDisplay.join(", ")}`;
+				return __("commands.music.play.dfmPlaylists", message, { genres: playlistsDisplay.join(", ") });
 			} else if(~playlistsFormat.indexOf(message.args[0].replace(/ /g, "-"))) {
 				if(!player.connection) await player.connect(voiceChannel.id);
 				let data = JSON.parse(
@@ -63,46 +63,51 @@ module.exports = {
 				if(typeof res === "string") return res;
 
 				let display = playlistsDisplay[playlistsFormat.indexOf(message.args[0].replace(/ /g, "-"))];
-				return `Added Discord.FM playlist ${display} to queue`;
+				return __("commands.music.play.addedDFM", message, { genre: display });
 			} else {
-				return "Invalid Discord.FM playlist, use `dfm:list` to view the list of playlists";
+				return __("commands.music.play.invalidDFM", message);
 			}
 		} else if(message.args[0].startsWith("sq:")) {
 			message.args[0] = message.args[0].substring(3).trim();
 			let donator = (await r.table("donators").filter({ id: message.author.id }).run())[0];
-			if(!donator) return "You must be a donator to use saved queues!";
+			if(!donator) return __("commands.music.play.donatorOnly", message);
 
 			let queueNumber = parseInt(message.args[0]);
-			if(!queueNumber || queueNumber < 1 || queueNumber > 3) return "Invalid number! Valid numbers are 1, 2 or 3";
+			if(!queueNumber || queueNumber < 1 || queueNumber > 3) {
+				return __("commands.music.play.invalidSavedQueue", message);
+			}
 
 			let savedQueue = (await r.table("savedQueues").filter({
 				savedID: queueNumber,
 				userID: message.author.id
 			}).run())[0];
-			if(!savedQueue) return `There is no saved queue under #${queueNumber}`;
+			if(!savedQueue) return __("commands.music.play.noSavedQueue", message, { save: queueNumber });
 
 			if(!player.connection) await player.connect(voiceChannel.id);
 			await player.addQueue(await Promise.all(savedQueue.queue.map(mainResolver)));
-			return `Loaded queue #${queueNumber} (${savedQueue.queue.length} items)`;
+			return __("commands.music.play.loadedSaveQueue", message, {
+				save: queueNumber,
+				itemCount: savedQueue.queue.length
+			});
 		} else {
 			let result = await mainResolver(message.args[0]);
 			if(typeof result === "object") {
 				if(!player.connection) await player.connect(voiceChannel.id);
 				let res2 = await player.addQueue(result);
 				if(typeof res2 === "string") return res2;
-				else return `Added __${result.title}__ to the queue`;
+				else return __("commands.music.play.addedItem", message, { title: result.title });
 			} else if(result === "NO_VALID_FORMATS") {
-				return "No suitable formats were found";
+				return __("commands.music.play.noFormats", message);
 			} else if(result === "INVALID_ID") {
-				return "The ID from playlist/video link was invalid";
+				return __("commands.music.play.invalidID", message);
 			} else if(result === "NOT_FOUND") {
-				return "The resource could not be found, perhaps it has been removed?";
+				return __("commands.music.play.notFound", message);
 			} else if(result === "INVALID_TYPE") {
-				return "Please only link to SoundCloud songs or playlists";
+				return __("commands.music.play.invalidType", message);
 			} else if(result === "CHANNEL_OFFLINE") {
-				return "That Twitch channel is offline";
+				return __("commands.music.play.channelOffline", message);
 			} else if(result === "NO_RESULTS") {
-				return "No results from search query";
+				return __("commands.music.play.noSearchResults", message);
 			} else {
 				return result;
 			}

@@ -47,23 +47,22 @@ module.exports = async message => {
 	if(editedInfo.enabled === false) {
 		return;
 	} else if((command.guildOnly || command.perm || command.type === "admin") && !guild) {
-		message.channel.createMessage("Sorry, but this command is for guilds (servers) only.");
+		message.channel.createMessage(__("modules.commands.guildOnly", message));
 		return;
 	} else if(command.type === "creator" && !~bot.publicConfig.creators.indexOf(message.author.id)) {
-		message.channel.createMessage("This command can only be used by the creators of the bot.");
+		message.channel.createMessage(__("modules.commands.creatorOnly", message));
 		return;
 	} else if(command.type === "admin" && !editedInfo.roles &&
 						!(message.member.permission.has("administrator") || message.author.id === guild.ownerID)) {
-		message.channel.createMessage(`You cannot run this command, it requires the permission ADMINISTRATOR.`);
+		message.channel.createMessage(__("modules.commands.adminOnly", message));
 		return;
 	} else if(command.perm && !editedInfo.roles &&
 						!(message.member.permission.has(command.perm) || message.author.id === guild.ownerID)) {
-		message.channel.createMessage(`You cannot run this command, it requires the permission ${command.perm}.`);
+		message.channel.createMessage(__("modules.commands.noPerms", message, { perm: command.perm }));
 		return;
 	} else if(editedInfo.roles && !editedInfo.roles.some(role => ~message.member.roles.indexOf(role.id))) {
 		let roleNames = editedInfo.roles.map(roleID => guild.roles.has(roleID) ? guild.roles.get(roleID).name : roleID);
-		message.channel.createMessage(`You do not have the correct roles to use this command, ` +
-			`it requires one of the following: \`${roleNames.join("`, `")}\`.`);
+		message.channel.createMessage(__("modules.commands.noRoles", message, { roles: `\`${roleNames.join("`, `")}\`` }));
 		return;
 	}
 
@@ -99,13 +98,13 @@ module.exports = async message => {
 			let resp = JSON.parse(err.response);
 			let permCodes = [50013, 10008, 50001, 40005, 10003];
 			if(~permCodes.indexOf(resp.code)) {
-				message.channel.createMessage("Command failed due to a permissions error");
+				message.channel.createMessage(__("modules.commands.permissionFail", message));
 			} else {
 				throw err;
 			}
 		} catch(error) {
-			message.channel.createMessage(`Error executing this command! ` +
-				`Stack trace: ${bot.utils.codeBlock(err.stack)}`);
+			message.channel.createMessage(__("modules.commands.errorRunning", message,
+				{ stack: bot.utils.codeBlock(err.stack) }));
 		}
 	}
 };

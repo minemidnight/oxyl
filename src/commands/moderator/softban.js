@@ -2,18 +2,18 @@ const modLog = require("../../modules/modLog.js");
 module.exports = {
 	process: async message => {
 		let banPerms = message.channel.guild.members.get(bot.user.id).permission.has("banMembers");
-		if(!banPerms) return "I am missing the permission to ban members!";
+		if(!banPerms) return __("commands.moderator.softban.noPerms", message);
 
 		let member = message.channel.guild.members.get(message.args[0].id);
-		if(!member) return "Error: user not in server";
+		if(!member) return __("phrases.notInGuild", message);
 
 		let bannableBot = bot.utils.isPunishable(member, bot.user.id);
 		let bannable = bot.utils.isPunishable(member, message.author.id);
 
 		if(!bannableBot) {
-			return `${member.user.username} couldn't be banned, because they have higher permisions than Oxyl`;
+			return __("commands.moderator.softban.botCantBan", message);
 		} else if(!bannable) {
-			return `${member.user.username} couldn't be banned, because they have higher permisions than you`;
+			return __("commands.moderator.softban.youCantBan", message);
 		} else {
 			if(message.args[1]) {
 				let guild = message.channel.guild;
@@ -25,7 +25,7 @@ module.exports = {
 
 			await member.ban(7);
 			member.unban();
-			return `${member.user.username} has been softbanned`;
+			return __("commands.moderator.softban.success", message, { user: member.user.username });
 		}
 	},
 	guildOnly: true,

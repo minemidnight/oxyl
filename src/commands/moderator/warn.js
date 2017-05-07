@@ -2,11 +2,11 @@ const modLog = require("../../modules/modLog.js");
 module.exports = {
 	process: async message => {
 		let member = message.channel.guild.members.get(message.args[0].id);
-		if(!member) return "Error: user not in server";
+		if(!member) return __("phrases.notInGuild", message);
 
 		let warnable = bot.utils.isPunishable(member, message.author.id);
 		if(!warnable) {
-			return "You do not have correct permission to warn that user";
+			return __("commands.moderator.warn.noPerms", message);
 		} else {
 			let warnCount = (await r.table("warnings").filter({
 				guildID: message.channel.guild.id,
@@ -44,7 +44,7 @@ module.exports = {
 			}
 
 			await r.table("warnings").insert({ guildID: message.channel.guild.id, userID: member.id }).run();
-			return `Successfully warned ${member.user.username} (total warnings: ${warnCount})`;
+			return __("commands.moderator.warn.success", message, { user: member.user.username, warnCount });
 		}
 	},
 	caseSensitive: true,

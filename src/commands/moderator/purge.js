@@ -3,7 +3,7 @@ module.exports = {
 	process: async message => {
 		let deletePerms = message.channel.guild.members.get(bot.user.id).permission.has("manageMessages");
 		if(!deletePerms) {
-			let msg = await message.channel.createMessage("I do not have permssion to Manage Messages");
+			let msg = await message.channel.createMessage(__("commands.moderator.purge.noPerms", message));
 			setTimeout(() => msg.delete(), 3000);
 		} else if(message.args[1]) {
 			await message.delete();

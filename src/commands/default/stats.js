@@ -20,17 +20,18 @@ module.exports = {
 		})).result;
 		let totalUsage = (masterUsage + results.map(res => res[2]).reduce((a, b) => a + b)) / Math.pow(1024, 3);
 
-		return `__**Guilds**__\n` +
-			`Large (over 250 members): ${largeGuilds}\n` +
-			`Others: ${totalGuilds - largeGuilds}\n` +
-			`Total: ${totalGuilds}\n` +
-			`Streaming In: ${streams}\n\n` +
-			`__**Other**__\n` +
-			`Worker Memory Usage: ${(workerUsage / Math.pow(1024, 2)).toFixed(2)}MB\n` +
-			`Total: ${totalUsage.toFixed(2)}GB\n` +
-			`Worker: ${cluster.worker.id} (shards: ${cluster.worker.shardStart}-${cluster.worker.shardEnd})\n` +
-			`Uptime: ${bot.utils.parseMs(Date.now() - bot.startTime)}\n` +
-			`Website: http://minemidnight.work`;
+		return __("commands.default.stats.success", message, {
+			largeGuilds,
+			smallGuilds: totalGuilds - largeGuilds,
+			totalGuilds,
+			streamCount: streams,
+			workerUsage: (workerUsage / Math.pow(1024, 2)).toFixed(2),
+			totalUsage: totalUsage.toFixed(2),
+			worker: cluster.worker.id,
+			shardRange: `${cluster.worker.shardStart}-${cluster.worker.shardEnd}`,
+			uptime: bot.utils.parseMs(Date.now() - bot.startTime),
+			webiste: "http://minemidnight.work"
+		});
 	},
 	description: "View information about Oxyl",
 	aliases: ["info"]

@@ -2,7 +2,7 @@ const Duration = require("duration-js");
 module.exports = {
 	process: async message => {
 		if(!~message.args[0].indexOf(" in ")) {
-			return "Please provide a time, using this format: `giveaway <item> in <timespan>`";
+			return __("commands.moderator.giveaway.noTime", message);
 		}
 
 		let split = message.args[0].split(" in ");
@@ -20,16 +20,17 @@ module.exports = {
 			var duration = new Duration(time);
 			duration = duration.milliseconds();
 			if(duration < 30000 || duration > 2419200000) {
-				return "Please only create giveaways for between 30 seconds and 4 weeks into the future.";
+				return __("commands.moderator.giveaway.invalidTime", message);
 			}
 		} catch(err) {
 			return err.message;
 		}
 
 		let date = Date.now();
-		let msg = await message.channel.createMessage(`__**GIVEAWAY!**__\n` +
-			`React with 🎉 to have a chance to win ${item}\n` +
-			`Ending on: ${bot.utils.formatDate(date + duration)}`);
+		let msg = await message.channel.createMessage(__("commands.moderator.giveaway.message", message, {
+			item,
+			date: bot.utils.formatDate(date + duration)
+		}));
 		await msg.addReaction("🎉");
 
 		await r.table("timedEvents").insert({

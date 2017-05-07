@@ -19,9 +19,7 @@ module.exports = {
 				command: command.name,
 				category: command.type,
 				usage: command.usage,
-				aliases: command.aliases.length ?
-					command.aliases.join(", ") :
-					__("words.none", message).charAt(0).toUpperCase + __("words.none", message).substring(1),
+				aliases: command.aliases.length ? command.aliases.join(", ") : __("words.none", message, {}, true),
 				description: command.description || __("phrases.noneProvided", message),
 				requiredPermission: command.perm || __("phrases.noneRequired", message)
 			});

@@ -2,11 +2,11 @@ module.exports = {
 	process: async message => {
 		let player = bot.players.get(message.channel.guild.id);
 		if(!player) {
-			return "There is currently no music playing";
+			return __("phrases.noMusic", message);
 		} else if(!player.voiceCheck(message.member)) {
-			return "You must be listening to music to use this command";
+			return __("phrases.notListening", message);
 		} else {
-			if(player.queue.length === 0) return "There is nothing queued";
+			if(player.queue.length === 0) return __("phrases.noQueue", message);
 
 			let toRemove = [];
 			if(message.args[0].indexOf("-") !== -1) {
@@ -28,11 +28,11 @@ module.exports = {
 				if(int === "l" || int === "latest") return player.queue.length;
 				else return parseInt(int);
 			});
-			if(toRemove.some(int => isNaN(int))) return "Please provide the queue position of the song (numbers only)";
+			if(toRemove.some(int => isNaN(int))) return __("commands.music.removequeue.invalidQueue", message);
 
 			toRemove.forEach(int => delete player.queue[int]);
 			player.queue = player.queue.filter(item => item !== undefined);
-			return `Removed ${toRemove.length} song${toRemove.length > 1 ? "s" : ""} from the queue`;
+			return __("commands.music.removequeue.success", message, { itemCount: toRemove.length });
 		}
 	},
 	guildOnly: true,

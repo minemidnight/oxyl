@@ -2,18 +2,18 @@ const modLog = require("../../modules/modLog.js");
 module.exports = {
 	process: async message => {
 		let kickPerms = message.channel.guild.members.get(bot.user.id).permission.has("kickMembers");
-		if(!kickPerms) return "I am missing the permission to kick members!";
+		if(!kickPerms) return __("commands.moderator.kick.noPerms", message);
 
 		let member = message.channel.guild.members.get(message.args[0].id);
-		if(!member) return "Error: user not in server";
+		if(!member) return __("phrases.notInGuild", message);
 
 		let kickableBot = bot.utils.isPunishable(member, bot.user.id);
 		let kickable = bot.utils.isPunishable(member, message.author.id);
 
 		if(!kickableBot) {
-			return `${member.user.username} couldn't be kicked, because they have higher permisions than Oxyl`;
+			return __("commands.moderator.kick.botCantBan", message, { user: member.user.username });
 		} else if(!kickable) {
-			return `${member.user.username} couldn't be kicked, because they have higher permisions than you`;
+			return __("commands.moderator.kick.youCantBan", message, { user: member.user.username });
 		} else {
 			if(message.args[1]) {
 				let guild = message.channel.guild;
@@ -25,7 +25,7 @@ module.exports = {
 
 			member.kick();
 			modLog.create(message.channel.guild, "kick", message.args[0]);
-			return `${member.user.username} has been kicked`;
+			return __("commands.moderator.kick.success", message, { user: member.user.username });
 		}
 	},
 	caseSensitive: true,

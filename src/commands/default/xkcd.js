@@ -2,7 +2,9 @@ const request = require("request-promise");
 let maxComic = 0;
 module.exports = {
 	process: async message => {
-		if(message.args[0] && message.args[0] > maxComic) return `Invalid Comic! Comics available: 1-${maxComic}`;
+		if(message.args[0] && message.args[0] > maxComic) {
+			return __("commands.default.xkcd.invalidComic", message, { comicRange: `1-${maxComic}` });
+		}
 
 		let comic = message.args[0] || Math.floor(Math.random() * maxComic) + 1;
 		let body = await request(`http://xkcd.com/${comic}/info.0.json`);

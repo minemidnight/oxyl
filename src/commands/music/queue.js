@@ -1,9 +1,9 @@
 module.exports = {
 	process: async message => {
 		let player = bot.players.get(message.channel.guild.id);
-		if(!player) return "There is currently no music playing";
+		if(!player) return __("phrases.noMusic", message);
 
-		let queueMsg = `__**Music Queue (${player.queue.length})**__\n`;
+		let queueMsg = "";
 		let page = message.args[0] || 1;
 		let pageAmount = Math.ceil(player.queue.length / 15);
 		if(page > pageAmount) page = pageAmount;
@@ -13,24 +13,31 @@ module.exports = {
 				.map((song, i) => `[${((page - 1) * 15) + i + 1}] ${song.title}`)
 				.join("\n");
 
-			queueMsg += `\n**Page ${page}/${pageAmount}**`;
+			queueMsg += `\n**${__("words.page", message, {}, true)} ${page}/${pageAmount}**`;
 		} else {
 			queueMsg += `N/A`;
 		}
 
 		if(!player.current || !player.connection) {
-			queueMsg += `\n\nPlaying: Nothing (Still queueing?)`;
+			queueMsg += "\n\n";
+			queueMsg += __("phrases.queueError", message);
 		} else {
 			if(!isNaN(player.current.duration)) var videoDuration = bot.utils.secondsToDuration(player.current.duration);
-			queueMsg += `\n\nPlaying: ${player.current.title}`;
-
 			let playTime = bot.utils.secondsToDuration(Math.floor(player.connection.current.playTime / 1000));
-			if(videoDuration) queueMsg += ` **(**${playTime}/${videoDuration}**)**`;
-			else queueMsg += ` **(**${playTime}/LIVE**)**`;
+
+			queueMsg += "\n\n";
+			queueMsg += __("phrases.currentPlaying", message, {
+				title: player.current.title,
+				duration: videoDuration ? `${playTime}/${videoDuration}` : `${playTime}/LIVE`
+			});
 		}
 
-		queueMsg += `\nRepeat: ${player.repeat ? "on" : "off"}`;
-		return queueMsg;
+		queueMsg += "\n";
+		queueMsg += __("phrases.repeat", message, { repeat: __(`words.${player.repeat ? "on" : "off"}`, message) });
+		return __("commands.music.queue.success", message, {
+			itemCount: player.queue.length,
+			message: queueMsg
+		});
 	},
 	guildOnly: true,
 	description: "List the music queue",
