@@ -46,19 +46,19 @@ module.exports = {
 	boolean: (message, input) => {
 		if(~["enable", "yes", "true", "1"].indexOf(input)) return true;
 		else if(~["disable", "no", "false", "0"].indexOf(input)) return false;
-		else throw new Error("Invalid input! Please provide true/yes or false/no");
+		else throw new Error(__("modules.resolver.booleanError", message));
 	},
 	link: (message, input) => {
-		if(!linkFilter.test(input)) throw new Error("Invalid link");
+		if(!linkFilter.test(input)) throw new Error(__("modules.resolver.invalidLink", message));
 		else return input;
 	},
 	num: (message, input, options) => {
-		if(!input.match(/\d+/)) throw new Error("Argument provided is not a number");
+		if(!input.match(/\d+/)) throw new Error(__("modules.resolver.NaN", message));
 		else input = parseInt(input);
 		if(options.min && input < options.min) {
-			throw new Error(`Argument provided is less than minimum amount (${options.min})`);
+			throw new Error(__("modules.resolver.underMin", message, { min: options.min }));
 		} else if(options.max && input > options.max) {
-			throw new Error(`Argument provided is more than maximum amount (${options.max})`);
+			throw new Error(__("modules.resolver.aboveMax", message, { max: options.max }));
 		} else {
 			return input;
 		}
@@ -70,7 +70,7 @@ module.exports = {
 		);
 
 		if(foundRole) return foundRole;
-		else throw new Error("No role found");
+		else throw new Error(__("modules.resolver.noRole", message));
 	},
 	text: (message, input) => input,
 	textChannel: (message, input) => {
@@ -79,39 +79,47 @@ module.exports = {
 			.find(ch => input === ch.id || input.toLowerCase() === ch.name.toLowerCase());
 
 		if(foundChannel) return foundChannel;
-		else throw new Error("No channel found");
+		else throw new Error(__("modules.resolver.noChannel", message));
 	},
 	user: async (message, input) => {
 		let match = /<@!?(\d{14,20})>/.exec(input);
 		if(match && match[1]) {
 			let user = bot.users.get(match[1]);
 			if(user) return user;
-			else throw new Error("User from mention not cached");
+			else throw new Error(__("modules.resolver.notCached", message));
 		} else {
 			let usersFound = message.channel.guild ?
 				getUsers(input, message.channel.guild.members) || getUsers(input, bot.users) :
 				getUsers(input, bot.users);
 			if(!usersFound || usersFound.length === 0) {
-				throw new Error("No mention or user found");
+				throw new Error(__("modules.resolver.noUserFound", message));
 			} else if(usersFound.length === 1) {
 				return usersFound[0];
 			} else {
 				let map = usersFound.slice(0, 15)
-					.map((user, i) => `[${i + 1}] ${user.username}#${user.discriminator}`).join("\n");
-				if(usersFound.length > 15) map += `\n... and ${usersFound.length - 15} more`;
-				let selectUser = await message.channel.createMessage(`Multiple users found. Please say a number ` +
-						`below to choose one in the next 10 seconds: ${bot.utils.codeBlock(map, "ini")}`);
+					.map((user, i) => `[${i + 1}] ${user.username}#${user.discriminator}`)
+					.join("\n");
+				if(usersFound.length > 15) {
+					map += "\n";
+					map += __("modules.resolver.andMore", message, { users: usersFound.length - 15 });
+				}
+
+				let content = __("modules.resolver.multipleUsers", message, { users: bot.utils.codeBlock(map, "ini") });
+				let selectUser = await message.channel.createMessage(content);
 
 				let responses = await bot.utils.awaitMessages(message.channel,
 					newMsg => newMsg.author.id === message.author.id, { maxMatches: 1, time: 10000 });
 
 				if(responses.length === 0) {
-					throw new Error("No user given");
+					throw new Error(__("modules.resolver.noUserChosen", message));
 				} else {
 					let int = parseInt(responses[0].content);
 					await selectUser.delete();
-					if(isNaN(int) || int > 15 || int < 1 || int > usersFound.length) throw new Error("Invalid user number");
-					else return usersFound[int - 1];
+					if(isNaN(int) || int > 15 || int < 1 || int > usersFound.length) {
+						throw new Error(__("modules.resolver.invalidUser", message));
+					} else {
+						return usersFound[int - 1];
+					}
 				}
 			}
 		}

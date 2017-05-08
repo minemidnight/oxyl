@@ -19,10 +19,7 @@ class Player extends EventEmitter {
 		if(!this.connection) return false;
 		if(this.queue.length >= 2000) {
 			let donator = (await r.table("donators").filter({ id: this.guild.ownerID }))[0];
-			if(!donator) {
-				return "You cannot add any more songs! Your queue already has 2000 songs. " +
-					"If you want an unlimited queue size, consider donating.";
-			}
+			if(!donator) return __("modules.player.maxQueue", this.guild);
 		}
 
 		if(Array.isArray(data)) this.queue = this.queue.concat(data);
@@ -33,10 +30,7 @@ class Player extends EventEmitter {
 			let donator = (await r.table("donators").filter({ id: this.guild.ownerID }).run())[0];
 			if(!donator) {
 				this.queue = this.queue.slice(0, (donator ? 10000 : 2000) - 1);
-				if(!donator) {
-					return "Your queue was added, but not fully. Your queue has been capped at 2000 songs. " +
-						"If you want an unlimited queue size, consider donating.";
-				}
+				if(!donator) return __("modules.player.cutOffQueue", this.guild);
 			}
 		}
 		return true;
@@ -91,11 +85,11 @@ class Player extends EventEmitter {
 
 		if(!song.stream) song = await mainResolver.extract(song);
 		if(!song.stream) {
-			this.emit("error", new Error("No stream returned after extraction"));
+			this.emit("error", new Error(__("modules.player.extractionError", this.guild)));
 			this.play();
 			return;
 		} else if(typeof song.stream === "string" && song.stream === "NO_VALID_FORMATS") {
-			this.emit("error", new Error("No suitable formats were found"));
+			this.emit("error", new Error(__("modules.player.noFormats", this.guild)));
 			this.play();
 			return;
 		} else if(typeof song.stream === "string" && song.stream.startsWith("ERROR:")) {
@@ -157,8 +151,8 @@ function handlePlayer(player) {
 		let embed = {
 			description: `**${song.title}**`,
 			image: { url: song.thumbnail },
-			footer: { text: `ID: ${song.id} | Service: ${song.service}` },
-			title: "▶ Now playing"
+			footer: { text: `ID: ${song.id} | ${__("words.service", this.guild)}: ${song.service}` },
+			title: `▶ ${__("phrases.nowPlaying", this.guild)}`
 		};
 		if(song.duration && !isNaN(song.duration)) embed.description += ` (${bot.utils.secondsToDuration(song.duration)})`;
 		createMessage(embed);
@@ -168,7 +162,7 @@ function handlePlayer(player) {
 		createMessage({
 			color: 0xF1C40F,
 			description: err.stack || err.message,
-			title: "⚠ Recieved Error"
+			title: `⚠ ${__("phrases.recievedError", this.guild)}`
 		});
 	});
 }

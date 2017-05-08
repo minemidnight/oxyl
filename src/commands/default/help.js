@@ -21,7 +21,7 @@ module.exports = {
 				usage: command.usage,
 				aliases: command.aliases.length ? command.aliases.join(", ") : __("words.none", message, {}, true),
 				description: command.description || __("phrases.noneProvided", message),
-				requiredPermission: command.perm || __("phrases.noneRequired", message)
+				perm: command.perm || __("phrases.noneRequired", message)
 			});
 		} else {
 			let commandMsg = "", commandTypes = {};

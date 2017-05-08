@@ -5,7 +5,7 @@ module.exports = {
 		).run();
 
 		waitingEvents.forEach(event => {
-			if(!module.exports[event.type] || !event || !event.type) console.log(event);
+			if(!module.exports[event.type] || !event || !event.type) return;
 			else module.exports[event.type](event);
 			r.table("timedEvents").get(event.id).delete().run();
 		});

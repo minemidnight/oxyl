@@ -85,7 +85,7 @@
                 "success": "Support Server: {{server}}\nInvite: {{invite}}"
             },
             "ping": {
-                "success": "Pong! `{{ms}}ms`"
+                "success": "Pong! `{{latency}}ms`"
             },
             "remind": {
                 "noTime": "Please provide a time, using this format: `remind <action> in <timespan>`",
@@ -247,7 +247,72 @@
             }
         }
     },
-    "phrases": {
+    "modules": {
+        "args": {
+            "usageError": "Invalid Usage! Please use the command as such: `{{command}} {{usage}}`"
+        },
+        "commands": {
+            "guildOnly": "Sorry, but this command is for guilds (servers) only.",
+            "creatorOnly": "This command can only be used by the creators of the bot.",
+            "adminOnly": "You cannot run this command, it requires the permission ADMINISTRATOR.",
+            "noPerms": "You cannot run this command, it requires the permission {{perm}}.",
+            "noRoles": "You do not have the correct roles to use this command, it requires one of the following: {{roles}}",
+            "permissionFail": "Command failed due to a permissions error",
+            "errorRunning": "Error executing this command! Stack trace: {{stack}}"
+        },
+        "modLog": {
+            "actions": {
+                "specialRoleAdd": "Special Role Added",
+                "specialRoleRemove": "Special Role Removed",
+                "ban": "Ban",
+                "kick": "Kick",
+                "pardon": "Pardon",
+                "softban": "Softban",
+                "unban": "Unban",
+								"reason": "Reason"
+            },
+            "words": {
+                "case": "case",
+                "action": "action",
+                "user": "user",
+                "mod": "mod",
+                "totalWarnings": "total warnings",
+                "noReason": "Responsible moderator, set this using `reason {{caseNum}}`"
+            }
+        },
+        "player": {
+            "maxQueue": "You cannot add any more songs! Your queue already has 2000 songs. If you want an unlimited queue size, consider donating.",
+            "cutOffQueue": "Your queue was added, but not fully. Your queue has been capped at 2000 songs. If you want an unlimited queue size, consider donating.",
+            "extractionError": "No stream returned after extraction",
+            "noFormats": "No suitable formats were found"
+        },
+        "resolver": {
+            "booleanError": "Invalid input! Please provide true/yes or false/no",
+            "invalidLink": "Invalid link",
+            "NaN": "Argument provided is not a number",
+            "underMin": "Argument provided is less than minimum amount ({{min}})",
+            "aboveMax": "Argument provided is greater than maximum amount ({{max}})",
+            "noRole": "No role found",
+            "noChannel": "No channel found",
+            "notCached": "User from mention not cached",
+            "noUserFound": "No user could be found",
+						"andMore": "... and {{users}} more",
+            "multipleUsers": "Multiple users found. Please say a number below to choose one in the next 10 seconds: {{users}}",
+            "noUserChosen": "No user chosen",
+						"invalidUser": "Invalid user number selected!"
+        },
+        "timedEvents": {
+            "reminder": "You asked me to remind you about this on {{date}}:\n\n {{action}}",
+            "giveawayWinner": "__**GIVEAWAY WINNER**__\nCongratulations, {{winner}} you have won {{item}}!",
+            "noGiveawayEntries": "__**GIVEAWAY WINNER**__\nSadly, nobody entered the giveaway for {{item}}, so there is no winner."
+        },
+				"locales": {
+					"invalidContext": "Invalid context for translation: {{context}}, {{part}} (non existant). Please report this to Support",
+					"incompleteContext": "Incomplete context for translation: {{context}} (non string). Please report this to Support",
+					"invalidPlaceholder": "INVALID PLACEHOLDER, please alert bot owner"
+				}
+    },
+		"phrases": {
         "noMusic": "There is currently no music playing",
         "notListening": "You must be listening to music to use this command",
         "notInGuild": "Error: user not in guild",
@@ -275,62 +340,5 @@
         "on": "on",
         "off": "off",
         "service": "service"
-    },
-    "modules": {
-        "args": {
-            "usageError": "Invalid Usage! Please use the command as such: `{{command}} {{usage}}`"
-        },
-        "commands": {
-            "guildOnly": "Sorry, but this command is for guilds (servers) only.",
-            "creatorOnly": "This command can only be used by the creators of the bot.",
-            "adminOnly": "You cannot run this command, it requires the permission ADMINISTRATOR.",
-            "noPerms": "You cannot run this command, it requires the permission {{perm}}.",
-            "noRoles": "You do not have the correct roles to use this command, it requires one of the following: {{roles}}",
-            "permissionFail": "Command failed due to a permissions error",
-            "errorRunning": "Error executing this command! Stack trace: {{stack}}"
-        },
-        "modLog": {
-            "actions": {
-                "specialRoleAdd": "Special Role Added",
-                "specialRoleRemove": "Special Role Removed",
-                "ban": "Ban",
-                "kick": "Kick",
-                "pardon": "Pardon",
-                "softban": "Softban",
-                "unban": "Unban"
-            },
-            "words": {
-                "case": "case",
-                "action": "action",
-                "user": "user",
-                "mod": "mod",
-                "totalWarnings": "total warnings",
-                "noReason": "Responsible moderator, set this using `reason {{caseNum}}`"
-            }
-        },
-        "player": {
-            "maxQueue": "You cannot add any more songs! Your queue already has 2000 songs. If you want an unlimited queue size, consider donating.",
-            "cutOffQueue": "Your queue was added, but not fully. Your queue has been capped at 2000 songs. If you want an unlimited queue size, consider donating.",
-            "extractionError": "No stream returned after extraction",
-            "noFormats": "No suitable formats were found"
-        },
-        "resolver": {
-            "booleanError": "Invalid input! Please provide true/yes or false/no",
-            "invalidLink": "Invalid link",
-            "NaN": "Argument provided is not a number",
-            "underMin": "Argument provided is less than minimum amount ({{min}})",
-            "aboveMax": "Argument provided is greater than maximum amount ({{max}})",
-            "noRole": "No role found",
-            "noChannel": "No channel found",
-            "notCached": "User from mention not cached",
-            "noUserFound": "No user could be found",
-            "multipleUsers": "Multiple users found. Please say a number below to choose one in the next 10 seconds: {{users}}",
-            "noUserChosen": "No user chosen"
-        },
-        "timedEvents": {
-            "reminder": "You asked me to remind you about this on {{date}}:\n\n {{action}}",
-            "giveawayWinner": "__**GIVEAWAY WINNER**__\nCongratulations, {{winner}} you have won {{item}}!",
-            "noGiveawayEntries": "__**GIVEAWAY WINNER**__\nSadly, nobody entered the giveaway for {{item}}, so there is no winner."
-        }
     }
 }
