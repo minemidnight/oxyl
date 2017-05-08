@@ -25,7 +25,7 @@ exports.cmd = new Oxyl.Command("botinfo", async message => {
 	let otherInfo = [
 		`Memory Usage: ${memoryInfo}`,
 		`Website: http://minemidnight.work`,
-		`Creator: minemidnight`,
+		`Creator: minemidnight & TonyMaster21`,
 		`Library: Eris`,
 		`GitHub: <http://github.com/minemidnight/oxyl>`,
 		`Prefix - o!, oxyl, or ${bot.user.mention}`
