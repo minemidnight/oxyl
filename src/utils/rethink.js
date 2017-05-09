@@ -49,16 +49,7 @@ module.exports = {
 		});
 
 		let locales = await r.table("locales").run();
-		locales.forEach(locale => {
-			if(locale.guild) {
-				let shard = ~~((locale.id / 4194304) % cluster.worker.maxShards);
-				if(cluster.worker.shardStart >= shard && cluster.worker.shardEnd <= shard) {
-					bot.localeCache.set(locale.id, locale.lang);
-				}
-			} else {
-				bot.localeCache.set(locale.id, locale.lang);
-			}
-		});
+		locales.forEach(locale => bot.localeCache.set(locale.id, locale.lang));
 	}
 };
 

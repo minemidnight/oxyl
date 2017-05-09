@@ -32,7 +32,7 @@ module.exports = async (guild, member, type) => {
 
 		for(let roleID of persistData.roles) {
 			if(trackedRoles && ~trackedRoles.value.indexOf(roleID) && channel) {
-				modLog.presetReasons[guild.id] = { reason: "Role Persist", mod: bot.user };
+				modLog.presetReasons[guild.id] = { reason: __("phrases.rolePersist", guild), mod: bot.user };
 			}
 			try {
 				await member.addRole(roleID);

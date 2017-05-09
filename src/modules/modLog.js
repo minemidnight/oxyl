@@ -1,8 +1,3 @@
-const readableActions = {
-	specialRoleAdd: "Special Role Added",
-	specialRoleRemove: "Special Role Removed"
-};
-
 module.exports = {
 	cases: guild => r.table("modLog").filter({ guildID: guild.id }).run(),
 	channel: async guild => {
@@ -118,19 +113,22 @@ module.exports = {
 		return "SUCCESS";
 	},
 	parse: (guild, { action, caseNum, user, reason, mod, role, warnCount }) => {
-		if(readableActions[action]) action = readableActions[action];
+		action = __(`modules.modLog.actions.${action}`, guild);
 		action = action.substring(0, 1).toUpperCase() + action.substring(1);
 
-		let parsed = `__**CASE #${caseNum}**__` +
-			`\n**ACTION**: ${action}`;
-		if(role) parsed += ` (${guild.roles.get(role).name})`;
-		else if(warnCount !== undefined) parsed += `\n**TOTAL WARNINGS**: ${warnCount}`;
+		let parsed = `__**${__("modules.modLog.words.case", guild).toUpperCase()} #${caseNum}**__` +
+			`\n**${__("modules.modLog.words.action", guild).toUpperCase()}**: ${action}`;
+		if(role) {
+			parsed += ` (${guild.roles.get(role).name})`;
+		} else if(warnCount !== undefined) {
+			parsed += `\n**${__("modules.modLog.words.totalWarnings", guild).toUpperCase()}**: ${warnCount}`;
+		}
 
-		parsed +=	`\n**USER**: ${user}` +
-			`\n**REASON**: `;
+		parsed +=	`\n**${__("modules.modLog.words.user", guild).toUpperCase()}**: ${user}` +
+			`\n**${__("modules.modLog.words.reason", guild).toUpperCase()}**: `;
 
-		if(reason) parsed += `${reason}\n**MOD**: ${mod}`;
-		else parsed += `Responsible moderator, set this using \`reason ${caseNum}\``;
+		if(reason) parsed += `${reason}\n**${__("modules.modLog.words.mod", guild).toUpperCase()}**: ${mod}`;
+		else parsed += __("modules.modLog.words.noReason", guild);
 		return parsed;
 	},
 	presetReasons: {},

@@ -84,6 +84,10 @@
             "invite": {
                 "success": "Support Server: {{server}}\nInvite: {{invite}}"
             },
+						"locale": {
+							"englishName": "English",
+							"nativeName": "English"
+						},
             "ping": {
                 "success": "Pong! `{{latency}}ms`"
             },

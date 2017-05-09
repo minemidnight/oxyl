@@ -51,9 +51,34 @@ module.exports = {
 				guildID: guild.id
 			};
 
-			if(setting.name === "userlog") insertData.value = resolvedInput.id;
+			if(setting.name === "userlog" || setting.name === "modLog.channel") insertData.value = resolvedInput.id;
 			else insertData.value = resolvedInput;
-			if(setting.type === "boolean" && !resolvedInput) {
+
+			if(setting.name === "modLog.track") {
+				let addedRole = true;
+				if(!currentValue) {
+					insertData.value = [resolvedInput.id];
+					await r.table("settings").insert(insertData).run();
+				} else {
+					let alreadyTracked = currentValue.value.indexOf(resolvedInput.id);
+					if(~alreadyTracked) {
+						currentValue.value.splice(alreadyTracked, 1);
+						addedRole = false;
+					} else {
+						currentValue.value.push(resolvedInput.id);
+					}
+
+					if(currentValue.value.length === 0) {
+						await r.table("settings").get(currentValue.id).delete().run();
+					} else {
+						await r.table("settings").get(currentValue.id).update({ value: currentValue.value }).run();
+					}
+				}
+
+				return addedRole ?
+					`Added \`${resolvedInput.name}\` to tracked roles` :
+					`Removed \`${resolvedInput.name}\` from tracked roles`;
+			} else if(setting.type === "boolean" && !resolvedInput) {
 				if(currentValue) await r.table("settings").filter(currentValue.id).delete().run();
 			} else if(currentValue) {
 				await r.table("settings").get(currentValue.id).update({ value: insertData.value }).run();
@@ -105,5 +130,23 @@ let settings = module.exports.settings = {
 	userlog: {
 		arg: "textChannel",
 		description: "Set the channel which greeting and farewell messages are announced"
+	},
+	"modLog.channel": {
+		arg: "textChannel",
+		description: "Set the mod log channel to log moderator actions"
+	},
+	"modLog.track": {
+		arg: "role",
+		description: "Toggle a roles to make mod log entries for (on role add/remove)"
+	},
+	"modLog.kickat": {
+		arg: "num",
+		description: "Amount of warnings before a user will get kicked",
+		extra: { min: 1 }
+	},
+	"modLog.banat": {
+		arg: "num",
+		description: "Amount of warnings before a user will get banned",
+		extra: { min: 1 }
 	}
 };

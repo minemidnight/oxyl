@@ -33,7 +33,8 @@ module.exports = {
 			createdAt: date,
 			channelID: dmChannel.id,
 			date: date + duration,
-			type: "reminder"
+			type: "reminder",
+			userID: message.author.id
 		});
 
 		return __("commands.default.remind.success", message, { action, time });

@@ -38,7 +38,8 @@ module.exports = {
 			date: date + duration,
 			item,
 			messageID: msg.id,
-			type: "giveaway"
+			type: "giveaway",
+			guildID: message.channel.guild.id
 		});
 		return false;
 	},

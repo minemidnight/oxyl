@@ -12,8 +12,12 @@ module.exports = {
 	},
 
 	reminder: data => {
-		bot.createMessage(data.channelID, `You asked me to remind you about this on ` +
-				`${bot.utils.formatDate(data.createdAt)}:\n\n${data.action}`);
+		let content = __("modules.timedEvents.reminder", { locale: bot.localeCache.get(data.userID) || "en" }, {
+			date: bot.utils.formatDate(data.createdAt),
+			action: data.action
+		});
+
+		bot.createMessage(data.channelID, content);
 	},
 
 	giveaway: async data => {
@@ -21,12 +25,18 @@ module.exports = {
 			.filter(user => !user.bot);
 
 		if(entrees.length === 0) {
-			bot.createMessage(data.channelID, `__**GIVEAWAY WINNER**__\n` +
-					`Sadly, nobody entered the giveaway for ${data.item}, so there is no winner.`);
+			let content = __("modules.timedEvents.noGiveawayEntries",
+				{ locale: bot.localeCache.get(data.guildID) || "en" },
+				{ item: data.item });
+
+			bot.createMessage(data.channelID, content);
 		} else {
 			let winner = entrees[Math.floor(Math.random() * entrees.length)];
-			bot.createMessage(data.channelID, `__**GIVEAWAY WINNER**__\n` +
-					`Congratulations, ${winner.mention} you have won ${data.item}!`);
+			let content = __("modules.timedEvents.giveawayWinner",
+				{ locale: bot.localeCache.get(data.guildID) || "en" },
+				{ winner: winner.mention, item: data.item });
+
+			bot.createMessage(data.channelID, content);
 		}
 	}
 };
