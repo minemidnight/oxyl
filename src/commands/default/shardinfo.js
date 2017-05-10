@@ -10,8 +10,9 @@ module.exports = {
 			let channelCount = 0;
 			onShard.forEach(guild => channelCount += guild.channels.size);
 
+			if(thisShard === shard.id) shardInfo += "\* ";
 			shardInfo += __("commands.default.shardInfo.success", message, {
-				shard: thisShard === shard.id ? `\* ${shard.id}` : shard.id,
+				shard: shard.id,
 				guilds: onShard.length,
 				channels: channelCount,
 				users: shardUsers.size,
