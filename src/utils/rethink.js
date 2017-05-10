@@ -49,7 +49,7 @@ module.exports = {
 		});
 
 		let locales = await r.table("locales").run();
-		locales.forEach(locale => bot.localeCache.set(locale.id, locale.lang));
+		locales.forEach(locale => bot.localeCache.set(locale.id, locale.locale));
 	}
 };
 

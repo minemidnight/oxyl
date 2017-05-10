@@ -87,8 +87,8 @@
 						"locale": {
 							"englishName": "English",
 							"nativeName": "English",
-							"noArg": "__**Locale List:**__\n{{locales}}\n\nCurrent Locale: `{{locale}}`\nRun `locale <locale>` to change the locale",
-							"invalidLocale": "That is not a valid locale! Please run `locale` without arguments to view a list of valid locales",
+							"noArg": "__**Locale List:**__\n{{locales}}\n\nCurrent Locale: `{{locale}}`",
+							"invalidLocale": "That is not a valid locale!",
 							"changedSuccess": "Set the locale to `{{locale}}`"
 						},
             "ping": {
