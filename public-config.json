@@ -10,7 +10,7 @@
 	"prefixes": ["ob!", "oxylbeta", "oxylb", "mention"],
 	"postStats": false,
 	"serverChannel": "265998475831934977",
-	"shardsPerWorker": 3,
+	"shardsPerWorker": 2,
 	"updates": {
 		"channel": "270576454117359617",
 		"guild": "254768930223161344",

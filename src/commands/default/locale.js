@@ -1,4 +1,7 @@
-const flags = { en: "🇺🇸" };
+const flags = {
+	en: "🇺🇸",
+	cz: "🇨🇿"
+};
 
 function localeFormat(locale) {
 	let format = `${flags[locale]} ` || "";
