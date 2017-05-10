@@ -183,7 +183,7 @@ function init() {
 	statsd({ type: "gauge", stat: "workers", value: workerCount });
 	for(let i = 0; i < workerCount; i++) {
 		let shardStart = i * shardsPerWorker, shardEnd = ((i + 1) * shardsPerWorker) - 1;
-		if(shardEnd > shardCount) shardEnd = shardCount - 1;
+		if(shardEnd > shardCount - 1) shardEnd = shardCount - 1;
 
 		const worker = cluster.fork();
 		worker.shardStart = shardStart;

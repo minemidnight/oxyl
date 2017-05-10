@@ -1,21 +1,15 @@
-const flags = {
-	en: "🇺🇸",
-	cz: "🇨🇿"
-};
-
-function localeFormat(locale) {
-	let format = `${flags[locale]} ` || "";
-	format += locale;
-	format += __("commands.default.locale.nativeName", { locale });
-	if(locale !== "en") format += __("commands.default.locale.englishName", { locale });
-}
-
 module.exports = {
 	process: async message => {
 		if(!message.args[0]) {
 			return __("commands.default.locale.noArg", message, {
-				locales: bot.locales.map(localeFormat).join("\n"),
-				locale: localeFormat(message.locale)
+				locales: bot.locales.map(locale => {
+					let format = `${locale}: `;
+					format += __("commands.default.locale.nativeName", { locale });
+					if(locale !== "en") format += ` (${__("commands.default.locale.englishName", { locale })})`;
+
+					return format;
+				}).join("\n"),
+				locale: message.locale
 			});
 		} else if(!~bot.locales.indexOf(message.args[0])) {
 			return __("commands.default.locale.invalidLocale", message);
@@ -32,6 +26,7 @@ module.exports = {
 	aliases: ["lang"],
 	args: [{
 		type: "text",
-		label: "language"
+		label: "language",
+		optional: true
 	}]
 };

@@ -87,7 +87,7 @@
 						"locale": {
 							"englishName": "English",
 							"nativeName": "English",
-							"noArg": "__Locale List:__\n{{locales}}\n\n__Current Locale:__\n{{locale}}\nRun `locale <locale>` to change",
+							"noArg": "__**Locale List:**__\n{{locales}}\n\nCurrent Locale: `{{locale}}`\nRun `locale <locale>` to change the locale",
 							"invalidLocale": "That is not a valid locale! Please run `locale` without arguments to view a list of valid locales",
 							"changedSuccess": "Set the locale to `{{locale}}`"
 						},
