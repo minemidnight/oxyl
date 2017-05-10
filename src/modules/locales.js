@@ -9,22 +9,22 @@ async function loadLocales() {
 	}
 }
 
-global.__ = (context, message = { locale: "en" }, values = {}, capitializeFirst = false) => {
-	if(message.ownerID) message.locale = bot.localeCache.get(message.id) || "en";
-	let string = locales[message.locale];
+global.__ = (context, object = { locale: "en" }, values = {}, capitializeFirst = false) => {
+	if(object.ownerID) object.locale = bot.localeCache.get(object.id) || "en";
+	let string = locales[object.locale];
 	for(let part of context.split(".")) {
-		if(!string[part]) return __("modules.locales.invalidContext", message, { context, part });
+		if(!string[part]) return __("modules.locales.invalidContext", object, { context, part });
 		else string = string[part];
 	}
 
-	if(typeof string !== string) return __("modules.locales.incompleteContext", message, { context });
+	if(typeof string !== "string") return __("modules.locales.incompleteContext", object, { context });
 
 	let placeholders = string.match(/{{[^{}]+}}/g);
 	if(placeholders) {
 		placeholders.forEach(placeholder => {
 			placeholder = placeholder.substring(2, placeholder.length - 2);
 			string = string.replace(`{{${placeholder}}}`,
-				values[placeholder] || __("modules.locales.invalidPlaceholder", message));
+				values[placeholder] || __("modules.locales.invalidPlaceholder", object));
 		});
 	}
 
