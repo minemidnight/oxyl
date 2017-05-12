@@ -276,13 +276,15 @@
                 "pardon": "Pardon",
                 "softban": "Softban",
                 "unban": "Unban",
-								"reason": "Reason"
+								"reason": "Reason",
+								"warn": "Warn"
             },
             "words": {
                 "case": "case",
                 "action": "action",
                 "user": "user",
                 "mod": "mod",
+								"reason": "reason",
                 "totalWarnings": "total warnings",
                 "noReason": "Responsible moderator, set this using `reason {{caseNum}}`"
             }

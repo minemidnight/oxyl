@@ -9,7 +9,8 @@ module.exports = {
 			avatar: `<${user.avatarURL}>`,
 			game: member.game ? member.game.name : __("words.none", message, {}, true),
 			joinDate: bot.utils.formatDate(user.createdAt),
-			guildJoin: bot.utils.formatDate(member.joinedAt)
+			guildJoin: bot.utils.formatDate(member.joinedAt),
+			status: member.status.toUpperCase()
 		});
 	},
 	guildOnly: true,
