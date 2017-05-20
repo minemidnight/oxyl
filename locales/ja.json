@@ -1,0 +1,351 @@
+{
+    "commands": {
+        "admin": {
+            "autoRole": {
+                "add": {
+                    "noArg": "plsはオートロールに追加する役割を引きます",
+                    "alreadyAutorole": "役割はすでにディンガスに設定されています",
+                    "success": "kden、私はあなたのために追加されました\n"
+                },
+                "remove": {
+                    "noArg": "plsはオートロールから取り除く役割を引きます",
+                    "notAutorole": "あなたがスクラブする役割ではありません",
+                    "success": "kden、私はあなたのために削除"
+                },
+                "list": {
+                    "noAutoroles": "オートホールなし",
+                    "success": "あなたがdonkの役割をheres："
+                },
+                "invalidSubcommand": "サブコマンドが無効です！ `autorole <add | remove | list> [<role>]`を使ってください"
+            },
+            "editCommand": {
+                "commandNotFound": "コマンドが見つかりません",
+                "cantEdit": "このコマンドを編集することはできません",
+                "info": {
+                    "noEdits": "このコマンドの編集はありません",
+                    "success": "__**コマンド**__：\n有効：\nロール："
+                },
+                "reset": {
+                    "success": "リセットコマンド ``"
+                },
+                "toggle": {
+                    "disabled": "無効なコマンド ``",
+                    "enabled": "有効なコマンド ``"
+                },
+                "roles": {
+                    "noArg": "このコマンドを制限する役割をいくつか与えてください！それぞれをaで分割し、",
+                    "invalidRoles": "無効な役割が指定されました。役割名をaで分割してください。",
+                    "success": "コマンド ``では、次のいずれかの役割を使用する必要があります。"
+                },
+                "invalidSubcommand": "サブコマンドが無効です！ `editcommand <コマンド名> <info | reset | roles> [<roles（split with、）>]`を使用してください。"
+            },
+            "ignore": {
+                "enabled": "Oxyl inを有効にしました",
+                "disabled": "のOxylを無効に"
+            },
+            "rolePersist": {
+                "add": {
+                    "noArg": "永続的な役割に追加する役割を提供してください！",
+                    "alreadyPersisted": "ロール ``はすでに永続的な役割を担っています",
+                    "success": "ロール ``が永続ロールに追加されました"
+                },
+                "remove": {
+                    "noArg": "永続化されたロールから削除するロールを指定してください！",
+                    "notPersisted": "ロール ``は永続的な役割ではありません",
+                    "success": "ロール \"が永続ロールから削除されました。"
+                },
+                "list": {
+                    "noPeristedRoles": "現在のところ、永続的な役割はありません",
+                    "success": "永続ロールのリスト："
+                },
+                "invalidSubcommand": "\nサブコマンドが無効です！ `rolepersist <add | remove | list> [<role>]`を使ってください"
+            },
+            "settings": {
+                "noArgs": "__ **有効な設定** __：\n\n\n特定の設定に関する詳細情報を得るには `setting <setting>`を使用してください",
+                "invalidSetting": "設定が無効です！",
+                "settingInfo": "__ **設定** __：\n説明：\n許容値：\n現在の値： ``",
+                "cantReset": "``はまだ設定されていないのでリセットできません",
+                "resetSuccess": "リセット設定 ``",
+                "setSuccess": "``に設定する"
+            }
+        },
+        "default": {
+            "donate": {
+                "success": "寄付を検討していただきありがとうございます。\nPatreon Page：https://patreon.com/minemidnight"
+            },
+            "google": {
+                "noResults": "結果が見つかりません\n"
+            },
+            "help": {
+                "commandNotFound": "コマンドが見つかりません",
+                "commandInfo": "__ **コマンド名** __：\nカテゴリー：\n使用法：\nエイリアス：\n説明：\n必要な権限：",
+                "commandList": "**コマンド（合計）**\n\nコマンドの詳細を知るには `help <command>`を使います"
+            },
+            "invite": {
+                "success": "サポートサーバー：\n招待："
+            },
+            "ping": {
+                "success": "成功"
+            },
+            "remind": {
+                "noTime": "時間がない",
+                "invalidTime": "invalidTime",
+                "success": "成功"
+            },
+            "roleMe": {
+                "noPerms": "noPerms",
+                "notAvailable": "利用不可",
+                "list": {
+                    "noneAvailable": "noneAvailable",
+                    "success": "成功"
+                },
+                "add": {
+                    "alreadyAvailable": "alreadyAvailable",
+                    "success": "成功"
+                },
+                "remove": {
+                    "success": "成功"
+                },
+                "invalidBotPerms": "invalidBotPerms",
+                "removedRole": "removedRole",
+                "gaveRole": "与えられたロール"
+            },
+            "serverInfo": {
+                "success": "成功"
+            },
+            "shardInfo": {
+                "success": "成功"
+            },
+            "stats": {
+                "success": "成功"
+            },
+            "userInfo": {
+                "success": "成功"
+            },
+            "xkcd": {
+                "invalidComic": "invalidComic"
+            },
+            "locale": {
+                "englishName": "英語名",
+                "nativeName": "nativeName",
+                "noArg": "noArg",
+                "invalidLocale": "invalidLocale",
+                "changedSuccess": "changedSuccess"
+            }
+        },
+        "moderator": {
+            "ban": {
+                "noPerms": "noPerms",
+                "botCantBan": "botCantBan",
+                "youCantBan": "youCantBan",
+                "success": "成功"
+            },
+            "giveaway": {
+                "noTime": "時間がない",
+                "invalidTime": "invalidTime",
+                "message": "メッセージ"
+            },
+            "hackban": {
+                "noPerms": "noPerms",
+                "invalidID": "invalidID",
+                "inGuild": "inGuild",
+                "success": "成功"
+            },
+            "kick": {
+                "noPerms": "noPerms",
+                "botCantKick": "botCantKick",
+                "youCantKick": "youCantKick",
+                "success": "成功"
+            },
+            "mute": {
+                "roleError": "roleError",
+                "missingBothPerms": "missingBothPerms",
+                "missingRolePerms": "missingRolePerms",
+                "missingChannelPerms": "missingChannelPerms",
+                "muted": "ミュートされた",
+                "unmuted": "ミュートされていない"
+            },
+            "pardon": {
+                "noPerms": "noPerms",
+                "noWarnings": "noWarnings",
+                "success": "成功"
+            },
+            "purge": {
+                "noPerms": "noPerms"
+            },
+            "reason": {
+                "noCases": "noCases",
+                "invalidInput": "無効入力",
+                "invalidCase": "invalidCase",
+                "noChannel": "noChannel",
+                "noMessage": "noMessage",
+                "successOneCase": "successOneCase",
+                "successMultipleCases": "success複数のケース"
+            },
+            "softban": {
+                "noPerms": "noPerms",
+                "botCantBan": "botCantBan",
+                "youCantBan": "youCantBan",
+                "success": "成功"
+            },
+            "warn": {
+                "noPerms": "noPerms",
+                "success": "成功"
+            }
+        },
+        "music": {
+            "end": {
+                "success": "成功"
+            },
+            "jump": {
+                "invalidQueue": "invalidQueue",
+                "success": "成功"
+            },
+            "movehere": {
+                "notInVoice": "notInVoice",
+                "nothingToMove": "nothingToMove",
+                "success": "成功"
+            },
+            "pause": {
+                "alreadyPaused": "alreadyPaused",
+                "success": "成功"
+            },
+            "play": {
+                "notInVoice": "notInVoice",
+                "dfmPlaylists": "dfmPlaylists",
+                "addedDFM": "追加されたFDM",
+                "invalidDFM": "無効なDEFM",
+                "donatorOnly": "donatorOnly",
+                "invalidSavedQueue": "invalidSavedQueue",
+                "noSavedQueue": "noSavedQueue",
+                "loadedSavedQueue": "loadedSavedQueue",
+                "addedItem": "addedItem",
+                "noFormats": "noFormats",
+                "invalidID": "invalidID",
+                "notFound": "見つかりません",
+                "invalidType": "invalidType",
+                "channelOffline": "channelOffline",
+                "noSearchResults": "noSearchResults"
+            },
+            "queue": {
+                "success": "成功"
+            },
+            "removequeue": {
+                "invalidQueue": "invalidQueue",
+                "success": "成功"
+            },
+            "repeat": {
+                "success": "成功"
+            },
+            "resume": {
+                "notPaused": "notPaused",
+                "success": "成功"
+            },
+            "savequeue": {
+                "donatorOnly": "donatorOnly",
+                "success": "成功"
+            },
+            "shuffle": {
+                "success": "成功"
+            },
+            "skip": {
+                "successNoneLeft": "successNoneLeft",
+                "successNextSong": "successNextSong"
+            }
+        }
+    },
+    "phrases": {
+        "noMusic": "noMusic",
+        "notListening": "notListening",
+        "notInGuild": "notInGuild",
+        "invalidRange": "invalidRange",
+        "cantJoin": "カンツョイン",
+        "cantSpeak": "cantSpeak",
+        "queueError": "queueError",
+        "currentPlaying": "現在のプレイ",
+        "repeat": "繰り返す",
+        "noQueue": "noQueue",
+        "otherResults": "otherResults",
+        "warningThreshold": "warningThreshold",
+        "noneProvided": "なし",
+        "noneRequired": "noneRequired",
+        "nowPlaying": "再生中",
+        "recievedError": "recievedError",
+        "rolePersist": "rolePersist"
+    },
+    "words": {
+        "noValue": "値なし",
+        "none": "なし",
+        "muted": "ミュートされた",
+        "and": "そして",
+        "page": "ページ",
+        "on": "に",
+        "off": "オフ",
+        "service": "サービス"
+    },
+    "modules": {
+        "args": {
+            "usageError": "usageError"
+        },
+        "commands": {
+            "guildOnly": "ギルドオンリー",
+            "creatorOnly": "creatorOnly",
+            "adminOnly": "adminOnly",
+            "noPerms": "noPerms",
+            "noRoles": "noRoles",
+            "permissionFail": "permissionFail",
+            "errorRunning": "errorRunning"
+        },
+        "modLog": {
+            "actions": {
+                "specialRoleAdd": "specialRoleAdd",
+                "specialRoleRemove": "specialRoleRemove",
+                "ban": "禁止",
+                "kick": "キック",
+                "pardon": "恩赦",
+                "softban": "ソフトバン",
+                "unban": "アンバン",
+                "reason": "理由"
+            },
+            "words": {
+                "case": "場合",
+                "action": "アクション",
+                "user": "ユーザー",
+                "mod": "モード",
+                "totalWarnings": "totalWarnings",
+                "noReason": "noReason"
+            }
+        },
+        "player": {
+            "maxQueue": "maxQueue",
+            "cutOffQueue": "cutOffQueue",
+            "extractionError": "extractError",
+            "noFormats": "noFormats"
+        },
+        "resolver": {
+            "booleanError": "booleanError",
+            "invalidLink": "無効なリンク",
+            "NaN": "NaN",
+            "underMin": "アンダーミン",
+            "aboveMax": "上のMax",
+            "noRole": "noRole",
+            "noChannel": "noChannel",
+            "notCached": "notCached",
+            "noUserFound": "noUserFound",
+            "multipleUsers": "複数のユーザー",
+            "noUserChosen": "noUserChosen",
+            "andMore": "もっと",
+            "invalidUser": "無効なユーザー"
+        },
+        "timedEvents": {
+            "reminder": "思い出させる",
+            "giveawayWinner": "ギフト",
+            "noGiveawayEntries": "noGiveawayEntries"
+        },
+        "locales": {
+            "invalidContext": "invalidContext",
+            "incompleteContext": "incompleteContext",
+            "invalidPlaceholder": "invalidPlaceholder"
+        }
+    }
+}
