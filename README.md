@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+soon tm
+=======
 # oxyl
 
 Discord bot using Eris library
@@ -33,3 +36,4 @@ channels:
   bugs: "266340187615920128"
   updates: "270576454117359617"
 ```
+>>>>>>> refs/remotes/origin/master

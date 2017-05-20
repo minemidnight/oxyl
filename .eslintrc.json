@@ -5,9 +5,11 @@
 		"es6": true
 	},
 	"globals": {
-		"Oxyl": false,
-		"framework": false,
-		"bot": false
+		"bot": false,
+		"cluster": false,
+		"r": false,
+		"statsd": false,
+		"__": false
 	 },
 	"parserOptions": {
 		"ecmaVersion": 2017
@@ -47,7 +49,6 @@
 		"no-new-wrappers": "error",
 		"no-new": "error",
 		"no-octal-escape": "error",
-		"no-return-assign": "error",
 		"no-self-compare": "error",
 		"no-sequences": "error",
 		"no-throw-literal": "error",
@@ -72,7 +73,6 @@
 		"no-mixed-requires": "error",
 		"no-new-require": "error",
 		"no-path-concat": "error",
-		"no-process-env": "error",
 
 		"array-bracket-spacing": "error",
 		"block-spacing": "error",
@@ -98,11 +98,11 @@
 				"switch": { "after": false }
 			}
 		}],
-		"max-len": ["error", 160, 2],
-		"max-nested-callbacks": ["error", { "max": 4 }],
+		"max-len": ["error", 120, 2],
+		"max-nested-callbacks": ["error", { "max": 3 }],
 		"max-statements-per-line": ["error", { "max": 2 }],
 		"new-cap": "error",
-		"newline-per-chained-call": ["error", { "ignoreChainWithDepth": 3 }],
+		"newline-per-chained-call": ["error", { "ignoreChainWithDepth": 4 }],
 		"no-array-constructor": "error",
 		"no-inline-comments": "error",
 		"no-lonely-if": "error",

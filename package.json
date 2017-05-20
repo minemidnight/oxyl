@@ -1,7 +1,7 @@
 {
   "name": "oxyl",
   "description": "Discord Bot",
-  "main": "oxyl.js",
+  "main": "./src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -9,11 +9,6 @@
     "type": "git",
     "url": "git+https://github.com/minemidnight/oxyl.git"
   },
-  "keywords": [
-    "discord",
-    "bot",
-    "oxyl"
-  ],
   "author": "minemidnight",
   "license": "GPL-3.0",
   "bugs": {
@@ -21,27 +16,18 @@
   },
   "homepage": "https://github.com/minemidnight/oxyl#readme",
   "dependencies": {
+    "big-number": "^0.4.0",
     "bluebird": "^3.5.0",
-    "body-parser": "^1.17.1",
-    "buffered2": "^1.0.0",
+    "chalk": "^1.1.3",
     "cheerio": "^0.22.0",
-    "cookie-parser": "^1.4.3",
     "duration-js": "^3.9.2",
     "eris": "github:abalabahaha/eris#dev",
-    "express": "^4.15.2",
-    "express-session": "^1.15.1",
-    "goo.gl": "^0.1.4",
-    "handlebars": "^4.0.6",
     "hot-shots": "^4.4.0",
-    "jimp": "^0.2.27",
-    "js-yaml": "^3.8.2",
-    "mathjs": "^3.10.0",
-    "node-vibrant": "^3.0.0-alpha.2",
-    "promise-mysql": "^3.0.0",
+    "raven": "^1.2.0",
     "request": "^2.81.0",
-    "superagent": "^3.5.2",
-    "twemoji": "^2.2.5",
-    "ws": "^2.2.2",
-    "youtube-dl": "^1.11.1"
+    "request-promise": "^4.2.0",
+    "rethinkdbdash": "^2.3.28",
+    "youtube-dl": "^1.11.1",
+    "ytdl-core": "^0.12.1"
   }
 }

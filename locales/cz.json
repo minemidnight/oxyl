@@ -1,0 +1,351 @@
+{
+    "commands": {
+        "admin": {
+            "autoRole": {
+                "add": {
+                    "noArg": "Prosím uveďte roli která má být přidána.",
+                    "alreadyAutorole": "Role `{{role}}` již existuje.",
+                    "success": "Role `{{role}}` byla přidána."
+                },
+                "remove": {
+                    "noArg": "Uveďte roli kterou chcete odebrat",
+                    "notAutorole": "Role `{{role}}` neexistuje",
+                    "success": "Role `{{role}}` byla odebrána"
+                },
+                "list": {
+                    "noAutoroles": "Nejsou zde žádné role.",
+                    "success": "Seznam rolí: {{roles}}"
+                },
+                "invalidSubcommand": "Neznámý příkaz! Použij formát `role <add|remove|list> [<role>]`"
+            },
+            "editCommand": {
+                "commandNotFound": "Neplatný příkaz",
+                "cantEdit": "Nemůžeš upravit tento příkaz",
+                "info": {
+                    "noEdits": "K tomuto příkazu nejsou žádné úpravy",
+                    "success": "__**Příkaz**__: {{command}}\nPovolen: {{enabled}}\nRole: {{roles}}"
+                },
+                "reset": {
+                    "success": "Příkaz `{{command}}` byl resetován"
+                },
+                "toggle": {
+                    "disabled": "Příkaz `{{command}}` byl zakázán",
+                    "enabled": "Příkaz `{{command}}` byl povolen"
+                },
+                "roles": {
+                    "noArg": "Uveďte některé role pro omezení tohoto příkazu! Oddělte je znakem `,`",
+                    "invalidRoles": "Chybné role, prosím uveďte názvy rolí odděleny ,",
+                    "success": "Příkaz `{{command}}` nyní vyžaduje použití jedné z následujících rolí: {{roles}}"
+                },
+                "invalidSubcommand": "Neplatný příkaz! Použij formát `editcommand <command name> <info|reset|toggle|roles> [<roles (oddělit znakem ,)>]`"
+            },
+            "ignore": {
+                "enabled": "Oxyl povolen v kanálu {{channel}}",
+                "disabled": "Oxyl zakázán v kanálu {{channel}}"
+            },
+            "rolePersist": {
+                "add": {
+                    "noArg": "Prosím, uveďte roli k přidání do trvalých rolí!",
+                    "alreadyPersisted": "Role `{{role}}` již je trvalá role!",
+                    "success": "Role `{{role}}` byla přidána do trvalých rolí."
+                },
+                "remove": {
+                    "noArg": "Prosím, uveďte roli k odebrání z trvalých rolí!",
+                    "notPersisted": "Role `{{role}}` není trvalá role.",
+                    "success": "Role `{{role}}` byla odstraněna z trvalých rolí."
+                },
+                "list": {
+                    "noPeristedRoles": "Aktuálně zde nejsou žádné trvalé role.",
+                    "success": "Seznam trvalých rolí: {{roles}}"
+                },
+                "invalidSubcommand": "Chybný podpříkaz! Prosím, použij `rolepersist <add|remove|list> [<role>]`"
+            },
+            "settings": {
+                "noArgs": "__**Platná nastavení**__:\n{{settings}}\n\nPoužij `setting <setting>` aby jsi získal více informací o specifickém nastavení.",
+                "invalidSetting": "Chybné nastavení!",
+                "settingInfo": "__**Nastavení**__: {{setting}}\nPopis: {{description}}\nPlatné hodnoty: {{accepted}}\nAktuální hodnota: `{{current}}`",
+                "cantReset": "`{{setting}}` nemůže být resetováno protože ještě nebylo nastaveno.",
+                "resetSuccess": "`{{setting}}` bylo resetováno.",
+                "setSuccess": "`{{setting}}` bylo změněno na {{value}}"
+            }
+        },
+        "default": {
+            "donate": {
+                "success": "Děkujeme za přemýšlení o příspěvku.\nPatreon stránka: https://patreon.com/minemidnight"
+            },
+            "google": {
+                "noResults": "Nebyly nalezeny žádné výsledky."
+            },
+            "help": {
+                "commandNotFound": "Příkaz nebyl nalezen.",
+                "commandInfo": "__**Název příkazu**__: {{command}}\nKategorie: {{category}}\nPoužití: {{usage}}\nAliasy: {{aliases}}\nPopis: {{description}}\nPotřebná oprávnění: {{perm}}",
+                "commandList": "**Celkem ({{count}}) příkazů**\n{{commands}}\nPoužij `help <command>` pro získání více informací o příkazu."
+            },
+            "invite": {
+                "success": "Server podpory: {{server}}\nPozvi mě: {{invite}}"
+            },
+            "ping": {
+                "success": "Pong! `{{ms}}ms`"
+            },
+            "remind": {
+                "noTime": "Prosím, uveď čas, v tomto dormátu: `remind <akce> v <časové rozpětí>`",
+                "invalidTime": "Prosím, vytvářej upozornění pouze od 30 sekund do 4 týdnů do budoucnosti.",
+                "success": "Vytvořil jsem upozornění: `{{action}}` in {{time}}"
+            },
+            "roleMe": {
+                "noPerms": "Nemáš potřebná oprávnění na tuto akci! Musíš mít oprávnění ADMINISTRÁTOR nebo být majitel serveru.",
+                "notAvailable": "Tato role není k dispozici.",
+                "list": {
+                    "noneAvailable": "Aktuálně zde nesjou žádné role k dispozici.",
+                    "success": "Seznam dostupných rolí: {{roles}}"
+                },
+                "add": {
+                    "alreadyAvailable": "Tato role je již dostupná.",
+                    "success": "`{{role}}` byla přidána do dostupných rolí"
+                },
+                "remove": {
+                    "success": "`{{role}}` byla odebrána z dostupných rolí"
+                },
+                "invalidBotPerms": "Nemám oprávnění, nebo pozice role je vyšší než moje!",
+                "removedRole": "Odebral jsem ti `{{role}}`",
+                "gaveRole": "Dal sem ti `{{role}}`"
+            },
+            "serverInfo": {
+                "success": "__**Guilda**__: {{guild}}\nKanály: {{channels}}\nČlenové: {{members}}\nUžívatelé: {{users}} ({{userPercent}}%)\nBoti: {{bots}} ({{botPercent}}%)\nDatum vytvoření: {{creationDate}}\nVlastník: {{owner}} (ID: {{ownerID}})\nIkona: {{icon}}"
+            },
+            "shardInfo": {
+                "success": "__**Shard {{shard}}**__\nGuildy: {{guilds}}\nKanály: {{channels}}\nUživatelé: {{users}}\nZpoždění: {{latency}}ms\nStatus: {{status}}"
+            },
+            "stats": {
+                "success": "__**Guildy**__\nVelké (s více než 250 členy): {{largeGuilds}}\nJiné: {{smallGuilds}}\nCelkem: {{totalGuilds}}\nStreamuji v: {{streamCount}}\n\n__**Jiné**__\nVyužití paměti pracovníka: {{workerUsage}}MiB\nCelkové využití paměti: {{totalUsage}}GiB\nPracovník: {{worker}} (Shards: {{shardRange}})\nOnline: {{uptime}}\nWeb: {{website}}"
+            },
+            "userInfo": {
+                "success": "__**Uživatel**__: {{user}}\nID: {{id}}\nAvatar: {{avatar}}\nHraje: {{game}}\nStatus: {{status}}\nPřipojil se na Discord: {{joinDate}}\nDo guildy se připojil: {{guildJoin}}"
+            },
+            "xkcd": {
+                "invalidComic": "Invalid Comic! Comics available: {{comicRange}}"
+            },
+            "locale": {
+                "englishName": "Czech",
+                "nativeName": "Čeština",
+                "noArg": "__Locale List:__\n{{locales}}\n\n__Current Locale:__\n{{locale}}\nRun `locale <locale>` to change",
+                "invalidLocale": "That is not a valid locale! Please run `locale` without arguments to view a list of valid locales",
+                "changedSuccess": "Set the locale to `{{locale}}`"
+            }
+        },
+        "moderator": {
+            "ban": {
+                "noPerms": "I am missing the permission to ban members!",
+                "botCantBan": "{{user}} couldn't be banned, because they have higher permisions than Oxyl",
+                "youCantBan": "{{user}} couldn't be banned, because they have higher permisions than you",
+                "success": "{{user}} has been banned"
+            },
+            "giveaway": {
+                "noTime": "Please provide a time, using this format: `giveaway <item> in <timespan>`",
+                "invalidTime": "Please only create giveaways for between 30 seconds and 4 weeks into the future.",
+                "message": "__**GIVEAWAY!**__\nReact with 🎉 to have a chance to win {{item}}\nEnding on: {{date}}"
+            },
+            "hackban": {
+                "noPerms": "I am missing the permission to ban members!",
+                "invalidID": "Invalid user id!",
+                "inGuild": "That user is in the guild, please ban them normally!",
+                "success": "{{user}} has been banned"
+            },
+            "kick": {
+                "noPerms": "I am missing the permission to kick members!",
+                "botCantKick": "{{user}} couldn't be kicked, because they have higher permisions than Oxyl",
+                "youCantKick": "{{user}} couldn't be kicked, because they have higher permisions than you",
+                "success": "{{user}} has been kicked"
+            },
+            "mute": {
+                "roleError": "Either I do not have permissions, or the muted role's position is higher than mine!",
+                "missingBothPerms": "I do not have permissions to create and configure a Muted role (needed permissions: `Manage Roles` and `Manage Channels`)",
+                "missingRolePerms": "I do not have permissions to create the Muted role (needed permission: `Manage Roles`)",
+                "missingChannelPerms": "Nebylo možno nastavit roli \"Muted\", kvůli nedostatečným oprávněním (potřebné  oprávnění: \"Spravovat kanály\"",
+                "muted": "{{user}} byl ztlumen",
+                "unmuted": "{{user}} has been unmuted"
+            },
+            "pardon": {
+                "noPerms": "You do not have correct permission to pardon that user",
+                "noWarnings": "That member has no warnings",
+                "success": "Successfully pardoned {{user}} (total warnings: {{warnCount}})"
+            },
+            "purge": {
+                "noPerms": "I do not have permssion to Manage Messages"
+            },
+            "reason": {
+                "noCases": "There have been no cases for this guild yet.",
+                "invalidInput": "Please only provide numbers for cases",
+                "invalidCase": "Case `{{caseNum}}` not found",
+                "noChannel": "The mod log channel is not set",
+                "noMessage": "Message from case `{{caseNum}}` not found",
+                "successOneCase": "✅ Set reason for case `{{caseNum}}`",
+                "successMultipleCases": "✅ Set reason for {{casesCount}} cases"
+            },
+            "softban": {
+                "noPerms": "I am missing the permission to ban members!",
+                "botCantBan": "{{user}} couldn't be banned, because they have higher permisions than Oxyl",
+                "youCantBan": "{{user}} couldn't be banned, because they have higher permisions than you",
+                "success": "{{user}} has been softbanned"
+            },
+            "warn": {
+                "noPerms": "You do not have correct permission to warn that user",
+                "success": "Successfully warned {{user}} (total warnings: {{warnCount}})"
+            }
+        },
+        "music": {
+            "end": {
+                "success": "Music stopped"
+            },
+            "jump": {
+                "invalidQueue": "Invalid queue number",
+                "success": "✅ Jumped to queue #{{queue}}"
+            },
+            "movehere": {
+                "notInVoice": "You are not in a voice channel, you cannot use this!",
+                "nothingToMove": "Nothing to move. Already bound to this voice and text channel",
+                "success": "Moved to {{locations}}"
+            },
+            "pause": {
+                "alreadyPaused": "The music is already paused",
+                "success": "Music stopped"
+            },
+            "play": {
+                "notInVoice": "You are not in a voice channel",
+                "dfmPlaylists": "Discord.FM playlists: {{genres}}",
+                "addedDFM": "Added Discord.FM playlist {{genre}} to queue",
+                "invalidDFM": "Invalid Discord.FM playlist, use `dfm:list` to view the list of playlists",
+                "donatorOnly": "You must be a donator to use saved queues!",
+                "invalidSavedQueue": "Invalid save number! Valid save numbers are 1, 2 or 3",
+                "noSavedQueue": "There is no saved queue under save #{{save}}",
+                "loadedSavedQueue": "Loaded queue #{{save}} ({{itemCount}} items)",
+                "addedItem": "Added __{{title}}__ to the queue",
+                "noFormats": "No suitable formats were found",
+                "invalidID": "The ID from playlist/video link was invalid",
+                "notFound": "The resource could not be found, perhaps it has been removed?",
+                "invalidType": "Please only link to SoundCloud songs or playlists",
+                "channelOffline": "That Twitch channel is offline",
+                "noSearchResults": "No results from search query"
+            },
+            "queue": {
+                "success": "__**Music Queue ({{itemCount}})**__\n {{message}}"
+            },
+            "removequeue": {
+                "invalidQueue": "Please provide numbers as queue positions",
+                "success": "Removed {{itemCount}} item(s) from the queue"
+            },
+            "repeat": {
+                "success": "Repeat has turned {{value}}"
+            },
+            "resume": {
+                "notPaused": "The music is not paused",
+                "success": "Music resumed"
+            },
+            "savequeue": {
+                "donatorOnly": "You must be a donator to use this command!",
+                "success": "Saved {{itemCount}} items under saved queue #{{queueNumber}}\nUse `play sq:{{queueNumber}}` to load the queue"
+            },
+            "shuffle": {
+                "success": "Queue shuffled"
+            },
+            "skip": {
+                "successNoneLeft": "Song skipped, no more songs in queue",
+                "successNextSong": "Now playing __{{title}}__"
+            }
+        }
+    },
+    "phrases": {
+        "noMusic": "There is currently no music playing",
+        "notListening": "You must be listening to music to use this command",
+        "notInGuild": "Error: user not in guild",
+        "invalidRange": "Invalid range given!",
+        "cantJoin": "I cannot join that channel (no permissions)",
+        "cantSpeak": "I cannot speak in that channel (no permissions)",
+        "queueError": "Playing: Nothing (Still queueing?)",
+        "currentPlaying": "Playing: {{title}} ({{duration}})",
+        "repeat": "Repeat: {{repeat}}",
+        "noQueue": "There is nothing queued",
+        "otherResults": "Other Results",
+        "warningThreshold": "Warning Threshold",
+        "noneProvided": "None provided",
+        "noneRequired": "None required",
+        "nowPlaying": "Now playing",
+        "recievedError": "Recieved Error",
+        "rolePersist": "Role Persist"
+    },
+    "words": {
+        "noValue": "No value",
+        "none": "none",
+        "muted": "muted",
+        "and": "and",
+        "page": "page",
+        "on": "on",
+        "off": "off",
+        "service": "service"
+    },
+    "modules": {
+        "args": {
+            "usageError": "Invalid Usage! Please use the command as such: `{{command}} {{usage}}`"
+        },
+        "commands": {
+            "guildOnly": "Sorry, but this command is for guilds (servers) only.",
+            "creatorOnly": "This command can only be used by the creators of the bot.",
+            "adminOnly": "You cannot run this command, it requires the permission ADMINISTRATOR.",
+            "noPerms": "You cannot run this command, it requires the permission {{perm}}.",
+            "noRoles": "You do not have the correct roles to use this command, it requires one of the following: {{roles}}",
+            "permissionFail": "Command failed due to a permissions error",
+            "errorRunning": "Error executing this command! Stack trace: {{stack}}"
+        },
+        "modLog": {
+            "actions": {
+                "specialRoleAdd": "Special Role Added",
+                "specialRoleRemove": "Special Role Removed",
+                "ban": "Ban",
+                "kick": "Kick",
+                "pardon": "Pardon",
+                "softban": "Softban",
+                "unban": "Unban",
+                "reason": "Reason"
+            },
+            "words": {
+                "case": "case",
+                "action": "action",
+                "user": "user",
+                "mod": "mod",
+                "totalWarnings": "total warnings",
+                "noReason": "Responsible moderator, set this using `reason {{caseNum}}`"
+            }
+        },
+        "player": {
+            "maxQueue": "You cannot add any more songs! Your queue already has 2000 songs. If you want an unlimited queue size, consider donating.",
+            "cutOffQueue": "Your queue was added, but not fully. Your queue has been capped at 2000 songs. If you want an unlimited queue size, consider donating.",
+            "extractionError": "No stream returned after extraction",
+            "noFormats": "No suitable formats were found"
+        },
+        "resolver": {
+            "booleanError": "Invalid input! Please provide true/yes or false/no",
+            "invalidLink": "Invalid link",
+            "NaN": "Argument provided is not a number",
+            "underMin": "Argument provided is less than minimum amount ({{min}})",
+            "aboveMax": "Argument provided is greater than maximum amount ({{max}})",
+            "noRole": "No role found",
+            "noChannel": "No channel found",
+            "notCached": "User from mention not cached",
+            "noUserFound": "No user could be found",
+            "multipleUsers": "Multiple users found. Please say a number below to choose one in the next 10 seconds: {{users}}",
+            "noUserChosen": "No user chosen",
+            "andMore": "... and {{users}} more",
+            "invalidUser": "Invalid user number selected!"
+        },
+        "timedEvents": {
+            "reminder": "You asked me to remind you about this on {{date}}:\n\n {{action}}",
+            "giveawayWinner": "__**GIVEAWAY WINNER**__\nCongratulations, {{winner}} you have won {{item}}!",
+            "noGiveawayEntries": "__**GIVEAWAY WINNER**__\nSadly, nobody entered the giveaway for {{item}}, so there is no winner."
+        },
+        "locales": {
+            "invalidContext": "Invalid context for translation: {{context}}, {{part}} (non existant). Please report this to Support",
+            "incompleteContext": "Incomplete context for translation: {{context}} (non string). Please report this to Support",
+            "invalidPlaceholder": "INVALID PLACEHOLDER, please alert bot owner"
+        }
+    }
+}
