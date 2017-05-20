@@ -6,7 +6,7 @@
 		"channel": "254770965018443776",
 		"role": "292657073987125249"
 	},
-	"prefixes": ["o!" "oxyl", "mention"],
+	"prefixes": ["o!", "oxyl", "mention"],
 	"postStats": true,
 	"serverChannel": "265998475831934977",
 	"shardsPerWorker": 2,

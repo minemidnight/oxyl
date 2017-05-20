@@ -115,9 +115,6 @@ async function getFiles(filepath, filter = () => true, deep = false) {
 	return validFiles;
 }
 
-const statPoster = require("./modules/webhookStatus.js");
-setInterval(statPoster, 1800000);
-
 process.on("unhandledRejection", err => {
 	if(err.message.startsWith("Request timed out")) return;
 	try {

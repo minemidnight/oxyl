@@ -18,7 +18,7 @@ module.exports = async () => {
 				headers: { Authorization: bot.privateConfig.dbotsKey },
 				json: true,
 				method: "POST",
-				url: `https://bots.discord.pw/api/bots/${bot.user.id}`
+				url: `https://bots.discord.pw/api/bots/${bot.user.id}/stats`
 			});
 		} catch(err) {
 			console.error(`Error posting to Discord Bots: ${err.stack}`);
@@ -34,7 +34,7 @@ module.exports = async () => {
 				url: "https://www.carbonitex.net/discord/data/botdata.php"
 			});
 		} catch(err) {
-			console.error(`Error posting to Discord Bots: ${err.stack}`);
+			console.error(`Error posting to Carbon: ${err.stack}`);
 		}
 	}
 };

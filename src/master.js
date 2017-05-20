@@ -13,12 +13,15 @@ function handleWorker(worker) {
 			totalShards: shardCount
 		});
 
-		webhook({
-			title: `Worker ${worker.id} started`,
-			color: 0x00FF00,
-			description: `Hosting shards ${worker.shardStart}-${worker.shardEnd}`,
-			timestamp: new Date()
-		});
+		if(process.uptime() >= 30) {
+			webhook({
+				title: `Worker ${worker.id} started`,
+				color: 0x00FF00,
+				description: `Hosting shards ${worker.shardStart}-${worker.shardEnd}`,
+				timestamp: new Date()
+			});
+		}
+
 		statsd({
 			type: "event",
 			stat: "worker_startup",
@@ -29,15 +32,6 @@ function handleWorker(worker) {
 	worker.on("exit", (code, signal) => {
 		if(signal) {
 			return;
-			// 	console.error(`Worker ${worker.id} died with signal ${signal} ` +
-			// 		`(hosted shards ${worker.shardStart}-${worker.shardEnd})`);
-			//
-			// 	webhook({
-			// 		title: `Worker ${worker.id} died`,
-			// 		color: 0xFF0000,
-			// 		description: `Singal: ${signal}\nHosted shards ${worker.shardStart}-${worker.shardEnd}`,
-			// 		timestamp: new Date()
-			// 	});
 		} else if(code !== 0) {
 			if(workerCrashes[worker.id] && workerCrashes[worker.id] >= 4) {
 				console.error(`Worker ${worker.id} killed due to restart loop with ` +
