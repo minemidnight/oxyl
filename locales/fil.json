@@ -1,0 +1,351 @@
+{
+    "commands": {
+        "admin": {
+            "autoRole": {
+                "add": {
+                    "noArg": "\npls gimme isang papel upang idagdag sa autorole.",
+                    "alreadyAutorole": "tungkulin  ay naka-set ya dingus.\n",
+                    "success": "kden, ako nagdagdag ng  para sa u."
+                },
+                "remove": {
+                    "noArg": "pls gimme isang papel upang alisin mula autorole\n",
+                    "notAutorole": " ay hindi isang papel Scrub mo.",
+                    "success": "kden, inalis ko  para sa u."
+                },
+                "list": {
+                    "noAutoroles": "\nWala pang autoroles.",
+                    "success": "heres ang tungkulin u Donk: .\n"
+                },
+                "invalidSubcommand": "Di-wastong sub-command! Mangyaring gamitin ang `autorole <add | alisin | list> [<role>]`\n"
+            },
+            "editCommand": {
+                "commandNotFound": "Command hindi natagpuan",
+                "cantEdit": "Hindi mo maaaring i-edit ang command na ito\n",
+                "info": {
+                    "noEdits": "Walang mga pag-edit sa command na ito",
+                    "success": "__ ** Command ** __: \nPinagana:\nMga Tungkulin: "
+                },
+                "reset": {
+                    "success": "I-reset ang utos ``\n"
+                },
+                "toggle": {
+                    "disabled": "\nDisabled utos` `",
+                    "enabled": "Pinagana ng command ``\n"
+                },
+                "roles": {
+                    "noArg": "\nMangyaring magbigay ng ilang mga tungkulin upang paghigpitan ang command na ito upang! Hatiin ang bawat isa ay may,",
+                    "invalidRoles": "Di-wastong mga tungkulin ibinigay, pakibigay pangalan role nahati sa a,",
+                    "success": "Command `` Nangangailangan na ngayon ang isa sa mga sumusunod na mga papel na gagamitin: "
+                },
+                "invalidSubcommand": "\nDi-wastong sub-command! Mangyaring gamitin ang `editcommand <utos name> <info | reset | toggle | ginagampanan> [<tungkulin (split sa,)>]`"
+            },
+            "ignore": {
+                "enabled": "Pinagana Oxyl sa",
+                "disabled": "Oxyl hindi pinagana sa "
+            },
+            "rolePersist": {
+                "add": {
+                    "noArg": "Mangyaring magbigay ng isang papel upang idagdag sa persisted tungkulin!",
+                    "alreadyPersisted": "Role `` nang isang persisted role",
+                    "success": "Role `` ay naidagdag na sa persisted tungkulin"
+                },
+                "remove": {
+                    "noArg": "Mangyaring magbigay ng isang tungkulin upang alisin mula sa persisted tungkulin!\n",
+                    "notPersisted": "Role `` ay hindi isang persisted role",
+                    "success": "Role `` inalis mula sa persisted tungkulin"
+                },
+                "list": {
+                    "noPeristedRoles": "Kasalukuyang walang persisted tungkulin",
+                    "success": "Listahan ng mga persisted papel: "
+                },
+                "invalidSubcommand": "Di-wastong sub-command! Mangyaring gamitin ang `rolepersist <add | alisin | list> [<role>]`"
+            },
+            "settings": {
+                "noArgs": "__ ** Wastong setting ** __:\n\n\nGamitin `setting <pagtatakda>` upang makakuha ng higit pang impormasyon sa isang partikular na setting",
+                "invalidSetting": "Di-wastong setting!",
+                "settingInfo": "__ ** Setting ** __: \nPaglalarawan: \nMga tinatanggap na Values:\nKasalukuyang Halaga: \n",
+                "cantReset": "`` hindi maaaring ma-reset dahil ito ay hindi pa naka-set",
+                "resetSuccess": "I-reset ang setting na ``",
+                "setSuccess": "et `` sa"
+            }
+        },
+        "default": {
+            "donate": {
+                "success": "Salamat sa iyo para isinasaalang-alang ang pagbibigay ng donasyon.\nPatreon Pahina: https://patreon.com/minemidnight"
+            },
+            "google": {
+                "noResults": "Walang nahanap na resulta"
+            },
+            "help": {
+                "commandNotFound": "Command hindi natagpuan",
+                "commandInfo": "__ ** Command Pangalan ** __:\nkategorya:\nPaggamit:\nMga Alyas:\nPaglalarawan:\nMga kinakailangang pahintulot:",
+                "commandList": "** Command (kabuuan) **\n\nGamitin `tulong <utos>` upang makakuha ng karagdagang impormasyon sa isang command"
+            },
+            "invite": {
+                "success": "Suporta ng server:\nMag-anyaya:"
+            },
+            "ping": {
+                "success": "Pong! `ms`"
+            },
+            "remind": {
+                "noTime": "Mangyaring magbigay ng oras, gamit ang format na ito: `ipaalala <pagkilos> sa <timespan>`",
+                "invalidTime": "Mangyaring lamang lumikha ng mga paalala para sa pagitan ng 30 segundo at 4 na linggo sa hinaharap.",
+                "success": "Nilikha paalala: `` in"
+            },
+            "roleMe": {
+                "noPerms": "Hindi mo na kailangang tamang pahintulot na gawin ito! Dapat ay mayroon kang pahintulot ADMINISTRATOR o maging ang may-ari ng server",
+                "notAvailable": "papel na iyon ay hindi magagamit",
+                "list": {
+                    "noneAvailable": "Kasalukuyang walang mga available tungkulin",
+                    "success": "Listahan ng mga magagamit na mga papel:"
+                },
+                "add": {
+                    "alreadyAvailable": "papel na iyon ay magagamit",
+                    "success": "Idinagdag `` na available tungkulin"
+                },
+                "remove": {
+                    "success": "Inalis `` mula sa magagamit na mga tungkulin"
+                },
+                "invalidBotPerms": "Alinman wala akong pahintulot, o posisyon ang papel na ginagampanan ay mas mataas kaysa sa minahan!",
+                "removedRole": "Inalis `` mula sa iyo",
+                "gaveRole": "Binigyan mo ``"
+            },
+            "serverInfo": {
+                "success": "__ ** Guild ** __:\nChannels:\nMga kasapi:\nMga gumagamit: (%)\nBot: (%)\nPetsa ng Paglikha:\nMay-ari: (ID:)\nicon:"
+            },
+            "shardInfo": {
+                "success": "__ ** Shard ** __\nguilds:\nChannels:\nUser:\nLatency: ms\nkatayuan:\n"
+            },
+            "stats": {
+                "success": "__ ** Guilds ** __\nMalaki (higit sa 250 mga kasapi):\nAng iba ay:\nkabuuan:\nStreaming In:\n\n__ ** Ibang ** __\nWorker Memory Usage: MiB\nKabuuang Paggamit Memory: gib\nWorker: (Shards:)\nuptime:\nWebsite:"
+            },
+            "userInfo": {
+                "success": "__ ** User ** __:\nID:\nAvatar:\nNaglalaro:\nkatayuan:\nSumali sa date:\nKapisanan Sumali Petsa:"
+            },
+            "xkcd": {
+                "invalidComic": "Di-wastong Comic! Komiks magagamit:"
+            },
+            "locale": {
+                "englishName": "Ingles",
+                "nativeName": "Ingles",
+                "noArg": "__ ** Locale List: ** __\n\n\nKasalukuyang Locale: ``",
+                "invalidLocale": "Iyon ay hindi isang wastong locale!",
+                "changedSuccess": "Itakda ang locale sa ``"
+            }
+        },
+        "moderator": {
+            "ban": {
+                "noPerms": "Ako kulang ng pahintulot na i-ban mga kasapi!",
+                "botCantBan": "Hindi ma-ban, dahil mayroon silang mas mataas na permisions kaysa Oxyl",
+                "youCantBan": "Hindi ma-ban, dahil mayroon silang mas mataas na permisions kaysa sa iyo",
+                "success": "ay pinagbawalan"
+            },
+            "giveaway": {
+                "noTime": "Mangyaring magbigay ng oras, gamit ang format na ito: `giveaway <item> sa <timespan>`",
+                "invalidTime": "Mangyaring lamang lumikha ng pamudmod para sa pagitan ng 30 segundo at 4 na linggo sa hinaharap.",
+                "message": "__ ** GIVEAWAY! ** __\nReaksyon sa 🎉 na magkaroon ng isang pagkakataon upang manalo\nNa nagtatapos sa:"
+            },
+            "hackban": {
+                "noPerms": "Ako kulang ng pahintulot na i-ban mga kasapi!",
+                "invalidID": "Hindi wastong user id!",
+                "inGuild": "user na nasa guild, mangyaring mag-ban ang mga ito nang normal!",
+                "success": "ay pinagbawalan"
+            },
+            "kick": {
+                "noPerms": "Ako kulang ng pahintulot upang sipain kasapi!",
+                "botCantKick": "Hindi ma-kicked, dahil mayroon silang mas mataas na permisions kaysa Oxyl",
+                "youCantKick": "Hindi ma-kicked, dahil mayroon silang mas mataas na permisions kaysa sa iyo",
+                "success": "ay kicked"
+            },
+            "mute": {
+                "roleError": "Alinman wala akong pahintulot, o posisyon ng naka-mute na papel ay mas mataas kaysa sa minahan!",
+                "missingBothPerms": "wala akong pahintulot upang lumikha at i-configure ng isang Naka-mute role (pahintulot na kinakailangan: `Pamahalaan Roles` at` Pamahalaan Channels`)",
+                "missingRolePerms": "wala akong pahintulot upang lumikha ng mga Naka-mute role (kailangan ng pahintulot: `Pamahalaan Roles`)",
+                "missingChannelPerms": "hindi tama ko maaaring i-configure ang Naka-mute papel, dahil sa mga pahintulot (kailangan ng pahintulot: `Pamahalaan Channels`)\n",
+                "muted": "Na-mute",
+                "unmuted": "ay nai-unmute"
+            },
+            "pardon": {
+                "noPerms": "Hindi mo na kailangang tamang pahintulot na patawarin nawa ng gumagamit na",
+                "noWarnings": "miyembro na walang mga babala",
+                "success": "Matagumpay na ipinatawad (kabuuang babala:)"
+            },
+            "purge": {
+                "noPerms": "Wala akong permssion sa Pamahalaan ang Mga Mensahe"
+            },
+            "reason": {
+                "noCases": "Nagkaroon walang kaso para sa guild ito.",
+                "invalidInput": "Mangyaring magbigay lamang ang mga numero para sa mga kaso",
+                "invalidCase": "Kaso `` hindi natagpuan",
+                "noChannel": "Ang mod log channel ay hindi nakatakda",
+                "noMessage": "Mensahe mula sa kasong `` hindi natagpuan",
+                "successOneCase": "✅ set ang dahilan ng kasong ``",
+                "successMultipleCases": "✅ Set dahilan para sa mga kaso"
+            },
+            "softban": {
+                "noPerms": "Ako kulang ng pahintulot na i-ban mga kasapi!",
+                "botCantBan": "Hindi ma-ban, dahil mayroon silang mas mataas na permisions kaysa Oxyl",
+                "youCantBan": "Hindi ma-ban, dahil mayroon silang mas mataas na permisions kaysa sa iyo",
+                "success": "ay tinanggal softbanned"
+            },
+            "warn": {
+                "noPerms": "Hindi mo na kailangang tamang pahintulot upang bigyan ng babala sa gumagamit na iyon",
+                "success": "Matagumpay na binigyan ng babala (kabuuang mga babala:"
+            }
+        },
+        "music": {
+            "end": {
+                "success": "tumigil Musika"
+            },
+            "jump": {
+                "invalidQueue": "Di-wastong numero queue",
+                "success": "✅ Jumped sa queue #"
+            },
+            "movehere": {
+                "notInVoice": "Wala ka sa isang tinig channel, hindi mo maaaring gamitin ito!",
+                "nothingToMove": "Walang bagay upang ilipat. Mayroon na nakasalalay sa ito ang boses at teksto channel",
+                "success": "Inilipat sa"
+            },
+            "pause": {
+                "alreadyPaused": "Ang musika ay naka-pause",
+                "success": "tumigil Musika"
+            },
+            "play": {
+                "notInVoice": "Wala ka sa isang tinig channel",
+                "dfmPlaylists": "Discord.FM playlist:",
+                "addedDFM": "Idinagdag Discord.FM playlist sa queue",
+                "invalidDFM": "Di-wastong Discord.FM playlist, gamitin `dfm: list` upang tingnan ang listahan ng mga playlist",
+                "donatorOnly": "Di-wastong Discord.FM playlist, gamitin `dfm: list` upang tingnan Ang listahan Ng Mga playlist",
+                "invalidSavedQueue": "Di-wastong makatipid number! Ang mga wastong imbak ng mga numero ay 1, 2 o 3",
+                "noSavedQueue": "May mga na-save queue ilalim makatipid #",
+                "loadedSavedQueue": "Na-load na queue #",
+                "addedItem": "Idinagdag ____ sa pila",
+                "noFormats": "Walang angkop na mga format ang natagpuan",
+                "invalidID": "Ang ID mula sa playlist / video link wasto",
+                "notFound": "Ang mapagkukunan ay hindi mahanap, marahil ito ay tinanggal dahil?",
+                "invalidType": "Mangyaring lamang mag-link sa SoundCloud kanta o playlist",
+                "channelOffline": "Iyon Twitch channel ay offline",
+                "noSearchResults": "Walang mga resulta mula sa query sa paghahanap"
+            },
+            "queue": {
+                "success": "__ ** Music Queue ** __"
+            },
+            "removequeue": {
+                "invalidQueue": "Mangyaring magbigay ng mga numero tulad ng queue posisyon",
+                "success": "Inalis item (s) mula sa queue"
+            },
+            "repeat": {
+                "success": "Ulitin ay naka"
+            },
+            "resume": {
+                "notPaused": "Ang musika ay hindi naka-pause",
+                "success": "Ipinagpatuloy Musika"
+            },
+            "savequeue": {
+                "donatorOnly": "Kailangan kang maging donator gamitin ang command na ito!",
+                "success": "Naka-save na mga item sa ilalim-save queue #\nGamitin `i-play sq:` upang i-load sa pila"
+            },
+            "shuffle": {
+                "success": "queue shuffled"
+            },
+            "skip": {
+                "successNoneLeft": "Song nilaktawan, walang higit pang mga kanta sa queue",
+                "successNextSong": "Nilalaro na ____"
+            }
+        }
+    },
+    "phrases": {
+        "noMusic": "Sa kasalukuyan ay walang music playing",
+        "notListening": "Ikaw dapat ay pakikinig sa musika upang gamitin ang command na ito",
+        "notInGuild": "Error: user wala sa guild",
+        "invalidRange": "Hindi balidong range na ibinigay!",
+        "cantJoin": "Hindi ko ma-sumali na channel",
+        "cantSpeak": "Hindi ako makapagsalita sa channel na iyon",
+        "queueError": "Playing: Nothing",
+        "currentPlaying": "Playing:",
+        "repeat": "ulitin:",
+        "noQueue": "\nMay ay walang nakapila",
+        "otherResults": "Iba pa Mga resulta",
+        "warningThreshold": "babala Threshold",
+        "noneProvided": "walang ibinigay",
+        "noneRequired": "wala na kinakailangan",
+        "nowPlaying": "Nilalaro na",
+        "recievedError": "nakatanggap ng Error",
+        "rolePersist": "Role Magpumilit"
+    },
+    "words": {
+        "noValue": "Walang halaga",
+        "none": "wala",
+        "muted": "mahina",
+        "and": "at",
+        "page": "pahina",
+        "on": "sa",
+        "off": "mula sa",
+        "service": "serbisyo"
+    },
+    "modules": {
+        "args": {
+            "usageError": "Di-wastong Paggamit! Mangyaring gamitin ang command na tulad ng: ``"
+        },
+        "commands": {
+            "guildOnly": "Paumanhin, ngunit ang command na ito ay para sa mga guilds lamang.",
+            "creatorOnly": "command na ito ay maaari lamang gamitin sa pamamagitan ng mga tagalikha ng mga bot.",
+            "adminOnly": "Hindi ka maaaring magpatakbo ng command na ito, ito ay nangangailangan ng pahintulot ADMINISTRATOR.",
+            "noPerms": "Hindi ka maaaring magpatakbo ng command na ito, ito ay nangangailangan ng pahintulot.",
+            "noRoles": "Hindi mo na kailangang ang tamang tungkulin upang gamitin ang command na ito, ito ay nangangailangan ng isa sa mga sumusunod:",
+            "permissionFail": "Command ay nabigo dahil sa isang error sa pahintulot",
+            "errorRunning": "Error e-execute command na ito! Stack trace:"
+        },
+        "modLog": {
+            "actions": {
+                "specialRoleAdd": "Espesyal Role Idinagdag",
+                "specialRoleRemove": "Espesyal Role Inalis",
+                "ban": "pagbabawal",
+                "kick": "sipa",
+                "pardon": "Pakiulit",
+                "softban": "Softban",
+                "unban": "unban",
+                "reason": "dahilan"
+            },
+            "words": {
+                "case": "kaso",
+                "action": "aksyon",
+                "user": "gumagamit",
+                "mod": "mod",
+                "totalWarnings": "\nkabuuang babala",
+                "noReason": "Responsable moderator, i-set ito gamit `reason`"
+            }
+        },
+        "player": {
+            "maxQueue": "Hindi ka maaaring magdagdag ng anumang higit pang mga kanta! Ang iyong queue ay mayroon 2000 mga kanta. Kung nais mong ng isang walang limitasyong laki pila, isaalang-alang ang pagbibigay ng donasyon.",
+            "cutOffQueue": "Ang iyong queue ay idinagdag, ngunit hindi ganap. Ang iyong queue ay tinanggal nalimitahan sa 2000 mga kanta. Kung nais mong ng isang walang limitasyong laki pila, isaalang-alang ang pagbibigay ng donasyon.",
+            "extractionError": "Walang stream ay bumalik pagkatapos ng bunutan",
+            "noFormats": "Walang angkop na mga format ang natagpuan"
+        },
+        "resolver": {
+            "booleanError": "Hindi wastong input! Mangyaring magbigay ng true / oo o hindi totoo / hindi",
+            "invalidLink": "Di-wastong link",
+            "NaN": "Argument na ibinigay ay hindi isang numero",
+            "underMin": "Argument na ibinigay ay mas mababa kaysa sa minimum na halaga",
+            "aboveMax": "Argument na ibinigay ay mas malaki kaysa sa maximum na halaga",
+            "noRole": "Walang role natagpuan",
+            "noChannel": "Walang channel na natagpuan",
+            "notCached": "User mula sa pagbanggit ay hindi naka-cache",
+            "noUserFound": "Walang user matagpuan",
+            "multipleUsers": "Maramihang mga gumagamit na natagpuan. Mangyaring sabihin ang isang numero sa ibaba upang pumili ng isa sa susunod na 10 segundo:",
+            "noUserChosen": "pinili Walang user",
+            "andMore": "... at iba pa",
+            "invalidUser": "Hindi wastong bilang pinili ng user!"
+        },
+        "timedEvents": {
+            "reminder": "Humingi ka sa akin upang ipaalala sa iyo tungkol dito sa:",
+            "giveawayWinner": "__ ** GIVEAWAY WINNER ** __\nBinabati kita, ikaw ay nanalo!",
+            "noGiveawayEntries": "__ ** GIVEAWAY WINNER ** __\nNakalulungkot, walang sinuman ang pumasok sa giveaway para sa, kaya walang nanalo."
+        },
+        "locales": {
+            "invalidContext": "Di-wastong konteksto para sa pagsasalin :, mangyaring iulat ito sa Suporta",
+            "incompleteContext": "Hindi kumpleto konteksto para sa pagsasalin :. Paki-ulat ito sa Suporta",
+            "invalidPlaceholder": "Hindi wastong PLACEHOLDER, paki-alerto ari bot"
+        }
+    }
+}
