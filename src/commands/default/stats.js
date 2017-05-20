@@ -30,7 +30,7 @@ module.exports = {
 			worker: cluster.worker.id,
 			shardRange: `${cluster.worker.shardStart}-${cluster.worker.shardEnd}`,
 			uptime: bot.utils.parseMs(Date.now() - bot.startTime),
-			webiste: "http://minemidnight.work"
+			website: "http://minemidnight.work"
 		});
 	},
 	description: "View information about Oxyl",

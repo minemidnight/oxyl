@@ -1,9 +1,9 @@
 const statPoster = require("../../modules/statPoster.js");
 module.exports = async guild => {
-	let joinMessage = "Thanks for adding Oxyl Beta to your server! Here is how to get started:\n";
-	joinMessage += "❓ Run `ob!help` to get a list of commands.";
-	joinMessage += `Oxyl Beta also supports ${bot.user.mention} or \`oxylb\` as prefixes.\n`;
-	joinMessage += "⚙ Feeling like configuring the bot? Use the dashboard at <http://beta.minemidnight.work>.\n";
+	let joinMessage = "Thanks for adding Oxyl to your server! Here is how to get started:\n";
+	joinMessage += "❓ Run `o!help` to get a list of commands.";
+	joinMessage += `Oxyl also supports ${bot.user.mention} or \`oxyl\` as prefixes.\n`;
+	joinMessage += "⚙ Feeling like configuring the bot? Use the dashboard at <http://minemidnight.work>.\n";
 	joinMessage += "🎵 Like music? Use the `play` command to start to queue music!\n";
 	joinMessage += "💰 Feeling generous? Donate at <http://patreon.com/minemidnight>.\n";
 	joinMessage += "📎 Need support, or want to be notified about updates? ";

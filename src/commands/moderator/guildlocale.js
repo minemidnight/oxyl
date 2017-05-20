@@ -6,8 +6,7 @@ module.exports = {
 
 			return __("commands.default.locale.noArg", message, {
 				locales: bot.locales.map(locale => {
-					let format = `${locale}: `;
-					format += __("commands.default.locale.nativeName", { locale });
+					let format = `${locale}: ${__("commands.default.locale.nativeName", { locale })}`;
 					if(locale !== "en") format += ` (${__("commands.default.locale.englishName", { locale })})`;
 
 					return format;
@@ -17,7 +16,13 @@ module.exports = {
 		} else if(!~bot.locales.indexOf(message.args[0])) {
 			return __("commands.default.locale.invalidLocale", message);
 		} else {
-			await r.table("locales").insert({ id: message.channel.guild.id, locale: message.args[0] }).run();
+			let currentLocale = await r.table("locales").get(message.channel.guild.id).run();
+			if(currentLocale) {
+				await r.table("locales").insert({ id: message.channel.guild.id, locale: message.args[0] }).run();
+			} else {
+				await r.table("locales").get(message.channel.guild.id).update({ locale: message.args[0] }).run();
+			}
+
 			bot.localeCache.set(message.channel.guild.id, message.args[0]);
 			message.locale = message.args[0];
 

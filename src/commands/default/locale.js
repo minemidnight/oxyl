@@ -17,7 +17,13 @@ module.exports = {
 		} else if(!~bot.locales.indexOf(message.args[0])) {
 			return __("commands.default.locale.invalidLocale", message);
 		} else {
-			await r.table("locales").insert({ id: message.author.id, locale: message.args[0] }).run();
+			let currentLocale = await r.table("locales").get(message.author.id).run();
+			if(currentLocale) {
+				await r.table("locales").insert({ id: message.author.id, locale: message.args[0] }).run();
+			} else {
+				await r.table("locales").get(message.author.id).update({ locale: message.args[0] }).run();
+			}
+
 			bot.localeCache.set(message.author.id, message.args[0]);
 			message.locale = message.args[0];
 

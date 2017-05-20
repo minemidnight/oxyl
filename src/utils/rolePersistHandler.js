@@ -1,11 +1,11 @@
 const modLog = require("../modules/modLog.js");
 module.exports = async (guild, member, type) => {
 	let persists = await r.table("rolePersist").filter({ guildID: guild.id, rule: true }).run();
-	if(persists.length === 0) return;
+	if(!persists.length) return;
 	else persists = persists.map(data => data.roleID);
 
 	if(type === "leave") {
-		if(member.roles && member.roles.length === 0) return;
+		if(!member.roles || !member.roles.length) return;
 
 		let toPersist = member.roles.filter(roleID => ~persists.indexOf(roleID));
 		await r.table("rolePersist").insert({
@@ -21,7 +21,7 @@ module.exports = async (guild, member, type) => {
 			rule: false
 		}).run())[0];
 
-		if(!persistData || persistData.roles.length === 0) return;
+		if(!persistData || !persistData.roles.length) return;
 		await r.table("rolePersist").get(persistData.id).delete().run();
 
 		let channel = await modLog.channel(guild);
