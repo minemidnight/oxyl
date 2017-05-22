@@ -15,7 +15,7 @@ module.exports = {
 
 			return __("commands.admin.settings.settingInfo", message, {
 				setting: message.args[0],
-				description: settings.description,
+				description: setting.description,
 				accepted: `${setting.label || `<${setting.arg}>`}|reset`,
 				current: currentValue ? currentValue.value : __("words.noValue", message)
 			});

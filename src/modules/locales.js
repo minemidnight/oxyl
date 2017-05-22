@@ -24,7 +24,7 @@ global.__ = (context, object = { locale: "en" }, values = {}, capitializeFirst =
 		placeholders.forEach(placeholder => {
 			placeholder = placeholder.substring(2, placeholder.length - 2);
 			string = string.replace(`{{${placeholder}}}`,
-				values[placeholder] || __("modules.locales.invalidPlaceholder", object));
+				values[placeholder] === undefined ? __("modules.locales.invalidPlaceholder", object) : values[placeholder]);
 		});
 	}
 

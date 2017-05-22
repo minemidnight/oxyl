@@ -44,6 +44,13 @@ wss.on("connection", ws => {
 				callback: results => ws.send(JSON.stringify({ type: "output", result: results[0], id: data.id }))
 			};
 			process.handleMessage(data);
+		} else if(data.type === "globalEval") {
+			process.waitingOutputs[data.id] = {
+				expected: cluster.onlineWorkers.length,
+				results: [],
+				callback: results => ws.send(JSON.stringify({ type: "output", results, id: data.id }))
+			};
+			process.handleMessage(data);
 		}
 	});
 });

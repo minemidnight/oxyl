@@ -103,11 +103,13 @@ process.handleMessage = async (msg, worker) => {
 		}
 	} else if(msg.type === "globalEval") {
 		let workers = cluster.onlineWorkers;
-		waitingOutputs[msg.id] = {
-			expected: workers.length,
-			results: [],
-			callback: results => worker.send({ type: "output", results, id: msg.id })
-		};
+		if(worker) {
+			waitingOutputs[msg.id] = {
+				expected: workers.length,
+				results: [],
+				callback: results => worker.send({ type: "output", results, id: msg.id })
+			};
+		}
 
 		workers.forEach(work => {
 			work.send({
@@ -134,7 +136,7 @@ process.handleMessage = async (msg, worker) => {
 		if(msg.target[0] === "shard" || msg.target[0] === "guild") {
 			if(msg.target[0] === "guild") shard = ~~((msg.guildID / 4194304) % process.shardCount);
 			else shard = msg.target[1];
-			targetWorker = workers.find(work => work.shardStart >= shard && work.shardEnd <= shard);
+			targetWorker = workers.find(work => shard >= work.shardStart && shard <= work.shardEnd);
 		}
 
 		if(!targetWorker) {
