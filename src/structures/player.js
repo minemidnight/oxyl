@@ -70,6 +70,8 @@ class Player extends EventEmitter {
 		let connection = this.connection;
 		if(!connection) return;
 		else if(this.current && connection.playing) return;
+		else if(!this.current && connection.playing) connection.stopPlaying();
+		else if(!connection.playing && this.current) delete this.current;
 
 		let song = this.queue[0];
 		if(!song && !this.current) {
@@ -103,13 +105,18 @@ class Player extends EventEmitter {
 		else volume = 0.3;
 		let options = {};
 
-		if(song.opus) {
-			options.format = "webm";
-			options.frameDuration = 20;
-		} else {
-			options.encoderArgs = ["-af", `volume=${volume}`];
-			options.inputArgs = ["-reconnect", "1", "-reconnect_streamed", "1", "-reconnect_delay_max", "2"];
-		}
+		// if(song.opus) {
+		// 	options.format = "webm";
+		// 	options.frameDuration = 20;
+		// } else {
+		// 	options.encoderArgs = ["-af", `volume=${volume}`];
+		// 	options.inputArgs = ["-reconnect", "1", "-reconnect_streamed", "1", "-reconnect_delay_max", "2"];
+		// }
+		// CPU Usage doesn't matter that much to me :)
+
+		options.encoderArgs = ["-af", `volume=${volume}`];
+		options.inputArgs = ["-reconnect", "1", "-reconnect_streamed", "1", "-reconnect_delay_max", "2"];
+
 		this.connection.play(song.stream, options);
 		this.current = song;
 		this.emit("playing", song);
