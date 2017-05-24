@@ -5,7 +5,7 @@ module.exports = {
 			input: () => [
 				bot.guilds.filter(guild => guild.large).length,
 				bot.guilds.size,
-				process.memoryUsage().heapUsed / Math.pow(1024, 2),
+				process.memoryUsage().heapUsed,
 				Array.from(bot.players.values()).filter(player => player.connection).length
 			]
 		})).results;
@@ -18,7 +18,7 @@ module.exports = {
 			type: "masterEval",
 			input: () => process.memoryUsage().heapUsed
 		})).result;
-		let totalUsage = (masterUsage + results.map(res => res[2]).reduce((a, b) => a + b)) / Math.pow(1024, 3);
+		let totalUsage = masterUsage + results.map(res => res[2]).reduce((a, b) => a + b);
 
 		return __("commands.default.stats.success", message, {
 			largeGuilds,
@@ -26,7 +26,7 @@ module.exports = {
 			totalGuilds,
 			streamCount: streams,
 			workerUsage: (workerUsage / Math.pow(1024, 2)).toFixed(2),
-			totalUsage: totalUsage.toFixed(2),
+			totalUsage: (totalUsage / Math.pow(1024, 3)).toFixed(2),
 			worker: cluster.worker.id,
 			shardRange: `${cluster.worker.shardStart}-${cluster.worker.shardEnd}`,
 			uptime: bot.utils.parseMs(Date.now() - bot.startTime),

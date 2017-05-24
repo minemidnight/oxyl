@@ -24,7 +24,7 @@ module.exports = {
 			}
 
 			await r.table("warnings").get(warnings[warnings.length - 1].id).delete().run();
-			return __("commands.moderator.pardon.sucess", message, { user: member.user.username, warnCount });
+			return __("commands.moderator.pardon.success", message, { user: member.user.username, warnCount });
 		}
 	},
 	caseSensitive: true,

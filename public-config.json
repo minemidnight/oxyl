@@ -1,19 +1,20 @@
 {
 	"creators": ["155112606661607425"],
-	"datadog": { "prefix": "oxyl." },
+	"databaseName": "OxylBeta",
+	"datadog": { "prefix": "oxyl_beta." },
 	"defaultInvitePermissionNumber": 298183686,
 	"donator": {
 		"channel": "254770965018443776",
 		"role": "292657073987125249"
 	},
-	"prefixes": ["o!", "oxyl", "mention"],
+	"prefixes": ["ob!", "oxylbeta", "oxylb", "mention"],
 	"postStats": true,
 	"serverChannel": "265998475831934977",
 	"shardsPerWorker": 2,
 	"updates": {
 		"channel": "270576454117359617",
 		"guild": "254768930223161344",
-		"role": "265293123821895680"
+		"role": "301018213616189441"
 	},
 	"websocketServer": true
 }

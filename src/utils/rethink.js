@@ -30,7 +30,7 @@ module.exports = {
 				await r.tableCreate(table).run();
 			}
 		}
-		console.startup(`RethinkDB successfully started on worker ${cluster.worker.id}`);
+		console.startup(`RethinkDB started on worker ${cluster.worker.id}`);
 
 		let prefixes = await r.table("settings").filter({ name: "prefix" }).run();
 		prefixes.forEach(setting => {

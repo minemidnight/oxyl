@@ -6,10 +6,7 @@ const publicConfig = JSON.parse(require("fs").readFileSync("public-config.json")
 const privateConfig = JSON.parse(require("fs").readFileSync("private-config.json").toString());
 
 let raven = require("raven");
-if(privateConfig.sentryLink) {
-	raven.config(privateConfig.sentryLink).install();
-	console.startup("Using sentry error handling");
-}
+if(privateConfig.sentryLink) raven.config(privateConfig.sentryLink).install();
 
 cluster.worker.on("message", async msg => {
 	if(msg.type === "startup") {
@@ -114,6 +111,9 @@ async function getFiles(filepath, filter = () => true, deep = false) {
 
 	return validFiles;
 }
+
+const statPoster = require("./modules/webhookStatus.js");
+setInterval(statPoster, 1800000);
 
 process.on("unhandledRejection", err => {
 	if(err.message.startsWith("Request timed out")) return;

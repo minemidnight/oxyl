@@ -75,7 +75,7 @@ module.exports = {
 					return __("commands.default.roleMe.removedRole", message, { role: role.name });
 				} else {
 					await message.member.addRole(role.id);
-					return __("commands.default.roleMe.gaveRole", message, { role: role });
+					return __("commands.default.roleMe.gaveRole", message, { role: role.name });
 				}
 			}
 		}

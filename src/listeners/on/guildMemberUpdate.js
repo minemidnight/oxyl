@@ -18,7 +18,7 @@ module.exports = async (guild, member, oldMember) => {
 		guildID: guild.id,
 		name: "modLog.track"
 	}).run())[0];
-	if(!trackedRoles) return;
+	if(!trackedRoles || !trackedRoles.value) return;
 	else trackedRoles = trackedRoles.value;
 
 	trackedRoles.forEach(tracked => {

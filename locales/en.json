@@ -318,7 +318,7 @@
 				"locales": {
 					"invalidContext": "Invalid context for translation: {{context}}, {{part}} (non existant). Please report this to Support",
 					"incompleteContext": "Incomplete context for translation: {{context}} (non string). Please report this to Support",
-					"invalidPlaceholder": "INVALID PLACEHOLDER, please alert bot owner"
+					"invalidPlaceholder": "INVALID PLACEHOLDER, please report this to Support"
 				}
     },
 		"phrases": {
