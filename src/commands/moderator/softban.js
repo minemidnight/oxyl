@@ -23,8 +23,8 @@ module.exports = {
 				}
 			}
 
-			await member.ban(7);
-			member.unban();
+			await member.ban(7, message.args[1]);
+			member.unban("Softban");
 			return __("commands.moderator.softban.success", message, { user: member.user.username });
 		}
 	},

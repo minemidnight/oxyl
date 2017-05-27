@@ -14,7 +14,7 @@ module.exports = {
 			if(match[2] < match[1]) return __("phrases.invalidRange", message);
 			for(let i = match[1]; i <= match[2]; i++) cases.push(i);
 		} else if(message.args[0].indexOf(",") !== -1) {
-			message.args[0].split(",").forEach(cases.push);
+			message.args[0].split(",").forEach(part => cases.push(part));
 		} else {
 			cases.push(message.args[0]);
 		}

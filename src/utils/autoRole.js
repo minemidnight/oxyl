@@ -4,6 +4,6 @@ module.exports = async (guild, member) => {
 	else autoRoles = autoRoles.map(data => data.roleID);
 
 	try {
-		await Promise.all(autoRoles.map(roleID => member.addRole(roleID)));
+		await Promise.all(autoRoles.map(roleID => member.addRole(roleID, "Auto role")));
 	} catch(err) {} // eslint-disable-line no-empty
 };

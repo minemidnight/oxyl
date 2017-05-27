@@ -19,7 +19,7 @@ module.exports = {
 				if(match[2] < match[1]) return "Invalid range given!";
 				for(let i = match[1]; i <= match[2]; i++) toRemove.push(i);
 			} else if(message.args[0].indexOf(",") !== -1) {
-				message.args[0].split(",").forEach(toRemove.push);
+				message.args[0].split(",").forEach(part => toRemove.push(part));
 			} else {
 				toRemove.push(message.args[0]);
 			}

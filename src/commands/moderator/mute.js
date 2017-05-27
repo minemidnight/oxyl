@@ -20,12 +20,12 @@ async function getMutedRole(message) {
 				name: __("words.muted", guild, {}, true),
 				permissions: 0,
 				color: 0xDF4242
-			});
-			mutedRole.editPosition(0);
+			}, "Create Muted Role");
+			// mutedRole.editPosition(0);
 
 			guild.channels
 				.filter(ch => ch.type === 0)
-				.forEach(ch => ch.editPermission(mutedRole.id, 0, 2048, "role"));
+				.forEach(ch => ch.editPermission(mutedRole.id, 0, 2048, "role", "Configure Muted Role"));
 			return mutedRole;
 		}
 	} else {
@@ -51,10 +51,10 @@ module.exports = {
 		if(!member) return __("phrases.notInGuild", message);
 		let isMuted = ~member.roles.indexOf(mutedRole.id);
 		if(isMuted) {
-			await member.removeRole(mutedRole.id);
+			await member.removeRole(mutedRole.id, message.args[1]);
 			return __("commands.moderator.mute.unmuted", message, { user: member.user.username });
 		} else {
-			await member.addRole(mutedRole.id);
+			await member.addRole(mutedRole.id, message.args[1]);
 			return __("commands.moderator.mute.muted", message, { user: member.user.username });
 		}
 	},

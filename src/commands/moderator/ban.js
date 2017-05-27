@@ -23,7 +23,7 @@ module.exports = {
 				}
 			}
 
-			member.ban(7);
+			member.ban(7, message.args[1]);
 			return __("commands.moderator.ban.success", message, { user: member.user.username });
 		}
 	},

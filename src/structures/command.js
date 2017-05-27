@@ -14,7 +14,6 @@ class Command {
 		this.guildOnly = !!data.guildOnly;
 		this.perm = data.perm;
 		this.type = data.type;
-		this.uses = 0;
 
 		if(this.args.length === 0) {
 			this.usage = "[]";
@@ -33,7 +32,6 @@ class Command {
 	}
 
 	run(message) {
-		this.uses++;
 		return this.process(message);
 	}
 

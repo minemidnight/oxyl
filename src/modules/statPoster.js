@@ -7,7 +7,7 @@ module.exports = async () => {
 
 	statsd({ type: "gauge", stat: "guilds", value: guilds });
 	if(bot.publicConfig.serverChannel) {
-		bot.editChannel(bot.publicConfig.serverChannel, { topic: `Server Count: ${guilds}` });
+		bot.editChannel(bot.publicConfig.serverChannel, { topic: `Server Count: ${guilds}` }, "Update server count");
 	}
 
 	if(!bot.publicConfig.postStats) return;

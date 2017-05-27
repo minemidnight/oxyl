@@ -5,5 +5,5 @@ module.exports = async channel => {
 	if(!rolePerms) return;
 
 	let mutedRole = channel.guild.roles.find(role => role.name.toLowerCase() === __("words.muted", channel.guild));
-	if(mutedRole) bot.editChannelPermission(channel.id, mutedRole.id, 0, 2048, "role");
+	if(mutedRole) bot.editChannelPermission(channel.id, mutedRole.id, 0, 2048, "role", "Set Muted Role Permissions");
 };

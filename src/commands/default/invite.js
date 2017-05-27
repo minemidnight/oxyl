@@ -6,7 +6,7 @@ module.exports = {
 		}
 
 		return __("commands.default.invite.success", message, {
-			invite,
+			invite: `<${invite}>`,
 			server: "https://discord.gg/9wkTDcE"
 		});
 	},

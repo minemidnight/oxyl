@@ -71,10 +71,10 @@ module.exports = {
 			} else {
 				let hasRole = ~message.member.roles.indexOf(role.id);
 				if(hasRole) {
-					await message.member.removeRole(role.id);
+					await message.member.removeRole(role.id, "RoleMe command");
 					return __("commands.default.roleMe.removedRole", message, { role: role.name });
 				} else {
-					await message.member.addRole(role.id);
+					await message.member.addRole(role.id, "RoleMe command");
 					return __("commands.default.roleMe.gaveRole", message, { role: role.name });
 				}
 			}

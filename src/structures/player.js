@@ -43,7 +43,7 @@ class Player extends EventEmitter {
 		updateStreamCount();
 
 		connection.on("error", err => this.emit("error", err));
-		connection.once("disconnect", () => {
+		connection.on("disconnect", () => {
 			connection.removeAllListeners();
 			this.queue = [];
 			delete this.connection;
@@ -66,15 +66,15 @@ class Player extends EventEmitter {
 	}
 
 	async play() {
-		clearTimeout(this.destroyTimeout);
 		let connection = this.connection;
 		if(!connection) return;
 		else if(this.current && connection.playing) return;
 		else if(!this.current && connection.playing) connection.stopPlaying();
 		else if(!connection.playing && this.current) delete this.current;
+		clearTimeout(this.destroyTimeout);
 
 		let song = this.queue[0];
-		if(!song && !this.current) {
+		if(!song && !this.current && !this.queue.length) {
 			this.destroy("no_queue");
 			return;
 		} else if(!song) {

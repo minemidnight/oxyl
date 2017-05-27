@@ -17,7 +17,7 @@ module.exports = {
 			}
 		}
 
-		message.channel.guild.banMember(message.args[0], 7);
+		message.channel.guild.banMember(message.args[0], 7, message.args[1]);
 		let display = bot.users.has(message.args[0]) ? bot.users.get(message.args[0]).username : `\`${message.args[0]}\``;
 		return __("commands.moderator.hackban.success", message, { user: display });
 	},

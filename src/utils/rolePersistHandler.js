@@ -34,9 +34,8 @@ module.exports = async (guild, member, type) => {
 			if(trackedRoles && ~trackedRoles.value.indexOf(roleID) && channel) {
 				modLog.presetReasons[guild.id] = { reason: __("phrases.rolePersist", guild), mod: bot.user };
 			}
-			try {
-				await member.addRole(roleID);
-			} catch(err) {} // eslint-disable-line no-empty
+
+			member.addRole(roleID, "Role Persist").catch(() => {}); // eslint-disable-line no-empty-function
 		}
 	}
 };

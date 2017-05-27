@@ -23,7 +23,7 @@ module.exports = {
 				}
 			}
 
-			member.kick();
+			member.kick(message.args[1]);
 			modLog.create(message.channel.guild, "kick", message.args[0]);
 			return __("commands.moderator.kick.success", message, { user: member.user.username });
 		}
