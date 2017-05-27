@@ -1,7 +1,7 @@
 module.exports = {
 	process: async message => {
 		let player = bot.players.get(message.channel.guild.id);
-		if(!player) return __("phrases.noMusic", message);
+		if(!player || !player.connection) return __("phrases.noMusic", message);
 
 		let queueMsg = "";
 		let page = message.args[0] || 1;

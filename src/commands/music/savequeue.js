@@ -4,7 +4,7 @@ module.exports = {
 		if(!donator) return __("commands.music.savequeue.donatorOnly", message);
 
 		let player = bot.players.get(message.channel.guild.id);
-		if(!player) {
+		if(!player || !player.connection) {
 			return __("phrases.noMusic", message);
 		} else if(!player.voiceCheck(message.member)) {
 			return __("phrases.notListening", message);

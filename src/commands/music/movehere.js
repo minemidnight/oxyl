@@ -15,7 +15,7 @@ module.exports = {
 						return __("phrases.cantSpeak", message);
 					} else {
 						moves.push(memberChannel.name);
-						bot.joinVoiceChannel(memberChannel.id);
+						player.connection.switchChannel(memberChannel.id);
 					}
 				}
 			} else {
