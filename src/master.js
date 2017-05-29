@@ -33,7 +33,7 @@ function handleWorker(worker) {
 		if(signal) {
 			return;
 		} else if(code !== 0) {
-			if(workerCrashes[worker.id] && workerCrashes[worker.id] >= 4) {
+			if(workerCrashes[`${worker.shardStart}-${worker.shardEnd}`] >= 3) {
 				console.error(`Worker ${worker.id} killed due to restart loop with ` +
 					`exit code: ${code} (hosted shards ${worker.shardStart}-${worker.shardEnd}).`);
 
@@ -61,12 +61,19 @@ function handleWorker(worker) {
 					timestamp: new Date()
 				});
 
-				if(!workerCrashes[worker.id]) workerCrashes[worker.id] = 1;
-				else workerCrashes[worker.id]++;
+				if(!workerCrashes[`${worker.shardStart}-${worker.shardEnd}`]) {
+					workerCrashes[`${worker.shardStart}-${worker.shardEnd}`] = 1;
+				} else {
+					workerCrashes[`${worker.shardStart}-${worker.shardEnd}`]++;
+				}
+
 				setTimeout(() => {
-					if(!workerCrashes[worker.id]) return;
-					if(workerCrashes[worker.id] === 1) delete workerCrashes[worker.id];
-					else workerCrashes[worker.id]--;
+					if(!workerCrashes[`${worker.shardStart}-${worker.shardEnd}`]) return;
+					if(workerCrashes[`${worker.shardStart}-${worker.shardEnd}`] === 1) {
+						delete workerCrashes[`${worker.shardStart}-${worker.shardEnd}`];
+					} else {
+						workerCrashes[`${worker.shardStart}-${worker.shardEnd}`]--;
+					}
 				}, 120000);
 			}
 		} else {
