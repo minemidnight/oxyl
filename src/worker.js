@@ -1,4 +1,4 @@
-const Eris = require("eris");
+const Eris = require("eris-additions")(require("eris"));
 const fs = Promise.promisifyAll(require("fs"));
 const path = require("path");
 

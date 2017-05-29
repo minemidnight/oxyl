@@ -22,6 +22,7 @@
     "cheerio": "^0.22.0",
     "duration-js": "^3.9.2",
     "eris": "github:abalabahaha/eris#45b12760ba1a5046a37a71bc85f2838b78ead890",
+    "eris-additions": "^1.0.1",
     "hot-shots": "^4.4.0",
     "raven": "^1.2.0",
     "request": "^2.81.0",
