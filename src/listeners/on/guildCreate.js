@@ -1,5 +1,14 @@
 const statPoster = require("../../modules/statPoster.js");
 module.exports = async guild => {
+	if(bot.publicConfig.beta) {
+		let donator = await r.table("donators").get(guild.ownerID).run();
+		if(!donator) {
+			await guild.defaultChannel.createMessage("You are not a donator, you cannot use Oxyl Beta!");
+			guild.leave();
+		}
+		return;
+	}
+
 	let joinMessage = "Thanks for adding Oxyl to your server! Here is how to get started:\n";
 	joinMessage += "❓ Run `o!help` to get a list of commands.";
 	joinMessage += `Oxyl also supports ${bot.user.mention} or \`oxyl\` as prefixes.\n`;

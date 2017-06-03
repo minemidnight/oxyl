@@ -7,12 +7,9 @@ module.exports = {
 		let member = message.channel.guild.members.get(message.args[0].id);
 		if(!member) return __("phrases.notInGuild", message);
 
-		let bannableBot = bot.utils.isPunishable(member, bot.user.id);
-		let bannable = bot.utils.isPunishable(member, message.author.id);
-
-		if(!bannableBot) {
+		if(!member.bannable) {
 			return __("commands.moderator.ban.botCantBan", message, { user: member.user.username });
-		} else if(!bannable) {
+		} else if(!member.punishable(message.member)) {
 			return __("commands.moderator.ban.youCantBan", message, { user: member.user.username });
 		} else {
 			if(message.args[1]) {
