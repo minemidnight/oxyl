@@ -6,7 +6,7 @@ module.exports = async () => {
 	})).results.reduce((a, b) => a + b);
 
 	statsd({ type: "gauge", stat: "guilds", value: guilds });
-	if(bot.publicConfig.serverChannel) {
+	if(bot.publicConfig.serverChannel && !bot.publicConfig.beta) {
 		bot.editChannel(bot.publicConfig.serverChannel, { topic: `Server Count: ${guilds}` }, "Update server count");
 	}
 

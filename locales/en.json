@@ -65,7 +65,7 @@
                 "invalidSetting": "Invalid setting!",
                 "settingInfo": "__**Setting**__: {{setting}}\nDescription: {{description}}\nAccepted Values: {{accepted}}\nCurrent Value: `{{current}}`",
                 "cantReset": "`{{setting}}` cannot be reset because it is not yet set",
-                "resetSuccess": "Reset setting `{{seting}}`",
+                "resetSuccess": "Reset setting `{{setting}}`",
                 "setSuccess": "Set `{{setting}}` to {{value}}"
             }
         },

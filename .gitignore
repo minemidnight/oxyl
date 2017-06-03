@@ -1,4 +1,5 @@
 .ftpconfig
+.ftpignore
 private-config.json
 public-config.json
 
