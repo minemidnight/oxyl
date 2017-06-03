@@ -4,7 +4,7 @@ async function getMutedRole(message) {
 	let botMember = guild.members.get(bot.user.id);
 	let mutedRole = guild.roles.find(role => role.name.toLowerCase() === __("words.muted", guild));
 
-	if(mutedRole && !bot.utils.canAddRole(guild, mutedRole)) {
+	if(mutedRole && !mutedRole.addable) {
 		return __("commands.moderator.mute.roleError", message);
 	} else if(!mutedRole) {
 		let rolePerms = botMember.permission.has("manageRoles");

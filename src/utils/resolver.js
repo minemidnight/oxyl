@@ -107,9 +107,10 @@ module.exports = {
 				let content = __("modules.resolver.multipleUsers", message, { users: bot.utils.codeBlock(map, "ini") });
 				let selectUser = await message.channel.createMessage(content);
 
-				let responses = await bot.utils.awaitMessages(message.channel,
-					newMsg => newMsg.author.id === message.author.id, { maxMatches: 1, time: 10000 });
-
+				let responses = await message.channel.awaitMessages(newMsg => newMsg.author.id === message.author.id, {
+					maxMatches: 1,
+					time: 10000
+				});
 				if(responses.length === 0) {
 					throw new Error(__("modules.resolver.noUserChosen", message));
 				} else {

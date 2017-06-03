@@ -4,8 +4,7 @@ module.exports = {
 		let member = message.channel.guild.members.get(message.args[0].id);
 		if(!member) return __("phrases.notInGuild", message);
 
-		let pardonable = bot.utils.isPunishable(member, message.author.id);
-		if(!pardonable) {
+		if(!member.punishable(message.member)) {
 			return __("commands.moderator.pardon.noPerms", message);
 		} else {
 			let warnings = await r.table("warnings").filter({
