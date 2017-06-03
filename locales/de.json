@@ -85,7 +85,7 @@
                 "success": "Support Server: {{server}}\nEinladung: {{invite}}"
             },
             "ping": {
-                "success": "Pong! `{{ms}}ms`"
+                "success": "Pong! `{{latency}}ms`"
             },
             "remind": {
                 "noTime": "Bitte stelle eine Zeit zur Verfügung, indem du dieses Format nutzt: `remind <Aktion> in <Zeitspanne>`",
