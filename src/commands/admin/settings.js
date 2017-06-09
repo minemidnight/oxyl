@@ -10,7 +10,7 @@ module.exports = {
 			setting.name = settingKey;
 		}
 
-		if(setting) {
+		if(!setting) {
 			return __("commands.admin.settings.invalidSetting", message);
 		} else if(!message.args[1]) {
 			const guild = message.channel.guild;
