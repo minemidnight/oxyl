@@ -2,12 +2,17 @@ module.exports = {
 	process: async message => {
 		if(!message.args[0]) {
 			return __("commands.admin.settings.noArgs", message, { settings: Object.keys(settings).join(", ") });
-		} else if(!settings[message.args[0]]) {
+		}
+
+		let settingKey = Object.keys(settings).filter(key => key.toLowerCase() === message.args[0].toLowerCase());
+		if(settings[settingKey]) {
+			var setting = settings[settingKey];
+			setting.name = settingKey;
+		}
+
+		if(!setting) {
 			return __("commands.admin.settings.invalidSetting", message);
 		} else if(!message.args[1]) {
-			let setting = settings[message.args[0]];
-			setting.name = message.args[0];
-
 			const guild = message.channel.guild;
 			let currentValue = (
 				await r.table("settings").filter({ name: setting.name, guildID: guild.id }).run()
@@ -20,8 +25,7 @@ module.exports = {
 				current: currentValue ? currentValue.value : __("words.noValue", message)
 			});
 		} else {
-			let setting = settings[message.args[0]], reset = false;
-			setting.name = message.args[0];
+			let reset = false;
 
 			if(message.args[1] === "reset") {
 				reset = true;
