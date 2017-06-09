@@ -57,7 +57,7 @@ class Player extends EventEmitter {
 
 	destroy(reason) {
 		let connection = this.connection;
-		if(connection) connection.disconnect();
+		if(connection) bot.leaveVoiceChannel(connection.channelID);
 		bot.players.delete(this.id);
 
 		this.emit("destroy", reason);
