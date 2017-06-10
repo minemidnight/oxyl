@@ -7,7 +7,7 @@ module.exports = async (guild, member, oldMember) => {
 	let removedRoles = oldMember.roles.filter(role => !~member.roles.indexOf(role));
 	if(bot.publicConfig.donator && ~addedRoles.indexOf(bot.publicConfig.donator.role)) {
 		r.table("donators").insert({ id: member.id }).run();
-		if(bot.publicConfig.donator.channel) {
+		if(bot.publicConfig.donator.channel && !bot.publicConfig.beta) {
 			bot.createMessage(bot.publicConfig.donator.channel, `Thank you <@${member.id}> for donating to Oxyl!`);
 		}
 	} else if(bot.publicConfig.donator && ~removedRoles.indexOf(bot.publicConfig.donator.role)) {

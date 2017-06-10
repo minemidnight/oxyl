@@ -34,10 +34,6 @@ class Command {
 	run(message) {
 		return this.process(message);
 	}
-
-	toString() {
-		return this.name;
-	}
 }
 
 module.exports = Command;

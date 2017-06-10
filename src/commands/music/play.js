@@ -85,7 +85,7 @@ module.exports = {
 
 			if(!player.connection) await player.connect(voiceChannel.id);
 			await player.addQueue(await Promise.all(savedQueue.queue.map(mainResolver)));
-			return __("commands.music.play.loadedSaveQueue", message, {
+			return __("commands.music.play.loadedSavedQueue", message, {
 				save: queueNumber,
 				itemCount: savedQueue.queue.length
 			});

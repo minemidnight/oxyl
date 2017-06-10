@@ -85,7 +85,7 @@ module.exports = {
 				roles: `\`${roles.map(role => role.name).join("`, `")}\``
 			});
 		} else {
-			return __("commands.admin.editCommand.invalidSubCommand", message);
+			return __("commands.admin.editCommand.invalidSubcommand", message);
 		}
 	},
 	description: "Edit a command by toggling it or requiring roles",

@@ -66,7 +66,7 @@ module.exports = {
 
 			if(!roleAvailable) {
 				return __("commands.default.roleMe.notAvailable", message);
-			} else if(!bot.utils.canAddRole(message.channel.guild, role)) {
+			} else if(!role.addable) {
 				return __("commands.default.roleMe.invalidBotPerms", message);
 			} else {
 				let hasRole = ~message.member.roles.indexOf(role.id);
