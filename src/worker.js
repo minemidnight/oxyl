@@ -1,4 +1,12 @@
-const Eris = require("eris-additions")(require("eris"));
+const Eris = require("eris-additions")(require("eris"), {
+	enabled: [
+		"Channel.awaitMessages",
+		"Member.bannable",
+		"Member.kickable",
+		"Member.punishable",
+		"Role.addable"
+	]
+});
 const fs = Promise.promisifyAll(require("fs"));
 const path = require("path");
 
