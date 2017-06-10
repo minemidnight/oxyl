@@ -31,7 +31,7 @@ module.exports = {
 			let roles = roleData
 				.filter(data => message.channel.guild.roles.has(data.roleID))
 				.map(data => message.channel.guild.roles.get(data.roleID).name);
-			return __("commands.admin.autoRole.list.sucess", message, { roles: `\`${roles.join("`, `")}\`` });
+			return __("commands.admin.autoRole.list.success", message, { roles: `\`${roles.join("`, `")}\`` });
 		} else {
 			return __("commands.admin.autoRole.invalidSubcommand", message);
 		}

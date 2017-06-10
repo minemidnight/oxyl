@@ -11,23 +11,25 @@ module.exports = {
 		connectionInfo.db = dbName;
 		global.r = rethinkdbdash(connectionInfo); // eslint-disable-line id-length
 
-		let dbs = await r.dbList().run();
-		if(!~dbs.indexOf(dbName)) {
-			console.info(`Creating database ${dbName}...`);
-			await r.dbCreate(dbName).run();
-		}
+		if(cluster.worker.id === 1) {
+			let dbs = await r.dbList().run();
+			if(!~dbs.indexOf(dbName)) {
+				console.info(`Creating database ${dbName}...`);
+				r.dbCreate(dbName).run();
+			}
 
-		let tableList = await r.tableList().run();
-		let tablesExpected = [
-			"autoRole", "blacklist", "donators", "editedCommands",
-			"ignoredChannels", "locales", "modLog", "roleMe",
-			"rolePersist", "savedQueues", "settings", "timedEvents", "warnings"
-		];
+			let tableList = await r.tableList().run();
+			let tablesExpected = [
+				"autoRole", "blacklist", "donators", "editedCommands",
+				"ignoredChannels", "locales", "modLog", "roleMe",
+				"rolePersist", "savedQueues", "settings", "timedEvents", "warnings"
+			];
 
-		for(let table of tablesExpected) {
-			if(!~tableList.indexOf(table)) {
-				console.info(`Creating "${table}" table...`);
-				await r.tableCreate(table).run();
+			for(let table of tablesExpected) {
+				if(!~tableList.indexOf(table)) {
+					console.info(`Creating "${table}" table...`);
+					r.tableCreate(table).run();
+				}
 			}
 		}
 		console.startup(`RethinkDB started on worker ${cluster.worker.id}`);
@@ -35,7 +37,7 @@ module.exports = {
 		let prefixes = await r.table("settings").filter({ name: "prefix" }).run();
 		prefixes.forEach(setting => {
 			let shard = ~~((setting.guildID / 4194304) % cluster.worker.maxShards);
-			if(cluster.worker.shardStart >= shard && cluster.worker.shardEnd <= shard) {
+			if(shard >= cluster.worker.shardStart && shard <= cluster.worker.shardEnd) {
 				bot.prefixes.set(setting.guildID, setting.value);
 			}
 		});
@@ -43,7 +45,7 @@ module.exports = {
 		let channels = await r.table("ignoredChannels").run();
 		channels.forEach(ignored => {
 			let shard = ~~((ignored.guildID / 4194304) % cluster.worker.maxShards);
-			if(cluster.worker.shardStart >= shard && cluster.worker.shardEnd <= shard) {
+			if(shard >= cluster.worker.shardStart && shard <= cluster.worker.shardEnd) {
 				bot.ignoredChannels.set(ignored.channelID, ignored.guildID);
 			}
 		});
