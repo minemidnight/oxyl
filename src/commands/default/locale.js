@@ -19,13 +19,16 @@ module.exports = {
 		} else {
 			let currentLocale = await r.table("locales").get(message.author.id).run();
 			if(currentLocale) {
+				console.log("insert");
 				await r.table("locales").insert({ id: message.author.id, locale: message.args[0] }).run();
 			} else {
-				await r.table("locales").get(message.author.id).update({ locale: message.args[0] }).run();
+				console.log("update");
+				await currentLocale.update({ locale: message.args[0] }).run();
 			}
 
 			bot.localeCache.set(message.author.id, message.args[0]);
 			message.locale = message.args[0];
+			console.log(await r.table("locales").run());
 
 			let name = __("commands.default.locale.nativeName", message);
 			return __("commands.default.locale.changedSuccess", message, { locale: `${message.args[0]} (${name})` });
