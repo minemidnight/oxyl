@@ -1,6 +1,8 @@
 module.exports = {
 	process: async message => {
+		console.log("locale cmd");
 		if(!message.args[0]) {
+			console.log("no args");
 			let currentLocale = await r.table("locales").get(message.author.id).run();
 			currentLocale = currentLocale ? currentLocale.locale : "en";
 
@@ -15,8 +17,10 @@ module.exports = {
 				locale: currentLocale
 			});
 		} else if(!~bot.locales.indexOf(message.args[0])) {
+			console.log("invalid locale");
 			return __("commands.default.locale.invalidLocale", message);
 		} else {
+			console.log("locale set");
 			let currentLocale = await r.table("locales").get(message.author.id).run();
 			if(currentLocale) {
 				console.log("insert");
