@@ -2,6 +2,7 @@ const modLog = require("../modules/modLog.js");
 module.exports = async message => {
 	let censors = bot.censors.get(message.channel.guild.id);
 	if(!censors) return;
+	else if(message.member.permission.has("manageMessages")) return;
 
 	for(let censor of Array.from(censors.values())) {
 		if(!message.content.match(new RegExp(censor.regex, "i"))) return;
@@ -9,7 +10,7 @@ module.exports = async message => {
 		message.channel.createMessage(__("modules.censor", message.channel.guild, { mention: message.author.mention }));
 
 		if(censor.action === "warn") {
-			await bot.utils.warnMember(message.member, null, "Said a censored phrase");
+			await bot.utils.warnMember(message.member, bot.user, "Said a censored phrase");
 		} else if(censor.action === "kick") {
 			let channel = await modLog.channel(message.channel.guild);
 			if(channel) {
