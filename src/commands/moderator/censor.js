@@ -2,11 +2,11 @@ module.exports = {
 	process: async message => {
 		if(message.args[0] === "add") {
 			if(!message.args[1]) {
-				return __("commmands.moderator.censor.add.noAction", message);
+				return __("commands.moderator.censor.add.noAction", message);
 			} else if(!~["none", "warn", "kick", "softban", "ban"].indexOf(message.args[1])) {
-				return __("commmands.moderator.censor.add.invalidAction", message);
+				return __("commands.moderator.censor.add.invalidAction", message);
 			} else if(!message.args[2]) {
-				return __("commmands.moderator.censor.add.noRegex", message);
+				return __("commands.moderator.censor.add.noRegex", message);
 			} else {
 				let censors = await r.table("censors").filter({ guildID: message.channel.guild.id }).run(), id = 1;
 				if(censors.length) id = Math.max(...censors.map(censor => censor.censorID)) + 1;
@@ -26,10 +26,10 @@ module.exports = {
 					guildID: message.channel.guild.id,
 					regex: message.args[2]
 				}).run();
-				return __("commmands.moderator.censor.add.success", message);
+				return __("commands.moderator.censor.add.success", message);
 			}
 		} else if(message.args[0] === "delete" || message.args[0] === "remove") {
-			if(!message.args[1]) return __("commmands.moderator.censor.delete.noID", message);
+			if(!message.args[1]) return __("commands.moderator.censor.delete.noID", message);
 
 			let id = parseInt(message.args[1]);
 			if(isNaN(id) || id < 1) {
