@@ -54,7 +54,7 @@ module.exports = {
 				return __("commands.moderator.censor.list.noCensors", message);
 			} else {
 				return __("commands.moderator.censor.list.success", message,
-					{ censors: censors.map(cen => `**${cen.censorID}.** ${cen.regex} (${cen.action})`).join("\n") });
+					{ censors: censors.map(cen => `${cen.censorID}. ${cen.regex} (${cen.action})`).join("\n") });
 			}
 		} else {
 			return __("commands.moderator.censor.invalidSubcommand", message);
