@@ -4,12 +4,11 @@ module.exports = {
 			return __("commands.admin.settings.noArgs", message, { settings: Object.keys(settings).join(", ") });
 		}
 
-		let settingKey = Object.keys(settings).filter(key => key.toLowerCase() === message.args[0].toLowerCase());
+		let settingKey = Object.keys(settings).find(key => key.toLowerCase() === message.args[0].toLowerCase());
 		if(settings[settingKey]) {
 			var setting = settings[settingKey];
 			setting.name = settingKey;
 		}
-		console.log(settingKey, setting.name);
 
 		if(!setting) {
 			return __("commands.admin.settings.invalidSetting", message);
