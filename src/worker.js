@@ -58,6 +58,7 @@ async function init() {
 	bot.ignoredChannels = new Map();
 	bot.players = new Map();
 	bot.prefixes = new Map();
+	bot.censors = new Map();
 
 	let locales = await getFiles(path.resolve("locales"), file => file.endsWith(".json"));
 	bot.locales = locales.map(file => file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".")));

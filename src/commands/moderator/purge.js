@@ -51,6 +51,7 @@ module.exports = {
 				else return false;
 			});
 		} else {
+			await message.delete();
 			await message.channel.purge(message.args[0]);
 		}
 

@@ -17,10 +17,10 @@ module.exports = {
 			return __("commands.default.locale.invalidLocale", message);
 		} else {
 			let currentLocale = await r.table("locales").get(message.channel.guild.id).run();
-			if(currentLocale) {
+			if(!currentLocale) {
 				await r.table("locales").insert({ id: message.channel.guild.id, locale: message.args[0] }).run();
 			} else {
-				await r.table("locales").get(message.channel.guild.id).update({ locale: message.args[0] }).run();
+				await currentLocale.update({ locale: message.args[0] }).run();
 			}
 
 			bot.localeCache.set(message.channel.guild.id, message.args[0]);

@@ -15,8 +15,7 @@ module.exports = {
 			creationDate: bot.utils.formatDate(guild.createdAt),
 			owner: `${owner.username}#${owner.discriminator}`,
 			ownerID: owner.id,
-			icon: guild.iconURL ? `<${guild.iconURL}>` :
-				__("words.none", message).charAt(0).toUppercase() + __("words.none", message).substring(1)
+			icon: guild.iconURL ? `<${guild.iconURL}>` : __("words.none", message, {}, true)
 		});
 	},
 	guildOnly: true,

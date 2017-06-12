@@ -17,9 +17,9 @@ module.exports = {
 			await r.dbCreate(dbName).run();
 		}
 
-		let tableList = await r.tableList().run();
+		let tableList = await r.tableList().run(), tableWait = [];
 		let tablesExpected = [
-			"autoRole", "blacklist", "donators", "editedCommands",
+			"autoRole", "blacklist", "censors", "donators", "editedCommands",
 			"ignoredChannels", "locales", "modLog", "roleMe",
 			"rolePersist", "savedQueues", "settings", "timedEvents", "warnings"
 		];
@@ -27,23 +27,39 @@ module.exports = {
 		for(let table of tablesExpected) {
 			if(!~tableList.indexOf(table)) {
 				console.info(`Creating "${table}" table...`);
-				await r.tableCreate(table).run();
+				tableWait.push(r.tableCreate(table).run());
 			}
 		}
+		await Promise.all(tableWait);
 		console.startup(`RethinkDB started on worker ${cluster.worker.id}`);
 
 		let prefixes = await r.table("settings").filter({ name: "prefix" }).run();
 		prefixes.forEach(setting => {
 			let shard = ~~((setting.guildID / 4194304) % cluster.worker.maxShards);
-			if(cluster.worker.shardStart >= shard && cluster.worker.shardEnd <= shard) {
+			if(shard >= cluster.worker.shardStart && shard <= cluster.worker.shardEnd) {
 				bot.prefixes.set(setting.guildID, setting.value);
+			}
+		});
+
+		let censors = await r.table("censors").run();
+		censors.forEach(censor => {
+			let shard = ~~((censor.guildID / 4194304) % cluster.worker.maxShards);
+			if(shard >= cluster.worker.shardStart && shard <= cluster.worker.shardEnd) {
+				let censorsCache = bot.censors.get(censor.guildID);
+				if(censorsCache) {
+					censorsCache.set(censor.censorID, { action: censor.action, regex: censor.regex });
+				} else {
+					bot.censors.set(censor.guildID, new Map())
+						.get(censor.guildID)
+						.set(censor.censorID, { action: censor.action, regex: censor.regex });
+				}
 			}
 		});
 
 		let channels = await r.table("ignoredChannels").run();
 		channels.forEach(ignored => {
 			let shard = ~~((ignored.guildID / 4194304) % cluster.worker.maxShards);
-			if(cluster.worker.shardStart >= shard && cluster.worker.shardEnd <= shard) {
+			if(shard >= cluster.worker.shardStart && shard <= cluster.worker.shardEnd) {
 				bot.ignoredChannels.set(ignored.channelID, ignored.guildID);
 			}
 		});

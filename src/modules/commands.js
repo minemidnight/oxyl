@@ -1,13 +1,10 @@
 const argHandler = require("./args.js");
+const handleCensor = require("./censors.js");
 
 module.exports = async message => {
 	const guild = message.channel.guild;
-	const prefixes = bot.publicConfig.prefixes.map(prefix => {
-		if(prefix === "mention") prefix = `<@!?${bot.user.id}>`;
-		return prefix;
-	});
 
-	let prefix = `^(?:${prefixes.join("|")}),?(?:\\s+)?([\\s\\S]+)`;
+	let prefix = `^(?:${bot.publicConfig.prefixes.join("|")}),?(?:\\s+)?([\\s\\S]+)`;
 	if(guild && bot.prefixes.has(guild.id)) {
 		let insertIndex = prefix.indexOf("),?(");
 		let guildPrefix = `|${bot.utils.escapeRegex(bot.prefixes.get(guild.id))}`;
@@ -16,8 +13,12 @@ module.exports = async message => {
 	prefix = new RegExp(prefix, "i");
 
 	let match = message.content.match(prefix);
-	if(!match && guild) return;
-	else if(match) message.content = match[1];
+	if(!match && guild) {
+		handleCensor(message);
+		return;
+	} else if(match) {
+		message.content = match[1];
+	}
 
 	let command;
 	if(!~message.content.indexOf(" ")) {

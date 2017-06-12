@@ -34,6 +34,7 @@ module.exports = {
 			delete module.exports.presetReasons[guild.id];
 
 			parseData.reason = preset.reason;
+			if(parseData.mod.user) parseData.mod = parseData.mod.user;
 			parseData.mod = insertData.modDisplay = `${preset.mod.username}#${preset.mod.discriminator}`;
 
 			insertData.reason = preset.reason;

@@ -27,6 +27,7 @@ Example `public-config.json`:
 beta is optional stating whether or not the bot is in beta, if true then some stuff is disabled
 creators is required and is an array of user ids
 datadog is optional if you want to send stats to datadog
+databaseName is optional, if you want a different database name besides Oxyl, set it there
 defaultInvitePermissionNumber is required and is used for the invite command
 donator is optional to say thank you for donating and add a role to a member in a server
 prefixes is an array of prefixes, mention is replaced with a bot mention
@@ -42,6 +43,7 @@ Example `private-config.json`:
 {
 	"database": { "password": "cool fam" },
 	"dbotsKey": "very long key",
+	"dbotsOrgKey": "very long key"
 	"carbonKey": "shorter key",
 	"googleKeys": ["a key", "Another"],
 	"secret": "thing from bot page",
@@ -51,7 +53,10 @@ Example `private-config.json`:
 }
 ```
 database is optional but bot will most likely break without it. this is passed to rethinkdbdash login
-dbotsKey and carbonKey are not required, but used if posting stats. If one is not present, it will not post to that website
+*Posting stuff - if a key is not present it will just not post to the site it corresponds to, if you have postStats off there is no reason for any of the keys*
+dbotsKey is to post to https://bots.discord.pw
+dbotsOrgKey is to post to http://discordbots.org
+carbonKey is to post to https://www.carbonitex.net/discord/bots
 googleKeys is an array of keys with the youtube data api v3 enabled and required for the bot to work correctly
 secret is only required if you use the web socket server
 sentryLink is optional, but if you want to use sentry.io put the link there

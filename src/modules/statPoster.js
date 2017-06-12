@@ -25,6 +25,20 @@ module.exports = async () => {
 		}
 	}
 
+	if(bot.privateConfig.dbotsOrgKey) {
+		try {
+			await request({
+				body: { server_count: guilds }, // eslint-disable-line camelcase
+				headers: { Authorization: bot.privateConfig.dbotsKey },
+				json: true,
+				method: "POST",
+				url: `https://discordbots.org/api/bots/${bot.user.id}/stats`
+			});
+		} catch(err) {
+			console.error(`Error posting to Discord Bots (org): ${err.stack}`);
+		}
+	}
+
 	if(bot.privateConfig.carbonKey) {
 		try {
 			await request({

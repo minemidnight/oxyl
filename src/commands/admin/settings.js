@@ -43,7 +43,7 @@ module.exports = {
 			)[0];
 
 			if(!currentValue && reset) {
-				return __("commands.admin.setings.cantReset", message, { setting: setting.name });
+				return __("commands.admin.settings.cantReset", message, { setting: setting.name });
 			} else if(reset || (setting.type === "boolean")) {
 				await r.table("settings").get(currentValue.id).delete().run();
 				if(setting.name === "prefix") bot.prefixes.delete(message.channel.guild.id);
