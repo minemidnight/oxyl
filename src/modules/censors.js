@@ -5,7 +5,6 @@ module.exports = async message => {
 	else if(message.member.permission.has("manageMessages")) return;
 
 	for(let censor of Array.from(censors.values())) {
-		console.log(censor, new RegExp(censor));
 		if(!message.content.match(new RegExp(censor.regex))) return;
 		message.delete();
 		message.channel.createMessage(__("modules.censor", message.channel.guild, { mention: message.author.mention }));
