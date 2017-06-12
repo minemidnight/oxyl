@@ -1,5 +1,5 @@
 const modLog = require("../modules/modLog.js");
-module.exports = async (member, mod = bot.user, reason) => {
+module.exports = async (member, mod, reason) => {
 	let warnCount = (await r.table("warnings").filter({
 		guildID: member.guild.id,
 		userID: member.id

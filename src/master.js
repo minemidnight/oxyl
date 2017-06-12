@@ -168,7 +168,8 @@ process.handleMessage = async (msg, worker) => {
 };
 
 let shardCount = 1;
-function init() {
+async function init() {
+	await (require("./utils/rethink.js")).init();
 	statsd({ type: "event", stat: "master_started", value: `Master started up` });
 	webhook({
 		title: `Master started`,
