@@ -140,6 +140,25 @@
                 "youCantBan": "{{user}} couldn't be banned, because they have higher permisions than you",
                 "success": "{{user}} has been banned"
             },
+						"censor": {
+							"add": {
+								"noAction": "Please provide an action to run when this censor is triggered! (`none, warn, kick, softban, ban`)",
+								"invalidAction": "Invalid action given! Valid actions: `none, warn, kick, softban, ban`",
+								"noRegex": "Please provide some regex to trigger this censor with!",
+								"success": "Censor successfully added"
+							},
+							"delete": {
+								"noID": "Please provide a censor ID to delete",
+								"invalidID": "Please provide a censor ID which is a number and above 0",
+								"noCensorFound": "No censor found",
+								"success": "Censor successfully deleted"
+							},
+							"list": {
+								"noCensors": "There are no censors for this guild!\nAdd them using `censor add <action> <regex>`",
+								"success": "Censors: ```\n{{censors}}\n```\nTo delete a censor, use `censor delete <id>`"
+							},
+							"invalidSubcommand": "Invalid sub-command! Please use `censor add <action> <regex>`, `censor delete <id>` or `censor list`"
+						},
             "giveaway": {
                 "noTime": "Please provide a time, using this format: `giveaway <item> in <timespan>`",
                 "invalidTime": "Please only create giveaways for between 30 seconds and 4 weeks into the future.",
@@ -258,6 +277,7 @@
         "args": {
             "usageError": "Invalid Usage! Please use the command as such: `{{command}} {{usage}}`"
         },
+				"censor": "{{mention}}, Please don't send messages with censored phrases",
         "commands": {
             "guildOnly": "Sorry, but this command is for guilds (servers) only.",
             "creatorOnly": "This command can only be used by the creators of the bot.",
