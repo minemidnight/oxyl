@@ -1,7 +1,7 @@
 module.exports = {
 	process: async message => {
 		message.args[0] = message.args[0].toLowerCase();
-		message.args[1] = message.args[1].toLowerCase();
+		if(message.args[1]) message.args[1] = message.args[1].toLowerCase();
 		if(message.args[0] === "add") {
 			if(!message.args[1]) {
 				return __("commands.moderator.censor.add.noAction", message);
