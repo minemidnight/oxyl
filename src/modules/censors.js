@@ -3,8 +3,7 @@ module.exports = async message => {
 	let censors = bot.censors.get(message.channel.guild.id);
 	if(!censors) return;
 
-	for(let censor in Array.from(censors.values())) {
-		console.log(censor);
+	for(let censor of Array.from(censors.values())) {
 		if(!message.content.match(new RegExp(censor.regex, "i"))) return;
 		message.delete();
 		message.channel.createMessage(__("modules.censor", message.channel.guild, { mention: message.author.mention }));
