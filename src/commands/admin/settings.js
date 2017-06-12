@@ -9,6 +9,7 @@ module.exports = {
 			var setting = settings[settingKey];
 			setting.name = settingKey;
 		}
+		console.log(settingKey, setting.name);
 
 		if(!setting) {
 			return __("commands.admin.settings.invalidSetting", message);

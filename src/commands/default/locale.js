@@ -21,7 +21,7 @@ module.exports = {
 			if(!currentLocale) {
 				await r.table("locales").insert({ id: message.author.id, locale: message.args[0] }).run();
 			} else {
-				await currentLocale.update({ locale: message.args[0] }).run();
+				await r.table("locales").get(message.author.id).update({ locale: message.args[0] }).run();
 			}
 
 			bot.localeCache.set(message.author.id, message.args[0]);
