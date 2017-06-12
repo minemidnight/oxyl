@@ -35,7 +35,7 @@ module.exports = {
 		}
 		await Promise.all(tableWait);
 		console.startup(`RethinkDB initated on master`);
-		await r.poolMaster.drain();
+		await r.getPoolMaster().drain();
 		return true;
 	},
 	connect: async () => {
