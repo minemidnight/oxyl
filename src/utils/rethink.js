@@ -11,28 +11,26 @@ module.exports = {
 		connectionInfo.db = dbName;
 		global.r = rethinkdbdash(connectionInfo); // eslint-disable-line id-length
 
-		if(cluster.worker.id === 1) {
-			let dbs = await r.dbList().run();
-			if(!~dbs.indexOf(dbName)) {
-				console.info(`Creating database ${dbName}...`);
-				await r.dbCreate(dbName).run();
-			}
-
-			let tableList = await r.tableList().run(), tableWait = [];
-			let tablesExpected = [
-				"autoRole", "blacklist", "censors", "donators", "editedCommands",
-				"ignoredChannels", "locales", "modLog", "roleMe",
-				"rolePersist", "savedQueues", "settings", "timedEvents", "warnings"
-			];
-
-			for(let table of tablesExpected) {
-				if(!~tableList.indexOf(table)) {
-					console.info(`Creating "${table}" table...`);
-					tableWait.push(r.tableCreate(table).run());
-				}
-			}
-			await Promise.all(tableWait);
+		let dbs = await r.dbList().run();
+		if(!~dbs.indexOf(dbName)) {
+			console.info(`Creating database ${dbName}...`);
+			await r.dbCreate(dbName).run();
 		}
+
+		let tableList = await r.tableList().run(), tableWait = [];
+		let tablesExpected = [
+			"autoRole", "blacklist", "censors", "donators", "editedCommands",
+			"ignoredChannels", "locales", "modLog", "roleMe",
+			"rolePersist", "savedQueues", "settings", "timedEvents", "warnings"
+		];
+
+		for(let table of tablesExpected) {
+			if(!~tableList.indexOf(table)) {
+				console.info(`Creating "${table}" table...`);
+				tableWait.push(r.tableCreate(table).run());
+			}
+		}
+		await Promise.all(tableWait);
 		console.startup(`RethinkDB started on worker ${cluster.worker.id}`);
 
 		let prefixes = await r.table("settings").filter({ name: "prefix" }).run();
