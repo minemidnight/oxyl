@@ -8,8 +8,8 @@ module.exports = {
 			return false;
 		}
 
-		let dbName = bot.publicConfig.databaseName || "Oxyl";
-		let connectionInfo = bot.privateConfig.database;
+		let dbName = publicConfig.databaseName || "Oxyl";
+		let connectionInfo = privateConfig.database;
 		connectionInfo.silent = true;
 		connectionInfo.db = dbName;
 		const r = rethinkdbdash(connectionInfo); // eslint-disable-line id-length
@@ -83,4 +83,4 @@ module.exports = {
 	}
 };
 
-if(!cluster.master) module.exports.connect();
+if(!cluster.isMaster) module.exports.connect();
