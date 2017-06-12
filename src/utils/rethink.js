@@ -31,8 +31,8 @@ module.exports = {
 					tableWait.push(r.tableCreate(table).run());
 				}
 			}
+			await Promise.all(tableWait);
 		}
-		await Promise.all(tableWait);
 		console.startup(`RethinkDB started on worker ${cluster.worker.id}`);
 
 		let prefixes = await r.table("settings").filter({ name: "prefix" }).run();
