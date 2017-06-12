@@ -68,7 +68,8 @@ module.exports = {
 		label: "add|delete|list"
 	}, {
 		type: "text",
-		label: "action|id"
+		label: "action|id",
+		optional: true
 	}, {
 		type: "text",
 		label: "regex",
