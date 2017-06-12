@@ -1,15 +1,18 @@
 const rethinkdbdash = require("rethinkdbdash");
 module.exports = {
 	init: async () => {
-		if(!bot.privateConfig.database) {
+		const publicConfig = JSON.parse(require("fs").readFileSync("public-config.json").toString());
+		const privateConfig = JSON.parse(require("fs").readFileSync("private-config.json").toString());
+		if(!privateConfig.database) {
 			console.warn("No RethinkDB connection info in private-config.yml, Oxyl won't work as expected");
-			return;
+			return false;
 		}
-		let dbName = bot.publicConfig.databaseName || "Oxyl";
-		let connectionInfo = bot.privateConfig.database;
+
+		let dbName = publicConfig.databaseName || "Oxyl";
+		let connectionInfo = privateConfig.database;
 		connectionInfo.silent = true;
 		connectionInfo.db = dbName;
-		global.r = rethinkdbdash(connectionInfo); // eslint-disable-line id-length
+		const r = rethinkdbdash(connectionInfo); // eslint-disable-line id-length
 
 		let dbs = await r.dbList().run();
 		if(!~dbs.indexOf(dbName)) {
@@ -27,11 +30,22 @@ module.exports = {
 		for(let table of tablesExpected) {
 			if(!~tableList.indexOf(table)) {
 				console.info(`Creating "${table}" table...`);
-				tableWait.push(r.tableCreate(table).run());
+				await r.tableCreate(table).run();
 			}
 		}
 		await Promise.all(tableWait);
-		console.startup(`RethinkDB started on worker ${cluster.worker.id}`);
+		console.startup(`RethinkDB initated on master`);
+		await r.getPoolMaster().drain();
+		return true;
+	},
+	connect: async () => {
+		if(!bot.privateConfig.database) return;
+
+		let dbName = bot.publicConfig.databaseName || "Oxyl";
+		let connectionInfo = bot.privateConfig.database;
+		connectionInfo.silent = true;
+		connectionInfo.db = dbName;
+		global.r = rethinkdbdash(connectionInfo); // eslint-disable-line id-length
 
 		let prefixes = await r.table("settings").filter({ name: "prefix" }).run();
 		prefixes.forEach(setting => {
@@ -69,4 +83,4 @@ module.exports = {
 	}
 };
 
-module.exports.init();
+if(!cluster.isMaster) module.exports.connect();
