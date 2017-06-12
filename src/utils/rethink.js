@@ -12,6 +12,7 @@ module.exports = {
 		let connectionInfo = privateConfig.database;
 		connectionInfo.silent = true;
 		connectionInfo.db = dbName;
+		connectionInfo.pool = false;
 		const r = rethinkdbdash(connectionInfo); // eslint-disable-line id-length
 
 		let dbs = await r.dbList().run();
@@ -35,7 +36,7 @@ module.exports = {
 		}
 		await Promise.all(tableWait);
 		console.startup(`RethinkDB initated on master`);
-		await r.poolMaster.drain();
+		await r.close();
 		return true;
 	},
 	connect: async () => {
