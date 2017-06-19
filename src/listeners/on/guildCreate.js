@@ -1,7 +1,7 @@
 const statPoster = require("../../modules/statPoster.js");
 module.exports = async guild => {
 	if(bot.publicConfig.beta) {
-		let donator = await r.table("donators").get(guild.ownerID).run();
+		let donator = await r.db("Oxyl").table("donators").get(guild.ownerID).run();
 		if(!donator) {
 			await guild.defaultChannel.createMessage("You are not a donator, you cannot use Oxyl Beta!");
 			guild.leave();
