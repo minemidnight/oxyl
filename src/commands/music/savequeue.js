@@ -1,6 +1,6 @@
 module.exports = {
 	process: async message => {
-		let donator = (await r.table("donators").get(message.author.id).run());
+		let donator = await r.db("Oxyl").table("donators").get(message.author.id).run();
 		if(!donator) return __("commands.music.savequeue.donatorOnly", message);
 
 		let player = bot.players.get(message.channel.guild.id);

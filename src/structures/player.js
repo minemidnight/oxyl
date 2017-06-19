@@ -18,7 +18,7 @@ class Player extends EventEmitter {
 	async addQueue(data) {
 		if(!this.connection) return false;
 		if(this.queue.length >= 2000) {
-			let donator = (await r.table("donators").filter({ id: this.guild.ownerID }))[0];
+			let donator = (await r.db("Oxyl").table("donators").filter({ id: this.guild.ownerID }))[0];
 			if(!donator) return __("modules.player.maxQueue", this.guild);
 		}
 
@@ -27,7 +27,7 @@ class Player extends EventEmitter {
 		if(!this.current) this.play();
 
 		if(this.queue.length >= 2000) {
-			let donator = (await r.table("donators").filter({ id: this.guild.ownerID }).run())[0];
+			let donator = (await r.db("Oxyl").table("donators").filter({ id: this.guild.ownerID }).run())[0];
 			if(!donator) {
 				this.queue = this.queue.slice(0, (donator ? 10000 : 2000) - 1);
 				if(!donator) return __("modules.player.cutOffQueue", this.guild);

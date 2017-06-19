@@ -69,7 +69,7 @@ module.exports = {
 			}
 		} else if(message.args[0].startsWith("sq:")) {
 			message.args[0] = message.args[0].substring(3).trim();
-			let donator = (await r.table("donators").filter({ id: message.author.id }).run())[0];
+			let donator = (await r.db("Oxyl").table("donators").filter({ id: message.author.id }).run())[0];
 			if(!donator) return __("commands.music.play.donatorOnly", message);
 
 			let queueNumber = parseInt(message.args[0]);
