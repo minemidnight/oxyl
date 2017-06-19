@@ -42,6 +42,7 @@ module.exports = {
 
 				if(censor.deleted) {
 					let censorsCache = bot.censors.get(message.channel.guild.id);
+					if(!censorsCache) return __("commands.moderator.censor.delete.success", message);
 					if(censorsCache.size === 1) bot.censors.delete(message.channel.guild.id);
 					else censorsCache.delete(id);
 
@@ -64,7 +65,7 @@ module.exports = {
 	},
 	caseSensitive: true,
 	guildOnly: true,
-	perm: "manageServer",
+	perm: "manageGuild",
 	description: "Add or remove censors",
 	args: [{
 		type: "text",

@@ -3,8 +3,8 @@ module.exports = async link => {
 	try {
 		let data = await youtubedl.getInfoAsync(link, [], { maxBuffer: Infinity }), format;
 
-		for(let i of data.formats) if(i.format_id === "Audio_Only") format = i.url;
-		if(!format) for(let i of data.formats) if(i.format_id === "Medium" || i.format_id === "High") format = i.url;
+		for(let i of data.formats) if(i.format_id === "audio_only") format = i.url;
+		if(!format) for(let i of data.formats) if(i.format_id === "medium" || i.format_id === "high") format = i.url;
 		if(!format) return "NO_VALID_FORMATS";
 
 		return {

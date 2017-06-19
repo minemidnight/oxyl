@@ -117,7 +117,7 @@ class Player extends EventEmitter {
 		options.encoderArgs = ["-af", `volume=${volume}`];
 		options.inputArgs = ["-reconnect", "1", "-reconnect_streamed", "1", "-reconnect_delay_max", "2"];
 
-		this.connection.play(song.stream, options);
+		connection.play(song.stream, options);
 		this.current = song;
 		this.emit("playing", song);
 		this.connection.once("end", () => {
@@ -125,7 +125,6 @@ class Player extends EventEmitter {
 			if(this.queue.length === 0) this.destroy("no_queue");
 			else setTimeout(() => this.play(), 100);
 		});
-		if(this.queue[0] && !this.queue[0].stream) this.queue[0] = await mainResolver.extract(this.queue[0]);
 	}
 
 	voiceCheck(member) {

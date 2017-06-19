@@ -31,7 +31,7 @@ module.exports = {
 		}
 	},
 	guildOnly: true,
-	perm: "manageServer",
+	perm: "manageGuild",
 	description: "Set the server's default language",
 	aliases: ["guildlang"],
 	args: [{

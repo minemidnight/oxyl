@@ -1,4 +1,4 @@
-const youtubedl = Promise.promisifyAll(require("youtube-dl"));
+const youtubedl = require("youtube-dl");
 const request = require("request-promise");
 const googleKeys = bot.privateConfig.googleKeys;
 const main = require("../audioResolvers/main.js");
@@ -14,7 +14,7 @@ module.exports = async link => {
 		return "INVALID_ID";
 	}
 
-	if(data.liveBroadcastContent === "live") {
+	if(data.snippet.liveBroadcastContent === "live") {
 		return module.exports.livestream(id);
 	} else {
 		let match = data.contentDetails.duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
