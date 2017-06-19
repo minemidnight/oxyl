@@ -1,4 +1,4 @@
-const youtubedl = require("youtube-dl");
+const youtubedl = Promise.promisifyAll(require("youtube-dl"));
 const request = require("request-promise");
 const googleKeys = bot.privateConfig.googleKeys;
 const main = require("../audioResolvers/main.js");
