@@ -1,0 +1,379 @@
+html, body { font-family: Whitney,Helvetica Neue,Helvetica,Arial,sans-serif!important; line-height: 1 }
+.w3-sidenav, .w3-sidebar { top: 0 }
+.discord-dark { background: #1e2124 }
+.discord-lighter { background: #2e3136 }
+.discord-main { background: #36393e }
+
+@media (min-width:993px) {
+	main:not(.no-push) { margin-left: 310px }
+	#nav-container { margin-left: 0px }
+}
+
+@media (max-width:992px) {
+	#nav-container { margin-left: -310px }
+}
+
+@font-face {
+	font-family: Whitney;
+	font-style: normal;
+	font-weight: 500;
+	src: url(/assets/other/whitney.woff);
+}
+
+.icon-nav {
+	margin: 8px 0;
+	width: 50px;
+	height: 50px;
+	position: relative;
+
+	cursor: pointer;
+	border-radius: 25px;
+	background: #2e3136;
+	font-size: 18px;
+	text-align: center;
+	line-height: 50px;
+	left: 50%;
+	margin-left: -25px;
+	transition: 0.25s;
+}
+
+.icon-nav:hover, .icon-nav:hover a, .icon-nav.selected, .icon-nav.selected a {
+	border-radius: 15px;
+}
+
+.icon-nav.selected::before {
+	content: " ";
+	width: 10px;
+	height: 40px;
+	left: -15px;
+	position: absolute;
+	top: 50%;
+	border-radius: 20px;
+	background: #fff;
+	margin-top: -20px;
+}
+
+.icon-nav a {
+	transition: 0.25s;
+	color: #fff;
+	display: block;
+	width: 50px;
+	height: 50px;
+	background-repeat: no-repeat;
+	background-size: 50px 50px;
+	padding: 0;
+	text-decoration: none;
+}
+
+#primary-nav, #secondary-nav {
+	overflow-x: hidden;
+	overflow-y: auto;
+	position: relative;
+	z-index: 5;
+}
+
+#secondary-nav header:first-child {
+	position: relative;
+	background: #2e3136;
+	color: #fff;
+	font-weight: 600;
+	padding: 20px 24px;
+	height: 56px;
+	box-shadow: 0 1px 0 #24272b,inset 0 -1px 0 rgba(0,0,0,.1);
+	margin-bottom: 1.25px;
+}
+
+#secondary-nav header:first-child span {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	font-size: 16px;
+	user-select: none;
+}
+
+#secondary-nav header:not(:first-child) {
+	font-size: 12px;
+	color: #fff;
+	opacity: .3;
+	text-transform: uppercase;
+	font-weight: 600px;
+	line-height: 30px;
+	margin-top: 20px;
+}
+
+#secondary-nav header:not(:first-child) span {
+	padding: 8px 6px 10px 20px;
+	user-select: none;
+}
+
+.nav-seperator {
+	height: 2px;
+	position: relative;
+	background: none;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.nav-seperator::after {
+	position: absolute;
+	left: 50%;
+	margin-left: -15px;
+	content: " ";
+	height: 2px;
+	width: 30px;
+	background: #2e3136;
+}
+
+.secondary-item {
+	font-size: 15px;
+	line-height: 1.25em;
+	position: relative;
+	cursor: pointer;
+	color: #fff;
+	height: 36px;
+}
+
+.secondary-item a {
+	padding: 8px 6px 10px 20px;
+	color: #fff;
+	text-decoration: none;
+	opacity: .3;
+	text-shadow: 0 1px 1px rgba(0,0,0,.25);
+	display: inline-block;
+	width: 100%;
+}
+
+.secondary-item.selected a, .secondary-item:not(.selected):hover a {
+	opacity: 1;
+}
+
+.secondary-item.selected, .secondary-item:hover {
+	background: linear-gradient(to right,#282b30 85%,#2e3136);
+}
+
+.secondary-item.selected::before, .secondary-item:hover::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  content: " ";
+  border-left: 2px solid #7289da;
+  opacity: 1;
+}
+.secondary-item:not(.selected):hover::before { opacity: 0.25 }
+
+.content-overview {
+	border-bottom: 1px solid #303337;
+	box-shadow: 0 1px 0 rgba(0,0,0,.06);
+	padding: 17px 0;
+}
+
+.content-overview .title {
+	font-size: 20px;
+	line-height: 22px;
+	font-weight: 700;
+	margin-left: 20px;
+	color: #fff;
+}
+
+.account {
+	height: 70px;
+	background: #282b30;
+	color: #fff;
+	font-size: 14px;
+	padding: 0 10px;
+	border-top: 1px solid #1c1e22;
+	position: fixed;
+	width: 240px;
+	bottom: 0;
+}
+
+.account .account-items {
+	position: relative;
+	top: 50%;
+	margin-top: -17.5px;
+}
+
+.avatar {
+	display: inline-block;
+	width: 30px;
+	height: 30px;
+	background-size: 30px 30px;
+	background-position: 50%;
+	border-radius: 50%;
+}
+
+.account .details {
+	padding: 0 10px;
+	display: inline-block;
+}
+
+.account .details .username {
+	display: block;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	max-width: 120px;
+}
+
+.account .details .discriminator {
+	display: block;
+	padding-top: 1px;
+	opacity: .4;
+	font-size: 10px;
+}
+
+.account .buttons {
+	width: 32px;
+	float: right;
+}
+
+button {
+	border: 0;
+	cursor: pointer;
+}
+
+.buttons {
+	border: 1px solid #1c1e22;
+	border-radius: 4px;
+	overflow: hidden;
+	display: inline-block;
+	background: #282b30;
+}
+
+.account .buttons button {
+	width: 32px;
+	border-radius: 3px;
+}
+
+.buttons button {
+	height: 32px;
+	background: #2e3136;
+	color: rgba(255, 255, 255, 0.2);
+	transition: 0.3s;
+}
+
+.account .login-text {
+	display: inline-block;
+	margin-left: 10px;
+	width: 140px;
+	line-height: 35px;
+	font-size: 16px;
+	opacity: 0.3;
+}
+
+.account .buttons .logout:hover {
+	background: red;
+	color: #fff;
+}
+
+.account .buttons .login:hover {
+	background: #7289DA;
+	color: #fff;
+}
+
+.normal-link {
+	color: #0096cf;
+	text-decoration: none;
+}
+
+.normal-link:hover {
+	text-decoration: underline;
+	transition: 0.5s;
+}
+
+::-webkit-scrollbar {
+	display: none;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input { display:none; }
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+	border-radius: 34px;
+}
+
+.slider::before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+	border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider::before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+.notifications {
+	width: 300px;
+	position: fixed;
+	right: 0;
+	bottom: 0;
+	margin: 2px 0px;
+}
+
+.notifications div {
+	min-height: 75px;
+	padding: 8px 12px;
+	margin: 4px;
+	background: #1e2124;
+	border-radius: 4px;
+	position: relative;
+	transition: 0.5s;
+}
+
+.notifications div header {
+	color: white;
+	margin-bottom: 6px;
+}
+
+.notifications div p {
+	margin: 0;
+	color: hsla(0,0%,100%,.7);
+}
+
+.notifications div span {
+	position: absolute;
+	top: 5px;
+	right: 10px;
+	color: red;
+	font-size: 24px;
+	cursor: pointer;
+	transition: 0.3s;
+	font-weight: 900;
+}
+
+.notifications div span:hover {
+	color: #ff2b2b;
+}

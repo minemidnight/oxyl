@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Oxyl - Emojis</title>
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/3/w3.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="{{baseURL}}/assets/css/main.css" />
+	<link rel="stylesheet" href="{{baseURL}}/assets/css/loading.css" />
+	<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.1.1.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+	<script async src="{{baseURL}}/assets/js/lazyload.js"></script>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body class="discord-main" onload="$('#primary-nav').scrollTop($('#primary-nav .selected').offset().top - ($(document).height() / 5))">
+	<div style="transition:0.5s" id="nav-container">
+		<nav class="w3-sidebar w3-bar-block w3-center discord-dark" id="primary-nav" style="width:70px">
+			<div class="icon-nav">
+				<a href="{{baseURL}}"><i class="fa fa-home"></i></a>
+			</div>
+			<div class="icon-nav">
+				<a href="{{baseURL}}/commands"><i class="fa fa-exclamation"></i></a>
+			</div>
+			<div class="icon-nav selected">
+				<a href="{{baseURL}}/emojis"><i class="fa fa-smile-o"></i></a>
+			</div>
+			<div class="nav-seperator"></div>
+			{{#if guilds}}
+				{{#each guilds}}
+					<div class="icon-nav">
+						{{#if this.icon}}
+							<a class="avatar" href="{{baseURL}}/dashboard/overview/{{this.id}}" style="background-image: url('https://cdn.discordapp.com/icons/{{this.id}}/{{this.icon}}.png')"></a>
+						{{else}}
+							<a class="avatar" href="{{baseURL}}/dashboard/overview/{{this.id}}" style="font-size:14px;overflow:hidden">{{this.smallname}}</a>
+						{{/if}}
+					</div>
+				{{/each}}
+			{{/if}}
+		</nav>
+		<nav class="w3-sidebar w3-bar-block discord-lighter" style="margin-left:70px;width:240px" id="secondary-nav">
+			<header>
+				<span>Emojis</span>
+			</header>
+			<header>
+				<span>Pages</span>
+			</header>
+			<div class="secondary-item selected"><a href="{{baseURL}}/emojis">Emojis</a></div>
+			<div class="account">
+				<div class="account-items">
+					{{#if user}}
+						<div class="avatar" style="background-image:url('https://cdn.discordapp.com/avatars/{{user.id}}/{{user.avatar}}.png?size=256')"></div>
+						<div class="details">
+							<span class="username">{{user.username}}</span>
+							<span class="discriminator">#{{user.discriminator}}</span>
+						</div>
+						<div class="buttons">
+							<button class="logout" onclick="window.location.href = '{{baseURL}}/logout'">
+								<i class="fa fa-sign-out"></i>
+							</button>
+						</div>
+					{{else}}
+						<div class="login-text">Log in with Discord</div>
+						<div class="buttons">
+							<button class="login" onclick="window.location.href = '{{baseURL}}/accounts'">
+								<i class="fa fa-sign-in"></i>
+							</button>
+						</div>
+					{{/if}}
+				</div>
+			</div>
+		</nav>
+		<div class="w3-overlay w3-animate-opacity" onclick="toggleNav()" style="display:none;" id="nav-overlay"></div>
+	</div>
+	<main>
+		<div class="content-overview">
+			<span class="w3-hide-large title" onclick="toggleNav()">&#9776;</span>
+			<span class="title">Emojis</span>
+		</div>
+		<div class="w3-container" style="color:hsla(0,0%,100%,.7)">
+			<style>
+				.tooltip {
+					position: absolute;
+					background: #7289da;
+					box-shadow: 0 2px 4px 1px rgba(0,0,0,.1);
+					border-radius: 3px;
+					font-weight: 600;
+					font-size: 12px;
+					color: #fff;
+					padding: 5px 10px;
+					max-width: 160px;
+					word-wrap: break-word;
+					left: 50%;
+  				transform: translate(-50%, -100%);
+				}
+
+				.tooltip::after {
+					border: solid transparent;
+			    content: " ";
+			    width: 0;
+			    height: 0;
+			    pointer-events: none;
+			    border-width: 5px;
+					position: absolute;
+					top: 100%;
+					left: 50%;
+					transform: translate(-50%);
+					border-top-color: #7289da;
+					margin-top: -1px;
+				}
+
+				.emoji {
+					object-fit: contain;
+					width: 32px;
+					height: 32px;
+					margin: 0.1em;
+					vertical-align: -.4em;
+				}
+
+				.pagination {
+					margin-bottom: 24px;
+					margin-top: 20px;
+					font-size: 15px;
+				}
+
+				.pagination .prev, .pagination .next {
+					border: 1px solid hsla(0,0%,100%,.16);
+					cursor: pointer;
+					display: inline-block;
+					border-radius: 2px;
+					background-size: 6px 12px;
+					background-position: 50%;
+					width: 18px;
+					height: 20px;
+					opacity: 0.7;
+					background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIyNSI+PHBhdGggZmlsbD0iI0ZGRiIgZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNMTcuMzM4IDEyLjQ4NWMtNC4xNTYgNC4xNTYtOC4zMTIgOC4zMTItMTIuNDY4IDEyLjQ2Ny0xLjQwMi0xLjQwMi0yLjgwNS0yLjgwNC00LjIwNy00LjIwNiAyLjc1Ni0yLjc1NyA1LjUxMy01LjUxNCA4LjI3LTguMjdDNi4xNzYgOS43MiAzLjQxOSA2Ljk2My42NjMgNC4yMDdMNC44NyAwYy0uMDU4LS4wNTkgMTIuNTU1IDEyLjU2MiAxMi40NjggMTIuNDg1eiIgY2xpcC1ydWxlPSJldmVub2RkIi8+PC9zdmc+Cg==);
+					background-repeat: no-repeat;
+					transition: 0.1s;
+				}
+
+				.pagination .prev:hover, .pagination .next:hover {
+					opacity: 1;
+				}
+
+				.pagination .prev.disabled, .pagination .next.disabled {
+					cursor: default;
+					opacity: 0.3;
+				}
+
+				.pagination .prev {
+					transform: rotate(180deg) translateY(-25%);
+					margin-right: 30px;
+				}
+
+				.pagination .next {
+					margin-left: 30px;
+					transform: translateY(25%);
+				}
+			</style>
+			{{#each emojis}}
+				<span class="w3-tooltip" style="position:relative">
+					<img class="emoji lazy" src="{{baseURL}}/assets/other/lazy.gif" data-original="https://cdn.discordapp.com/emojis/{{this.id}}.png" alt="{{this.name}}" />
+					<div class="w3-text tooltip">{{this.name}}</div>
+				</span>
+			{{/each}}
+			<div class="w3-container w3-center pagination">
+				{{#if prevPage}}
+					<span class="prev" onclick="window.location.assign(queryString(window.location.href, 'page', {{prevPage}}))"></span>
+				{{else}}
+					<span class="prev disabled"></span>
+				{{/if}}
+				Page {{page}} of {{totalPages}}
+				{{#if nextPage}}
+					<span class="next" onclick="window.location.assign(queryString(window.location.href, 'page', {{nextPage}}))"></span>
+				{{else}}
+					<span class="next disabled"></div>
+				{{/if}}
+			</div>
+		</div>
+	</main>
+	<script>
+		function queryString(uri, key, value) {
+		  var re = new RegExp("([?&])" + key + "=.*?(&|#|$)", "i");
+		  if (uri.match(re)) {
+		    return uri.replace(re, '$1' + key + "=" + value + '$2');
+		  } else {
+		    var hash =  '';
+		    if( uri.indexOf('#') !== -1 ){
+		        hash = uri.replace(/.*#/, '#');
+		        uri = uri.replace(/#.*/, '');
+		    }
+		    var separator = uri.indexOf('?') !== -1 ? "&" : "?";
+		    return uri + separator + key + "=" + value + hash;
+		  }
+		}
+
+		$("img.lazy").lazyload();
+		function toggleNav() {
+			$("#nav-container").css("margin-left", (index, currentValue) => {
+				if(currentValue === "0px") return "";
+				else if(currentValue === "-310px") return "0px";
+			});
+			$("#nav-overlay").css("display", (index, currentValue) => {
+				if(currentValue === "none") return "block";
+				else if(currentValue === "block") return "none";
+			});
+		}
+	</script>
+</body>
+</html>
