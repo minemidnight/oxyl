@@ -22,7 +22,6 @@ async function init() {
 		console.error("No prefix(es) found in config.json");
 		process.exit(0);
 	} else {
-		console.log(config.bot.token, cluster.worker.shardStart, cluster.worker.shardEnd, cluster.worker.totalShards);
 		global.bot = new Eris(config.bot.token, {
 			firstShardID: cluster.worker.shardStart,
 			lastShardID: cluster.worker.shardEnd,
@@ -32,7 +31,6 @@ async function init() {
 			defaultImageFormat: "png",
 			defaultImageSize: 256
 		});
-		console.log(bot);
 	}
 
 	bot.config = config;
@@ -60,6 +58,7 @@ async function init() {
 	bot.commands = {};
 	const Command = require("./structures/command");
 	let commands = await loadScripts("./commands", true);
+	console.log(onceListeners, onListeners, commands);
 	commands.forEach(script => {
 		let finalPath = script.path.dir.substring(script.path.dir.lastIndexOf("/") + 1);
 		script.exports.name = script.name.toLowerCase();
