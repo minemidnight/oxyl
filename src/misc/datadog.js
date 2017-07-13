@@ -1,4 +1,4 @@
-const config = require("config.json");
+const config = require("../../../config.json");
 const StatsD = require("hot-shots");
 
 let client = false;

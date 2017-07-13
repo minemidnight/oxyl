@@ -1,7 +1,7 @@
 const rethinkdbdash = require("rethinkdbdash");
 module.exports = {
 	init: async () => {
-		const config = require("config.json");
+		const config = require("../../../config.json");
 		if(!config.other.database) {
 			console.warn("No RethinkDB connection info in config.json, Oxyl won't work as expected");
 			return false;
