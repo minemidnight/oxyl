@@ -2,11 +2,11 @@ const Player = require("../../structures/player.js");
 const mainResolver = require("../../modules/audioResolvers/main.js");
 
 const cheerio = require("cheerio");
-const request = require("request-promise");
+const superagent = require("superagent");
 let playlistsDisplay, playlistsFormat;
 async function updateDFM() {
 	playlistsDisplay = [];
-	const $ = cheerio.load(await request("http://temp.discord.fm/")); // eslint-disable-line id-length
+	const $ = cheerio.load((await superagent.get("http://temp.discord.fm/").text)); // eslint-disable-line id-length
 	$("li.collection-item.avatar span").each((i, ele) => playlistsDisplay.push($(ele).text()));
 	playlistsDisplay = playlistsDisplay.map(genre => genre.substring(0, genre.indexOf("(") - 1));
 	playlistsFormat = playlistsDisplay.map(genre => genre.toLowerCase().replace(/ /g, "-"));
@@ -38,9 +38,7 @@ module.exports = {
 				return __("commands.music.play.dfmPlaylists", message, { genres: playlistsDisplay.join(", ") });
 			} else if(~playlistsFormat.indexOf(message.args[0].replace(/ /g, "-"))) {
 				if(!player.connection) await player.connect(voiceChannel.id);
-				let data = JSON.parse(
-					await request(`https://temp.discord.fm/libraries/${message.args[0].replace(/ /g, "-")}/json`)
-				);
+				let { body: data } = await superagent.get(`https://temp.discord.fm/libraries/${message.args[0].replace(/ /g, "-")}/json`)
 
 				let soundcloud = [], youtube = [];
 				for(let video of data) {
