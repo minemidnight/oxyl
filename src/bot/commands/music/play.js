@@ -6,7 +6,7 @@ const superagent = require("superagent");
 let playlistsDisplay, playlistsFormat;
 async function updateDFM() {
 	playlistsDisplay = [];
-	const $ = cheerio.load((await superagent.get("http://temp.discord.fm/").text)); // eslint-disable-line id-length
+	const $ = cheerio.load((await superagent.get("http://temp.discord.fm/")).text); // eslint-disable-line id-length
 	$("li.collection-item.avatar span").each((i, ele) => playlistsDisplay.push($(ele).text()));
 	playlistsDisplay = playlistsDisplay.map(genre => genre.substring(0, genre.indexOf("(") - 1));
 	playlistsFormat = playlistsDisplay.map(genre => genre.toLowerCase().replace(/ /g, "-"));

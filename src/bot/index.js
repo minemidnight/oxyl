@@ -58,7 +58,6 @@ async function init() {
 	bot.commands = {};
 	const Command = require(path.resolve("src", "bot", "structures", "command"));
 	let commands = await loadScripts(path.resolve("src", "bot", "commands"), true);
-	console.log(onceListeners, onListeners, commands);
 	commands.forEach(script => {
 		let finalPath = script.path.dir.substring(script.path.dir.lastIndexOf("/") + 1);
 		script.exports.name = script.name.toLowerCase();
