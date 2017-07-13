@@ -124,4 +124,4 @@ router.get("/modlog/*", async (req, res) => {
 	}
 });
 
-let settings = require("../../../bot/commands/admin/settings").settings;
+let settings = require(require("path").resolve("src", "bot", "commands", "admin", "settings").settings;

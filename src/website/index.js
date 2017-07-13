@@ -3,19 +3,20 @@ const bodyParser = require("body-parser"),
 	cookieParser = require("cookie-parser"),
 	fs = require("fs"),
 	handlebars = require("handlebars"),
+	path = require("path"),
 	superagent = require("superagent");
 
 
 Promise.promisifyAll(fs);
 const app = global.app = express();
-const config = app.config = require(require("path").resolve("config.json"));
+const config = app.config = require(path.resolve("config.json"));
 const server = app.server = require("http").createServer(app);
 server.listen(config.website.port, () => {
 	console.startup(`Listening on port ${config.website.port}`);
 	cluster.worker.send({ type: "startup", port: config.website.port });
 });
 
-app.use(express.static("./public"));
+app.use(express.static(path.resolve("src", "website", "public")));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
@@ -27,7 +28,7 @@ app.use((req, res, next) => {
 let raven = require("raven");
 if(config.website.sentryLink) raven.config(config.website.sentryLink).install();
 
-let routes = loadScripts("./routes");
+let routes = loadScripts(path.resolve("src", "website", "routes"));
 routes.forEach(script => {
 	if(script.name === "index") app.use("/", script.exports);
 	else app.use(`/${script.name}`, script.exports);
@@ -152,7 +153,6 @@ app.discordInfo = async (tokenInfo, apipath, req) => {
 	}
 };
 
-const path = require("path");
 function loadScripts(filepath, deep = false) {
 	if(!fs.existsSync(filepath)) return [];
 
@@ -209,11 +209,11 @@ process.on("unhandledRejection", err => {
 });
 
 async function init() {
-	require("../misc/rethink");
-	require("../misc/outputHandler");
+	require(path.resolve("src", "misc", "rethink"));
+	require(path.resolve("src", "misc", "outputHandler"));
 
 	app.hbs = {};
-	let views = await getFiles("./views");
+	let views = await getFiles(path.resolve("src", "website", "views"));
 	for(let i of views) app.hbs[i.substring(i.lastIndexOf("/") + 1, i.lastIndexOf("."))] = fs.readFileAsync(i).toString();
 
 	app.page = parseHBS;

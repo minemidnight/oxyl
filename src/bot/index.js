@@ -42,22 +42,22 @@ async function init() {
 	let locales = await getFiles(path.resolve("locales"), file => file.endsWith(".json"));
 	bot.locales = locales.map(file => file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".")));
 	bot.localeCache = new Map();
-	require("../misc/rethink");
-	require("../misc/outputHandler");
-	require("./modules/locales");
+	require(path.resolve("src", "misc", "rethink"));
+	require(path.resolve("src", "misc", "outputHandler"));
+	require(path.resolve("src", "bot", "modules", "locales"));
 
 	bot.utils = {};
 	let utils = await loadScripts("utils");
 	utils.forEach(script => bot.utils[script.name] = script.exports);
 
-	let onceListeners = await loadScripts("./listeners/once");
-	let onListeners = await loadScripts("./listeners/on");
+	let onceListeners = await loadScripts(path.resolve("src", "bot", "listeners", "once"));
+	let onListeners = await loadScripts(path.resolve("src", "bot", "listeners", "on"));
 	onceListeners.forEach(script => bot.once(script.name, script.exports));
 	onListeners.forEach(script => bot.on(script.name, script.exports));
 
 	bot.commands = {};
-	const Command = require("./structures/command");
-	let commands = await loadScripts("./commands", true);
+	const Command = require(path.resolve("src", "bot", "structures", "command"));
+	let commands = await loadScripts(path.resolve("src", "bot", "commands"), true);
 	console.log(onceListeners, onListeners, commands);
 	commands.forEach(script => {
 		let finalPath = script.path.dir.substring(script.path.dir.lastIndexOf("/") + 1);
@@ -103,7 +103,7 @@ async function getFiles(filepath, filter = () => true, deep = false) {
 	return validFiles;
 }
 
-const statPoster = require("./modules/statPoster");
+const statPoster = require(path.resolve("src", "bot", "modules", "statPoster"));
 setInterval(statPoster, 1800000);
 
 process.on("unhandledRejection", err => {
