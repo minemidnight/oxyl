@@ -37,7 +37,7 @@ async function init() {
 	if(totalShards < 1 || isNaN(totalShards)) totalShards = 1;
 	statsd({ type: "gauge", stat: "shards", value: totalShards });
 
-	let shardsPerWorker, fields;
+	let shardsPerWorker, fields = [];
 	fields.push({ name: "Total Shards", value: totalShards, inline: true });
 	if(argv.perWorker && argv.perWorker >= 1 && !isNaN(argv.perWorker)) {
 		shardsPerWorker = argv.perWorker;
