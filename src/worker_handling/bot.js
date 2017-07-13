@@ -10,7 +10,7 @@ module.exports = async worker => {
 			shardRange: worker.shardRange,
 			shardStart: worker.shardStart,
 			shardEnd: worker.shardEnd,
-			totalShards: process.shardCount,
+			totalShards: worker.totalShards,
 			processType: "bot"
 		});
 
