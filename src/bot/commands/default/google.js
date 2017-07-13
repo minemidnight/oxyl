@@ -3,7 +3,7 @@ const superagent = require("superagent");
 
 module.exports = {
 	process: async message => {
-		let { text: body } = await superagent.(`https://www.google.com/search?q=${encodeURI(message.args[0])}`);
+		let { text: body } = await superagent.get(`https://www.google.com/search?q=${encodeURI(message.args[0])}`);
 		let $ = cheerio.load(body); // eslint-disable-line id-length
 		let results = $(".r"), resultmsg = "";
 
