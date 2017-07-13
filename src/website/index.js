@@ -8,7 +8,7 @@ const bodyParser = require("body-parser"),
 
 Promise.promisifyAll(fs);
 const app = global.app = express();
-const config = app.config = require("../../../config.json");
+const config = app.config = require(require("path").resolve("config.json"));
 const server = app.server = require("http").createServer(app);
 server.listen(config.website.port, () => {
 	console.startup(`Listening on port ${config.website.port}`);

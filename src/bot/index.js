@@ -9,7 +9,7 @@ const Eris = require("eris-additions")(require("eris"), {
 });
 const path = require("path");
 const fs = Promise.promisifyAll(require("fs"));
-const config = require("../../../config.json");
+const config = require(path.resolve("config.json"));
 
 let raven = require("raven");
 if(config.bot.sentryLink) raven.config(config.bot.sentryLink).install();
@@ -39,7 +39,7 @@ async function init() {
 	bot.prefixes = new Map();
 	bot.censors = new Map();
 
-	let locales = await getFiles("../../../locales", file => file.endsWith(".json"));
+	let locales = await getFiles(path.resolve("locales"), file => file.endsWith(".json"));
 	bot.locales = locales.map(file => file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".")));
 	bot.localeCache = new Map();
 	require("../misc/rethink");
