@@ -24,7 +24,6 @@ async function init() {
 	});
 
 	if(totalShards < 1 || isNaN(totalShards)) totalShards = 1;
-	process.totalShards = totalShards;
 	statsd({ type: "gauge", stat: "shards", value: totalShards });
 
 	let shardsPerWorker;
@@ -44,7 +43,7 @@ async function init() {
 		let shardRange = shardStart === shardEnd ? `shard ${shardStart}` : `shards ${shardStart}-${shardEnd}`;
 
 		const worker = cluster.fork();
-		Object.assign(worker, { type: "bot", shardStart, shardEnd, shardRange });
+		Object.assign(worker, { type: "bot", shardStart, shardEnd, shardRange, totalShards });
 		handleWorker(worker);
 	}
 
