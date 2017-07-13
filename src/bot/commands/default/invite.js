@@ -1,8 +1,8 @@
 module.exports = {
 	process: async message => {
 		let invite = `https://discordapp.com/oauth2/authorize?client_id=${bot.user.id}&scope=bot`;
-		if(bot.config.defaultInvitePermissionNumber) {
-			invite += `&permissions=${bot.config.defaultInvitePermissionNumber}`;
+		if(bot.config.bot.defaultInvitePermissionNumber) {
+			invite += `&permissions=${bot.config.bot.defaultInvitePermissionNumber}`;
 		}
 
 		return __("commands.default.invite.success", message, {

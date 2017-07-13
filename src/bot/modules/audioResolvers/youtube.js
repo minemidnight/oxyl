@@ -1,15 +1,15 @@
 const youtubedl = Promise.promisifyAll(require("youtube-dl"));
 const superagent = require("superagent");
-const googleKeys = bot.privateConfig.googleKeys;
+const googleKeys = bot.config.bot.googleKeys;
 const main = require("../audioResolvers/main.js");
 
 module.exports = async link => {
-	let id = link.match(regex)[1], data;
+	let id = link.match(regex)[1];
 
 	try {
-		data = await superagent.get(`https://www.googleapis.com/youtube/v3/videos?id=${id}&part=snippet,` +
-				`contentDetails&fields=items(snippet(title,liveBroadcastContent),contentDetails(duration))` +
-				`&key=${googleKeys[Math.floor(Math.random() * googleKeys.length)]}`).body.items[0];
+		var { body: { items: [data] } } = await superagent.get(`https://www.googleapis.com/youtube/v3/` +
+				`videos?id=${id}&part=snippet,contentDetails&fields=items(snippet(title,liveBroadcastContent)` +
+				`,contentDetails(duration))&key=${googleKeys[Math.floor(Math.random() * googleKeys.length)]}`);
 	} catch(err) {
 		return "INVALID_ID";
 	}

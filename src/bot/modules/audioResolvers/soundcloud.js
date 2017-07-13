@@ -2,8 +2,8 @@ const superagent = require("superagent");
 const clientID = "2t9loNQH90kzJcsFCODdigxfp325aq4z";
 module.exports = async link => {
 	try {
-		var data = await superagent.get(`http://api.soundcloud.com/resolve.json?url=${link}&client_id=${clientID}`);
-		data = data.body;
+		var { body: data } = await superagent.get(`http://api.soundcloud.com/resolve.json?url=${link}` +
+			`&client_id=${clientID}`);
 	} catch(err) {
 		return "NOT_FOUND";
 	}

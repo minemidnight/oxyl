@@ -2,13 +2,13 @@ const rethinkdbdash = require("rethinkdbdash");
 module.exports = {
 	init: async () => {
 		const config = require("config.json");
-		if(!config.database) {
-			console.warn("No RethinkDB connection info in private-config.yml, Oxyl won't work as expected");
+		if(!config.other.database) {
+			console.warn("No RethinkDB connection info in config.json, Oxyl won't work as expected");
 			return false;
 		}
 
-		let dbName = config.databaseName || "Oxyl";
-		let connectionInfo = config.database;
+		let dbName = config.other.databaseName || "Oxyl";
+		let connectionInfo = config.other.database;
 		connectionInfo.silent = true;
 		connectionInfo.db = dbName;
 		const r = rethinkdbdash(connectionInfo); // eslint-disable-line id-length
@@ -38,10 +38,10 @@ module.exports = {
 		return true;
 	},
 	connect: async () => {
-		if(!bot.privateConfig.database) return;
+		if(!bot.config.other.database) return;
 
-		let dbName = bot.publicConfig.databaseName || "Oxyl";
-		let connectionInfo = bot.privateConfig.database;
+		let dbName = bot.config.other.databaseName || "Oxyl";
+		let connectionInfo = bot.config.other.database;
 		connectionInfo.silent = true;
 		connectionInfo.db = dbName;
 		global.r = rethinkdbdash(connectionInfo); // eslint-disable-line id-length

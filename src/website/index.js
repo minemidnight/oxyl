@@ -5,16 +5,14 @@ const bodyParser = require("body-parser"),
 	handlebars = require("handlebars"),
 	superagent = require("superagent");
 
-let raven = require("raven");
-if(config.sentryLink) raven.config(config.sentryLink).install();
 
 Promise.promisifyAll(fs);
 const app = global.app = express();
-const config = app.config = require("config.json").website;
+const config = app.config = require("config.json");
 const server = app.server = require("http").createServer(app);
-server.listen(config.port, () => {
-	console.startup(`Listening on port ${config.port}`);
-	cluster.worker.send({ type: "startup", port: config.port });
+server.listen(config.website.port, () => {
+	console.startup(`Listening on port ${config.website.port}`);
+	cluster.worker.send({ type: "startup", port: config.website.port });
 });
 
 app.use(express.static("./public"));
@@ -26,6 +24,9 @@ app.use((req, res, next) => {
 	next();
 });
 
+let raven = require("raven");
+if(config.website.sentryLink) raven.config(config.website.sentryLink).install();
+
 let routes = loadScripts("./routes");
 routes.forEach(script => {
 	if(script.name === "index") app.use("/", script.exports);
@@ -33,8 +34,8 @@ routes.forEach(script => {
 });
 
 async function parseHBS(req, page, context = {}) {
-	context.botID = app.publicConfig.botID;
-	context.baseURL = app.publicConfig.baseURL;
+	context.botID = app.config.website.botID;
+	context.baseURL = app.config.website.baseURL;
 	if(context.guild) {
 		context.guild = (await process.output({
 			target: context.guild,
@@ -96,7 +97,7 @@ async function refreshToken(tokenInfo) {
 		grant_type: "refresh_token" // eslint-disable-line camelcase
 	};
 
-	let base64 = new Buffer(`${app.publicConfig.botID}:${app.privateConfig.secret}`).toString("base64");
+	let base64 = new Buffer(`${app.config.website.botID}:${app.config.website.secret}`).toString("base64");
 	try {
 		let { body } = await superagent
 			.post("https://discordapp.com/api/oauth2/token")
@@ -208,8 +209,8 @@ process.on("unhandledRejection", err => {
 });
 
 async function init() {
-	require("./../misc/rethink");
-	require("./../misc/outputHandler");
+	require("../misc/rethink");
+	require("../misc/outputHandler");
 
 	app.hbs = {};
 	let views = await getFiles("./views");

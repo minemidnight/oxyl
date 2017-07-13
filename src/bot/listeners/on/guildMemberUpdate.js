@@ -5,12 +5,12 @@ module.exports = async (guild, member, oldMember) => {
 
 	let addedRoles = member.roles.filter(role => !~oldMember.roles.indexOf(role));
 	let removedRoles = oldMember.roles.filter(role => !~member.roles.indexOf(role));
-	if(bot.publicConfig.donator && ~addedRoles.indexOf(bot.publicConfig.donator.role)) {
+	if(bot.config.bot.donator && ~addedRoles.indexOf(bot.config.bot.donator.role)) {
 		r.table("donators").insert({ id: member.id }).run();
-		if(bot.publicConfig.donator.channel && !bot.publicConfig.beta) {
-			bot.createMessage(bot.publicConfig.donator.channel, `Thank you <@${member.id}> for donating to Oxyl!`);
+		if(bot.config.bot.donator.channel && !bot.config.beta) {
+			bot.createMessage(bot.config.bot.donator.channel, `Thank you <@${member.id}> for donating to Oxyl!`);
 		}
-	} else if(bot.publicConfig.donator && ~removedRoles.indexOf(bot.publicConfig.donator.role)) {
+	} else if(bot.config.bot.donator && ~removedRoles.indexOf(bot.config.bot.donator.role)) {
 		r.table("donators").filter({ id: member.id }).delete().run();
 	}
 

@@ -4,7 +4,7 @@ module.exports = async guild => {
 	let tables = await r.tableList().run();
 	tables.forEach(table => r.table(table).filter({ guildID: guild.id }).delete());
 
-	if(bot.publicConfig.serverChannel) {
+	if(bot.config.bot.serverChannel) {
 		let owner = bot.users.get(guild.ownerID);
 		let botCount = guild.members.filter(member => member.bot).length;
 		let botPercent = ((botCount / guild.memberCount) * 100).toFixed(2);
@@ -19,7 +19,7 @@ module.exports = async guild => {
 		content += `Bots: ${botCount} (${botPercent}%)`;
 
 		try {
-			await bot.createMessage(bot.publicConfig.serverChannel, content);
+			await bot.createMessage(bot.config.bot.serverChannel, content);
 		} catch(err) {
 			console.error(`Failed to send message to server log: ${err.message}`);
 		}

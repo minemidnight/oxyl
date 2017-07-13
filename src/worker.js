@@ -9,9 +9,9 @@ async function startupMessage(msg) {
 		delete msg.processType;
 
 		Object.assign(cluster.worker, msg);
-		require("./../bot/index");
+		require("../bot/index");
 	} else {
-		require("./../website/index");
+		require("../website/index");
 	}
 }
 

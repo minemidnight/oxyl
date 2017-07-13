@@ -4,7 +4,7 @@ const handleCensor = require("./censors.js");
 module.exports = async message => {
 	const guild = message.channel.guild;
 
-	let prefix = `^(?:${bot.publicConfig.prefixes.join("|")}),?(?:\\s+)?([\\s\\S]+)`;
+	let prefix = `^(?:${bot.config.bot.prefixes.join("|")}),?(?:\\s+)?([\\s\\S]+)`;
 	if(guild && bot.prefixes.has(guild.id)) {
 		let insertIndex = prefix.indexOf("),?(");
 		let guildPrefix = `|${bot.utils.escapeRegex(bot.prefixes.get(guild.id))}`;
@@ -50,7 +50,7 @@ module.exports = async message => {
 	} else if((command.guildOnly || command.perm || command.type === "admin") && !guild) {
 		message.channel.createMessage(__("modules.commands.guildOnly", message));
 		return;
-	} else if(command.type === "creator" && !~bot.publicConfig.creators.indexOf(message.author.id)) {
+	} else if(command.type === "creator" && !~bot.config.bot.creators.indexOf(message.author.id)) {
 		message.channel.createMessage(__("modules.commands.creatorOnly", message));
 		return;
 	} else if(command.type === "admin" && !editedInfo.roles &&

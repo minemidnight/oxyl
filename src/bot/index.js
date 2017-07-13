@@ -9,20 +9,20 @@ const Eris = require("eris-additions")(require("eris"), {
 });
 const path = require("path");
 const fs = Promise.promisifyAll(require("fs"));
-const config = require("config.json").bot;
+const config = require("config.json");
 
 let raven = require("raven");
-if(config.sentryLink) raven.config(config.sentryLink).install();
+if(config.bot.sentryLink) raven.config(config.bot.sentryLink).install();
 
 async function init() {
-	if(!config.token) {
-		console.error("No token found in private-config.json");
+	if(!config.bot.token) {
+		console.error("No token found in config.json");
 		process.exit(0);
-	} else if(!config.prefixes) {
-		console.error("No prefix(es) found in public-config.json");
+	} else if(!config.bot.prefixes) {
+		console.error("No prefix(es) found in config.json");
 		process.exit(0);
 	} else {
-		global.bot = new Eris(config.token, {
+		global.bot = new Eris(config.bot.token, {
 			firstShardID: cluster.worker.shardStart,
 			lastShardID: cluster.worker.shardEnd,
 			maxShards: cluster.worker.totalShards,
@@ -42,8 +42,8 @@ async function init() {
 	let locales = await getFiles("locales", file => file.endsWith(".json"));
 	bot.locales = locales.map(file => file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".")));
 	bot.localeCache = new Map();
-	require("./../misc/rethink");
-	require("./../misc/outputHandler");
+	require("../misc/rethink");
+	require("../misc/outputHandler");
 	require("./modules/locales");
 
 	bot.utils = {};

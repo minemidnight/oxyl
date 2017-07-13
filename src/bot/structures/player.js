@@ -1,5 +1,4 @@
 const EventEmitter = require("events").EventEmitter;
-const request = require("request");
 const mainResolver = require("../modules/audioResolvers/main.js");
 
 class Player extends EventEmitter {
@@ -121,7 +120,11 @@ class Player extends EventEmitter {
 		this.current = song;
 		this.emit("playing", song);
 		this.connection.once("end", () => {
-			if(this.repeat) this.queue.push(this.current);
+			if(this.repeat) {
+				delete this.current.stream;
+				this.queue.push(this.current);
+			}
+
 			if(this.queue.length === 0) this.destroy("no_queue");
 			else setTimeout(() => this.play(), 100);
 		});

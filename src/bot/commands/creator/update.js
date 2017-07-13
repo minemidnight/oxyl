@@ -1,7 +1,8 @@
 module.exports = {
 	process: async message => {
-		let updateInfo = bot.config.updates;
-		if(!updateInfo) return "No update object was set in the config";
+		let updateInfo = bot.config.bot.updates;
+		if(bot.config.beta) return "This is the beta bot!";
+		else if(!updateInfo) return "No update object was set in the config";
 		else if(!updateInfo.channel) return "A channel id to release the updates in has not been set in the config";
 		else if(!updateInfo.guild) return "A guild id which the updates role belongs to has not been set in the config";
 		else if(!updateInfo.role) return "An updates role has not been set in the config";

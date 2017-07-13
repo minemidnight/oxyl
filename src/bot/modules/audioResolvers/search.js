@@ -1,5 +1,5 @@
 const superagent = require("superagent");
-const googleKeys = bot.config.googleKeys;
+const googleKeys = bot.config.bot.googleKeys;
 const ytResolver = require("../audioResolvers/youtube.js");
 module.exports = async query => {
 	let data = await superagent.get(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1` +

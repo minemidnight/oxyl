@@ -15,7 +15,7 @@ module.exports = {
 
 		let workerUsage = process.memoryUsage().heapUsed;
 		let masterUsage = (await process.output({
-			type: "masterEval",
+			type: "master",
 			input: () => process.memoryUsage().heapUsed
 		})).result;
 		let totalUsage = masterUsage + results.map(res => res[2]).reduce((a, b) => a + b);

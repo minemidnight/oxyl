@@ -1,4 +1,4 @@
-const request = require("request-promise");
+const superagent = require("superagent");
 let maxComic = 0;
 module.exports = {
 	process: async message => {
@@ -7,16 +7,15 @@ module.exports = {
 		}
 
 		let comic = message.args[0] || Math.floor(Math.random() * maxComic) + 1;
-		let body = await request(`http://xkcd.com/${comic}/info.0.json`);
-		body = JSON.parse(body);
+		let { body } = await superagent.get(`http://xkcd.com/${comic}/info.0.json`);
 
-		let buffer = await request(body.img, { encoding: null });
+		let { body: buffer } = await superagent.get(body.img);
 		return [`<http://xkcd.com/${comic}>\n**${body.title}** (#${comic})`, {
 			file: buffer,
 			name: body.img.substring(body.img.lastIndexOf("/") + 1)
 		}];
 	},
-	updateComic: async () => maxComic = JSON.parse(await request("https://xkcd.com/info.0.json")).num,
+	updateComic: async () => maxComic = (await superagent.get("https://xkcd.com/info.0.json")).body.num,
 	description: "Grab a xkcd from xkcd.com",
 	args: [{
 		label: "comic number",
