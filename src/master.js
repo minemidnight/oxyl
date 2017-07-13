@@ -24,7 +24,7 @@ async function init() {
 	});
 
 	if(totalShards < 1 || isNaN(totalShards)) totalShards = 1;
-	console.log(totalShards, argv.shards);
+	console.log(argv, process.argv);
 	statsd({ type: "gauge", stat: "shards", value: totalShards });
 
 	let shardsPerWorker;
