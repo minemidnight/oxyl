@@ -22,7 +22,6 @@ async function init() {
 		console.error("No prefix(es) found in config.json");
 		process.exit(0);
 	} else {
-		console.log(cluster.worker.shardStart, cluster.worker.shardEnd, cluster.worker.totalShards);
 		global.bot = new Eris(config.bot.token, {
 			firstShardID: cluster.worker.shardStart,
 			lastShardID: cluster.worker.shardEnd,
