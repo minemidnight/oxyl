@@ -41,9 +41,7 @@ async function init() {
 	for(let i = 0; i < workerCount; i++) {
 		let shardStart = i * shardsPerWorker, shardEnd = ((i + 1) * shardsPerWorker) - 1;
 		if(shardEnd > totalShards - 1) shardEnd = totalShards - 1;
-		let shardRange = shardStart === shardEnd ?
-			shardRange = `shard ${shardStart}` :
-			shardRange = `shards ${shardStart}-${shardEnd}`;
+		let shardRange = shardStart === shardEnd ? `shard ${shardStart}` : `shards ${shardStart}-${shardEnd}`;
 
 		const worker = cluster.fork();
 		Object.assign(worker, { type: "bot", shardStart, shardEnd, shardRange });
