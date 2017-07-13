@@ -28,11 +28,6 @@ Object.defineProperty(cluster, "onlineWorkers", {
 let totalShards = 1 || argv.shards;
 async function init() {
 	await (require("./misc/rethink")).init();
-	webhook({
-		title: `Master started`,
-		color: 0x0000FF,
-		timestamp: new Date()
-	});
 
 	if(totalShards < 1 || isNaN(totalShards)) totalShards = 1;
 	statsd({ type: "gauge", stat: "shards", value: totalShards });
