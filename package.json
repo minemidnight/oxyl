@@ -16,6 +16,7 @@
   },
   "homepage": "https://github.com/minemidnight/oxyl#readme",
   "dependencies": {
+    "argv": "0.0.2",
     "big-number": "^0.4.0",
     "bluebird": "^3.5.0",
     "body-parser": "^1.17.2",

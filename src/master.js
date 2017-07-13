@@ -1,4 +1,15 @@
-const argv = process.argv;
+const argv = require("argv")
+	.option({
+		name: "shards",
+		short: "s",
+		type: "int",
+		description: "Amount of shards for the bot"
+	}).option({
+		name: "perWorker",
+		short: "pw",
+		type: "int",
+		description: "Amount of shards to spawn on each worker (leave blank for automatic across cpu cores)"
+	}).run();
 const webhook = require("./misc/webhookStatus");
 
 const botHandler = require("./worker_handling/bot");
@@ -14,7 +25,7 @@ Object.defineProperty(cluster, "onlineWorkers", {
 		.filter(work => work.isConnected())
 });
 
-let totalShards = 1;
+let totalShards = 1 || argv.shards;
 async function init() {
 	await (require("./misc/rethink")).init();
 	webhook({
@@ -26,7 +37,8 @@ async function init() {
 	if(totalShards < 1 || isNaN(totalShards)) totalShards = 1;
 	statsd({ type: "gauge", stat: "shards", value: totalShards });
 
-	let shardsPerWorker;
+	let shardsPerWorker, fields;
+	fields.push({ name: "Total Shards", value: totalShards, inline: true });
 	if(argv.perWorker && argv.perWorker >= 1 && !isNaN(argv.perWorker)) {
 		shardsPerWorker = argv.perWorker;
 	} else {
@@ -34,8 +46,10 @@ async function init() {
 		if(coreCount >= totalShards) shardsPerWorker = 1;
 		else shardsPerWorker = Math.ceil(totalShards / coreCount);
 	}
+	fields.push({ name: "Shards per Worker", value: shardsPerWorker, inline: true });
 
 	const workerCount = Math.ceil(totalShards / shardsPerWorker);
+	fields.push({ name: "Total Shards", value: workerCount, inline: true });
 	statsd({ type: "gauge", stat: "workers", value: workerCount });
 	for(let i = 0; i < workerCount; i++) {
 		let shardStart = i * shardsPerWorker, shardEnd = ((i + 1) * shardsPerWorker) - 1;
@@ -52,6 +66,14 @@ async function init() {
 		const website = cluster.fork();
 		Object.assign(website, { type: "website" });
 		handleWorker(website);
+		fields.push({ name: "Website", value: `Website hosted on worker ${website.id}`, inline: true });
 	}
+
+	webhook({
+		title: `Master Started up`,
+		color: 0x00FF00,
+		fields,
+		timestamp: new Date()
+	});
 }
 init();
