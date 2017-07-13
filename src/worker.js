@@ -1,3 +1,4 @@
+const path = require("path");
 async function startupMessage(msg) {
 	if(msg.type !== "startup") {
 		cluster.worker.once("message", startupMessage);
@@ -9,9 +10,9 @@ async function startupMessage(msg) {
 		delete msg.processType;
 
 		Object.assign(cluster.worker, msg);
-		require("../bot/index");
+		require(path.resolve("src", "bot", "index"));
 	} else {
-		require("../website/index");
+		require(path.resolve("src", "bot", "index"));
 	}
 }
 

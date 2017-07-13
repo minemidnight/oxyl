@@ -48,7 +48,8 @@ async function init() {
 		handleWorker(worker);
 	}
 
-	if(!require("../../config.json").beta && require("../../config.json").website) {
+	let config = require(require("path").resolve("config.json"));
+	if(!config.beta && config.website) {
 		const website = cluster.fork();
 		Object.assign(website, { type: "website" });
 		handleWorker(website);
