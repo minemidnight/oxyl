@@ -1,4 +1,4 @@
-const argv = require("args-parser")(process.argv);
+const argv = process.argv;
 const webhook = require("./misc/webhookStatus");
 
 const botHandler = require("./worker_handling/bot");
@@ -14,7 +14,7 @@ Object.defineProperty(cluster, "onlineWorkers", {
 		.filter(work => work.isConnected())
 });
 
-let totalShards = argv.shards || 1;
+let totalShards = 1;
 async function init() {
 	await (require("./misc/rethink")).init();
 	webhook({
@@ -24,7 +24,6 @@ async function init() {
 	});
 
 	if(totalShards < 1 || isNaN(totalShards)) totalShards = 1;
-	console.log(argv, process.argv);
 	statsd({ type: "gauge", stat: "shards", value: totalShards });
 
 	let shardsPerWorker;
