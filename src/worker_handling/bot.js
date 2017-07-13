@@ -37,7 +37,7 @@ module.exports = async worker => {
 				description: `Exit code: ${code} (success)\nHosted ${worker.shardRange}`,
 				timestamp: new Date()
 			});
-		} else if(workerCrashes[worker.shardRange] >= 3) {
+		} else if(workerCrashes[worker.shardRange] >= 2) {
 			console.error(`Worker ${worker.id} killed due to restart loop with ` +
 					`exit code: ${code} (hosted ${worker.shardRange}).`);
 

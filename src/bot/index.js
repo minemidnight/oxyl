@@ -47,7 +47,7 @@ async function init() {
 	require(path.resolve("src", "bot", "modules", "locales"));
 
 	bot.utils = {};
-	let utils = await loadScripts("utils");
+	let utils = await loadScripts(path.resolve("src", "bot", "utils"));
 	utils.forEach(script => bot.utils[script.name] = script.exports);
 
 	let onceListeners = await loadScripts(path.resolve("src", "bot", "listeners", "once"));
