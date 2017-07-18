@@ -15,7 +15,7 @@ module.exports = async (msg, worker) => {
 			waitingResults[msg.id] = {
 				expected: 1,
 				results: [],
-				callback: results => worker.send({ type: "output", result: results[0], id: msg.id })
+				worker
 			};
 			targetWorker.send({ type: "eval", input: msg.input, id: msg.id });
 		}
@@ -34,7 +34,7 @@ module.exports = async (msg, worker) => {
 				waitingResults[msg.id] = {
 					expected: 1,
 					results: [],
-					callback: results => worker.send({ type: "output", result: results[0], id: msg.id })
+					worker
 				};
 				targetWorker.send({ type: "eval", input: msg.input, id: msg.id });
 			}
@@ -54,7 +54,7 @@ module.exports = async (msg, worker) => {
 				waitingResults[msg.id] = {
 					expected: 1,
 					results: [],
-					callback: results => worker.send({ type: "output", result: results[0], id: msg.id })
+					worker
 				};
 				targetWorker.send({ type: "eval", input: msg.input, id: msg.id });
 			}
@@ -62,6 +62,7 @@ module.exports = async (msg, worker) => {
 	} else if(msg.type === "all_shards") {
 		let workers = cluster.onlineWorkers.filter(work => work.type === "bot");
 		waitingResults[msg.id] = {
+			alwaysPlural: true,
 			expected: workers.length,
 			results: [],
 			worker
@@ -79,8 +80,11 @@ module.exports = async (msg, worker) => {
 
 		waiting.results.push(msg.result);
 		if(waiting.results.length === waiting.expected) {
-			if(waiting.expected > 1) waiting.worker.send({ type: "output", results: waiting.results, id: msg.id });
-			else waiting.worker.send({ type: "output", result: waiting.results[0], id: msg.id });
+			if(waiting.expected > 1 || waiting.alwaysPlural) {
+				waiting.worker.send({ type: "output", results: waiting.results, id: msg.id });
+			} else {
+				waiting.worker.send({ type: "output", result: waiting.results[0], id: msg.id });
+			}
 
 			delete waitingResults[msg.id];
 		}
