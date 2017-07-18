@@ -15,7 +15,7 @@ module.exports = {
 		}
 	},
 	guildOnly: true,
-	description: "Stop music in your channel",
+	description: "Jump to a song in the queue",
 	args: [{
 		type: "num",
 		label: "queue #",

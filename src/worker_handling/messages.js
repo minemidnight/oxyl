@@ -59,7 +59,7 @@ module.exports = async (msg, worker) => {
 				targetWorker.send({ type: "eval", input: msg.input, id: msg.id });
 			}
 		}
-	} else if(msg.type === "all_bots") {
+	} else if(msg.type === "all_shards") {
 		let workers = cluster.onlineWorkers.filter(work => work.type === "bot");
 		waitingResults[msg.id] = {
 			expected: workers.length,
