@@ -27,6 +27,7 @@ module.exports = {
 			let commandMsg = "", commandTypes = {};
 			for(let cmd in bot.commands) {
 				cmd = bot.commands[cmd];
+				if(cmd.type === "creator") continue;
 				if(!commandTypes[cmd.type]) commandTypes[cmd.type] = [];
 				commandTypes[cmd.type].push(cmd.name);
 				commandTypes[cmd.type].concat(cmd.aliases);
