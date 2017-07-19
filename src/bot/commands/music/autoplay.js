@@ -1,7 +1,7 @@
 const autoplay = require("../../modules/audioResolvers/autoplay.js");
 module.exports = {
 	process: async message => {
-		let donator = await r.db("Oxyl").table("donators").get(message.guild.ownerID).run();
+		let donator = await r.db("Oxyl").table("donators").get(message.channel.guild.ownerID).run();
 		if(!donator) return __("commands.music.autoplay.donatorOnly", message);
 
 		let player = bot.players.get(message.channel.guild.id);
@@ -18,7 +18,7 @@ module.exports = {
 			}
 
 			return __("commands.music.autoplay.success", message,
-				{ value: __(`words.${player.repeat ? "on" : "off"}`, message) });
+				{ value: __(`words.${player.autoplay ? "on" : "off"}`, message) });
 		}
 	},
 	guildOnly: true,
