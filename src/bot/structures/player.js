@@ -1,5 +1,6 @@
 const EventEmitter = require("events").EventEmitter;
 const mainResolver = require("../modules/audioResolvers/main.js");
+const autoplay = require("../modules/audioResolvers/autoplay.js");
 
 class Player extends EventEmitter {
 	constructor(guild, data) {
@@ -8,6 +9,7 @@ class Player extends EventEmitter {
 		this.guild = guild;
 
 		this.queue = data.queue || [];
+		this.autoplay = !!data.repeat;
 		this.repeat = !!data.repeat;
 		this.channel = data.channel || null;
 		bot.players.set(this.id, this);
@@ -128,6 +130,10 @@ class Player extends EventEmitter {
 			if(this.queue.length === 0) this.destroy("no_queue");
 			else setTimeout(() => this.play(), 100);
 		});
+
+		if(!this.repeat && this.autoplay && this.current.service === "youtube") {
+			this.queue.unshift(await autoplay(this.current.id));
+		}
 	}
 
 	voiceCheck(member) {
