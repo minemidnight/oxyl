@@ -118,6 +118,7 @@ class Player extends EventEmitter {
 		options.encoderArgs = ["-af", `volume=${volume}`];
 		options.inputArgs = ["-reconnect", "1", "-reconnect_streamed", "1", "-reconnect_delay_max", "2"];
 
+		if(!this.repeat && this.autoplay && song.service === "youtube") this.queue.unshift(await autoplay(song.id));
 		connection.play(song.stream, options);
 		this.current = song;
 		this.emit("playing", song);
@@ -130,10 +131,6 @@ class Player extends EventEmitter {
 			if(this.queue.length === 0) this.destroy("no_queue");
 			else setTimeout(() => this.play(), 100);
 		});
-
-		if(!this.repeat && this.autoplay && this.current.service === "youtube") {
-			this.queue.unshift(await autoplay(this.current.id));
-		}
 	}
 
 	voiceCheck(member) {
