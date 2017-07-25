@@ -25,7 +25,7 @@ Object.defineProperty(cluster, "onlineWorkers", {
 		.filter(work => work.isConnected())
 });
 
-let totalShards = 1 || argv.shards;
+let totalShards = argv.shards || 1;
 async function init() {
 	await (require("./misc/rethink")).init();
 
