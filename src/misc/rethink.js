@@ -137,4 +137,4 @@ module.exports = {
 	}
 };
 
-if(!cluster || !cluster.isMaster) module.exports.connect();
+if(!cluster.isMaster) module.exports.connect();

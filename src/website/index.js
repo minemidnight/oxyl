@@ -27,7 +27,16 @@ app.use((req, res, next) => {
 
 let raven = require("raven");
 if(config.website.sentryLink) raven.config(config.website.sentryLink).install();
+require(path.resolve("src", "misc", "rethink"));
+require(path.resolve("src", "misc", "outputHandler"));
 
+let routes = loadScripts(path.resolve("src", "website", "routes"));
+routes.forEach(script => {
+	if(script.name === "index") app.use("/", script.exports);
+	else app.use(`/${script.name}`, script.exports);
+});
+
+app.page = parseHBS;
 async function parseHBS(req, page, context = {}) {
 	context.botID = app.config.website.botID;
 	context.baseURL = app.config.website.baseURL;
@@ -204,20 +213,9 @@ process.on("unhandledRejection", err => {
 });
 
 async function init() {
-	require(path.resolve("src", "misc", "rethink"));
-	require(path.resolve("src", "misc", "outputHandler"));
-
-	let routes = loadScripts(path.resolve("src", "website", "routes"));
-	routes.forEach(script => {
-		if(script.name === "index") app.use("/", script.exports);
-		else app.use(`/${script.name}`, script.exports);
-	});
-
 	app.hbs = {};
 	let views = await getFiles(path.resolve("src", "website", "views"));
 	for(let i of views) app.hbs[i.substring(i.lastIndexOf("/") + 1, i.lastIndexOf("."))] = fs.readFileAsync(i).toString();
-
-	app.page = parseHBS;
 }
 init();
 
