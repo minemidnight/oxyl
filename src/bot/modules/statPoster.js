@@ -4,11 +4,7 @@ module.exports = async () => {
 		type: "all_shards",
 		input: () => bot.guilds.size
 	})).results.reduce((a, b) => a + b);
-
 	statsd({ type: "gauge", stat: "guilds", value: guilds });
-	if(bot.config.bot.serverChannel && !bot.config.beta) {
-		bot.editChannel(bot.config.bot.serverChannel, { topic: `Server Count: ${guilds}` }, "Update server count");
-	}
 
 	if(!bot.config.bot.postStats) return;
 	if(bot.config.bot.dbotsKey) {
