@@ -1,7 +1,4 @@
-.ftpconfig
-.ftpignore
-private-config.json
-public-config.json
+config.json
 
 # Logs
 logs

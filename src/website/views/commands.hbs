@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Oxyl - Commands</title>
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/3/w3.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="{{baseURL}}/assets/css/main.css" />
+	<link rel="stylesheet" href="{{baseURL}}/assets/css/loading.css" />
+	<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.1.1.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body class="discord-main" onload="$('#primary-nav').scrollTop($('#primary-nav .selected').offset().top - ($(document).height() / 5))">
+	<div style="transition:0.5s" id="nav-container">
+		<nav class="w3-sidebar w3-bar-block w3-center discord-dark" id="primary-nav" style="width:70px">
+			<div class="icon-nav">
+				<a href="{{baseURL}}"><i class="fa fa-home"></i></a>
+			</div>
+			<div class="icon-nav selected">
+				<a href="{{baseURL}}/commands"><i class="fa fa-exclamation"></i></a>
+			</div>
+			<div class="icon-nav">
+				<a href="{{baseURL}}/emojis"><i class="fa fa-smile-o"></i></a>
+			</div>
+			<div class="nav-seperator"></div>
+			{{#if guilds}}
+				{{#each guilds}}
+					<div class="icon-nav">
+						{{#if this.icon}}
+							<a class="avatar" href="{{baseURL}}/dashboard/overview/{{this.id}}" style="background-image: url('https://cdn.discordapp.com/icons/{{this.id}}/{{this.icon}}.png')"></a>
+						{{else}}
+							<a class="avatar" href="{{baseURL}}/dashboard/overview/{{this.id}}" style="font-size:14px;overflow:hidden">{{this.smallname}}</a>
+						{{/if}}
+					</div>
+				{{/each}}
+			{{/if}}
+		</nav>
+		<nav class="w3-sidebar w3-bar-block discord-lighter" style="margin-left:70px;width:240px" id="secondary-nav">
+			<header>
+				<span>Commands</span>
+			</header>
+			<header>
+				<span>Pages</span>
+			</header>
+			<div class="secondary-item selected"><a href="{{baseURL}}/commands">List</a></div>
+			<header>
+				<span>Options</span>
+			</header>
+			<div style="width:90%;margin-left:5%">
+				<select class="w3-select" name="category" style="background:none;outline:none;color:hsla(0,0%,100%,.7)" onchange="updateCategory()">
+					<option value="all" style="background:#36393e;color:hsla(0,0%,100%,.7)" selected>all</option>
+					{{#each categories}}<option value="{{this}}" style="background:#36393e;color:hsla(0,0%,100%,.7)">{{this}}</option>{{/each}}
+				</select>
+			</div>
+			<div class="account">
+				<div class="account-items">
+					{{#if user}}
+						<div class="avatar" style="background-image:url('https://cdn.discordapp.com/avatars/{{user.id}}/{{user.avatar}}.png?size=256')"></div>
+						<div class="details">
+							<span class="username">{{user.username}}</span>
+							<span class="discriminator">#{{user.discriminator}}</span>
+						</div>
+						<div class="buttons">
+							<button class="logout" onclick="window.location.href = '{{baseURL}}/logout'">
+								<i class="fa fa-sign-out"></i>
+							</button>
+						</div>
+					{{else}}
+						<div class="login-text">Log in with Discord</div>
+						<div class="buttons">
+							<button class="login" onclick="window.location.href = '{{baseURL}}/accounts'">
+								<i class="fa fa-sign-in"></i>
+							</button>
+						</div>
+					{{/if}}
+				</div>
+			</div>
+		</nav>
+		<div class="w3-overlay w3-animate-opacity" onclick="toggleNav()" style="display:none" id="nav-overlay"></div>
+	</div>
+	<main>
+		<div class="content-overview">
+			<span class="w3-hide-large title" onclick="toggleNav()">&#9776;</span>
+			<span class="title">Command List</span>
+		</div>
+		<div class="w3-container" style="color:hsla(0,0%,100%,.7)">
+			<div class="w3-row-padding w3-section">
+				{{#each commands}}
+					<div class="w3-third" style="margin: 4px 0px;">
+						<div class="w3-round-medium w3-padding-small" style="background:rgba(46,48,54,.3);border:1px solid rgba(46,48,54,.6);border-left:4px solid #4f545c;height:275px;overflow:auto">
+							<div style="color:white;padding:4px 0px;font-weight:600">{{this.name}}</div>
+							<div class="w3-section">
+								<div style="color:white;padding:4px 0px">Category</div>
+								{{this.type}}
+							</div>
+							<div class="w3-section">
+								<div style="color:white;padding:4px 0px">Usage</div>
+								{{this.name}} {{this.usage}}
+							</div>
+							<div>
+								<div style="color:white;padding:4px 0px">Aliases</div>
+								{{#if this.aliases}}{{this.aliases}}{{/if}}{{#unless this.aliases}}None{{/unless}}
+							</div>
+							<div class="w3-section">
+								<div style="color:white;padding:4px 0px">Description</div>
+								{{this.description}}
+							</div>
+							<div style="padding-bottom:8px">
+								<div style="color:white;padding-top:4px 0px">Required Permission</div>
+								{{#if this.perm}}{{this.perm}}{{/if}}{{#unless this.perm}}None required{{/unless}}
+							</div>
+						</div>
+					</div>
+				{{/each}}
+			</div>
+		</div>
+	</main>
+	<script>
+		function toggleNav() {
+			$("#nav-container").css("margin-left", (index, currentValue) => {
+				if(currentValue === "0px") return "";
+				else if(currentValue === "-310px") return "0px";
+			});
+			$("#nav-overlay").css("display", (index, currentValue) => {
+				if(currentValue === "none") return "block";
+				else if(currentValue === "block") return "none";
+			});
+		}
+	</script>
+	<script>
+		function updateCategory() {
+			let newType = $("[name=category] option:selected").val();
+			let commands = $(".w3-third");
+
+			commands.each((i, ele) => {
+				let category = $(ele).find("div").eq(2).contents().filter((i, ele) => ele.nodeType === 3).text().trim();
+				if(newType === "all") $(ele).css("display", "");
+				else if(category === newType) $(ele).css("display", "");
+				else $(ele).css("display", "none");
+			});
+		}
+	</script>
+</body>
+</html>

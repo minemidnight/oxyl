@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Oxyl - Accounts</title>
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/3/w3.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="{{baseURL}}/assets/css/main.css" />
+	<link rel="stylesheet" href="{{baseURL}}/assets/css/loading.css" />
+	<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.1.1.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body class="discord-main">
+	<main class="no-push">
+		<div class="content-overview">
+			<span class="title">Login</span>
+		</div>
+
+		<div class="w3-center" style="color:hsla(0,0%,100%,.7);font-size:18px">
+			<h4 class="w3-xxlarge">Select account</h4>
+			<div class="w3-row-padding">
+				<div class="w3-third">&#8203;</div>
+				<div class="w3-third w3-card discord-dark">
+					{{#if accounts}}
+						{{#each accounts}}
+							<div class="w3-padding-large" style="cursor:pointer;border-bottom:1px solid #303337" onclick="window.location.href = '{{baseURL}}/callback?timestamp={{this.tokenid}}'">
+								<div class="avatar" style="background-image:url('https://cdn.discordapp.com/avatars/{{this.id}}/{{this.avatar}}.png?size=256')"></div>
+								{{this.username}}#{{this.discriminator}}
+							</div>
+						{{/each}}
+					{{/if}}
+					<div class="w3-padding-large w3-text-white" style="cursor:pointer" onclick="window.location.href = 'https://discordapp.com/oauth2/authorize?response_type=code&redirect_uri={{baseURL}}/callback&scope=identify+guilds&client_id={{botID}}'">
+						Add account
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</body>
+</html>

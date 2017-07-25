@@ -1,6 +1,6 @@
 {
   "name": "oxyl",
-  "description": "Discord Bot",
+  "description": "Discord Bot, built with a website and command line tool hosted on a node.js cluster",
   "main": "./src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,25 +10,29 @@
     "url": "git+https://github.com/minemidnight/oxyl.git"
   },
   "author": "minemidnight",
-  "license": "GPL-3.0",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/minemidnight/oxyl/issues"
   },
   "homepage": "https://github.com/minemidnight/oxyl#readme",
   "dependencies": {
+    "argv": "0.0.2",
     "big-number": "^0.4.0",
     "bluebird": "^3.5.0",
-    "chalk": "^1.1.3",
-    "cheerio": "^1.0.0-rc.1",
+    "body-parser": "^1.17.2",
+    "chalk": "^2.0.1",
+    "cheerio": "^1.0.0-rc.2",
+    "cookie-parser": "^1.4.3",
     "duration-js": "^4.0.0",
-    "eris": "github:abalabahaha/eris#dev",
+    "eris": "^0.7.0",
     "eris-additions": "^1.2.5",
+    "express": "^4.15.3",
+    "handlebars": "^4.0.10",
     "hot-shots": "^4.5.0",
-    "raven": "^2.0.2",
-    "request": "^2.81.0",
-    "request-promise": "^4.2.1",
+    "raven": "^2.1.0",
     "rethinkdbdash": "^2.3.29",
+    "superagent": "^3.5.2",
     "youtube-dl": "^1.11.1",
-    "ytdl-core": "^0.14.2"
+    "ytdl-core": "^0.14.4"
   }
 }

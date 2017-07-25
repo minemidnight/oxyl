@@ -213,6 +213,11 @@
             }
         },
         "music": {
+            "autoplay": {
+                "donatorOnly": "This feature can only be used in servers in which the owner is a donator",
+                "noMusicPlaying": "Music must be playing for autoplay to be turned on",
+                "success": "Autoplay has turned {{value}}"
+            },
             "end": {
                 "success": "Music stopped"
             },
