@@ -17,6 +17,7 @@ module.exports = {
 		};
 
 		let insertData = {
+			id: [caseNum, guild.id],
 			action,
 			caseNum,
 			guildID: guild.id,

@@ -26,14 +26,14 @@ module.exports = {
 			indexes: ["guildID"]
 		}, {
 			name: "censors",
-			primary: [r.row("censorID"), r.row("guildID")],
+			primary: "id", // [censorID, guildID]
 			indexes: ["guildID"]
 		}, {
 			name: "donators",
 			primary: "userID"
 		}, {
 			name: "editedCommands",
-			primary: [r.row("command"), r.row("guildID")]
+			primary: "id" // [command, guildID]
 		}, {
 			name: "ignoredChannels",
 			primary: "channelID"
@@ -42,7 +42,7 @@ module.exports = {
 			primary: "id"
 		}, {
 			name: "modLog",
-			primary: [r.row("caseNum"), r.row("guildID")],
+			primary: "id", // [caseNum, guildID]
 			indexes: ["guildID"]
 		}, {
 			name: "roleMe",
@@ -54,13 +54,13 @@ module.exports = {
 			indexes: ["guildID"]
 		}, {
 			name: "rolePersistStorage",
-			primary: ["memberID", "guildID"]
+			primary: "id" // [memberID, userID]
 		}, {
 			name: "savedQueues",
-			primary: [r.row("savedID"), r.row("userID")]
+			primary: "id" // [savedID, userID]
 		}, {
 			name: "settings",
-			primary: [r.row("name"), r.row("guildID")]
+			primary: "id" // [name, guildID]
 		}, {
 			name: "timedEvents",
 			primary: "uuid",

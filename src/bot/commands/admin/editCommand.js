@@ -32,6 +32,7 @@ module.exports = {
 
 			if(!editedInfo) {
 				await r.table("editedCommands").insert({
+					id: [command.name, message.channel.guild.id],
 					command: command.name,
 					enabled: false,
 					guildID: message.channel.guild.id,
@@ -59,6 +60,7 @@ module.exports = {
 
 			if(!editedInfo) {
 				await r.table("editedCommands").insert({
+					id: [command.name, message.channel.guild.id],
 					command: command.name,
 					enabled: true,
 					guildID: message.channel.guild.id,

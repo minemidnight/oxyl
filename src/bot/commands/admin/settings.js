@@ -47,6 +47,7 @@ module.exports = {
 			}
 
 			let insertData = {
+				id: [setting.name, guild.id],
 				name: setting.name,
 				guildID: guild.id
 			};

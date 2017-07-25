@@ -9,6 +9,7 @@ module.exports = async (guild, member, type) => {
 		if(!member.roles.length || !toPersist.length) return;
 
 		await r.table("rolePersistStorage").insert({
+			id: [member.id, guild.id],
 			guildID: guild.id,
 			roles: toPersist,
 			memberID: member.id

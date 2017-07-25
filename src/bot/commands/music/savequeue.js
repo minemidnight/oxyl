@@ -24,6 +24,7 @@ module.exports = {
 					.update({ queue: trimmedQueue }).run();
 			} else {
 				await r.table("savedQueues").insert({
+					id: [message.args[0], message.author.id],
 					queue: trimmedQueue,
 					savedID: message.args[0],
 					userID: message.author.id
