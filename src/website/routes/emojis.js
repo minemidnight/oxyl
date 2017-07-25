@@ -2,15 +2,15 @@ const router = module.exports = express.Router(); // eslint-disable-line new-cap
 
 let emojis = {};
 router.get("/", async (req, res) => {
-	let goodEmojis = emojis;
-	if(req.query.search) goodEmojis = goodEmojis.filter(emoji => ~emoji.name.indexOf(req.query.search));
+	let displayEmojis = emojis;
+	if(req.query.search) displayEmojis = displayEmojis.filter(emoji => ~emoji.name.indexOf(req.query.search));
 
 	let page = req.query.page ? parseInt(req.query.page) : 1;
-	let totalPages = Math.ceil(goodEmojis.length / 1500);
+	let totalPages = Math.ceil(displayEmojis.length / 1500);
 	if(page > totalPages) page = totalPages;
 
 	res.status(200).send(await app.page(req, "emojis", {
-		emojis: goodEmojis.slice((page - 1) * 1500, page * 1500),
+		emojis: displayEmojis.slice((page - 1) * 750, page * 750),
 		page,
 		totalPages,
 		prevPage: page - 1,
