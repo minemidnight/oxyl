@@ -12,7 +12,7 @@ async function startupMessage(msg) {
 		Object.assign(cluster.worker, msg);
 		require(path.resolve("src", "bot", "index"));
 	} else {
-		require(path.resolve("src", "website", "index"));
+		setTimeout(() => require(path.resolve("src", "website", "index")), 120000);
 	}
 }
 

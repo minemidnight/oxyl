@@ -199,6 +199,7 @@ handlebars.registerHelper("extendedIf", (v1, operator, v2, options) => {
 });
 
 process.on("unhandledRejection", err => {
+	console.error(err.stack);
 	if(raven.installed) raven.captureException(err);
 });
 
@@ -206,17 +207,17 @@ async function init() {
 	require(path.resolve("src", "misc", "rethink"));
 	require(path.resolve("src", "misc", "outputHandler"));
 
-	app.hbs = {};
-	let views = await getFiles(path.resolve("src", "website", "views"));
-	for(let i of views) app.hbs[i.substring(i.lastIndexOf("/") + 1, i.lastIndexOf("."))] = fs.readFileAsync(i).toString();
-
-	app.page = parseHBS;
-
 	let routes = loadScripts(path.resolve("src", "website", "routes"));
 	routes.forEach(script => {
 		if(script.name === "index") app.use("/", script.exports);
 		else app.use(`/${script.name}`, script.exports);
 	});
+
+	app.hbs = {};
+	let views = await getFiles(path.resolve("src", "website", "views"));
+	for(let i of views) app.hbs[i.substring(i.lastIndexOf("/") + 1, i.lastIndexOf("."))] = fs.readFileAsync(i).toString();
+
+	app.page = parseHBS;
 }
 init();
 
