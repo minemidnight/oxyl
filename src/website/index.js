@@ -89,10 +89,9 @@ async function parseHBS(req, page, context = {}) {
 		}
 	}
 
-	let hbs = await app.hbs[page] || app.hbs["404"];
-	let returnStuff = handlebars.compile(hbs)(context);
-	if(req.scriptAddition) returnStuff += req.scriptAddition;
-	return returnStuff;
+	let compiled = handlebars.compile(app.hbs[page] || app.hbs["404"])(context);
+	if(req.scriptAddition) compiled += req.scriptAddition;
+	return compiled;
 }
 
 async function refreshToken(tokenInfo) {
