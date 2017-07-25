@@ -5,11 +5,11 @@ const argv = require("argv")
 		type: "int",
 		description: "Amount of shards for the bot"
 	}).option({
-		name: "perWorker",
-		short: "pw",
+		name: "perworker",
+		short: "p",
 		type: "int",
 		description: "Amount of shards to spawn on each worker (leave blank for automatic across cpu cores)"
-	}).run();
+	}).run().options;
 const webhook = require("./misc/webhookStatus");
 
 const botHandler = require("./worker_handling/bot");
