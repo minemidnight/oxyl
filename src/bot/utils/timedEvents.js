@@ -1,6 +1,6 @@
 module.exports = {
 	update: async () => {
-		let waitingEvents = await r.table("timedEvents").between([r.minval, Date.now()], { index: "date" }).run();
+		let waitingEvents = await r.table("timedEvents").between(r.minval, Date.now(), { index: "date" }).run();
 
 		waitingEvents.forEach(event => {
 			if(!module.exports[event.type] || !event || !event.type) return;
