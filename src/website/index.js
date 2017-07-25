@@ -215,7 +215,7 @@ async function init() {
 	app.hbs = {};
 	let views = await getFiles(path.resolve("src", "website", "views"));
 	for(let i of views) {
-		app.hbs[i.substring(i.lastIndexOf("/") + 1, i.lastIndexOf("."))] = await fs.readFileAsync(i).toString();
+		app.hbs[i.substring(i.lastIndexOf("/") + 1, i.lastIndexOf("."))] = await fs.readFileAsync(i, "utf8");
 	}
 }
 init();
