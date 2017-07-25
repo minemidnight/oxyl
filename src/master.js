@@ -45,7 +45,7 @@ async function init() {
 	fields.push({ name: "Shards per Worker", value: shardsPerWorker });
 
 	const workerCount = Math.ceil(totalShards / shardsPerWorker);
-	fields.push({ name: "Total Shards", value: workerCount });
+	fields.push({ name: "Total Workers", value: workerCount });
 	statsd({ type: "gauge", stat: "workers", value: workerCount });
 	for(let i = 0; i < workerCount; i++) {
 		let shardStart = i * shardsPerWorker, shardEnd = ((i + 1) * shardsPerWorker) - 1;
