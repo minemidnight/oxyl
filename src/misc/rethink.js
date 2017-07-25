@@ -90,10 +90,11 @@ module.exports = {
 		return true;
 	},
 	connect: async () => {
-		if(!bot.config.other.database) return;
+		const config = require(require("path").resolve("config.json"));
+		if(!config.other.database) return;
 
-		let dbName = bot.config.other.databaseName || "Oxyl";
-		let connectionInfo = bot.config.other.database;
+		let dbName = config.other.databaseName || "Oxyl";
+		let connectionInfo = config.other.database;
 		connectionInfo.silent = true;
 		connectionInfo.db = dbName;
 		global.r = rethinkdbdash(connectionInfo); // eslint-disable-line id-length
