@@ -143,7 +143,7 @@ module.exports = Player;
 
 async function updateStreamCount() {
 	let streams = (await process.output({
-		type: "globalEval",
+		type: "all_shards",
 		input: () => Array.from(bot.players.values()).filter(player => player.connection).length
 	})).results.reduce((a, b) => a + b);
 	statsd({ type: "gauge", stat: "streams", value: streams });

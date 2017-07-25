@@ -113,7 +113,7 @@ process.on("unhandledRejection", err => {
 		if(~[10003, 10008, 40005, 50001, 50013].indexOf(resp.code)) return;
 		else throw err;
 	} catch(err2) {
-		console.error(err);
+		console.error(err.stack);
 		if(raven.installed) raven.captureException(err);
 	}
 });
