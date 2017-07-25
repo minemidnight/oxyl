@@ -54,7 +54,7 @@ module.exports = {
 			indexes: ["guildID"]
 		}, {
 			name: "rolePersistStorage",
-			primary: "id" // [memberID, userID]
+			primary: "id" // [memberID, guildID]
 		}, {
 			name: "savedQueues",
 			primary: "id" // [savedID, userID]
