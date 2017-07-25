@@ -28,12 +28,6 @@ app.use((req, res, next) => {
 let raven = require("raven");
 if(config.website.sentryLink) raven.config(config.website.sentryLink).install();
 
-let routes = loadScripts(path.resolve("src", "website", "routes"));
-routes.forEach(script => {
-	if(script.name === "index") app.use("/", script.exports);
-	else app.use(`/${script.name}`, script.exports);
-});
-
 async function parseHBS(req, page, context = {}) {
 	context.botID = app.config.website.botID;
 	context.baseURL = app.config.website.baseURL;
@@ -217,6 +211,12 @@ async function init() {
 	for(let i of views) app.hbs[i.substring(i.lastIndexOf("/") + 1, i.lastIndexOf("."))] = fs.readFileAsync(i).toString();
 
 	app.page = parseHBS;
+
+	let routes = loadScripts(path.resolve("src", "website", "routes"));
+	routes.forEach(script => {
+		if(script.name === "index") app.use("/", script.exports);
+		else app.use(`/${script.name}`, script.exports);
+	});
 }
 init();
 

@@ -1,6 +1,6 @@
 const superagent = require("superagent");
 const webhook = require(require("path").resolve("config.json")).other.webhook;
-module.exports = embed => {
+module.exports = async embed => {
 	if(!webhook) return false;
-	return superagent.post(webhook).send({ embeds: [embed] });
+	return await superagent.post(webhook).send({ embeds: [embed] });
 };
