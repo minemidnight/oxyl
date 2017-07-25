@@ -19,7 +19,7 @@ module.exports = {
 			await r.dbCreate(dbName).run();
 		}
 
-		let tableList = await r.tableList().run(), tableWait = [];
+		let tableList = await r.tableList().run();
 		let tablesExpected = [{
 			name: "autoRole",
 			primary: "roleID",
