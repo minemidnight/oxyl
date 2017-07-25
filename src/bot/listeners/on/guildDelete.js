@@ -2,7 +2,11 @@ const excludedTables = ["blacklist", "musicCache", "timedEvents"];
 const statPoster = require("../../modules/statPoster.js");
 module.exports = async guild => {
 	let tables = await r.tableList().run();
-	tables.forEach(table => r.table(table).filter({ guildID: guild.id }).delete());
+	for(let table of tables) {
+		let indexes = await r.table(table).indexList().run();
+		if(~indexes.indexOf("guildID")) r.table(table).getAll(guild.id, { index: "guildID" }).delete().run();
+		else r.table(table).filter({ guildID: guild.id }).delete().run();
+	}
 
 	if(bot.config.bot.serverChannel) {
 		let owner = bot.users.get(guild.ownerID);

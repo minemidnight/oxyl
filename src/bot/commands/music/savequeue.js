@@ -18,13 +18,10 @@ module.exports = {
 				else return false;
 			});
 
-			let alreadySaved = (await r.table("savedQueues").filter({
-				savedID: message.args[0],
-				userID: message.author.id
-			}).run())[0];
-
+			let alreadySaved = await r.table("savedQueues").get([message.args[0], message.author.id]).run();
 			if(alreadySaved) {
-				await r.table("savedQueues").update({ queue: trimmedQueue }).run();
+				await r.table("savedQueues").get([message.args[0], message.author.id])
+					.update({ queue: trimmedQueue }).run();
 			} else {
 				await r.table("savedQueues").insert({
 					queue: trimmedQueue,

@@ -40,7 +40,7 @@ module.exports = {
 			messageID: msg.id,
 			type: "giveaway",
 			guildID: message.channel.guild.id
-		});
+		}).run();
 		return false;
 	},
 	guildOnly: true,

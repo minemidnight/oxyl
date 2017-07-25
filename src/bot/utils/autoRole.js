@@ -1,5 +1,5 @@
 module.exports = async (guild, member) => {
-	let autoRoles = await r.table("autoRole").filter({ guildID: guild.id }).run();
+	let autoRoles = await r.table("autoRole").getAll(guild.id, { index: "guildID" }).run();
 	if(autoRoles.length === 0) return;
 	else autoRoles = autoRoles.map(data => data.roleID);
 

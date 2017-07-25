@@ -3,7 +3,8 @@ module.exports = async guild => {
 	if(bot.config.beta) {
 		let donator = await r.db("Oxyl").table("donators").get(guild.ownerID).run();
 		if(!donator) {
-			await guild.defaultChannel.createMessage("You are not a donator, you cannot use Oxyl Beta!");
+			await guild.defaultChannel.createMessage("You are not a donator, you cannot use Oxyl Beta!")
+				.catch(err => {}); // eslint-disable-line
 			guild.leave();
 		}
 		return;

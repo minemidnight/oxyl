@@ -39,10 +39,7 @@ module.exports = async message => {
 
 	let editedInfo = {};
 	if(guild) {
-		editedInfo = (await r.table("editedCommands").filter({
-			command: command.name,
-			guildID: message.channel.guild.id
-		}))[0] || {};
+		editedInfo = await r.table("editedCommands").get([command.name, message.channel.guild.id]).run() || {};
 	}
 
 	if(editedInfo.enabled === false) {

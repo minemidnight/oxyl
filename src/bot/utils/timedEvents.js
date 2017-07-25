@@ -1,13 +1,11 @@
 module.exports = {
 	update: async () => {
-		let waitingEvents = await r.table("timedEvents").filter(
-			r.row("date").le(Date.now())
-		).run();
+		let waitingEvents = await r.table("timedEvents").between([r.minval, Date.now()], { index: "date" }).run();
 
 		waitingEvents.forEach(event => {
 			if(!module.exports[event.type] || !event || !event.type) return;
 			else module.exports[event.type](event);
-			r.table("timedEvents").get(event.id).delete().run();
+			r.table("timedEvents").get(event.uuid).delete().run();
 		});
 	},
 

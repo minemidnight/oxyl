@@ -10,7 +10,7 @@ module.exports = {
 			} else if(!message.args[2]) {
 				return __("commands.moderator.censor.add.noRegex", message);
 			} else {
-				let censors = await r.table("censors").filter({ guildID: message.channel.guild.id }).run(), id = 1;
+				let id = 1, censors = await r.table("censors").getAll(message.channel.guild.id, { index: "guildID" }).run();
 				if(censors.length) id = Math.max(...censors.map(censor => censor.censorID)) + 1;
 
 				let censorsCache = bot.censors.get(message.channel.guild.id);
@@ -37,10 +37,8 @@ module.exports = {
 			if(isNaN(id) || id < 1) {
 				return __("commands.moderator.censor.delete.invalidID", message);
 			} else {
-				let censor = await r.table("censors")
-					.filter({ guildID: message.channel.guild.id, censorID: id }).delete().run();
-
-				if(censor.deleted) {
+				let { deleted } = await r.table("censors").get([id, message.channel.guild.id]).delete().run();
+				if(deleted) {
 					let censorsCache = bot.censors.get(message.channel.guild.id);
 					if(!censorsCache) return __("commands.moderator.censor.delete.success", message);
 					if(censorsCache.size === 1) bot.censors.delete(message.channel.guild.id);
@@ -52,12 +50,16 @@ module.exports = {
 				}
 			}
 		} else if(message.args[0] === "list") {
-			let censors = await r.table("censors").filter({ guildID: message.channel.guild.id }).run();
+			let censors = await r.table("censors").getAll(message.channel.guild.id, { index: "guildID" }).run();
 			if(!censors.length) {
 				return __("commands.moderator.censor.list.noCensors", message);
 			} else {
-				return __("commands.moderator.censor.list.success", message,
-					{ censors: censors.map(cen => `${cen.censorID}. ${cen.regex} (${cen.action})`).join("\n") });
+				return __("commands.moderator.censor.list.success", message, {
+					censors: censors
+						.sort((a, b) => b.censorID - a.censorID)
+						.map(cen => `${cen.censorID}. ${cen.regex} (${cen.action})`)
+						.join("\n")
+				});
 			}
 		} else {
 			return __("commands.moderator.censor.invalidSubcommand", message);

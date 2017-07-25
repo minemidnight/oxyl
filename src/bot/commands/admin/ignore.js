@@ -3,10 +3,7 @@ module.exports = {
 		let ignored = bot.ignoredChannels.has(message.channel.id);
 		if(ignored) {
 			bot.ignoredChannels.delete(message.channel.id);
-			await r.table("ignoredChannels").filter({
-				channelID: message.channel.id,
-				guildID: message.channel.guild.id
-			}).delete().run();
+			await r.table("ignoredChannels").get(message.channel.id).delete().run();
 
 			return __("commands.admin.ignore.enabled", message, { channel: message.channel.mention });
 		} else {

@@ -76,10 +76,7 @@ module.exports = {
 				return __("commands.music.play.invalidSavedQueue", message);
 			}
 
-			let savedQueue = (await r.table("savedQueues").filter({
-				savedID: queueNumber,
-				userID: message.author.id
-			}).run())[0];
+			let savedQueue = await r.table("savedQueues").get([queueNumber, message.author.id]).run();
 			if(!savedQueue) return __("commands.music.play.noSavedQueue", message, { save: queueNumber });
 
 			if(!player.connection) await player.connect(voiceChannel.id);

@@ -6,14 +6,8 @@ module.exports = async (member, mod, reason) => {
 	}).run()).length + 1;
 
 	let kick, ban;
-	let kickAt = (await r.table("settings").filter({
-		guildID: member.guild.id,
-		name: "modLog.kickat"
-	}).run())[0];
-	let banAt = (await r.table("settings").filter({
-		guildID: member.guild.id,
-		name: "modLog.banat"
-	}).run())[0];
+	let kickAt = await r.table("settings").get(["modLog.kickat", member.guild.id]).run();
+	let banAt = await r.table("settings").get(["modLog.banAt", member.guild.id]).run();
 	if(kickAt && warnCount === kickAt.value) kick = true;
 	if(banAt && warnCount >= banAt.value) ban = true;
 

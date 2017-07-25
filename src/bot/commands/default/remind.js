@@ -35,7 +35,7 @@ module.exports = {
 			date: date + duration,
 			type: "reminder",
 			userID: message.author.id
-		});
+		}).run();
 
 		return __("commands.default.remind.success", message, { action, time });
 	},

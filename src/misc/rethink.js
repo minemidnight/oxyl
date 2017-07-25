@@ -20,19 +20,71 @@ module.exports = {
 		}
 
 		let tableList = await r.tableList().run(), tableWait = [];
-		let tablesExpected = [
-			"autoRole", "blacklist", "censors", "donators", "editedCommands",
-			"ignoredChannels", "locales", "modLog", "roleMe",
-			"rolePersist", "savedQueues", "settings", "timedEvents", "warnings"
-		];
+		let tablesExpected = [{
+			name: "autoRole",
+			primary: "roleID",
+			indexes: ["guildID"]
+		}, {
+			name: "censors",
+			primary: [r.row("censorID"), r.row("guildID")],
+			indexes: ["guildID"]
+		}, {
+			name: "donators",
+			primary: "userID"
+		}, {
+			name: "editedCommands",
+			primary: [r.row("command"), r.row("guildID")]
+		}, {
+			name: "ignoredChannels",
+			primary: "channelID"
+		}, {
+			name: "locales",
+			primary: "id"
+		}, {
+			name: "modLog",
+			primary: [r.row("caseNum"), r.row("guildID")],
+			indexes: ["guildID"]
+		}, {
+			name: "roleMe",
+			primary: "roleID",
+			indexes: ["guildID"]
+		}, {
+			name: "rolePersistRules",
+			primary: "roleID",
+			indexes: ["guildID"]
+		}, {
+			name: "rolePersistStorage",
+			primary: ["memberID", "guildID"]
+		}, {
+			name: "savedQueues",
+			primary: [r.row("savedID"), r.row("userID")]
+		}, {
+			name: "settings",
+			primary: [r.row("name"), r.row("guildID")]
+		}, {
+			name: "timedEvents",
+			primary: "uuid",
+			indexes: ["date"]
+		}, {
+			name: "warnings",
+			primary: "uuid",
+			indexes: ["userID"]
+		}];
 
 		for(let table of tablesExpected) {
-			if(!~tableList.indexOf(table)) {
-				console.info(`Creating "${table}" table...`);
-				await r.tableCreate(table).run();
+			if(~tableList.indexOf(table.name)) continue;
+
+			console.info(`Creating "${table.name}" table...`);
+			await r.tableCreate(table.name, { primaryKey: table.primary }).run();
+
+			if(table.indexes) {
+				for(let index of table.indexes) await r.table(table.name).indexCreate(index).run();
+			}
+			if(table.insertions) {
+				for(let insertion of table.insertions) await r.table(table.name).insert(insertion).run();
 			}
 		}
-		await Promise.all(tableWait);
+
 		console.startup(`RethinkDB initated on master`);
 		await r.getPoolMaster().drain();
 		return true;
@@ -46,6 +98,9 @@ module.exports = {
 		connectionInfo.db = dbName;
 		global.r = rethinkdbdash(connectionInfo); // eslint-disable-line id-length
 
+		if(bot) module.exports.botStuff();
+	},
+	botStuff: async () => {
 		let prefixes = await r.table("settings").filter({ name: "prefix" }).run();
 		prefixes.forEach(setting => {
 			let shard = ~~((setting.guildID / 4194304) % cluster.worker.maxShards);
@@ -82,4 +137,4 @@ module.exports = {
 	}
 };
 
-if(!cluster.isMaster) module.exports.connect();
+if(!cluster || !cluster.isMaster) module.exports.connect();

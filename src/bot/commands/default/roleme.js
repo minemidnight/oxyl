@@ -1,7 +1,7 @@
 module.exports = {
 	process: async message => {
 		if(message.args[0] === "list") {
-			let roleList = await r.table("roleMe").filter({ guildID: message.channel.guild.id }).run();
+			let roleList = await r.table("roleMe").getAll(message.channel.guild.id, { index: "guildID" }).run();
 			if(roleList.length === 0) return __("commands.default.roleMe.list.noneAvailable", message);
 
 			let roles = roleList
@@ -20,16 +20,13 @@ module.exports = {
 				return err.message;
 			}
 
-			let roleAvailable = (await r.table("roleMe").filter({
-				guildID: message.channel.guild.id,
-				roleID: role.id
-			}).run())[0];
+			let roleAvailable = await r.table("roleMe").get(role.id).run();
 			if(roleAvailable) return __("commands.default.roleMe.add.alreadyAvailable", message);
 
 			await r.table("roleMe").insert({
 				guildID: message.channel.guild.id,
 				roleID: role.id
-			});
+			}).run();
 			return __("commands.default.roleMe.add.success", message, { role: role.name });
 		} else if(message.args[0].startsWith("remove ")) {
 			if(!(message.member.permission.has("administrator") || message.author.id === message.channel.guild.ownerID)) {
@@ -43,13 +40,10 @@ module.exports = {
 				return err.message;
 			}
 
-			let roleAvailable = (await r.table("roleMe").filter({
-				guildID: message.channel.guild.id,
-				roleID: role.id
-			}).run())[0];
+			let roleAvailable = await r.table("roleMe").get(role.id).run();
 			if(!roleAvailable) return __("commands.default.roleMe.notAvailable", message);
 
-			await r.table("roleMe").get(roleAvailable.id).delete().run();
+			await r.table("roleMe").get(role.id).delete().run();
 			return __("commands.default.roleMe.remove.success", message, { role: role.name });
 		} else {
 			let role;
@@ -59,11 +53,7 @@ module.exports = {
 				return err.message;
 			}
 
-			let roleAvailable = (await r.table("roleMe").filter({
-				guildID: message.channel.guild.id,
-				roleID: role.id
-			}).run())[0];
-
+			let roleAvailable = await r.table("roleMe").get(role.id).run();
 			if(!roleAvailable) {
 				return __("commands.default.roleMe.notAvailable", message);
 			} else if(!role.addable) {

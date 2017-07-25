@@ -14,9 +14,7 @@ module.exports = {
 			return __("commands.admin.settings.invalidSetting", message);
 		} else if(!message.args[1]) {
 			const guild = message.channel.guild;
-			let currentValue = (
-				await r.table("settings").filter({ name: setting.name, guildID: guild.id }).run()
-			)[0];
+			let currentValue = await r.table("settings").get([setting.name, guild.id]).run();
 
 			return __("commands.admin.settings.settingInfo", message, {
 				setting: message.args[0],
@@ -38,14 +36,12 @@ module.exports = {
 			}
 
 			const guild = message.channel.guild;
-			let currentValue = (
-				await r.table("settings").filter({ name: setting.name, guildID: guild.id }).run()
-			)[0];
+			let currentValue = await r.table("settings").get([setting.name, guild.id]).run();
 
 			if(!currentValue && reset) {
 				return __("commands.admin.settings.cantReset", message, { setting: setting.name });
 			} else if(reset || (setting.type === "boolean")) {
-				await r.table("settings").get(currentValue.id).delete().run();
+				await r.table("settings").get([setting.name, guild.id]).delete().run();
 				if(setting.name === "prefix") bot.prefixes.delete(message.channel.guild.id);
 				return __("commands.admin.settings.resetSuccess", message, { setting: setting.name });
 			}
@@ -73,9 +69,9 @@ module.exports = {
 					}
 
 					if(currentValue.value.length === 0) {
-						await r.table("settings").get(currentValue.id).delete().run();
+						await r.table("settings").get([setting.name, guild.id]).delete().run();
 					} else {
-						await r.table("settings").get(currentValue.id).update({ value: currentValue.value }).run();
+						await r.table("settings").get([setting.name, guild.id]).update({ value: currentValue.value }).run();
 					}
 				}
 
@@ -83,9 +79,9 @@ module.exports = {
 					`Added \`${resolvedInput.name}\` to tracked roles` :
 					`Removed \`${resolvedInput.name}\` from tracked roles`;
 			} else if(setting.type === "boolean" && !resolvedInput) {
-				if(currentValue) await r.table("settings").filter(currentValue.id).delete().run();
+				if(currentValue) await r.table("settings").get([setting.name, guild.id]).delete().run();
 			} else if(currentValue) {
-				await r.table("settings").get(currentValue.id).update({ value: insertData.value }).run();
+				await r.table("settings").get([setting.name, guild.id]).update({ value: insertData.value }).run();
 			} else {
 				await r.table("settings").insert(insertData).run();
 			}
@@ -123,7 +119,7 @@ let settings = module.exports.settings = {
 		description: "Message sent in user log when a user leaves " +
 			"(placeholders: {{mention}}, {{username}}, {{id}}, {{discrim}})"
 	},
-	musicmessages: {
+	"disable-music-messages": {
 		arg: "boolean",
 		description: "Toggle if Oxyl sends now playing and error messages"
 	},

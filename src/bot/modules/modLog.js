@@ -1,10 +1,10 @@
 module.exports = {
-	cases: guild => r.table("modLog").filter({ guildID: guild.id }).run(),
+	cases: guild => r.table("modLog").getAll(guild.id, { index: "guildID" }).run(),
 	channel: async guild => {
-		let data = (await r.table("settings").filter({ name: "modLog.channel", guildID: guild.id }).run())[0];
+		let data = await r.table("settings").get(["modLog.channel", guild.id]).run();
 		return data ? data.value : false;
 	},
-	info: async (guild, caseNum) => (await r.table("modLog").filter({ guildID: guild.id, caseNum }).run())[0],
+	info: async (guild, caseNum) => await r.table("modLog").get([caseNum, guild.id]).run(),
 	create: async (guild, action, user, extraData = {}) => {
 		let caseNum = ((await module.exports.cases(guild)).length || 0) + 1;
 		let channelID = await module.exports.channel(guild);
@@ -70,7 +70,7 @@ module.exports = {
 			}
 
 			await bot.editMessage(channelID, caseData.messageID, parsed);
-			await r.table("modLog").get(caseData.id).update({ action: "softban" }).run();
+			await r.table("modLog").get([caseNum, guild.id]).update({ action: "softban" }).run();
 		}
 
 		return true;
@@ -104,7 +104,7 @@ module.exports = {
 		});
 		await bot.editMessage(channelID, caseData.messageID, parsed);
 
-		await r.table("modLog").get(caseData.id).update({
+		await r.table("modLog").get([caseNum, guild.id]).update({
 			userDisplay: user,
 			modID: mod.id,
 			modDisplay,

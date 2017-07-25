@@ -14,10 +14,7 @@ module.exports = async (guild, member, oldMember) => {
 		r.table("donators").filter({ id: member.id }).delete().run();
 	}
 
-	let trackedRoles = (await r.table("settings").filter({
-		guildID: guild.id,
-		name: "modLog.track"
-	}).run())[0];
+	let trackedRoles = await r.table("settings").get(["modLog.track", guild.id]).run();
 	if(!trackedRoles || !trackedRoles.value) return;
 	else trackedRoles = trackedRoles.value;
 

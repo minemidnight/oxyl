@@ -10,10 +10,7 @@ module.exports = {
 		}
 
 		if(message.args[1] === "info") {
-			let editedInfo = (await r.table("editedCommands").filter({
-				command: command.name,
-				guildID: message.channel.guild.id
-			}))[0];
+			let editedInfo = await r.table("editedCommands").get([command.name, message.channel.guild.id]).run();
 
 			if(!editedInfo) {
 				return __("commands.admin.editCommand.info.noEdits", message);
@@ -28,16 +25,10 @@ module.exports = {
 				});
 			}
 		} else if(message.args[1] === "reset") {
-			await r.table("editedCommands").filter({
-				command: command.name,
-				guildID: message.channel.guild.id
-			}).delete().run();
+			await r.table("editedCommands").get([command.name, message.channel.guild.id]).delete().run();
 			return __("commands.admin.editCommand.reset.success", message, { command: command.name });
 		} else if(message.args[1] === "toggle") {
-			let editedInfo = (await r.table("editedCommands").filter({
-				command: command.name,
-				guildID: message.channel.guild.id
-			}))[0];
+			let editedInfo = await r.table("editedCommands").get([command.name, message.channel.guild.id]).run();
 
 			if(!editedInfo) {
 				await r.table("editedCommands").insert({
@@ -45,11 +36,11 @@ module.exports = {
 					enabled: false,
 					guildID: message.channel.guild.id,
 					roles: []
-				});
+				}).run();
 
 				return __("commands.admin.editCommand.toggle.disabled", message, { command: command.name });
 			} else {
-				await r.table("editedCommands").get(editedInfo.id).update({ enabled: !editedInfo.enabled });
+				await r.table("editedCommands").get(editedInfo.id).update({ enabled: !editedInfo.enabled }).run();
 
 				return __(`commands.admin.editCommand.toggle.${!editedInfo.enabled ? "en" : "dis"}abled`,
 					message, { command: command.name });
@@ -64,10 +55,7 @@ module.exports = {
 				return __("commands.admin.editCommand.roles.invalidRoles", message);
 			}
 
-			let editedInfo = (await r.table("editedCommands").filter({
-				command: command.name,
-				guildID: message.channel.guild.id
-			}))[0];
+			let editedInfo = await r.table("editedCommands").get([command.name, message.channel.guild.id]).run();
 
 			if(!editedInfo) {
 				await r.table("editedCommands").insert({
@@ -75,9 +63,12 @@ module.exports = {
 					enabled: true,
 					guildID: message.channel.guild.id,
 					roles: roles.map(role => role.id)
-				});
+				}).run();
 			} else {
-				await r.table("editedCommands").get(editedInfo.id).update({ roles: roles.map(role => role.id) });
+				await r.table("editedCommands")
+					.get([command.name, message.channel.guild.id])
+					.update({ roles: roles.map(role => role.id) })
+					.run();
 			}
 
 			return __("commands.admin.editCommand.roles.success", message, {

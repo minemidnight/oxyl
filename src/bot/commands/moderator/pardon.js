@@ -7,10 +7,9 @@ module.exports = {
 		if(!member.punishable(message.member)) {
 			return __("commands.moderator.pardon.noPerms", message);
 		} else {
-			let warnings = await r.table("warnings").filter({
-				guildID: message.channel.guild.id,
-				userID: member.id
-			}).run();
+			let warnings = await r.table("warnings")
+				.getAll(member.id, { index: "userID" })
+				.filter({ guildID: message.channel.guild.id }).run();
 			let warnCount = warnings.length - 1;
 			if(warnCount < 0) return __("commands.moderator.pardon.noWarnings", message);
 
@@ -22,7 +21,7 @@ module.exports = {
 				await modLog.create(message.channel.guild, "pardon", member.user, { warnCount });
 			}
 
-			await r.table("warnings").get(warnings[warnings.length - 1].id).delete().run();
+			await r.table("warnings").get(warnings[warnings.length - 1].uuid).delete().run();
 			return __("commands.moderator.pardon.success", message, { user: member.user.username, warnCount });
 		}
 	},

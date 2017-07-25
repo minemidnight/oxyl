@@ -72,6 +72,7 @@ class Player extends EventEmitter {
 		else if(this.current && connection.playing) return;
 		else if(!this.current && connection.playing) connection.stopPlaying();
 		else if(!connection.playing && this.current) delete this.current;
+		if(!bot.players.get(this.id) && connection) bot.players.set(this.id, this);
 		clearTimeout(this.destroyTimeout);
 
 		let song = this.queue[0];
@@ -151,7 +152,7 @@ async function updateStreamCount() {
 function handlePlayer(player) {
 	let createMessage = async embed => {
 		if(!player.channel || !player.connection) return;
-		let announcements = (await r.table("settings").filter({ guildID: player.id, name: "musicmessages" }).run())[0];
+		let announcements = await r.table("settings").get(["disable-music-messages", player.id]).run();
 		if(announcements && announcements.value) return;
 
 		let listening = player.guild.channels.get(player.connection.channelID).voiceMembers

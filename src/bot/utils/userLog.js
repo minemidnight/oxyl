@@ -1,16 +1,10 @@
 module.exports = async (guild, member, type) => {
 	type = type === "join" ? "greeting" : "farewell";
-	let userlog = (await r.table("settings").filter({
-		name: "userlog",
-		guildID: guild.id
-	}).run())[0];
+	let userlog = await r.table("settings").get(["userlog", guild.id]).run();
 	if(!userlog) return;
 	else userlog = userlog.value;
 
-	let message = (await r.table("settings").filter({
-		name: type,
-		guildID: guild.id
-	}).run())[0];
+	let message = await r.table("settings").get([type, guild.id]).run();
 	if(!message) return;
 	else message = message.value;
 

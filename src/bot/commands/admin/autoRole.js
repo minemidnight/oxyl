@@ -1,13 +1,16 @@
 module.exports = {
 	process: async message => {
-		let filterData = { guildID: message.channel.guild.id };
-		if(message.args[1]) filterData.roleID = message.args[1].id;
-		let roleData = await r.table("autoRole").filter(filterData).run();
+		let roleData;
+		if(message.args[1]) {
+			roleData = await r.table("autoRole").get(message.args[1].id).run();
+		} else {
+			roleData = await r.table("autoRole").getAll(message.channel.guild.id, { index: "guildID" }).run();
+		}
 
 		if(message.args[0] === "add") {
 			if(!message.args[1]) {
 				return __("commands.admin.autoRole.add.noArg", message);
-			} else if(roleData[0]) {
+			} else if(roleData) {
 				return __("commands.admin.autoRole.add.alreadyAutorole", message, { role: message.args[1].name });
 			}
 
@@ -19,7 +22,7 @@ module.exports = {
 		} else if(message.args[0] === "remove") {
 			if(!message.args[1]) {
 				return __("commands.admin.autoRole.remove.noArg", message);
-			} else if(roleData[0]) {
+			} else if(!roleData) {
 				return __("commands.admin.autoRole.remove.notAutorole", message, { role: message.args[1].name });
 			}
 
