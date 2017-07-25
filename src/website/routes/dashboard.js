@@ -74,7 +74,7 @@ router.get("/settings/*", async (req, res) => {
 			input: `let guild = bot.guilds.get("${id}");` +
 								`return [guild.channels.map(c => ({ id: c.id, name: c.name })),` +
 									`guild.roles.map(r => ({ id: r.id, name: r.name }))]`,
-			type: "target"
+			type: "guild"
 		})).result;
 
 		res.status(200)
