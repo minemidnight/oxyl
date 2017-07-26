@@ -39,7 +39,7 @@ router.post("/reset/*", async (req, res) => {
 		});
 	}
 
-	await r.table("settings").filter({ guildID: id, name: req.body.name }).delete().run();
+	await r.table("settings").get([req.body.name, id]).delete().run();
 	res.status(200).json({ success: true }).end();
 });
 
@@ -81,11 +81,12 @@ router.post("/set/*", async (req, res) => {
 
 	if(Object.keys(req.body).length === 1) {
 		let settingName = Object.keys(req.body)[0];
-		let current = (await r.table("settings").filter({ guildID: id, name: settingName }).run())[0];
+		let current = await r.table("settings").get([settingName, id]).run();
 		if(current) {
 			await r.table("settings").get(current.id).update({ value: req.body[settingName] }).run();
 		} else {
-			await r.table("settings").insert({ guildID: id, name: settingName, value: req.body[settingName] }).run();
+			await r.table("settings")
+				.insert({ id: [settingName, id], guildID: id, name: settingName, value: req.body[settingName] }).run();
 		}
 
 		if(settingName === "prefix") {
@@ -103,13 +104,14 @@ router.post("/set/*", async (req, res) => {
 			.filter(key => req.body[key])
 			.forEach(key => value.push(key.substring(key.indexOf("[") + 1, key.indexOf("]"))));
 
-		let current = (await r.table("settings").filter({ guildID: id, name: settingName }).run())[0];
+		let current = await r.table("settings").get([settingName, id]).run();
 		if(current && value.length) {
 			await r.table("settings").get(current.id).update({ value }).run();
 		} else if(current && !value.length) {
 			await r.table("settings").get(current.id).delete().run();
 		} else {
-			await r.table("settings").insert({ guildID: id, name: settingName, value: req.body[settingName] }).run();
+			await r.table("settings")
+				.insert({ id: [settingName, id], guildID: id, name: settingName, value: req.body[settingName] }).run();
 		}
 
 		res.status(200).json({ success: true }).end();

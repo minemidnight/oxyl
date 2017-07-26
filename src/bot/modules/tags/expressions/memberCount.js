@@ -5,5 +5,6 @@ module.exports = {
 	patterns: [`[the] amount of member[s] in %servers%`,
 		`[the] member count[s] of %servers%`,
 		`%servers%['[s]] member count`],
+	returns: "integer",
 	run: async (options, server) => server.memberCount
 };

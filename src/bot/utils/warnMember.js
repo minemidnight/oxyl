@@ -11,7 +11,7 @@ module.exports = async (member, mod, reason) => {
 	if(kickAt && warnCount === kickAt.value) kick = true;
 	if(banAt && warnCount >= banAt.value) ban = true;
 
-	let channel = await modLog.channel(member.guild.id);
+	let channel = await modLog.channel(member.guild);
 	if(channel) {
 		if(reason) modLog.presetReasons[member.guild.id] = { reason, mod };
 		await modLog.create(member.guild, "warn", member.user, { warnCount });

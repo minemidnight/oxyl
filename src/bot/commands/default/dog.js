@@ -1,7 +1,7 @@
 const superagent = require("superagent");
 module.exports = {
 	process: async message => {
-		let { body: { file: [file] } } = await superagent.get("http://shibe.online/api/shibes?count=1");
+		let { body: [file] } = await superagent.get("http://shibe.online/api/shibes?count=1");
 		let { body: buffer } = await superagent.get(file);
 		return ["", {
 			file: buffer,

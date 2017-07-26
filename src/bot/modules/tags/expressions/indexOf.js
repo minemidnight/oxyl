@@ -5,6 +5,7 @@ module.exports = {
 	examples: [`set {_index} to index of "abc" in "abcdefgh"`],
 	patterns: [`[the] [first] index of %text% in %text%`,
 		`[the] last index of %text% in %text%`],
+	returns: "integer",
 	run: async (options, text, search) => {
 		if(options.matchIndex === 0) return text.indexOf(search);
 		else return text.lastIndexOf(search);

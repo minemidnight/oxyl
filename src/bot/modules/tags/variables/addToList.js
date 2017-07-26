@@ -1,9 +1,8 @@
 module.exports = {
-	name: "Set Variable",
-	description: "Set a variable",
-	examples: [`set {_a} to true`],
-	patterns: [`set [the] [variable] {%text%} to %anys%`],
-	giveFullLists: true,
+	name: "Add to Variable",
+	description: "Add to a variable. If this is a list, it will add it as the last element",
+	examples: [`set {_int} to 4\nadd 1 to {_int}`, `set {_names::*} to "Bob" and "Bill"\nadd "Joe" to {_names::*}`],
+	patterns: [`add %anys% to [the] [variable] {%text%}`],
 	run: (options, name, any) => {
 		if(!name.match(/^_?[A-Za-z0-9\-:\.\s]+\*?$/)) {
 			throw new options.TagError(`Invalid variable name: {${name}}. ` +
@@ -11,7 +10,7 @@ module.exports = {
 		} else {
 			if(~name.indexOf("::")) {
 				let otherVars = name.match(/(_?[A-Za-z0-9\-\.\s]+)::/g);
-				if(!otherVars) throw new options.TagError(`Invalid list variable: {${name}}`);
+				if(!otherVars || !name.endsWith("*")) throw new options.TagError(`Invalid list variable: {${name}}`);
 
 				otherVars = otherVars.map(vName => vName.substring(0, vName.length - 2));
 				let reference, prev, prevName;
@@ -30,11 +29,11 @@ module.exports = {
 					}
 				});
 
-				let index = name.substring(name.lastIndexOf("::") + 2);
-				if(index === "*") prev[prevName] = any;
-				else reference[index] = any;
+				prev[prevName].push(any);
 			} else {
-				options.data.variables.set(name, any);
+				let value = options.data.variables.get(name);
+				if(!value) throw new options.TagError(`Variable {${name}} is not defined`);
+				options.data.variables.set(name, value + any);
 			}
 
 			return options.data;

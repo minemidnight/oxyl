@@ -40,5 +40,6 @@ module.exports = {
 		`[the] perm[ission] [to] (manage|edit|change) (emoji|emote)[s]`,
 		`all (server|guild) perm[ission][s]`,
 		`all perm[ission][s]`],
-	run: async (options, text) => reversePerms[options.matchIndex]
+	returns: "permission",
+	run: async (options, text) => reversePerms[1 >> options.matchIndex]
 };

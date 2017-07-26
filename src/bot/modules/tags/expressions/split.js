@@ -4,5 +4,6 @@ module.exports = {
 	examples: [`set {_args} to content of event-message split at " "`],
 	patterns: [`split %text% (at|using|by) [[the] delimiter] %text%`,
 		`%text% [split] (at|using|by) [[the] delimiter] %text%`],
+	returns: "list",
 	run: async (options, text, splitter) => text.split(splitter)
 };

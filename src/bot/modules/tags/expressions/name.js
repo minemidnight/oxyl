@@ -7,6 +7,7 @@ module.exports = {
 		`[the] name[s] of %channels%`, `%channels%['[s]] name[s]`,
 		`[the] name[s] of %servers%`, `%servers%['[s]] name[s]`,
 		`[the] name[s] of %roles%`, `%roles%['[s]] name[s]`],
+	returns: "text",
 	run: async (options, object) => {
 		if(~[0, 1].indexOf(options.matchIndex)) return object.username;
 		else if(~[2, 3].indexOf(options.matchIndex)) return object.user.username;

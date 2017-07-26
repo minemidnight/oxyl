@@ -8,6 +8,7 @@ module.exports = {
 		`[the] id[s] of %channels%`, `%channels%['[s]] id[s]`,
 		`[the] id[s] of %servers%`, `%servers%['[s]] id[s]`,
 		`[the] id[s] of %roles%`, `%roles%['[s]] id[s]`],
+	returns: "text",
 	run: async (options, object) => {
 		if(options.matchIndex <= 11) return object.id;
 		else throw new options.TagError("Match index was out of range");

@@ -3,5 +3,6 @@ module.exports = {
 	description: "A list of the roles a server has",
 	examples: [`set {_roles} to roles of server from event-message`],
 	patterns: [`[the] roles of %servers%`, `%servers%['[s]] roles`],
-	run: async (options, server) => server.roles
+	returns: "role list",
+	run: async (options, server) => options.types.role
 };

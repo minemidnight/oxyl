@@ -6,6 +6,7 @@ module.exports = {
 		`[the] mention[s] of %members%`, `%members%['[s]] mention[s]`,
 		`[the] mention[s] of %channels%`, `%channels%['[s]] mention[s]`,
 		`[the] mention[s] of %roles%`, `%roles%['[s]] mention[s]`],
+	returns: "text",
 	run: async (options, object) => {
 		if(options.matchIndex <= 7) return object.mention;
 		else throw new options.TagError("Match index was out of range");

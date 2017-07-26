@@ -5,6 +5,7 @@ module.exports = {
 	patterns: [`join %texts% [(with|using|by) [[the] delimiter] %text%]`,
 		`%texts% joined [(with|using|by) [[the] delimiter] %text%]`],
 	giveFullLists: true,
+	returns: "text",
 	run: async (options, texts, joiner) => {
 		if(!joiner) return `${texts.slice(0, -1).join(", ")}, and ${texts.slice(-1)}`;
 		else return texts.join(joiner);

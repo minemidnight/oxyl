@@ -14,7 +14,7 @@ router.get("/overview/*", async (req, res) => {
 	})).result;
 
 	if(hasServer) {
-		let modLog = (await r.table("modLog").filter({ guildID: id }).run()).length;
+		let modLog = (await r.table("modLog").getAll(id, { index: "guildID" }).run()).length;
 		let { botCount, channelCount, memberCount, onlineMembers, owner, region } = (await process.output({
 			target: id,
 			input: `let guild = bot.guilds.get("${id}");` +
@@ -62,9 +62,9 @@ router.get("/settings/*", async (req, res) => {
 	})).result;
 
 	if(hasServer) {
-		let modLog = (await r.table("modLog").filter({ guildID: id }).run()).length;
+		let modLog = (await r.table("modLog").getAll(id, { index: "guildID" }).run()).length;
 		let guildSettings = JSON.parse(JSON.stringify(settings));
-		(await r.table("settings").filter({ guildID: id }).run()).forEach(data => {
+		(await r.table("settings").getAll(id, { index: "guildID" }).run()).forEach(data => {
 			let index = guildSettings.indexOf(guildSettings.find(gset => gset.name === data.name));
 			guildSettings[index].value = data.value;
 		});
@@ -102,7 +102,7 @@ router.get("/modlog/*", async (req, res) => {
 	})).result;
 
 	if(hasServer) {
-		let cases = await r.table("modLog").filter({ guildID: id }).run();
+		let cases = await r.table("modLog").getAll(id, { index: "guildID" }).run();
 		let roles = (await process.output({
 			target: id,
 			input: `return bot.guilds.get("${id}").roles.map(data => ({ id: data.id, name: data.name }))`,

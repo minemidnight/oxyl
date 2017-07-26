@@ -8,6 +8,7 @@ module.exports = {
 		`[the] creation (date|time[stamp])[s] of %channels%`, `%channels%['[s]] creation (date|time[stamp])[s]`,
 		`[the] creation (date|time[stamp])[s] of %servers%`, `%servers%['[s]] creation (date|time[stamp])[s]`,
 		`[the] creation (date|time[stamp])[s] of %roles%`, `%roles%['[s]] creation (date|time[stamp])[s]`],
+	returns: "integer",
 	run: async (options, object) => {
 		if(options.matchIndex <= 11) return object.createdAt;
 		else throw new options.TagError("Match index was out of range");
