@@ -3,8 +3,12 @@ module.exports = {
 	description: "Arithmetic expressions: addition (+), subtraction (-), " +
 		"multiplication (*), division (/), exponentation (^) and modular (mod)",
 	examples: [`set {_result} to 5 * (6 + 4)`, `set {_result} to 2^3`],
-	patterns: [`%number%[ ]+[ ]%number%`, `%number%[ ]-[ ]%number`, `%number%[ ]*[ ]%number`,
-		`%number%[ ]/[ ]%number`, `%number%[ ]^[ ]%number`, `%number%[ ]mod[ ]%number`],
+	patterns: [`%number%[ ]+[ ]%number%`,
+		`%number%[ ]-[ ]%number`,
+		`%number%[ ]*[ ]%number`,
+		`%number%[ ]/[ ]%number`,
+		`%number%[ ]^[ ]%number`,
+		`%number%[ ]mod[ ]%number`],
 	run: async (options, number1, number2) => {
 		if(options.matchIndex === 0) return number1 + number2;
 		else if(options.matchIndex === 1) return number1 - number2;

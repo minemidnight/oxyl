@@ -55,7 +55,8 @@ module.exports = async worker => {
 				type: "bot",
 				shardStart: worker.shardStart,
 				shardEnd: worker.shardEnd,
-				shardRange: worker.shardRange
+				shardRange: worker.shardRange,
+				totalShards: worker.totalShards
 			});
 			module.exports(newWorker);
 
