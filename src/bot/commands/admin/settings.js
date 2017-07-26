@@ -117,7 +117,7 @@ let settings = module.exports.settings = {
 	},
 	greeting: {
 		arg: "text",
-		description: "Message sent in user log when a user leaves " +
+		description: "Message sent in user log when a user joins " +
 			"(placeholders: {{mention}}, {{username}}, {{id}}, {{discrim}})"
 	},
 	"disable-music-messages": {

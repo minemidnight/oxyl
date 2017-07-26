@@ -62,6 +62,10 @@ module.exports = {
 			name: "settings",
 			primary: "id" // [name, guildID]
 		}, {
+			name: "tags",
+			primary: "name",
+			indexes: ["ownerID"]
+		}, {
 			name: "timedEvents",
 			primary: "uuid",
 			indexes: ["date"]
