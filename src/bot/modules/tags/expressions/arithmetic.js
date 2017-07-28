@@ -3,11 +3,11 @@ module.exports = {
 	description: "Arithmetic expressions: addition (+), subtraction (-), " +
 		"multiplication (*), division (/), exponentation (^) and modular (mod)",
 	examples: [`set {_result} to 5 * (6 + 4)`, `set {_result} to 2^3`],
-	patterns: [`%number%[ ]+[ ]%number%`,
-		`%number%[ ]-[ ]%number%`,
-		`%number%[ ]*[ ]%number%`,
-		`%number%[ ]/[ ]%number%`,
-		`%number%[ ]^[ ]%number%`,
+	patterns: [`%number%[ ]\\+[ ]%number%`,
+		`%number%[ ]\\-[ ]%number%`,
+		`%number%[ ]\\*[ ]%number%`,
+		`%number%[ ]\\/[ ]%number%`,
+		`%number%[ ]\\^[ ]%number%`,
 		`%number%[ ]mod[ ]%number%`],
 	returns: "number",
 	run: async (options, number1, number2) => {
