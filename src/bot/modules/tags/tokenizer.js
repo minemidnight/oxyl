@@ -31,8 +31,8 @@ function replacedNestedBrackets(string) {
 	return string;
 }
 
-function regexFromPattern(pattern) {
-	pattern = replacedNestedBrackets(pattern);
+function regexFromPattern(pattern, replace) {
+	if(replace) pattern = replacedNestedBrackets(pattern);
 	return new RegExp(`^${pattern}$`, "i");
 }
 
@@ -77,26 +77,30 @@ function regexFromPattern(pattern) {
 // 	}
 // });
 
-module.exports = async string => new Promise((resolve, reject) => {
+module.exports.tokenize = async string => new Promise((resolve, reject) => {
 	const tokenStream = tokenizer();
+	// tokenStream.addRule(/^[^\s]+$/, "word");
+	tokenStream.addRule(/^if .*?:$/, "if statement");
+	tokenStream.addRule(/^el(se )?if .*?:$/, "else if statement");
+	tokenStream.addRule(/^else:$/, "else statement");
 	tokenStream.addRule(/^end$/, "end keyword");
+	tokenStream.addRule(/^\n$/, "newline");
 	tokenStream.addRule(/^\s+$/, "whitespace");
 
 	types.forEach(type => {
 		let patterns = require(`${__dirname}/types/${type}`).patterns;
 		if(patterns) {
-			patterns.map(regexFromPattern)
+			patterns
+				.map(pattern => regexFromPattern(pattern, false))
 				.forEach((pattern, i) => tokenStream.addRule(pattern, `type ${type.substring(0, type.length - 3)} ${i}`));
 		}
 	});
 
 	let tokens = [];
-	tokenStream.write(string);
-	console.log("tokenizing", string);
-	tokenStream.on("data", token => console.log(token));
+	tokenStream.on("data", token => tokens.push(token));
+	tokenStream.on("error", reject);
+	tokenStream.on("end", () => resolve(tokens));
 
-	tokenStream.on("end", () => {
-		console.log("FINISHED");
-		resolve(tokens);
-	});
+	tokenStream.write(string);
+	tokenStream.end();
 });
