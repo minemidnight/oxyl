@@ -51,7 +51,7 @@ module.exports = {
 
 			let roles;
 			try {
-				roles = message.args[2].split(",").map(input => bot.utils.resolver.role(message, input));
+				roles = message.args[2].split(",").map(input => bot.utils.resolver.role(message, input.trim()));
 			} catch(err) {
 				return __("commands.admin.editCommand.roles.invalidRoles", message);
 			}

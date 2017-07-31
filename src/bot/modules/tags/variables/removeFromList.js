@@ -1,5 +1,5 @@
 module.exports = {
-	name: "Remove froo Variable",
+	name: "Remove from Variable",
 	description: "Remove froo a variable. If this is a list, it remove the last element and shift all indexes past it",
 	examples: [`set {_int} to 4\nremove 1 from {_int}`,
 		`set {_names::*} to "Bob", "Joe" and "Bill"\nremove "Joe" to {_names::*}`],
