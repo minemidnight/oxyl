@@ -1,3 +1,4 @@
+const TagError = require(`${__dirname}/tagError`);
 const fs = require("fs");
 const conditions = fs.readdirSync(`${__dirname}/conditions`);
 const effects = fs.readdirSync(`${__dirname}/effects`);
@@ -80,11 +81,7 @@ types.forEach(type => {
 	}
 });
 
-syntaxes.push({ name: "If Statement", patterns: ["if (.*):"] });
-syntaxes.push({ name: "Else If Statement", patterns: ["el( if)? (.*):"] });
-syntaxes.push({ name: "Else", patterns: ["el( if)? (.*):"] });
 syntaxes.push({ name: "End Keyword", patterns: ["end"] });
-
 function findSyntax(string) {
 	let patternFound;
 	let syntax = syntaxes.find(syn => {
@@ -99,15 +96,38 @@ function findSyntax(string) {
 	return [patternFound, syntax];
 }
 
-function getResult(pattern, syntax) {
+async function getResult(options, pattern, syntax) {
+	let typesExpected = pattern.match(/%.*?%/g);
+	let newPattern = pattern.replace(/%.*?%/g, "(.*?)");
 
+	let patternsMatched = newPattern.match(new RegExp(`^${pattern}$`, "ig"));
+	let values = [];
+	patternsMatched.forEach(pMatch => {
+		let value;
+		if(options.values.has(pMatch)) {
+			values.push(options.values.get(pMatch));
+		} else {
+			let found = findSyntax(pMatch);
+			if(found) {
+				let res = getResult(options, found[0], found[1]);
+				values.push(res);
+			} else {
+				throw new TagError(`No syntax found for ${pMatch}`);
+			}
+		}
+	});
+
+	return await syntax.run(options, ...values);
 }
 
-module.exports = async string => {
+module.exports = async (options, string) => {
 	string = string.replace(/  +/g, " ");
 	let lines = string.split("\n");
 	for(let line of lines) {
 		line = line.trim();
-		let [pattern, syntax] = findSyntax(line);
+		let found = findSyntax(line);
+		if(!found) throw new TagError(`No syntax found for ${line}`);
+
+		await getResult(options, found[0], found[1]);
 	}
 };
