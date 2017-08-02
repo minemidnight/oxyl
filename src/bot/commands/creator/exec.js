@@ -3,7 +3,7 @@ module.exports = {
 	process: async message => {
 		try {
 			let stdout = await exec(message.args[0]);
-			return bot.utils.codeBlock(stdout);
+			return bot.utils.codeBlock(stdout.substring(0, 1950));
 		} catch(err) {
 			return `Error executing command: ${bot.utils.codeBlock(err)}`;
 		}
