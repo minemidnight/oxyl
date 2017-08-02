@@ -7,7 +7,7 @@ module.exports = async message => {
 	if(~message.content.indexOf("&&")) {
 		let commands = message.content.split("&&");
 		for(let command of commands) {
-			message.content = command;
+			message.content = command.trim();
 			let result = await module.exports(message);
 			if(!result) break;
 		}
