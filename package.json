@@ -27,7 +27,6 @@
     "eris": "^0.7.0",
     "eris-additions": "^1.2.5",
     "express": "^4.15.3",
-    "google-tts-api": "0.0.1",
     "handlebars": "^4.0.10",
     "hot-shots": "^4.5.0",
     "raven": "^2.1.0",
