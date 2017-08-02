@@ -1,6 +1,7 @@
 const Player = require("../../structures/player.js");
 const mainResolver = require("../../modules/audioResolvers/main.js");
 
+const tts = require("google-tts-api");
 const cheerio = require("cheerio");
 const superagent = require("superagent");
 let playlistsDisplay, playlistsFormat;
@@ -67,9 +68,8 @@ module.exports = {
 				return __("commands.music.play.invalidDFM", message);
 			}
 		} else if(message.args[0].startsWith("tts:")) {
-			message.args[0] = message.cleanContent.substring(4).trim();
-			let url = `http://translate.google.com/translate_tts?ie=UTF-8` +
-				`&q=${encodeURIComponent(message.args[0])}&tl=en&client=t`;
+			message.args[0] = message.args[0].substring(4).trim();
+			let url = await tts(message.args[0], "en");
 
 			if(!player.connection) await player.connect(voiceChannel.id);
 			await player.addQueue({
@@ -79,7 +79,7 @@ module.exports = {
 			});
 			return __("commands.music.play.addedTTS", message);
 		} else if(message.args[0].startsWith("sq:")) {
-			message.args[0] = message.args[0].substring(3).trim();
+			message.args[0] = message.cleanContent.substring(3).trim();
 			let donator = (await r.db("Oxyl").table("donators").filter({ id: message.author.id }).run())[0];
 			if(!donator) return __("commands.music.play.donatorOnly", message);
 
