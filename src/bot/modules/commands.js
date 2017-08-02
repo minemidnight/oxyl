@@ -103,7 +103,8 @@ module.exports = async message => {
 			await message.channel.createMessage(output, file);
 		}
 
-		return true;
+		if(command.name === "play") return new Promise(resolve => setTimeout(() => resolve(true), 750));
+		else return true;
 	} catch(err) {
 		try {
 			let resp = JSON.parse(err.response);
