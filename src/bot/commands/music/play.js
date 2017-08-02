@@ -68,7 +68,7 @@ module.exports = {
 				return __("commands.music.play.invalidDFM", message);
 			}
 		} else if(message.args[0].startsWith("tts:")) {
-			message.args[0] = message.args[0].substring(4).trim();
+			message.args[0] = message.cleanContent.substring(4).trim();
 			let url = await tts(message.args[0], "en");
 
 			if(!player.connection) await player.connect(voiceChannel.id);
@@ -79,7 +79,7 @@ module.exports = {
 			});
 			return __("commands.music.play.addedTTS", message);
 		} else if(message.args[0].startsWith("sq:")) {
-			message.args[0] = message.cleanContent.substring(3).trim();
+			message.args[0] = message.args[0].substring(3).trim();
 			let donator = (await r.db("Oxyl").table("donators").filter({ id: message.author.id }).run())[0];
 			if(!donator) return __("commands.music.play.donatorOnly", message);
 
