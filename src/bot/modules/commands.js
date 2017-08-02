@@ -4,7 +4,7 @@ const handleCensor = require("./censors.js");
 module.exports = async message => {
 	const guild = message.channel.guild;
 
-	if(~message.content.indexOf("&&")) {
+	if(~message.content.indexOf("&&") && !~message.content.indexOf("exec")) {
 		let commands = message.content.split("&&");
 		for(let command of commands) {
 			message.content = command.trim();
