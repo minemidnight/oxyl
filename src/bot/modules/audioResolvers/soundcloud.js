@@ -32,4 +32,4 @@ module.exports = async link => {
 		return "INVALID_TYPE";
 	}
 };
-const regex = module.exports.regex = /(?:http?s?:\/\/)?(?:www\.)?(?:soundcloud\.com|snd\.sc)\/(?:.*)/;
+const regex = module.exports.regex = /^(?:http?s?:\/\/)?(?:www\.)?(?:soundcloud\.com|snd\.sc)\/(?:.*)/;

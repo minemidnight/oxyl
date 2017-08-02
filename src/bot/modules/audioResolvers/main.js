@@ -47,6 +47,6 @@ module.exports.extract = async song => {
 
 const resolvers = {};
 // youtube playlist must come first to test the regex, because videos may capture playlists
-["twitch", "search", "soundcloud", "youtubePlaylist", "youtube"].forEach(provider => {
+["twitch", "search", "soundcloud", "youtubePlaylist", "youtube", "https"].forEach(provider => {
 	resolvers[provider] = require(`../audioResolvers/${provider}.js`);
 });

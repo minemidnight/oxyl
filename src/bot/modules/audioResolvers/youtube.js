@@ -1,4 +1,4 @@
-const youtubedl = Promise.promisifyAll(require("youtube-dl"));
+const youtubedl = require("youtube-dl");
 const superagent = require("superagent");
 const googleKeys = bot.config.bot.googleKeys;
 const main = require("../audioResolvers/main.js");
@@ -31,7 +31,7 @@ module.exports = async link => {
 		});
 	}
 };
-const regex = module.exports.regex = /(?:youtube\.com\/\S*(?:(?:\/e(?:mbed))?\/|watch\/??(?:\S*?&?v=))|youtu\.be\/)([a-zA-Z0-9_-]{6,11})/; // eslint-disable-line max-len
+const regex = module.exports.regex = /^(?:youtube\.com\/\S*(?:(?:\/e(?:mbed))?\/|watch\/??(?:\S*?&?v=))|youtu\.be\/)([a-zA-Z0-9_-]{6,11})/; // eslint-disable-line max-len
 
 module.exports.livestream = async id => {
 	let data = await youtubedl.getInfoAsync(id, [], { maxBuffer: Infinity }), format;

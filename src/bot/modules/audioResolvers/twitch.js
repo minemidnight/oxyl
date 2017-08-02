@@ -19,4 +19,4 @@ module.exports = async link => {
 		return "CHANNEL_OFFLINE";
 	}
 };
-const regex = module.exports.regex = /https?:\/\/(?:www\.)?twitch\.tv/;
+const regex = module.exports.regex = /^(?:https?:\/\/)?(?:www\.)?twitch\.tv/;
