@@ -28,7 +28,7 @@ module.exports = {
 			queueMsg += "\n\n";
 			queueMsg += __("phrases.currentPlaying", message, {
 				title: player.current.title,
-				duration: videoDuration ? `${playTime}/${videoDuration}` : `${playTime}/LIVE`
+				duration: videoDuration ? `${playTime}/${videoDuration}` : player.current.live ? `${playTime}/LIVE` : playTime
 			});
 		}
 

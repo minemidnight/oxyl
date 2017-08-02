@@ -164,9 +164,11 @@ function handlePlayer(player) {
 		let embed = {
 			description: `**${song.title}**`,
 			image: { url: song.thumbnail },
-			footer: { text: `ID: ${song.id} | ${__("words.service", this.guild)}: ${song.service}` },
+			footer: { text: `${__("words.service", this.guild)}: ${song.service}` },
 			title: `▶ ${__("phrases.nowPlaying", this.guild)}`
 		};
+
+		if(song.id) song.footer.text = `ID: ${song.id} |${  song.footer.text}`;
 		if(song.duration && !isNaN(song.duration)) embed.description += ` (${bot.utils.secondsToDuration(song.duration)})`;
 		createMessage(embed);
 	});
