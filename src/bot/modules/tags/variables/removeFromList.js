@@ -17,7 +17,7 @@ module.exports = {
 				let reference, prev, prevName;
 				otherVars.forEach((vName, i) => {
 					if(!reference) {
-						prev = options.data.variables.set(vName, []);
+						prev = options.variables.set(vName, []);
 						prevName = vName;
 
 						reference = prev.get(vName);
@@ -32,12 +32,12 @@ module.exports = {
 
 				if(~prev[prevName].indexOf(any)) prev[prevName].splice(prev[prevName].indexOf(any), 1);
 			} else {
-				let value = options.data.variables.get(name);
+				let value = options.variables.get(name);
 				if(!value) throw new options.TagError(`Variable {${name}} is not defined`);
-				options.data.variables.set(name, value - any);
+				options.variables.set(name, value - any);
 			}
 
-			return options.data;
+			return options;
 		}
 	}
 };

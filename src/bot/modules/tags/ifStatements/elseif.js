@@ -4,5 +4,5 @@ module.exports = {
 	examples: [`if member has perm to ban members:\n\treturn "You have perms to ban them!"\n` +
 		`else if member has perm to kick members:\n\treturn "You can only kick :("\nend`],
 	patterns: [`el(se )?if (.*?)`],
-	run: async (options, value) => options.run(!!value)
+	run: async (options, { value }) => !!value
 };

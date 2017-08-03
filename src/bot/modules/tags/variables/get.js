@@ -16,7 +16,7 @@ module.exports = {
 			let reference;
 			otherVars.forEach((vName, i) => {
 				if(!reference) {
-					reference = options.data.variables.set(vName, []).get(vName);
+					reference = options.variables.set(vName, []).get(vName);
 				} else {
 					if(!reference[vName]) reference[vName] = [];
 					reference = reference[vName];
@@ -27,7 +27,7 @@ module.exports = {
 			if(index === "*") return reference;
 			else return reference[index];
 		} else {
-			return options.data.variables.get(name);
+			return options.variables.get(name);
 		}
 	}
 };

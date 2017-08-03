@@ -8,6 +8,6 @@ module.exports = {
 			options = options.run("next", { "loop-number": i });
 		}
 
-		return options.data;
+		return options;
 	}
 };

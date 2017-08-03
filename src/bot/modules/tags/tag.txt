@@ -1,0 +1,5 @@
+if name of author from event-message is "hello yes":
+	return "you can ban that member!"
+else:
+	return "you cannot ban them"
+end;

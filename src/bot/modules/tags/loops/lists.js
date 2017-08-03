@@ -11,6 +11,6 @@ module.exports = {
 			});
 		});
 
-		return options.data;
+		return options;
 	}
 };

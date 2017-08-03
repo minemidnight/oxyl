@@ -1,6 +1,6 @@
 module.exports = {
-	name: "Text",
-	description: "A string",
+	name: "Boolean",
+	description: "A boolean",
 	examples: [`set {_text} to true`],
 	patterns: [`true`, `false`],
 	run: async (options) => {

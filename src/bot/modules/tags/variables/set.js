@@ -17,7 +17,7 @@ module.exports = {
 				let reference, prev, prevName;
 				otherVars.forEach((vName, i) => {
 					if(!reference) {
-						prev = options.data.variables.set(vName, []);
+						prev = options.variables.set(vName, []);
 						prevName = vName;
 
 						reference = prev.get(vName);
@@ -34,10 +34,10 @@ module.exports = {
 				if(index === "*") prev[prevName] = any;
 				else reference[index] = any;
 			} else {
-				options.data.variables.set(name, any);
+				options.variables.set(name, any);
 			}
 
-			return options.data;
+			return options;
 		}
 	}
 };

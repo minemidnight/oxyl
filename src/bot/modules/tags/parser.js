@@ -28,18 +28,26 @@ function replacedNestedBrackets(string) {
 		}
 	}
 
-	return string;
+	return string.replace(/\((.*?)\)/g, "(?:$1)");
 }
 
 function regexFromPattern(pattern, replace) {
 	if(replace !== false) pattern = replacedNestedBrackets(pattern);
-	return pattern.replace(/\((.*?)\)/g, "(?:$1)");
+	return pattern;
 }
 
 let syntaxes = [];
-conditions.forEach(cond => {
-	let file = require(`${__dirname}/conditions/${cond}`);
-	file.patterns = file.patterns.map(regexFromPattern);
+syntaxes.push({ name: "End Keyword", patterns: ["end"] });
+
+ifStatements.forEach(ifStatement => {
+	let file = require(`${__dirname}/ifStatements/${ifStatement}`);
+	file.patterns = file.patterns.map(pattern => `${regexFromPattern(pattern, false)}:`);
+	syntaxes.push(file);
+});
+
+loops.forEach(loop => {
+	let file = require(`${__dirname}/loops/${loop}`);
+	file.patterns = file.patterns.map(pattern => `${regexFromPattern(pattern)}:`);
 	syntaxes.push(file);
 });
 
@@ -55,21 +63,16 @@ expressions.forEach(expr => {
 	syntaxes.push(file);
 });
 
-ifStatements.forEach(ifStatement => {
-	let file = require(`${__dirname}/ifStatements/${ifStatement}`);
-	file.patterns = file.patterns.map(pattern => `${regexFromPattern(pattern, false)}:`);
-	syntaxes.push(file);
-});
-
-loops.forEach(loop => {
-	let file = require(`${__dirname}/loops/${loop}`);
-	file.patterns = file.patterns.map(pattern => `${regexFromPattern(pattern)}:`);
-	syntaxes.push(file);
-});
-
 variables.forEach(variable => {
 	let file = require(`${__dirname}/variables/${variable}`);
 	file.patterns = file.patterns.map(regexFromPattern);
+	syntaxes.push(file);
+});
+
+conditions.forEach(cond => {
+	let file = require(`${__dirname}/conditions/${cond}`);
+	file.patterns = file.patterns.map(regexFromPattern);
+	file.returns = "boolean";
 	syntaxes.push(file);
 });
 
@@ -81,53 +84,53 @@ types.forEach(type => {
 	}
 });
 
-syntaxes.push({ name: "End Keyword", patterns: ["end"] });
 function findSyntax(string) {
 	let patternFound;
 	let syntax = syntaxes.find(syn => {
-		let find = syn.patterns.find(pattern => new RegExp(`^${pattern.replace(/%.*?%/, "(.*?)")}$`, "i").test(string));
-		if(find) {
-			patternFound = find;
+		patternFound = syn.patterns
+			.find(pattern => new RegExp(`^${pattern.replace(/%.*?%/g, "(.*?)")}$`, "i").test(string));
+		if(patternFound) {
 			return true;
 		} else {
 			return false;
 		}
 	});
-	return [patternFound, syntax];
-}
-
-async function getResult(options, pattern, syntax) {
-	let typesExpected = pattern.match(/%.*?%/g);
-	let newPattern = pattern.replace(/%.*?%/g, "(.*?)");
-
-	let patternsMatched = newPattern.match(new RegExp(`^${pattern}$`, "ig"));
-	let values = [];
-	patternsMatched.forEach(pMatch => {
-		let value;
-		if(options.values.has(pMatch)) {
-			values.push(options.values.get(pMatch));
-		} else {
-			let found = findSyntax(pMatch);
-			if(found) {
-				let res = getResult(options, found[0], found[1]);
-				values.push(res);
-			} else {
-				throw new TagError(`No syntax found for ${pMatch}`);
-			}
-		}
-	});
-
-	return await syntax.run(options, ...values);
+	return syntax ? { code: string, pattern: patternFound, syntax } : undefined;
 }
 
 module.exports = async (options, string) => {
 	string = string.replace(/  +/g, " ");
-	let lines = string.split("\n");
-	for(let line of lines) {
-		line = line.trim();
+	let lineStrings = string.split("\n");
+	let linesParsed = [];
+	for(let line of lineStrings) {
+		if(line.endsWith(";")) line = line.substring(0, line.length - 1).trim();
+		else line = line.trim();
+
 		let found = findSyntax(line);
 		if(!found) throw new TagError(`No syntax found for ${line}`);
-
-		await getResult(options, found[0], found[1]);
+		linesParsed.push(found);
 	}
+
+	let codeBlocks = [], spliceIndex = 0;
+	for(let lineIndex = 0; lineIndex < linesParsed.length; lineIndex++) {
+		let line = linesParsed[lineIndex];
+		switch(line.syntax.name) {
+			case "If":
+			case "Else if":
+			case "Else":
+			case "Loop list":
+			case "Loop nth times":
+				if(lineIndex !== spliceIndex) codeBlocks.push(linesParsed.slice(spliceIndex, lineIndex));
+				spliceIndex = lineIndex;
+				break;
+			case "End Keyword":
+				codeBlocks.push(linesParsed.slice(spliceIndex, lineIndex));
+				spliceIndex = lineIndex + 1;
+				break;
+		}
+	}
+	if(spliceIndex !== linesParsed.length) codeBlocks.push(linesParsed.slice(spliceIndex));
+
+	return codeBlocks;
 };
+module.exports.findSyntax = findSyntax;
