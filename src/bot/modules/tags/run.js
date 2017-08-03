@@ -68,6 +68,10 @@ async function runCode(options, codeBlock) {
 		for(let line of codeBlock) {
 			options = await getResult(options, line);
 		}
+	} else {
+		for(let line of codeBlock) {
+			options = await getResult(options, line);
+		}
 	}
 
 	return options;

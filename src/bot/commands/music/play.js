@@ -69,7 +69,7 @@ module.exports = {
 			}
 		} else if(message.args[0].startsWith("tts:")) {
 			message.args[0] = message.cleanContent.substring(4).trim();
-			let url = await tts(encodeURIComponent(message.args[0]), "en");
+			let url = await tts(message.args[0], "en");
 
 			if(!player.connection) await player.connect(voiceChannel.id);
 			await player.addQueue({
