@@ -69,16 +69,16 @@ router.get("/settings/*", async (req, res) => {
 			guildSettings[index].value = data.value;
 		});
 
-		let [channels, roles] = (await process.output({
+		let [textChannels, roles] = (await process.output({
 			target: id,
 			input: `let guild = bot.guilds.get("${id}");` +
-								`return [guild.channels.map(c => ({ id: c.id, name: c.name })),` +
-									`guild.roles.map(r => ({ id: r.id, name: r.name }))]`,
+					`return [guild.channels.filter(c => c.type === 0).map(c => ({ id: c.id, name: c.name })),` +
+					`guild.roles.map(r => ({ id: r.id, name: r.name }))]`,
 			type: "guild"
 		})).result;
 
 		res.status(200)
-			.send(await app.page(req, "settings", { channels, guild: id, modLog, settings: guildSettings, roles })).end();
+			.send(await app.page(req, "settings", { textChannels, guild: id, modLog, settings: guildSettings, roles })).end();
 	} else {
 		res.status(200).send(await app.page(req, "invite", { guild: id })).end();
 	}
@@ -88,6 +88,7 @@ const readableActions = {
 	specialRoleAdd: "Special Role Added",
 	specialRoleRemove: "Special Role Removed"
 };
+
 router.get("/modlog/*", async (req, res) => {
 	let id = req.path.substring(7).replace(/\//g, "");
 	if(!id.match(/\d+/)) {

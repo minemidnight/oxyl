@@ -108,7 +108,7 @@ module.exports = async message => {
 	} catch(err) {
 		try {
 			let resp = JSON.parse(err.response);
-			let permCodes = [50013, 10008, 50001, 40005, 10003];
+			let permCodes = [10003, 10008, 40005, 50001, 50013];
 			if(~permCodes.indexOf(resp.code)) {
 				message.channel.createMessage(__("modules.commands.permissionFail", message));
 			} else {

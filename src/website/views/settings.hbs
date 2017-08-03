@@ -110,7 +110,7 @@
 									{{/extendedIf}}{{#extendedIf this.arg "=" "textChannel"}}
 										<select name="{{../name}}" class="w3-select" style="background:none;outline:none;color:hsla(0,0%,100%,.7)">
 											{{#unless this.value}}<option value="" style="background:#36393e;color:hsla(0,0%,100%,.7)" selected disabled>Choose a channel...</option>{{/unless}}
-											{{#each ../../channels}}<option value="{{this.id}}" style="background:#36393e;color:hsla(0,0%,100%,.7)" {{#extendedIf ../../value "=" this.id}}selected{{/extendedIf}}>#{{this.name}}</option>{{/each}}
+											{{#each ../../textChannels}}<option value="{{this.id}}" style="background:#36393e;color:hsla(0,0%,100%,.7)" {{#extendedIf ../../value "=" this.id}}selected{{/extendedIf}}>{{this.name}}</option>{{/each}}
 										</select>
 									{{/extendedIf}}{{#extendedIf this.arg "=" "text"}}
 										<textarea name="{{../name}}" class="w3-input w3-animate-input" style="resize:none;width:70%;background:none;outline:none;color:hsla(0,0%,100%,.7)" spellcheck="false">{{#if ../value}}{{../value}}{{/if}}</textarea>

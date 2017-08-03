@@ -60,7 +60,8 @@ module.exports = {
 			primary: "id" // [savedID, userID]
 		}, {
 			name: "settings",
-			primary: "id" // [name, guildID]
+			primary: "id", // [name, guildID]
+			indexes: ["guildID"]
 		}, {
 			name: "tags",
 			primary: "name",
