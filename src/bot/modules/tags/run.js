@@ -1,10 +1,6 @@
 const parser = require(`${__dirname}/parser`);
 const TagError = require(`${__dirname}/tagError`);
 
-function parseType(options, value, type) {
-	return require(`${__dirname}/types/${type}`).run(options, value);
-}
-
 async function getResult(options, { code, pattern, syntax }) {
 	options.matchIndex = syntax.patterns.indexOf(pattern);
 	let typesExpected = pattern.match(/%.*?%/g);
@@ -23,15 +19,25 @@ async function getResult(options, { code, pattern, syntax }) {
 			if(found) {
 				let res = getResult(options, found);
 
-				if(found.syntax.returns) res = parseType(options, res, found.syntax.returns);
+				let returnType = found.syntax.returns;
+				if(Array.isArray(returnType)) returnType = returnType[options.matchIndex];
+				if(returnType && returnType !== "any") {
+					if(returnType.endsWith(" list")) {
+						returnType = returnType.substring(0, returnType.length - 5);
+						res = res.map(result => options.types[found.syntax.returns].run(options, result));
+					} else {
+						res = options.types[found.syntax.returns].run(options, res);
+					}
+				}
+
 				values.push(res);
 			} else {
-				throw new TagError(`No syntax or value found for ${pMatch}`);
+				throw new TagError(`No syntax or value found for "${pMatch}"`);
 			}
 		}
 	});
 
-	values = values.map(val => val.value ? val.value : val);
+	if(!syntax.giveFullLists) values = values.map(val => val.value ? val.value : val);
 	return await syntax.run(options, ...values);
 }
 
@@ -68,6 +74,30 @@ async function runCode(options, codeBlock) {
 		for(let line of codeBlock) {
 			options = await getResult(options, line);
 		}
+	} else if(firstLine.syntax.name === "Loop list") {
+		let list = await getResult(options, firstLine);
+		for(let index of list) {
+			let value = list[index];
+			options.values.set("loop-value", value);
+			options.values.set("loop-index", index + 1);
+
+			for(let line of codeBlock) {
+				options = await getResult(options, line);
+			}
+		}
+
+		options.values.delete("loop-value");
+		options.values.delete("loop-index");
+	} else if(firstLine.syntax.name === "Loop nth times") {
+		let times = await getResult(options, firstLine);
+		for(let i = times - 1; i--;) {
+			options.values.set("loop-number", i + 1);
+			for(let line of codeBlock) {
+				options = await getResult(options, line);
+			}
+		}
+
+		options.values.delete("loop-number");
 	} else {
 		for(let line of codeBlock) {
 			options = await getResult(options, line);
@@ -77,15 +107,27 @@ async function runCode(options, codeBlock) {
 	return options;
 }
 
+const fs = require("fs");
+let types = fs.readdirSync(`${__dirname}/types`)
+	.map(type => require(`${__dirname}/types/${type}`))
+	.reduce((prev, type) => {
+		prev[type.name.toLowerCase()] = type;
+		return prev;
+	}, {});
+
 module.exports = async (options, string) => {
 	if(!options.__message) throw new TagError("No __message key in options");
-	options.values = new Map().set("event-message", options.__message);
-	options.variables = new Map();
+	options = Object.assign(options, {
+		TagError,
+		types,
+		values: new Map().set("event-message", types.message.run(options, options.__message)),
+		variables: new Map()
+	});
 
 	const parsed = await parser(options, string);
 	for(let codeBlock of parsed) options = await runCode(options, codeBlock);
 };
 
-process.on("unhandledRejection", console.log);
+process.on("unhandledRejection", err => console.log(err.stack));
 module.exports({ __message: { author: { id: "123", username: "hello" } } },
 	require("fs").readFileSync(`${__dirname}/tag.txt`, "utf8"));

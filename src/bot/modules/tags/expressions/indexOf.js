@@ -6,7 +6,7 @@ module.exports = {
 	patterns: [`[the] [first] index of %text% in %text%`,
 		`[the] last index of %text% in %text%`],
 	returns: "integer",
-	run: async (options, text, search) => {
+	run: async (options, search, text) => {
 		if(options.matchIndex === 0) return text.indexOf(search);
 		else return text.lastIndexOf(search);
 	}

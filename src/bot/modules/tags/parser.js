@@ -107,7 +107,7 @@ module.exports = async (options, string) => {
 		else line = line.trim();
 
 		let found = findSyntax(line);
-		if(!found) throw new TagError(`No syntax found for ${line}`);
+		if(!found) throw new TagError(`No syntax found for "${line}"`);
 		linesParsed.push(found);
 	}
 
