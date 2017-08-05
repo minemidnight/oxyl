@@ -16,7 +16,9 @@ function replacedNestedBrackets(string) {
 			indexes.push(i + 1);
 		} else if(char === "]") {
 			let pop = indexes.pop();
-			if(string.charAt(pop - 2) === " ") {
+			if(i - pop === 1) {
+				string = `${string.substring(0, pop - 1)}(${string.substring(pop, i)})?${string.substring(i + 1)}`;
+			} else if(string.charAt(pop - 2) === " ") {
 				string = `${string.substring(0, pop - 2)}( ${string.substring(pop, i)})?${string.substring(i + 1)}`;
 			} else if(string.charAt(i + 1) === " ") {
 				string = `${string.substring(0, pop - 1)}(${string.substring(pop, i)} )?${string.substring(i + 2)}`;
@@ -28,11 +30,12 @@ function replacedNestedBrackets(string) {
 		}
 	}
 
-	return string.replace(/\((.*?)\)/g, "(?:$1)");
+	return string.replace(/\((.+?)\)/g, "(?:$1)");
 }
 
 function regexFromPattern(pattern, replace) {
 	if(replace !== false) pattern = replacedNestedBrackets(pattern);
+	console.log(pattern);
 	return pattern;
 }
 
@@ -84,11 +87,11 @@ types.forEach(type => {
 	}
 });
 
-function findSyntax(string) {
+function findSyntax(string, invalidPatterns = []) {
 	let patternFound;
-	let syntax = syntaxes.find(syn => {
+	let syntax = syntaxes.filter(syn => !~invalidPatterns.indexOf(syn.name)).find(syn => {
 		patternFound = syn.patterns
-			.find(pattern => new RegExp(`^${pattern.replace(/%.*?%/g, "(.*?)")}$`, "i").test(string));
+			.find(pattern => new RegExp(`^${pattern.replace(/%.+?%/g, "(.+?)")}$`, "i").test(string));
 		if(patternFound) {
 			return true;
 		} else {
