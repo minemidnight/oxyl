@@ -38,18 +38,20 @@ async function getResult(options, { code, pattern, syntax }, invalidPatterns = [
 	options.matchIndex = syntax.patterns.indexOf(pattern);
 
 	let values = [];
-	let newPattern = new RegExp(`^${pattern.replace(/%.+?%/g, "(.+?)")}$`, "ig");
+	let newPattern = pattern.replace(/%.+?%/g, "(.+?)");
+	if(newPattern.endsWith("(.+?)")) newPattern = `${newPattern.substring(0, newPattern.length - 5)}(.+)`;
+	newPattern = new RegExp(`^${newPattern}$`, "ig");
 	let patternsMatched = newPattern.exec(code);
 	if(patternsMatched) patternsMatched = patternsMatched.slice(1).filter(match => match);
 
 	for(let pMatch of patternsMatched) {
 		let value = await getCorrectPattern(options, pMatch, invalidPatterns);
-		console.log(value);
+		values.push(value);
 	}
 
 
 	if(!syntax.giveFullLists) values = values.map(val => val.value ? val.value : val);
-	let typesExpected = pattern.match(/%.+?%/g)
+	let typesExpected = pattern.match(/%.+%/g)
 		.map(type => type.endsWith("s") ? type.substring(0, type.length - 1) : type);
 
 	let result = await syntax.run(options, ...values);

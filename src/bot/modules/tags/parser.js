@@ -30,12 +30,11 @@ function replacedNestedBrackets(string) {
 		}
 	}
 
-	return string.replace(/\((.+?)\)/g, "(?:$1)");
+	return string.replace(/\((.+)\)/g, "(?:$1)");
 }
 
 function regexFromPattern(pattern, replace) {
 	if(replace !== false) pattern = replacedNestedBrackets(pattern);
-	console.log(pattern);
 	return pattern;
 }
 
@@ -91,12 +90,14 @@ function findSyntax(string, invalidPatterns = []) {
 	let patternFound;
 	let syntax = syntaxes.filter(syn => !~invalidPatterns.indexOf(syn.name)).find(syn => {
 		patternFound = syn.patterns
-			.find(pattern => new RegExp(`^${pattern.replace(/%.+?%/g, "(.+?)")}$`, "i").test(string));
-		if(patternFound) {
-			return true;
-		} else {
-			return false;
-		}
+			.find(pattern => {
+				let newPattern = pattern.replace(/%.+?%/g, "(.+?)");
+				if(newPattern.endsWith("(.+?)")) newPattern = `${newPattern.substring(0, newPattern.length - 5)}(.+)`;
+				newPattern = new RegExp(`^${newPattern}$`, "i");
+				return newPattern.test(string);
+			});
+
+		return !!patternFound;
 	});
 	return syntax ? { code: string, pattern: patternFound, syntax } : undefined;
 }
