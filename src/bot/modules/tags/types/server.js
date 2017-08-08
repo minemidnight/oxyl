@@ -2,8 +2,8 @@ module.exports = {
 	name: "Server",
 	description: "A Discord Server",
 	examples: [`set {_server} to server from event-message`],
-	run: async (options, channel) => ({
+	run: (options, server) => ({
 		type: "server",
-		value: channel
+		value: server
 	})
 };

@@ -5,8 +5,7 @@ module.exports = {
 	patterns: [`return [message] [content] %text%`],
 	run: async (options, text) => {
 		try {
-			// await options.__message.channel.createMessage(text);
-			console.log("return", text);
+			await options.__message.channel.createMessage(text.toString());
 		} catch(err) {
 			throw new options.TagError("Error sending content: too long, or no content?");
 		}

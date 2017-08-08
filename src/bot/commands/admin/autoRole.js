@@ -26,7 +26,7 @@ module.exports = {
 				return __("commands.admin.autoRole.remove.notAutorole", message, { role: message.args[1].name });
 			}
 
-			await r.table("autoRole").get(roleData.id).delete().run();
+			await r.table("autoRole").get(roleData.roleID).delete().run();
 			return __("commands.admin.autoRole.remove.success", message, { role: message.args[1].name });
 		} else if(message.args[0] === "list") {
 			if(roleData.length === 0) return __("commands.admin.autoRole.list.noAutoroles", message);

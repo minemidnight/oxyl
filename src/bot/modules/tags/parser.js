@@ -30,7 +30,7 @@ function replacedNestedBrackets(string) {
 		}
 	}
 
-	return string.replace(/\((.+)\)/g, "(?:$1)");
+	return string.replace(/\((.+?)\)/g, "(?:$1)");
 }
 
 function regexFromPattern(pattern, replace) {
@@ -80,6 +80,8 @@ conditions.forEach(cond => {
 
 types.forEach(type => {
 	let file = require(`${__dirname}/types/${type}`);
+	// file.returns = type.substring(0, type.lastIndexOf("."));
+	file.isType = true;
 	if(file.patterns) {
 		file.patterns = file.patterns.map(pattern => regexFromPattern(pattern, false));
 		syntaxes.push(file);
@@ -88,9 +90,10 @@ types.forEach(type => {
 
 function findSyntax(string, invalidPatterns = []) {
 	let patternFound;
-	let syntax = syntaxes.filter(syn => !~invalidPatterns.indexOf(syn.name)).find(syn => {
+	let syntax = syntaxes.find(syn => {
 		patternFound = syn.patterns
-			.find(pattern => {
+			.find((pattern, i) => {
+				if(invalidPatterns.find(invalid => invalid.name === syn.name && invalid.index === i)) return false;
 				let newPattern = pattern.replace(/%.+?%/g, "(.+?)");
 				if(newPattern.endsWith("(.+?)")) newPattern = `${newPattern.substring(0, newPattern.length - 5)}(.+)`;
 				newPattern = new RegExp(`^${newPattern}$`, "i");

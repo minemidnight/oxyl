@@ -26,7 +26,8 @@ module.exports = {
 					action: message.args[1],
 					censorID: id,
 					guildID: message.channel.guild.id,
-					regex: message.args[2]
+					regex: message.args[2],
+					id: [id, message.channel.guild.id]
 				}).run();
 				return __("commands.moderator.censor.add.success", message);
 			}

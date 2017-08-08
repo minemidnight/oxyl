@@ -2,7 +2,7 @@ module.exports = {
 	name: "Substring",
 	description: "Extracts parts of a text",
 	examples: [`set {_test} to substring of "abc" from chars 1 to 3`],
-	patterns: [`[the] [(part|sub[ ](text|string)) of %texts% (between|from) (ind(ex|ices)|char[acter][s])]` +
+	patterns: [`[the] (part|sub[ ](text|string)) of %texts% (between|from) (ind(ex|ices)|char[acter][s])` +
 		`%integer% [(and|to) (index|char[acter])] %integer%`,
 	`[the] first [%integer%] character[s] of %texts%`,
 	`[the] last [%integer%] character[s] of %texts%`,

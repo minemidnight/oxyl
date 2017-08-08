@@ -4,7 +4,7 @@ module.exports = {
 	examples: [`set {_list::*} to 5 and 6`],
 	patterns: [`(.*?(, |and)){2,}`],
 	patternRegex: true,
-	run: async (options, items) => ({
+	run: (options, items) => ({
 		type: "list",
 		value: items
 	})

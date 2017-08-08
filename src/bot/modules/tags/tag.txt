@@ -1,5 +1,10 @@
-if name of author from event-message is "hello yes":
-	return "you can ban that member!"
+set {_name} to name of author from event-message;
+if {_name} is "hello":
+	return "you are hello"
+else {_name} is "yes":
+	return "you are yes"
+else {_name} is "hello yes":
+	return "you are hello yes"
 else:
-	return "you cannot ban them"
-end;
+	return "you aren't hello or yes"
+end
