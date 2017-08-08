@@ -15,26 +15,31 @@ async function parseResult(options, returnType, value) {
 	return value;
 }
 
-async function getCorrectPattern(options, pattern, invalidPatterns = []) {
-	if(options.values.has(pattern)) {
-		return options.values.get(pattern);
+async function getCorrectPattern(options, code, invalidPatterns = []) {
+	if(options.values.has(code)) {
+		return options.values.get(code);
 	} else {
-		let found = parser.findSyntax(pattern, invalidPatterns);
+		let found = parser.findSyntax(code, invalidPatterns);
 		if(found) {
 			try {
-				return (await getResult(options, found)).value;
+				let res = await getResult(options, found);
+				if(res.value) return res.value;
+				else return undefined;
 			} catch(err) {
 				let index = found.syntax.patterns.indexOf(found.pattern);
 				invalidPatterns.push({ name: found.syntax.name, index });
-				return await getCorrectPattern(options, pattern, invalidPatterns);
+				return await getCorrectPattern(options, code, invalidPatterns);
 			}
 		} else {
-			throw new TagError(`No syntax or value found for "${pattern}"`);
+			throw new TagError(`No syntax or value found for "${code}"`);
 		}
 	}
 }
 
-async function getResult(options, { code, pattern, syntax }) {
+async function getResult(options, data) {
+	if(typeof data === "string") return await getCorrectPattern(options, data);
+
+	const { code, pattern, syntax } = data;
 	options.matchIndex = syntax.patterns.indexOf(pattern);
 
 	let values = [];
@@ -44,8 +49,11 @@ async function getResult(options, { code, pattern, syntax }) {
 	let patternsMatched = newPattern.exec(code);
 	if(patternsMatched) patternsMatched = patternsMatched.slice(1).filter(match => match);
 
-	for(let pMatch of patternsMatched) {
-		if(!syntax.isType) {
+	for(let index = 0; index < patternsMatched.length; index++) {
+		let pMatch = patternsMatched[index];
+		if(syntax.dontProcess && ~syntax.dontProcess.indexOf(index)) {
+			values.push(pMatch);
+		} else if(!syntax.isType) {
 			let value = await getCorrectPattern(options, pMatch);
 			values.push(value);
 		} else {
@@ -64,12 +72,18 @@ async function getResult(options, { code, pattern, syntax }) {
 
 async function runCode(options, codeBlock) {
 	let firstLine = codeBlock[0];
-	if(firstLine.syntax.name === "If") {
+	if(typeof firstLine !== "object") {
+		console.log("working 3");
+		for(let line of codeBlock) ({ options } = await getResult(options, line));
+		console.log("working 4");
+	} else if(firstLine.syntax.name === "If") {
 		delete options.doneIf;
 		delete options.doElses;
 
 		let value;
+		console.log("working 1");
 		({ options, value } = await getResult(options, firstLine));
+		console.log("working 2");
 		if(value) {
 			options.doneIf = true;
 			for(let line of codeBlock) ({ options } = await getResult(options, line));
@@ -113,8 +127,6 @@ async function runCode(options, codeBlock) {
 		}
 
 		options.values.delete("loop-number");
-	} else {
-		for(let line of codeBlock) ({ options } = await getResult(options, line));
 	}
 
 	return options;

@@ -2,7 +2,8 @@ module.exports = {
 	name: "Get Variable",
 	description: "Get a variable",
 	examples: [`{_a}`],
-	patterns: [`[the] [variable] {%text%}`],
+	patterns: [`(?:the)?(?: variable)?{(.+?)}`],
+	dontProcess: [0],
 	giveFullLists: true,
 	run: (options, name) => {
 		if(!name.match(/^_?[A-Za-z0-9\-:\.\s]+\*?$/)) {

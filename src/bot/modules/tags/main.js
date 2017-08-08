@@ -9,7 +9,7 @@ module.exports = {
 		try {
 			await run({ __message: message }, content);
 		} catch(err) {
-			message.channel.createMessage(`Error running tag!\n${(err.message)}`);
+			message.channel.createMessage(`Error running tag!\n${(err.stack)}`);
 		}
 	}
 };

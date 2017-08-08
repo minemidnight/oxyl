@@ -32,65 +32,55 @@ function replacedNestedBrackets(string) {
 
 	return string.replace(/\((.+?)\)/g, "(?:$1)");
 }
-
-function regexFromPattern(pattern, replace) {
-	if(replace !== false) pattern = replacedNestedBrackets(pattern);
-	return pattern;
-}
-
 let syntaxes = [];
 syntaxes.push({ name: "End Keyword", patterns: ["end"] });
 
 ifStatements.forEach(ifStatement => {
 	let file = require(`${__dirname}/ifStatements/${ifStatement}`);
-	file.patterns = file.patterns.map(pattern => `${regexFromPattern(pattern, false)}:`);
+	file.patterns = file.patterns.map(pattern => `${pattern}:`);
 	syntaxes.push(file);
 });
 
 loops.forEach(loop => {
 	let file = require(`${__dirname}/loops/${loop}`);
-	file.patterns = file.patterns.map(pattern => `${regexFromPattern(pattern)}:`);
+	file.patterns = file.patterns.map(pattern => `${replacedNestedBrackets(pattern)}:`);
 	syntaxes.push(file);
 });
 
 effects.forEach(eff => {
 	let file = require(`${__dirname}/effects/${eff}`);
-	file.patterns = file.patterns.map(regexFromPattern);
+	file.patterns = file.patterns.map(replacedNestedBrackets);
 	syntaxes.push(file);
 });
 
 expressions.forEach(expr => {
 	let file = require(`${__dirname}/expressions/${expr}`);
-	file.patterns = file.patterns.map(regexFromPattern);
+	file.patterns = file.patterns.map(replacedNestedBrackets);
 	syntaxes.push(file);
 });
 
 variables.forEach(variable => {
 	let file = require(`${__dirname}/variables/${variable}`);
-	file.patterns = file.patterns.map(regexFromPattern);
 	syntaxes.push(file);
 });
 
 conditions.forEach(cond => {
 	let file = require(`${__dirname}/conditions/${cond}`);
-	file.patterns = file.patterns.map(regexFromPattern);
+	file.patterns = file.patterns.map(replacedNestedBrackets);
 	file.returns = "boolean";
 	syntaxes.push(file);
 });
 
 types.forEach(type => {
 	let file = require(`${__dirname}/types/${type}`);
-	// file.returns = type.substring(0, type.lastIndexOf("."));
 	file.isType = true;
-	if(file.patterns) {
-		file.patterns = file.patterns.map(pattern => regexFromPattern(pattern, false));
-		syntaxes.push(file);
-	}
+	if(file.patterns) syntaxes.push(file);
 });
 
-function findSyntax(string, invalidPatterns = []) {
-	let patternFound;
-	let syntax = syntaxes.find(syn => {
+function findSyntax(string, invalidPatterns = [], allowedPatterns) {
+	let toSearch = syntaxes, patternFound;
+	if(allowedPatterns) toSearch = toSearch.filter(syn => ~allowedPatterns.indexOf(syn.name));
+	let syntax = toSearch.find(syn => {
 		patternFound = syn.patterns
 			.find((pattern, i) => {
 				if(invalidPatterns.find(invalid => invalid.name === syn.name && invalid.index === i)) return false;
@@ -107,20 +97,19 @@ function findSyntax(string, invalidPatterns = []) {
 
 module.exports = async (options, string) => {
 	string = string.replace(/  +/g, " ");
-	let lineStrings = string.split("\n");
-	let linesParsed = [];
-	for(let line of lineStrings) {
-		if(line.endsWith(";")) line = line.substring(0, line.length - 1).trim();
-		else line = line.trim();
 
-		let found = findSyntax(line);
-		if(!found) throw new TagError(`No syntax found for "${line}"`);
-		linesParsed.push(found);
-	}
+	let linesParsed = string.split("\n").map(line => {
+		line = line.trim();
+		if(line.endsWith(";")) line = line.substring(0, line.length - 1).trim();
+		let found = findSyntax(line, [], ["If", "Else if", "Else", "Loop list", "Loop nth times", "End Keyword"]);
+		return found || line;
+	});
 
 	let codeBlocks = [], spliceIndex = 0;
 	for(let lineIndex = 0; lineIndex < linesParsed.length; lineIndex++) {
 		let line = linesParsed[lineIndex];
+		if(typeof line !== "object") continue;
+
 		switch(line.syntax.name) {
 			case "If":
 			case "Else if":
