@@ -23,8 +23,9 @@ async function getCorrectPattern(options, code, invalidPatterns = []) {
 		if(found) {
 			try {
 				let res = await getResult(options, found);
-				if(res.value) return res.value;
-				else return undefined;
+				if(options.end) return { options };
+				else if(res.value) return res.value;
+				else return { options };
 			} catch(err) {
 				let index = found.syntax.patterns.indexOf(found.pattern);
 				invalidPatterns.push({ name: found.syntax.name, index });
@@ -72,21 +73,25 @@ async function getResult(options, data) {
 
 async function runCode(options, codeBlock) {
 	let firstLine = codeBlock[0];
-	if(typeof firstLine !== "object") {
-		console.log("working 3");
-		for(let line of codeBlock) ({ options } = await getResult(options, line));
-		console.log("working 4");
+	if(options.end) {
+		return options;
+	} else if(typeof firstLine !== "object") {
+		for(let line of codeBlock) {
+			({ options } = await getResult(options, line));
+			if(options.end) break;
+		}
 	} else if(firstLine.syntax.name === "If") {
 		delete options.doneIf;
 		delete options.doElses;
 
 		let value;
-		console.log("working 1");
 		({ options, value } = await getResult(options, firstLine));
-		console.log("working 2");
 		if(value) {
 			options.doneIf = true;
-			for(let line of codeBlock) ({ options } = await getResult(options, line));
+			for(let line of codeBlock) {
+				({ options } = await getResult(options, line));
+				if(options.end) break;
+			}
 		} else {
 			options.doElses = true;
 		}
@@ -98,13 +103,19 @@ async function runCode(options, codeBlock) {
 		({ options, value } = await getResult(options, firstLine));
 		if(value) {
 			options.doneIf = true;
-			for(let line of codeBlock) ({ options } = await getResult(options, line));
+			for(let line of codeBlock) {
+				({ options } = await getResult(options, line));
+				if(options.end) break;
+			}
 		}
 	} else if(firstLine.syntax.name === "Else") {
 		if(options.doneIf) return options;
 		else if(!options.doElses) throw new TagError("Else statement without if statement");
 
-		for(let line of codeBlock) ({ options } = await getResult(options, line));
+		for(let line of codeBlock) {
+			({ options } = await getResult(options, line));
+			if(options.end) break;
+		}
 	} else if(firstLine.syntax.name === "Loop list") {
 		let list;
 		({ options, value: list } = await getResult(options, firstLine));
@@ -113,7 +124,10 @@ async function runCode(options, codeBlock) {
 			options.values.set("loop-value", options.types.integer(value));
 			options.values.set("loop-index", options.types.integer(index + 1));
 
-			for(let line of codeBlock) ({ options } = await getResult(options, line));
+			for(let line of codeBlock) {
+				({ options } = await getResult(options, line));
+				if(options.end) break;
+			}
 		}
 
 		options.values.delete("loop-value");
@@ -123,7 +137,10 @@ async function runCode(options, codeBlock) {
 		({ options, value: times } = await getResult(options, firstLine));
 		for(let i = times - 1; i--;) {
 			options.values.set("loop-number", options.types.integer(i + 1));
-			for(let line of codeBlock) ({ options } = await getResult(options, line));
+			for(let line of codeBlock) {
+				({ options } = await getResult(options, line));
+				if(options.end) break;
+			}
 		}
 
 		options.values.delete("loop-number");
@@ -155,5 +172,8 @@ module.exports = async (options, string) => {
 	});
 
 	const parsed = await parser(options, string);
-	for(let codeBlock of parsed) options = await runCode(options, codeBlock);
+	for(let codeBlock of parsed) {
+		options = await runCode(options, codeBlock);
+		if(options.end) break;
+	}
 };

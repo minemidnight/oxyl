@@ -1,10 +1,11 @@
-set {_name} to name of author from event-message;
+set {_name} to name of author from event-message
+# return {_name} is "hello yes"
 if {_name} is "hello":
 	return "you are hello"
-else {_name} is "yes":
+else if {_name} is "yes":
 	return "you are yes"
-else {_name} is "hello yes":
+else if {_name} is "hello yes":
 	return "you are hello yes"
 else:
-	return "you aren't hello or yes"
+	return "you aren't any"
 end

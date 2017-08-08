@@ -15,6 +15,6 @@ module.exports = {
 };
 
 module.exports.run({
-	author: { id: "123", username: "hello yes" },
+	author: { id: "123", username: "n" },
 	channel: { createMessage: (content) => console.log("message", content) }
 }, require("fs").readFileSync(`${__dirname}/tag.txt`, "utf8"));

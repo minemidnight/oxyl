@@ -100,10 +100,12 @@ module.exports = async (options, string) => {
 
 	let linesParsed = string.split("\n").map(line => {
 		line = line.trim();
-		if(line.endsWith(";")) line = line.substring(0, line.length - 1).trim();
+		if(line.startsWith("#")) return false;
+		else if(line.endsWith(";")) line = line.substring(0, line.length - 1).trim();
+
 		let found = findSyntax(line, [], ["If", "Else if", "Else", "Loop list", "Loop nth times", "End Keyword"]);
 		return found || line;
-	});
+	}).filter(line => line);
 
 	let codeBlocks = [], spliceIndex = 0;
 	for(let lineIndex = 0; lineIndex < linesParsed.length; lineIndex++) {
