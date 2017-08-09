@@ -32,7 +32,7 @@ module.exports = {
 				let res = await tags.run(message, content);
 				return res;
 			} catch(err) {
-				return __("commands.default.tags.test.error", { error: err.message });
+				return __("commands.default.tags.error", { error: err.message });
 			}
 		} else if(arg.toLowerCase().startsWith("delete")) {
 			if(!~arg.indexOf(" ")) return __("commands.default.tags.delete.noTag", message);
