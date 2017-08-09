@@ -58,7 +58,7 @@ module.exports = {
 			await tags.create(tagName, message.author.id, content);
 			return __("commands.default.tags.create.success", message, { name: tagName });
 		} else {
-			let tagName = message.args.toLowerCase();
+			let tagName = arg.toLowerCase();
 			let tag = await tags.get(tagName);
 			if(!tag) return __("commands.default.tags.noTagFound", message, { name: tagName });
 
