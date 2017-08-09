@@ -24,7 +24,7 @@ async function getCorrectPattern(options, code, invalidPatterns = []) {
 			try {
 				let res = await getResult(options, found);
 				if(options.end) return { options };
-				else if(res && res.value !== "undefined" && res.value.value !== "undefined") return res.value;
+				else if(res && res.value !== undefined && res.value.value !== undefined) return res.value;
 				else if(res) return res;
 				else return { options };
 			} catch(err) {
