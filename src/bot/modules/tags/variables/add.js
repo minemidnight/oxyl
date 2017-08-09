@@ -5,7 +5,7 @@ module.exports = {
 	patterns: [`add (.+?) to(?: the)?(?: variable)? {(.+?)}`],
 	dontProcess: [1],
 	giveRaw: true,
-	run: (options, name, any) => {
+	run: (options, { value: any }, name) => {
 		if(!name.match(/^_?[A-Za-z0-9\-:\.\s]+\*?$/)) {
 			throw new options.TagError(`Invalid variable name: {${name}}. ` +
 				`Variables can only contain letters, numbers, colons, periods, spaces, and hypens`);
@@ -33,8 +33,11 @@ module.exports = {
 			prev[prevName].push(any);
 		} else {
 			let value = options.variables.get(name);
+			console.log(name, value);
 			if(!value) throw new options.TagError(`Variable {${name}} is not defined`);
-			options.variables.set(name, value + any);
+			else if(value.type === "text") value.value += any.toString();
+			else ovalue.value = value.value + any;
+			options.variables.set(name, value);
 		}
 	}
 };

@@ -4,5 +4,5 @@ module.exports = {
 	examples: [`set {_amount} to amount of {_member}'s roles`],
 	patterns: [`[the] (amount|number|size)[s] of %lists%`],
 	returns: "integer",
-	run: async (options, list) => options.length
+	run: async (options, list) => list.length
 };

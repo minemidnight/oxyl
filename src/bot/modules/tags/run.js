@@ -49,7 +49,7 @@ async function getResult(options, data) {
 	if(newPattern.endsWith("(.+?)")) newPattern = `${newPattern.substring(0, newPattern.length - 5)}(.+)`;
 	newPattern = new RegExp(`^${newPattern}$`, "ig");
 	let patternsMatched = newPattern.exec(code);
-	if(patternsMatched) patternsMatched = patternsMatched.slice(1).filter(match => match);
+	if(patternsMatched) patternsMatched = patternsMatched.slice(1).filter(match => match !== undefined);
 
 	for(let index = 0; index < patternsMatched.length; index++) {
 		let pMatch = patternsMatched[index];
@@ -69,7 +69,7 @@ async function getResult(options, data) {
 			.map(type => type.endsWith("s") ? type.substring(0, type.length - 1) : type);
 		let valTypes = values.map(val => val.type);
 
-		if(!typesExpected.every((ele, i) => valTypes[i] === ele ||
+		if(!typesExpected.slice(0, valTypes.length).every((ele, i) => valTypes[i] === ele ||
 			ele === "any" ||
 			(ele === "number" && valTypes[i] === "integer"))) {
 			throw new options.TagError(`Invalid parameters for ${syntax.name} in "${code}", ` +
