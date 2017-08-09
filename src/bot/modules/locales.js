@@ -9,7 +9,7 @@ async function loadLocales() {
 	}
 }
 
-global.__ = (context, object = { locale: "en" }, values = {}, capitializeFirst = false) => {
+const __ = global.__ = (context, object = { locale: "en" }, values = {}, capitializeFirst = false) => {
 	if(object.ownerID) object.locale = bot.localeCache.get(object.id) || "en";
 	let string = locales[object.locale];
 	for(let part of context.split(".")) {

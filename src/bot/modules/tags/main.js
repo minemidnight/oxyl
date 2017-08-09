@@ -5,11 +5,12 @@ module.exports = {
 	create: async (name, ownerID, content) => await r.table("tags").insert({ name, ownerID, content }).run(),
 	update: async (name, content) => await r.table("tags").get(name).update({ content }).run(),
 	delete: async name => await r.table("tags").get(name).delete().run(),
-	run: async (message, content) => {
+	list: async page => await r.table("tags").skip(page).limit(100).run(),
+	run: async (message, content, customCommand = false) => {
 		try {
-			await run({ __message: message }, content);
+			await run({ __message: message, customCommand }, content);
 		} catch(err) {
-			message.channel.createMessage(`Error running tag!\n${(err.stack)}`);
+			throw err;
 		}
 	}
 };

@@ -77,6 +77,10 @@ async function getResult(options, data) {
 		}
 	}
 
+	if(syntax.customOnly && !options.customCommand) {
+		throw new options.TagError(`${syntax.name} can only be used in custom commands`);
+	}
+
 	if(!syntax.giveRaw) values = values.map(val => val.value !== undefined ? val.value : val);
 	let result = await syntax.run(options, ...values);
 	let parsed = await parseResult(options, syntax.returns, result);

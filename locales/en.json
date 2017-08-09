@@ -126,6 +126,32 @@
             "stats": {
                 "success": "__**Guilds**__\nLarge (over 250 members): {{largeGuilds}}\nOthers: {{smallGuilds}}\nTotal: {{totalGuilds}}\nStreaming In: {{streamCount}}\n\n__**Other**__\nWorker Memory Usage: {{workerUsage}}MiB\nTotal Memory Usage: {{totalUsage}}GiB\nWorker: {{worker}} (Shards: {{shardRange}})\nUptime: {{uptime}}\nWebsite: {{website}}"
             },
+            "tags": {
+                "noTagFound": "No tag was found under the name `{{name}}`",
+                "error": "Error executing tag:\n```{{error}}\n```",
+                "list": {
+                    "noTags": "There are no tags on this page",
+                    "success": "Tags (page {{page}}):\n```\n{{tags}}```\n\nUse `tag <tag name>` to execute a tag"
+                },
+                "raw": {
+                    "noTag": "Please provide a tag you'd like to see the content of! Correct usage: `tag raw <tag name>`",
+                    "success": "Tag `{{name}}`:\n```vb\n{{content}}\n```"
+                },
+                "test": {
+                    "noContent": "Please provide tag content to test! Correct usage: `tag test <content>`"
+                },
+                "delete": {
+                    "noTag": "Please provide a tag you'd like to delete! Correct usage: `tag delete <tag name>`",
+                    "notOwner": "You cannot delete a tag you do not own",
+                    "success": "Deleted tag `{{name}}`"
+                },
+                "create": {
+                    "noArgs": "You must provide a name and content for this tag! Usage: `tag create <tag> <content>`",
+                    "noContent": "You must provide content for this tag! Usage: `tag create <tag> <content>`",
+                    "alreadyExists": "Tag `{{name}}` already exists",
+                    "success": "Successfully created tag `{{name}}`"
+                }
+            },
             "userInfo": {
                 "success": "__**User**__: {{user}}\nID: {{id}}\nAvatar: {{avatar}}\nPlaying Game: {{game}}\nStatus: {{status}}\nJoin Date: {{joinDate}}\nGuild Join Date: {{guildJoin}}"
             },
