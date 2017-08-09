@@ -32,7 +32,7 @@ module.exports = {
 				let res = await tags.run(message, content);
 				return res;
 			} catch(err) {
-				return __("commands.default.tags.error", { error: err.message });
+				return __("commands.default.tags.error", message, { error: err.message });
 			}
 		} else if(arg.toLowerCase().startsWith("delete")) {
 			if(!~arg.indexOf(" ")) return __("commands.default.tags.delete.noTag", message);
@@ -43,7 +43,7 @@ module.exports = {
 			else if(tag.ownerID !== message.author.id) return __("commands.default.tags.delete.notOwner");
 
 			await tags.delete(tagName);
-			return __("commands.default.tags.delete.success", { name: tagName });
+			return __("commands.default.tags.delete.success", message, { name: tagName });
 		} else if(arg.toLowerCase().startsWith("create")) {
 			if(!~arg.indexOf(" ")) return __("commands.default.tags.create.noArgs", message);
 
@@ -66,7 +66,7 @@ module.exports = {
 				let res = await tags.run(message, tag.content);
 				return res;
 			} catch(err) {
-				return __("commands.default.tags.error", { error: err.message });
+				return __("commands.default.tags.error", message, { error: err.message });
 			}
 		}
 	},
