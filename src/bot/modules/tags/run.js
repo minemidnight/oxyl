@@ -24,7 +24,8 @@ async function getCorrectPattern(options, code, invalidPatterns = []) {
 			try {
 				let res = await getResult(options, found);
 				if(options.end) return { options };
-				else if(res.value) return res.value;
+				else if(res && res.value && res.value.value) return res.value;
+				else if(res) return res;
 				else return { options };
 			} catch(err) {
 				let index = found.syntax.patterns.indexOf(found.pattern);
@@ -62,13 +63,24 @@ async function getResult(options, data) {
 		}
 	}
 
-	if(!syntax.giveRaw) values = values.map(val => val.value !== undefined ? val.value : val);
 	let typesExpected = pattern.match(/%.+?%/g);
-	if(typesExpected) typesExpected.map(type => type.endsWith("s") ? type.substring(0, type.length - 1) : type);
+	if(typesExpected) {
+		typesExpected = typesExpected.map(type => type.substring(1, type.length - 1))
+			.map(type => type.endsWith("s") ? type.substring(0, type.length - 1) : type);
+		let valTypes = values.map(val => val.type);
 
+		if(!typesExpected.every((ele, i) => valTypes[i] === ele ||
+			ele === "any" ||
+			(ele === "number" && valTypes[i] === "integer"))) {
+			throw new options.TagError(`Invalid parameters for ${syntax.name} in "${code}", ` +
+				`expected ${typesExpected.join(", ")} but got ${valTypes.join(", ")}`);
+		}
+	}
+
+	if(!syntax.giveRaw) values = values.map(val => val.value !== undefined ? val.value : val);
 	let result = await syntax.run(options, ...values);
 	let parsed = await parseResult(options, syntax.returns, result);
-	return { value: parsed, options };
+	return { value: parsed, options, type: syntax.returns };
 }
 
 async function runCode(options, codeBlock) {
@@ -135,8 +147,8 @@ async function runCode(options, codeBlock) {
 	} else if(firstLine.syntax.name === "Loop nth times") {
 		let times;
 		({ options, value: times } = await getResult(options, firstLine));
-		for(let i = times - 1; i--;) {
-			options.values.set("loop-number", options.types.integer(i + 1));
+		for(let i = times; i--;) {
+			options.values.set("loop-number", options.types.integer(times - i));
 			for(let line of codeBlock) {
 				({ options } = await getResult(options, line));
 				if(options.end) break;

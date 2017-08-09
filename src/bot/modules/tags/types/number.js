@@ -1,5 +1,5 @@
 module.exports = {
-	name: "Integer",
+	name: "Number",
 	description: "A number, with a floating-point (decimal) value",
 	examples: [`set {_number} to 5.5`],
 	patterns: [`(\\d.\\d)`],

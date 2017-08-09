@@ -5,6 +5,7 @@ module.exports = {
 	patterns: [`set(?: the)?(?: variable)? {(.+?)} to (.+)`],
 	dontProcess: [0],
 	giveFullLists: true,
+	giveRaw: true,
 	run: (options, name, any) => {
 		if(!name.match(/^_?[A-Za-z0-9\-:\.\s]+\*?$/)) {
 			throw new options.TagError(`Invalid variable name: {${name}}. ` +

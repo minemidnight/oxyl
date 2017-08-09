@@ -1,5 +1,12 @@
+set {_text} to " "
+loop 5 times:
+	# set {_text} to {_text} + loop-number
+	add loop-number to {_text}
+end
+return {_text}
+
 set {_name} to name of author from event-message
-# return {_name} is "hello yes"
+set {_id} to id of author from event-message
 if {_name} is "hello":
 	return "you are hello"
 else if {_name} is "yes":

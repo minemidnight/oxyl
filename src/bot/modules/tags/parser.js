@@ -4,7 +4,7 @@ const conditions = fs.readdirSync(`${__dirname}/conditions`);
 const effects = fs.readdirSync(`${__dirname}/effects`);
 const expressions = fs.readdirSync(`${__dirname}/expressions`);
 const ifStatements = fs.readdirSync(`${__dirname}/ifStatements`);
-const loops = fs.readdirSync(`${__dirname}/loops`);
+const loops = fs.readdirSync(`${__dirname}/loops`).reverse(); // prioritize time syntax checking first
 const types = fs.readdirSync(`${__dirname}/types`);
 const variables = fs.readdirSync(`${__dirname}/variables`);
 

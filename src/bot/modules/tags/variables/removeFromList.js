@@ -5,6 +5,7 @@ module.exports = {
 		`set {_names::*} to "Bob", "Joe" and "Bill"\nremove "Joe" to {_names::*}`],
 	patterns: [`remove (.+?) from (?:the )?(?: variable)? {(.+?)}`],
 	dontProcess: [1],
+	giveRaw: true,
 	run: (options, name, any) => {
 		if(!name.match(/^_?[A-Za-z0-9\-:\.\s]+\*?$/)) {
 			throw new options.TagError(`Invalid variable name: {${name}}. ` +

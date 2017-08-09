@@ -4,6 +4,7 @@ module.exports = {
 	examples: [`set {_int} to 4\nadd 1 to {_int}`, `set {_names::*} to "Bob" and "Bill"\nadd "Joe" to {_names::*}`],
 	patterns: [`add (.+?) to(?: the)?(?: variable)? {(.+?)}`],
 	dontProcess: [1],
+	giveRaw: true,
 	run: (options, name, any) => {
 		if(!name.match(/^_?[A-Za-z0-9\-:\.\s]+\*?$/)) {
 			throw new options.TagError(`Invalid variable name: {${name}}. ` +
