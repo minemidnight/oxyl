@@ -8,9 +8,10 @@ module.exports = {
 	list: async page => await r.table("tags").skip(page).limit(100).run(),
 	run: async (message, content, customCommand = false) => {
 		try {
-			await run({ __message: message, customCommand }, content);
+			return await run({ __message: message, customCommand }, content);
 		} catch(err) {
 			throw err;
 		}
 	}
 };
+
