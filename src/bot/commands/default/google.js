@@ -6,7 +6,7 @@ module.exports = {
 		let { text: body } = await superagent.get(`https://www.google.com/search?q=${encodeURI(message.args[0])}`);
 		let $ = cheerio.load(body); // eslint-disable-line id-length
 
-		let resultmsg;
+		let resultmsg = "";
 		let results = $("h3.r a");
 		if(!results.get().length) return __("commands.default.google.noResults", message);
 
@@ -78,9 +78,11 @@ module.exports = {
 
 			let link = ele.attr("href");
 			if(!link) continue;
+			else if(~link.indexOf("/url?q=")) link = link.substring(link.indexOf("/url?q=") + 7, link.indexOf("&sa="));
 
-			if(i === 0) resultmsg += link;
-			else resultmsg += `\n<${link}>`;
+
+			if(!i) link = `<${link}>`;
+			resultmsg += `\n${link}`;
 		}
 
 		return resultmsg;
