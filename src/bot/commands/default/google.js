@@ -24,7 +24,7 @@ module.exports = {
 				let partOfSpeech = tableData.eq(i).find("div").text();
 				resultmsg += `\n_${partOfSpeech}_`;
 
-				let definitions = tableData.eq(i).find("ol li").eq(0).text().get();
+				let definitions = tableData.eq(i).find("ol li").eq(0).text();
 				definitions.forEach((index, definition) => resultmsg += `\n\n**${index}**.  ${definition}`);
 			}
 		}
@@ -42,15 +42,20 @@ module.exports = {
 
 		let infoCard = $("#rhs_block ol .g");
 		if(infoCard.length) {
+			resultmsg += `\n\n**${__("phrases.infoCard", message)}**\n${calculator.text()}`;
+
 			let title = infoCard.find("._o0d div ._B5d").text();
 			let info = infoCard.find("._o0d div ._zdb._Pxg").text();
 			let description = infoCard.find("._o0d ._tXc span").clone().children().remove().end().text();
 
-			resultmsg += `\n${title} (${info})\n${description}`;
+			if(info) resultmsg += `\n${title} (${info})\n${description}`;
+			else resultmsg += `\n${title}\n${description}`;
 		}
 
 		let stories = $("#ires ol").children().eq(2).find("table.ts tbody td").eq(1).children();
 		if(stories.length) {
+			resultmsg += `\n\n**${__("phrases.stories", message)}**\n${calculator.text()}`;
+
 			for(let i = 0; i < stories.length; i++) {
 				let ele = stories.eq(i).find("a");
 				let link = ele.attr("href");
