@@ -29,7 +29,7 @@ module.exports = {
 		}
 
 		let translate = $("#tw-ob");
-		if(translate.get().length()) {
+		if(translate.get().length) {
 			resultmsg += `\n\n**${__("phrases.translation", message)}**`;
 
 			let fromLang = translate.find("#tw-sl :selected").text();
@@ -40,7 +40,7 @@ module.exports = {
 		}
 
 		let calculator = $("#cwmcwd");
-		if(calculator.get().length()) {
+		if(calculator.get().length) {
 			resultmsg += `\n\n**${__("phrases.calculator", message)}**`;
 
 			let calculation = calculator.find("#cwles").text().trim();
