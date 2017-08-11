@@ -25,7 +25,7 @@ module.exports = {
 				resultmsg += `\n_${partOfSpeech}_`;
 
 				let definitions = tableData.eq(i).find("ol li").map((index, element) => $(element).text()).get();
-				definitions.forEach((index, definition) => resultmsg += `\n\n**${index}**.  ${definition}`);
+				definitions.forEach((definition, index) => resultmsg += `\n\n**${index}**.  ${definition}`);
 			}
 		}
 
