@@ -67,7 +67,7 @@ module.exports = {
 				let link = ele.attr("href");
 				let storyName = ele.find("div._Jvo div").text();
 
-				if(!i) link = `<${link}>`;
+				if(i) link = `<${link}>`;
 				resultmsg += `\n${storyName}\n_${link}`;
 			}
 		}
@@ -81,7 +81,7 @@ module.exports = {
 			else if(~link.indexOf("/url?q=")) link = link.substring(link.indexOf("/url?q=") + 7, link.indexOf("&sa="));
 
 
-			if(!i) link = `<${link}>`;
+			if(i) link = `<${link}>`;
 			resultmsg += `\n${link}`;
 		}
 
