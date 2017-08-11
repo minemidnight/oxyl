@@ -22,7 +22,7 @@ module.exports = {
 			let definitions = dictionary.find(".vmod .vmod ol.lr_dct_sf_sens li");
 			for(let i = 0; i < definitions.get().length(); i++) {
 				let ele = definitions.eq(i).find(".vmod ._Jig").parent();
-				let [definition, example] = ele.find("span").map((i, element) => $(element).text()).get();
+				let [definition, example] = ele.find("span").map((index, element) => $(element).text()).get();
 
 				resultmsg += `\n\n**${i}**.  ${definition}\n${example}`;
 			}
