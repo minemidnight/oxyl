@@ -11,7 +11,7 @@ module.exports = {
 		let results = $(".g .r a");
 		if(!results.length) return __("commands.default.google.noResults", message);
 
-		let dictionary = $(".g").has("table").has(".r").eq(0);
+		let dictionary = $("#ires ol").children().eq(0).has("table").eq(0);
 		if(dictionary.length) {
 			resultmsg += `\n\n**${__("phrases.dictionary", message)}**`;
 
