@@ -11,7 +11,7 @@ module.exports = {
 		let results = $(".g .r a");
 		if(!results.get().length) return __("commands.default.google.noResults", message);
 
-		let dictionary = $(".g div");
+		let dictionary = $(".g").eq(0).find("div");
 		if(dictionary.get().length) {
 			resultmsg += `\n\n**${__("phrases.dictionary", message)}**`;
 
@@ -23,7 +23,7 @@ module.exports = {
 			resultmsg += `\n${word} (${pronunciation})\n_${partOfSpeech}`;
 
 			let definitions = tableData.find("ol li");
-			for(let i = 0; i < definitions.get().length(); i++) {
+			for(let i = 0; i < definitions.get().length; i++) {
 				let definition = definitions.eq(i).text();
 				resultmsg += `\n\n**${i}**.  ${definition}`;
 			}
@@ -51,7 +51,7 @@ module.exports = {
 
 		let stories = $(".g div table.ts tbody td").eq(1).find("div");
 		if(stories.get().length) {
-			for(let i = 0; i < stories.get().length(); i++) {
+			for(let i = 0; i < stories.get().length; i++) {
 				let ele = stories.eq(i).find("a");
 				let link = ele.attr("href");
 				let storyName = ele.text();
