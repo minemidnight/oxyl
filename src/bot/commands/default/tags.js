@@ -62,11 +62,15 @@ module.exports = {
 			let tag = await tags.get(tagName);
 			if(!tag) return __("commands.default.tags.noTagFound", message, { name: tagName });
 
-			try {
-				let res = await tags.run(message, tag.content);
-				return res;
-			} catch(err) {
-				return __("commands.default.tags.error", message, { error: err.message });
+			if(tag.type === "plain") {
+				return tag.content;
+			} else {
+				try {
+					let res = await tags.run(message, tag.content);
+					return res;
+				} catch(err) {
+					return __("commands.default.tags.error", message, { error: err.message });
+				}
 			}
 		}
 	},
