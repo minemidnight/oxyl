@@ -11,7 +11,7 @@ module.exports = {
 		let results = $(".g .r a");
 		if(!results.length) return __("commands.default.google.noResults", message);
 
-		let dictionary = $(".g").eq(0).find("div:not(.s,.osl,.kv)").eq(0);
+		let dictionary = $(".g").eq(0).find("div").not(".s").not(".osl").not(".kv").eq(0);
 		if(dictionary.length) {
 			resultmsg += `\n\n**${__("phrases.dictionary", message)}**`;
 
