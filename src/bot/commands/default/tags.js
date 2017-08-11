@@ -11,7 +11,7 @@ module.exports = {
 			if(!tagList.length) {
 				return __("commands.default.tags.list.noTags", message);
 			} else {
-				tagList = tagList.map(tag => tag.name);
+				tagList = tagList.map(tag => tag.name).join(", ");
 				return __("commands.default.tags.list.success", message, { page, tags: tagList });
 			}
 		} else if(arg.toLowerCase().startsWith("raw")) {
