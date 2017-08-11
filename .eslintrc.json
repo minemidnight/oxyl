@@ -104,7 +104,6 @@
 		"max-nested-callbacks": ["error", { "max": 3 }],
 		"max-statements-per-line": ["error", { "max": 2 }],
 		"new-cap": "error",
-		"newline-per-chained-call": ["error", { "ignoreChainWithDepth": 4 }],
 		"no-array-constructor": "error",
 		"no-lonely-if": "error",
 		"no-mixed-operators": "error",

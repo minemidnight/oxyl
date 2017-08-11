@@ -8,66 +8,55 @@ module.exports = {
 		let $ = cheerio.load(body); // eslint-disable-line id-length
 
 		let resultmsg = "";
-		let results = $("h3.r a");
+		let results = $(".g .r a");
 		if(!results.get().length) return __("commands.default.google.noResults", message);
 
-		let dictionary = $("div.lr_dct_ent.vmod");
+		let dictionary = $(".g div");
 		if(dictionary.get().length) {
 			resultmsg += `\n\n**${__("phrases.dictionary", message)}**`;
 
-			let word = dictionary.find(".vk_ans span").text();
-			let pronunciation = dictionary.find(".vmod .lr_dct_ent_ph .lr_dct_ph span").text();
-			let partOfSpeech = dictionary.find(".vmod .vmod lr_dct_sf_h i span").text();
+			let [word, pronunciation] = dictionary.find(".r").eq(0).find("div span")
+				.map((index, element) => $(element).text()).get();
+
+			let tableData = dictionary.find("table tbody").eq(0).find("tr td");
+			let partOfSpeech = tableData.find("div").text();
 			resultmsg += `\n${word} (${pronunciation})\n_${partOfSpeech}`;
 
-			let definitions = dictionary.find(".vmod .vmod ol.lr_dct_sf_sens li");
+			let definitions = tableData.find("ol li");
 			for(let i = 0; i < definitions.get().length(); i++) {
-				let ele = definitions.eq(i).find(".vmod ._Jig").parent();
-				let [definition, example] = ele.find("span").map((index, element) => $(element).text()).get();
-
-				resultmsg += `\n\n**${i}**.  ${definition}\n${example}`;
+				let definition = definitions.eq(i).text();
+				resultmsg += `\n\n**${i}**.  ${definition}`;
 			}
 		}
 
-		let translate = $("#tw-ob");
+		let translate = $(".g div table.ts tbody tr td h3.r");
 		if(translate.get().length) {
 			resultmsg += `\n\n**${__("phrases.translation", message)}**`;
 
-			let fromLang = translate.find("#tw-sl :selected").text();
-			let toLang = translate.find("#tw-tl :selected").text();
-			let input = translate.find("#tw-source-text-ta").val();
-			let output = translate.find("#tw-target-text span").text();
-			resultmsg += `\n${fromLang} => ${toLang}\n${input} => ${output}`;
+			let [input, output] = translate.find("span").map((index, element) => $(element).text()).get();
+			resultmsg += `\n${input} => ${output}`;
 		}
 
-		let calculator = $("#cwmcwd");
-		if(calculator.get().length) {
-			resultmsg += `\n\n**${__("phrases.calculator", message)}**`;
+		let calculator = $("#topstuff ._tLi tbody tr td").eq(3).find("span.nobr h2.r");
+		if(calculator.get().length) resultmsg += `\n\n**${__("phrases.calculator", message)}**\n${calculator.text()}`;
 
-			let calculation = calculator.find("#cwles").text().trim();
-			let result = calculator.find("#cwos").text();
-			resultmsg += `\n${calculation} ${result}`;
-		}
-
-		let infoCard = $("#rhs_block").find("div.xpdopen div._OKe div").eq(1);
+		let infoCard = $("#rhs_block ol .g");
 		if(infoCard.get().length) {
-			let title = infoCard.find(".kp-header ._cFb ._fdf .kno-fb-ctx.kno-erc-pt span").text();
-			let info = infoCard.find(".kp-header ._cFb ._fdf .kno-fb-ctx._gdf span").text();
-			let website = infoCard.find(".mod ._ilf ._glf.ellip").attr("href");
-			let description = infoCard.find(".kno-rdesc span").eq(0).text();
+			let title = infoCard.find("._o0d div ._B5d").text();
+			let info = infoCard.find("._o0d div ._zdb._Pxg").text();
+			let description = infoCard.find("._o0d ._tXc span").clone().children().remove().end().text();
 
-			if(website) resultmsg += `\n${title} (${info}) - <${website}>`;
-			else resultmsg += `\n${title} (${info})`;
-			resultmsg += `\n${description}`;
+			resultmsg += `\n${title} (${info})\n${description}`;
 		}
 
-		let stories = $("._0cr").find("div");
+		let stories = $(".g div table.ts tbody td").eq(1).find("div");
 		if(stories.get().length) {
 			for(let i = 0; i < stories.get().length(); i++) {
-				let ele = stories.eq(i).find("g-inner-card a");
+				let ele = stories.eq(i).find("a");
 				let link = ele.attr("href");
-				let storyName = ele.find("div._Jvo div").text();
+				let storyName = ele.text();
 
+				if(~link.indexOf("/url?q=")) link = link.substring(link.indexOf("/url?q=") + 7, link.indexOf("&sa="));
 				if(i) link = `<${link}>`;
 				resultmsg += `\n${storyName}\n_${link}`;
 			}
