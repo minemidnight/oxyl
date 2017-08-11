@@ -11,7 +11,7 @@ module.exports = {
 		let results = $(".g .r a");
 		if(!results.length) return __("commands.default.google.noResults", message);
 
-		let dictionary = $(".g").eq(0).find("div:not(.s,.osl,.kv)").eq(0);
+		let dictionary = $(".g").has("table").has(".r").eq(0);
 		if(dictionary.length) {
 			resultmsg += `\n\n**${__("phrases.dictionary", message)}**`;
 
@@ -19,13 +19,13 @@ module.exports = {
 				.map((index, element) => $(element).text()).get();
 
 			let tableData = dictionary.find("table tbody").eq(0).find("tr td");
-			let partOfSpeech = tableData.find("div").text();
-			resultmsg += `\n${word} (${pronunciation})\n_${partOfSpeech}`;
+			resultmsg += `\n${word} (${pronunciation})`;
+			for(let i = 0; i < tableData.length; i++) {
+				let partOfSpeech = tableData.eq(i).find("div").text();
+				resultmsg += `\n_${partOfSpeech}_`;
 
-			let definitions = tableData.find("ol li");
-			for(let i = 0; i < definitions.length; i++) {
-				let definition = definitions.eq(i).text();
-				resultmsg += `\n\n**${i}**.  ${definition}`;
+				let definitions = tableData.eq(i).find("ol li").eq(0).text().get();
+				definitions.forEach((index, definition) => resultmsg += `\n\n**${index}**.  ${definition}`);
 			}
 		}
 
@@ -49,14 +49,15 @@ module.exports = {
 			resultmsg += `\n${title} (${info})\n${description}`;
 		}
 
-		let stories = $(".g div table.ts tbody td").eq(1).find("div");
+		let stories = $("#ires ol").children().eq(2).find("table.ts tbody td").eq(1).children();
 		if(stories.length) {
 			for(let i = 0; i < stories.length; i++) {
 				let ele = stories.eq(i).find("a");
 				let link = ele.attr("href");
 				let storyName = ele.text();
 
-				if(~link.indexOf("/url?q=")) link = link.substring(link.indexOf("/url?q=") + 7, link.indexOf("&sa="));
+				if(!link) continue;
+				else if(~link.indexOf("/url?q=")) link = link.substring(link.indexOf("/url?q=") + 7, link.indexOf("&sa="));
 				if(i) link = `<${link}>`;
 				resultmsg += `\n${storyName}\n_${link}`;
 			}
