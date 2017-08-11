@@ -22,6 +22,7 @@ module.exports = {
 			resultmsg += `\n${word} (${pronunciation})`;
 			for(let i = 0; i < tableData.length; i++) {
 				let partOfSpeech = tableData.eq(i).find("div").text();
+				if(!partOfSpeech) continue;
 				resultmsg += `\n\n_${partOfSpeech}_`;
 
 				let definitions = tableData.eq(i).find("ol li").map((index, element) => $(element).text()).get();
