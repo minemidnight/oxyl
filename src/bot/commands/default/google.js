@@ -22,10 +22,10 @@ module.exports = {
 			resultmsg += `\n${word} (${pronunciation})`;
 			for(let i = 0; i < tableData.length; i++) {
 				let partOfSpeech = tableData.eq(i).find("div").text();
-				resultmsg += `\n_${partOfSpeech}_`;
+				resultmsg += `\n\n_${partOfSpeech}_`;
 
 				let definitions = tableData.eq(i).find("ol li").map((index, element) => $(element).text()).get();
-				definitions.forEach((definition, index) => resultmsg += `\n\n**${index}**.  ${definition}`);
+				definitions.forEach((definition, index) => resultmsg += `\n**${index}**.  ${definition}`);
 			}
 		}
 
