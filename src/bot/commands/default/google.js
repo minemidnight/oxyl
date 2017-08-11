@@ -11,7 +11,7 @@ module.exports = {
 		let results = $(".g .r a");
 		if(!results.length) return __("commands.default.google.noResults", message);
 
-		let dictionary = $(".g").eq(0).find("div").not(".s").not(".osl").not(".kv").eq(0);
+		let dictionary = $(".g").eq(0).find("div:not(.s,.osl,.kv)").eq(0);
 		if(dictionary.length) {
 			resultmsg += `\n\n**${__("phrases.dictionary", message)}**`;
 
@@ -23,7 +23,7 @@ module.exports = {
 			resultmsg += `\n${word} (${pronunciation})\n_${partOfSpeech}`;
 
 			let definitions = tableData.find("ol li");
-			for(let i = 0; i < definition.length; i++) {
+			for(let i = 0; i < definitions.length; i++) {
 				let definition = definitions.eq(i).text();
 				resultmsg += `\n\n**${i}**.  ${definition}`;
 			}
