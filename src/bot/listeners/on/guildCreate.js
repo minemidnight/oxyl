@@ -1,10 +1,18 @@
 const statPoster = require("../../modules/statPoster.js");
 module.exports = async guild => {
+	let defaultChannel = guild.channels.filter(channel => channel.type === 0)
+		.sort((a, b) => a.position - b.position)
+		.find(channel => channel.permissionsOf(bot.user.id).has("readMessages") &&
+			channel.permissionsOf(bot.user.id).has("sendMessages"));
+
 	if(bot.config.beta) {
 		let donator = await r.db("Oxyl").table("donators").get(guild.ownerID).run();
 		if(!donator) {
-			await guild.defaultChannel.createMessage("You are not a donator, you cannot use Oxyl Beta!")
+			if(defaultChannel) {
+				await defaultChannel.createMessage("You are not a donator, you cannot use Oxyl Beta!")
 				.catch(err => {}); // eslint-disable-line
+			}
+
 			guild.leave();
 		}
 		return;
@@ -18,7 +26,7 @@ module.exports = async guild => {
 	joinMessage += "💰 Feeling generous? Donate at <http://patreon.com/minemidnight>.\n";
 	joinMessage += "📎 Need support, or want to be notified about updates? ";
 	joinMessage += "Join Oxyl's Server at http://discord.gg/9wkTDcE";
-	guild.defaultChannel.createMessage(joinMessage);
+	if(defaultChannel) defaultChannel.createMessage(joinMessage);
 
 	if(bot.config.bot.serverChannel) {
 		let owner = bot.users.get(guild.ownerID);

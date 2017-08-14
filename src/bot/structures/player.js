@@ -152,8 +152,8 @@ async function updateStreamCount() {
 function handlePlayer(player) {
 	let createMessage = async embed => {
 		if(!player.channel || !player.connection) return;
-		let messageDisabled = await r.table("settings").get(["disable-music-messages", player.id]).run() || {};
-		if(messageDisabled.value) return;
+		let messageDisabled = await r.table("settings").get(["disable-music-messages", player.id]).run();
+		if(messageDisabled && messageDisabled.value) return;
 
 		let listening = player.guild.channels.get(player.connection.channelID).voiceMembers
 			.filter(member => !member.bot && !member.voiceState.selfDeaf).length;
@@ -168,7 +168,7 @@ function handlePlayer(player) {
 			title: `▶ ${__("phrases.nowPlaying", this.guild)}`
 		};
 
-		if(song.id) song.footer.text = `ID: ${song.id} |${song.footer.text}`;
+		if(song.id) embed.footer.text = `ID: ${song.id} |${embed.footer.text}`;
 		if(song.duration && !isNaN(song.duration)) embed.description += ` (${bot.utils.secondsToDuration(song.duration)})`;
 		createMessage(embed);
 	});

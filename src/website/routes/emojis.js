@@ -25,7 +25,7 @@ async function updateEmojis() {
 			`.map(g => g.emojis.map(e => ({ id: e.id, name: e.name })))` +
 			`.reduce((a, b) => a.concat(b))`,
 		type: "all_shards"
-	})).results.reduce((a, b) => a.concat(b));
+	})).results.reduce((a, b) => a.concat(b), []);
 
 	if(!emojis) emojis = backup;
 }
