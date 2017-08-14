@@ -4,14 +4,15 @@ module.exports = {
 		if(!donator) return __("commands.music.savequeue.donatorOnly", message);
 
 		let player = bot.players.get(message.channel.guild.id);
+		let queue = await player.getQueue();
 		if(!player || !player.connection) {
 			return __("phrases.noMusic", message);
 		} else if(!player.voiceCheck(message.member)) {
 			return __("phrases.notListening", message);
-		} else if(player.queue.length === 0) {
+		} else if(queue.length === 0) {
 			return __("phrases.noQueue", message);
 		} else {
-			let trimmedQueue = player.queue.map(song => {
+			let trimmedQueue = queue.map(song => {
 				if(song.service === "twitch") return `https://twitch.tv/${song.id}`;
 				else if(song.service === "soundcloud") return song.url;
 				else if(song.service === "youtube") return `https://www.youtube.com/watch?v=${song.id}`;
@@ -32,7 +33,7 @@ module.exports = {
 			}
 
 			return __("commands.music.savequeue.success", message, {
-				itemCount: player.queue.length,
+				itemCount: queue.length,
 				queueNumber: message.args[0]
 			});
 		}

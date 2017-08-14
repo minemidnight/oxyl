@@ -13,7 +13,7 @@ module.exports = {
 			let warnCount = warnings.length - 1;
 			if(warnCount < 0) return __("commands.moderator.pardon.noWarnings", message);
 
-			let channel = await modLog.channel(message.channel.guild.id);
+			let channel = await modLog.channel(message.channel.guild);
 			if(channel) {
 				if(message.args[1]) {
 					modLog.presetReasons[message.channel.guild.id] = { reason: message.args[1], mod: message.author };

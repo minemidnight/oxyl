@@ -3,13 +3,14 @@ module.exports = {
 		let player = bot.players.get(message.channel.guild.id);
 		if(!player || !player.connection) return __("phrases.noMusic", message);
 
+		let queue = await player.getQueue();
 		let queueMsg = "";
 		let page = message.args[0] || 1;
-		let pageAmount = Math.ceil(player.queue.length / 15);
+		let pageAmount = Math.ceil(queue.length / 15);
 		if(page > pageAmount) page = pageAmount;
 
-		if(player.queue.length > 0) {
-			queueMsg += player.queue.slice((page - 1) * 15, ((page - 1) * 15) + 15)
+		if(queue.length > 0) {
+			queueMsg += queue.slice((page - 1) * 15, ((page - 1) * 15) + 15)
 				.map((song, i) => `[${((page - 1) * 15) + i + 1}] ${song.title}`)
 				.join("\n");
 
@@ -35,7 +36,7 @@ module.exports = {
 		queueMsg += "\n";
 		queueMsg += __("phrases.repeat", message, { repeat: __(`words.${player.repeat ? "on" : "off"}`, message) });
 		return __("commands.music.queue.success", message, {
-			itemCount: player.queue.length,
+			itemCount: queue.length,
 			message: queueMsg
 		});
 	},

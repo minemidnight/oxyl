@@ -14,7 +14,9 @@ module.exports = {
 		} else {
 			player.autoplay = !player.autoplay;
 			if(!player.repeat && player.autoplay && player.current.service === "youtube") {
-				player.queue.unshift(await autoplay(player.current.id));
+				let queue = await player.getQueue();
+				queue.unshift(await autoplay(player.current.id));
+				await player.setQueue(queue);
 			}
 
 			return __("commands.music.autoplay.success", message,

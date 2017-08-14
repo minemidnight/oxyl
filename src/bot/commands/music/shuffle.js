@@ -13,7 +13,10 @@ module.exports = {
 		} else if(!player.voiceCheck(message.member)) {
 			return __("phrases.notListening", message);
 		} else {
-			shuffle(player.queue);
+			let queue = await player.getQueue();
+			shuffle(queue);
+			await player.saveQueue(queue);
+
 			return __("commands.music.shuffle.success", message);
 		}
 	},

@@ -80,7 +80,7 @@ module.exports = {
 			return __("commands.music.play.addedTTS", message);
 		} else if(message.args[0].startsWith("sq:")) {
 			message.args[0] = message.args[0].substring(3).trim();
-			let donator = (await r.db("Oxyl").table("donators").filter({ id: message.author.id }).run())[0];
+			let donator = await r.db("Oxyl").table("donators").get(message.author.id).run();
 			if(!donator) return __("commands.music.play.donatorOnly", message);
 
 			let queueNumber = parseInt(message.args[0]);

@@ -6,11 +6,13 @@ module.exports = {
 		} else if(!player.voiceCheck(message.member)) {
 			return __("phrases.notListening", message);
 		} else {
-			if(player.queue.length === 0) return __("phrases.noQueue", message);
-			if(message.args[0] > player.queue.length) return __("commands.music.jump.invalidQueue", message);
-			player.queue = player.queue.slice(message.args[0] - 1).concat(player.queue.slice(0, message.args[0] - 1));
+			let queue = await player.getQueue();
+			if(queue.length === 0) return __("phrases.noQueue", message);
+			if(message.args[0] > queue.length) return __("commands.music.jump.invalidQueue", message);
+			queue = queue.slice(message.args[0] - 1).concat(queue.slice(0, message.args[0] - 1));
 			player.connection.stopPlaying();
 
+			await player.setQueue(queue);
 			return __("commands.music.success", message, { queue: message.agrs[0] });
 		}
 	},

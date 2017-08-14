@@ -1,3 +1,6 @@
+const Redis = require("ioredis");
+const redis = new Redis({ keyPrefix: bot.config.beta ? "oxylbeta" : "oxyl" });
+
 const EventEmitter = require("events").EventEmitter;
 const mainResolver = require("../modules/audioResolvers/main.js");
 const autoplay = require("../modules/audioResolvers/autoplay.js");
@@ -8,7 +11,6 @@ class Player extends EventEmitter {
 		this.id = guild.id;
 		this.guild = guild;
 
-		this.queue = data.queue || [];
 		this.autoplay = !!data.repeat;
 		this.repeat = !!data.repeat;
 		this.channel = data.channel || null;
@@ -16,24 +18,37 @@ class Player extends EventEmitter {
 		handlePlayer(this);
 	}
 
+	async getQueue() {
+		return JSON.parse(await redis.get(`queue.${this.id}`));
+	}
+
+	async setQueue(queue) {
+		return await redis.set(`queue.${this.id}`, JSON.stringify(queue));
+	}
+
 	async addQueue(data) {
 		if(!this.connection) return false;
-		if(this.queue.length >= 2000) {
-			let donator = (await r.db("Oxyl").table("donators").filter({ id: this.guild.ownerID }))[0];
+
+		let queue = await this.getQueue();
+		if(queue.length >= 1500) {
+			let donator = await r.db("Oxyl").table("donators").get(this.guild.ownerID).run();
 			if(!donator) return __("modules.player.maxQueue", this.guild);
 		}
 
-		if(Array.isArray(data)) this.queue = this.queue.concat(data);
-		else if(typeof data === "object") this.queue.push(data);
+		if(Array.isArray(data)) queue = queue.concat(data);
+		else if(typeof data === "object") queue.push(data);
 		if(!this.current) this.play();
 
-		if(this.queue.length >= 2000) {
-			let donator = (await r.db("Oxyl").table("donators").filter({ id: this.guild.ownerID }).run())[0];
+		if(queue.length >= 1500) {
+			let donator = await r.db("Oxyl").table("donators").get(this.guild.ownerID).run();
 			if(!donator) {
-				this.queue = this.queue.slice(0, (donator ? 10000 : 2000) - 1);
+				queue = queue.slice(0, (donator ? 10000 : 1500) - 1);
+				await this.setQueue(queue);
 				if(!donator) return __("modules.player.cutOffQueue", this.guild);
 			}
 		}
+
+		await this.setQueue(queue);
 		return true;
 	}
 
@@ -44,9 +59,9 @@ class Player extends EventEmitter {
 		updateStreamCount();
 
 		connection.on("error", err => this.emit("error", err));
-		connection.on("disconnect", () => {
+		connection.on("disconnect", async () => {
 			connection.removeAllListeners();
-			this.queue = [];
+			await this.setQueue([]);
 			delete this.connection;
 			updateStreamCount();
 			this.destroyTimeout = setTimeout(() => this.destroy("inactivity"), 600000);
@@ -62,6 +77,7 @@ class Player extends EventEmitter {
 		bot.players.delete(this.id);
 
 		this.emit("destroy", reason);
+		redis.del(`queue.${this.id}`);
 		delete this;
 		updateStreamCount();
 	}
@@ -75,8 +91,9 @@ class Player extends EventEmitter {
 		if(!bot.players.get(this.id) && connection) bot.players.set(this.id, this);
 		clearTimeout(this.destroyTimeout);
 
-		let song = this.queue[0];
-		if(!song && !this.current && !this.queue.length) {
+		let queue = await this.getQueue();
+		let song = queue[0];
+		if(!song && !this.current && !queue.length) {
 			this.destroy("no_queue");
 			return;
 		} else if(!song) {
@@ -84,20 +101,23 @@ class Player extends EventEmitter {
 			return;
 		}
 
-		if(this.queue.length > 1) this.queue.shift();
-		else this.queue = [];
+		if(queue.length > 1) queue.shift();
+		else queue = [];
 
 		if(!song.stream) song = await mainResolver.extract(song);
 		if(!song.stream) {
 			this.emit("error", new Error(__("modules.player.extractionError", this.guild)));
+			await this.setQueue(queue);
 			this.play();
 			return;
 		} else if(typeof song.stream === "string" && song.stream === "NO_VALID_FORMATS") {
 			this.emit("error", new Error(__("modules.player.noFormats", this.guild)));
+			await this.setQueue(queue);
 			this.play();
 			return;
 		} else if(typeof song.stream === "string" && song.stream.startsWith("ERROR:")) {
 			this.emit("error", song.stream);
+			await this.setQueue(queue);
 			this.play();
 			return;
 		}
@@ -107,29 +127,24 @@ class Player extends EventEmitter {
 		else volume = 0.3;
 		let options = {};
 
-		// if(song.opus) {
-		// 	options.format = "webm";
-		// 	options.frameDuration = 20;
-		// } else {
-		// 	options.encoderArgs = ["-af", `volume=${volume}`];
-		// 	options.inputArgs = ["-reconnect", "1", "-reconnect_streamed", "1", "-reconnect_delay_max", "2"];
-		// }
-		// CPU Usage doesn't matter that much to me :)
-
 		options.encoderArgs = ["-af", `volume=${volume}`];
 		options.inputArgs = ["-reconnect", "1", "-reconnect_streamed", "1", "-reconnect_delay_max", "2"];
 
-		if(!this.repeat && this.autoplay && song.service === "youtube") this.queue.unshift(await autoplay(song.id));
+		if(!this.repeat && this.autoplay && song.service === "youtube") queue.unshift(await autoplay(song.id));
+		await this.setQueue(queue);
 		connection.play(song.stream, options);
 		this.current = song;
 		this.emit("playing", song);
-		this.connection.once("end", () => {
+		this.connection.once("end", async () => {
 			if(this.repeat) {
 				delete this.current.stream;
-				this.queue.push(this.current);
+
+				queue = await this.getQueue();
+				queue.push(this.current);
+				await this.setQueue(queue);
 			}
 
-			if(this.queue.length === 0) this.destroy("no_queue");
+			if(queue.length === 0) this.destroy("no_queue");
 			else setTimeout(() => this.play(), 100);
 		});
 	}
