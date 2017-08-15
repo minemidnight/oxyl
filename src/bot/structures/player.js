@@ -207,11 +207,9 @@ class Player extends EventEmitter {
 module.exports = Player;
 
 module.exports.resumeQueues = async () => {
-	let keys = redis.keys(`${redis.options.keyPrefix}queue.*`);
+	let keys = await redis.keys(`${redis.options.keyPrefix}queue.*`);
 	keys.forEach(async key => {
-		console.log(key);
 		let id = key.substring(key.indexOf("queue.") + 6);
-		console.log(id);
 		if(!bot.guilds.has(id)) return;
 
 		let player = new Player(bot.guilds.get(id));
@@ -219,7 +217,6 @@ module.exports.resumeQueues = async () => {
 		let current = await player.getCurrent();
 		let options = await player.getOptions();
 		let queue = await player.getQueue();
-		console.log(connection, current, options, queue);
 
 		queue.unshift(current);
 		await player.connect(connection);
