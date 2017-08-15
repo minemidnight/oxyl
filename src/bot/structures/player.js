@@ -224,7 +224,10 @@ module.exports.resumeQueues = async () => {
 		await player.setOptions(options);
 		await player.play();
 
-		if(options.paused) player.connection.pause();
+		if(options.paused) {
+			await new Promise(resolve => setTimeout(resolve, 2500));
+			player.connection.pause();
+		}
 	});
 };
 
