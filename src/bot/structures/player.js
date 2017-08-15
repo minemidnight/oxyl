@@ -6,7 +6,7 @@ const mainResolver = require("../modules/audioResolvers/main.js");
 const autoplay = require("../modules/audioResolvers/autoplay.js");
 
 class Player extends EventEmitter {
-	constructor(guild, data) {
+	constructor(guild, data = {}) {
 		super();
 		this.id = guild.id;
 		this.guild = guild;
