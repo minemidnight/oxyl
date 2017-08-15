@@ -25,7 +25,7 @@ module.exports = {
 		}
 
 		if(!voiceChannel) return __("commands.music.play.notInVoice", message);
-		else if(!player) player = new Player(message.channel.guild, { channel: message.channel });
+		else if(!player) player = new Player(message.channel.guild, { channelID: message.channel.id });
 
 		if(player && player.connection && !player.voiceCheck(message.member)) {
 			return __("phrases.notListening", message);

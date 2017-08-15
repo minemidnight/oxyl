@@ -5,20 +5,23 @@ module.exports = {
 		if(!donator) return __("commands.music.autoplay.donatorOnly", message);
 
 		let player = bot.players.get(message.channel.guild.id);
+		let current = await player.getCurrent();
 		if(!player || !player.connection) {
 			return __("phrases.noMusic", message);
 		} else if(!player.voiceCheck(message.member)) {
 			return __("phrases.notListening", message);
-		} else if(!player.current) {
+		} else if(!current) {
 			return __("commands.music.autoplay.noMusicPlaying", message);
 		} else {
-			player.autoplay = !player.autoplay;
-			if(!player.repeat && player.autoplay && player.current.service === "youtube") {
+			let options = await player.getOptions();
+			options.autoplay = !player.options;
+			if(!options.repeat && options.autoplay && current.service === "youtube") {
 				let queue = await player.getQueue();
-				queue.unshift(await autoplay(player.current.id));
+				queue.unshift(await autoplay(current.id));
 				await player.setQueue(queue);
 			}
 
+			await player.setOptions(options);
 			return __("commands.music.autoplay.success", message,
 				{ value: __(`words.${player.autoplay ? "on" : "off"}`, message) });
 		}

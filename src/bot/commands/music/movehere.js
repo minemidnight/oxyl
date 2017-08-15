@@ -16,14 +16,16 @@ module.exports = {
 					} else {
 						moves.push(memberChannel.name);
 						player.connection.switchChannel(memberChannel.id);
+						player.setConnection(memberChannel.id);
 					}
 				}
 			} else {
 				return __("commands.music.movehere.notInVoice", message);
 			}
 
-			if(player.channel.id !== message.channel.id) {
-				player.channel = message.channel;
+			let channel = await player.getChannel();
+			if(channel.id !== message.channel.id) {
+				await player.setChannel(message.channel.id);
 				moves.push(message.channel.mention);
 			}
 

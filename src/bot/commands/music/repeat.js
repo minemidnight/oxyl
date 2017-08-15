@@ -6,7 +6,10 @@ module.exports = {
 		} else if(!player.voiceCheck(message.member)) {
 			return __("phrases.notListening", message);
 		} else {
-			player.repeat = !player.repeat;
+			let options = await player.getOptions();
+			options.repeat = !options.repeat;
+			await player.setOptions(options);
+
 			return __("commands.music.repeat.success", message,
 				{ value: __(`words.${player.repeat ? "on" : "off"}`, message) });
 		}

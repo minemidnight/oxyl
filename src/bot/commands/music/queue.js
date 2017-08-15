@@ -3,7 +3,10 @@ module.exports = {
 		let player = bot.players.get(message.channel.guild.id);
 		if(!player || !player.connection) return __("phrases.noMusic", message);
 
+		let current = await player.getCurrent();
 		let queue = await player.getQueue();
+		let options = await player.getOptions();
+
 		let queueMsg = "";
 		let page = message.args[0] || 1;
 		let pageAmount = Math.ceil(queue.length / 15);
@@ -19,22 +22,22 @@ module.exports = {
 			queueMsg += `N/A`;
 		}
 
-		if(!player.current || !player.connection) {
+		if(!current || !player.connection) {
 			queueMsg += "\n\n";
 			queueMsg += __("phrases.queueError", message);
 		} else {
-			if(!isNaN(player.current.duration)) var videoDuration = bot.utils.secondsToDuration(player.current.duration);
+			if(!isNaN(current.duration)) var videoDuration = bot.utils.secondsToDuration(current.duration);
 			let playTime = bot.utils.secondsToDuration(Math.floor(player.connection.current.playTime / 1000));
 
 			queueMsg += "\n\n";
 			queueMsg += __("phrases.currentPlaying", message, {
-				title: player.current.title,
-				duration: videoDuration ? `${playTime}/${videoDuration}` : player.current.live ? `${playTime}/LIVE` : playTime
+				title: current.title,
+				duration: videoDuration ? `${playTime}/${videoDuration}` : current.live ? `${playTime}/LIVE` : playTime
 			});
 		}
 
 		queueMsg += "\n";
-		queueMsg += __("phrases.repeat", message, { repeat: __(`words.${player.repeat ? "on" : "off"}`, message) });
+		queueMsg += __("phrases.repeat", message, { repeat: __(`words.${options.repeat ? "on" : "off"}`, message) });
 		return __("commands.music.queue.success", message, {
 			itemCount: queue.length,
 			message: queueMsg

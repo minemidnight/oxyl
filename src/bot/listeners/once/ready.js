@@ -1,3 +1,4 @@
+const Player = require("../../structures/player");
 module.exports = () => {
 	console.startup(`Worker ${cluster.worker.id} bot ready (took ${bot.utils.parseMs(process.uptime() * 1000)})`);
 
@@ -7,4 +8,6 @@ module.exports = () => {
 	let name = `${bot.config.bot.prefixes[0]}help | ${cluster.worker.shardRange}`;
 	bot.editStatus("online", { name });
 	cluster.worker.send({ type: "startup" });
+
+	Player.resumeQueues();
 };

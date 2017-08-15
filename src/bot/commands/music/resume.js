@@ -8,6 +8,10 @@ module.exports = {
 		} else if(!player.connection.paused) {
 			return __("commands.music.resume.notPaused", message);
 		} else {
+			let options = await player.getOptions();
+			delete options.paused;
+			await player.setOptions(options);
+
 			player.connection.resume();
 			return __("commands.music.resume.success", message);
 		}

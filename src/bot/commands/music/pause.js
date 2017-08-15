@@ -8,6 +8,10 @@ module.exports = {
 		} else if(player.connection.paused) {
 			return __("commands.music.pause.alreadyPaused", message);
 		} else {
+			let options = await player.getOptions();
+			options.paused = true;
+			await player.setOptions(options);
+
 			player.connection.pause();
 			return __("commands.music.pause.success", message);
 		}
