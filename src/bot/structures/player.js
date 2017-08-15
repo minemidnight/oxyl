@@ -1,5 +1,5 @@
 const Redis = require("ioredis");
-const redis = new Redis({ keyPrefix: bot.config.beta ? "oxylbeta." : "oxyl." });
+const redis = new Redis({ keyPrefix: bot.config.beta ? "oxylbeta:" : "oxyl:" });
 
 const EventEmitter = require("events").EventEmitter;
 const mainResolver = require("../modules/audioResolvers/main.js");
@@ -71,7 +71,7 @@ class Player extends EventEmitter {
 		this.emit("destroy", reason);
 		bot.players.delete(this.id);
 
-		let keys = await redis.keys(`${redis.options.keyPrefix}*.${this.id}`);
+		let keys = await redis.keys(`${redis.options.keyPrefix}*:${this.id}`);
 		keys.forEach(key => redis.del(key.substring(redis.options.keyPrefix.length)));
 
 		delete this;
@@ -85,7 +85,7 @@ class Player extends EventEmitter {
 		if(!connection) return;
 		else if(current && connection.playing) return;
 		else if(!current && connection.playing) connection.stopPlaying();
-		else if(!connection.playing && current) redis.del(`current.${this.id}`);
+		else if(!connection.playing && current) redis.del(`current:${this.id}`);
 
 		if(!bot.players.has(this.id) && connection) bot.players.set(this.id, this);
 
@@ -161,55 +161,55 @@ class Player extends EventEmitter {
 	}
 
 	async getOptions() {
-		let options = await redis.get(`options.${this.id}`);
+		let options = await redis.get(`options:${this.id}`);
 		return options ? JSON.parse(options) : { autoplay: false, repeat: false };
 	}
 
 	async setOptions(options) {
-		return await redis.set(`options.${this.id}`, JSON.stringify(options), "EX", 86400);
+		return await redis.set(`options:${this.id}`, JSON.stringify(options), "EX", 7200);
 	}
 
 	async getChannel() {
-		let channel = await redis.get(`channel.${this.id}`);
+		let channel = await redis.get(`channel:${this.id}`);
 		return channel ? this.guild.channels.get(channel) : undefined;
 	}
 
 	async setChannel(channelID) {
-		return await redis.set(`channel.${this.id}`, channelID, "EX", 86400);
+		return await redis.set(`channel:${this.id}`, channelID, "EX", 7200);
 	}
 
 	async getCurrent() {
-		let current = await redis.get(`current.${this.id}`);
+		let current = await redis.get(`current:${this.id}`);
 		return current ? JSON.parse(current) : undefined;
 	}
 
 	async setCurrent(song) {
-		return await redis.set(`current.${this.id}`, JSON.stringify(song), "EX", 86400);
+		return await redis.set(`current:${this.id}`, JSON.stringify(song), "EX", 7200);
 	}
 
 	async getQueue() {
-		let queue = await redis.get(`queue.${this.id}`);
+		let queue = await redis.get(`queue:${this.id}`);
 		return queue ? JSON.parse(queue) : [];
 	}
 
 	async setQueue(queue) {
-		return await redis.set(`queue.${this.id}`, JSON.stringify(queue), "EX", 86400);
+		return await redis.set(`queue:${this.id}`, JSON.stringify(queue), "EX", 7200);
 	}
 
 	async getConnection() {
-		return await redis.get(`connection.${this.id}`);
+		return await redis.get(`connection:${this.id}`);
 	}
 
 	async setConnection(channelID) {
-		return await redis.set(`connection.${this.id}`, channelID, "EX", 86400);
+		return await redis.set(`connection:${this.id}`, channelID, "EX", 7200);
 	}
 }
 module.exports = Player;
 
 module.exports.resumeQueues = async () => {
-	let keys = await redis.keys(`${redis.options.keyPrefix}queue.*`);
+	let keys = await redis.keys(`${redis.options.keyPrefix}queue:*`);
 	keys.forEach(async key => {
-		let id = key.substring(key.indexOf("queue.") + 6);
+		let id = key.substring(key.indexOf("queue:") + 6);
 		if(!bot.guilds.has(id)) return;
 
 		let player = new Player(bot.guilds.get(id));
