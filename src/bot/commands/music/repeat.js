@@ -11,7 +11,7 @@ module.exports = {
 			await player.setOptions(options);
 
 			return __("commands.music.repeat.success", message,
-				{ value: __(`words.${player.repeat ? "on" : "off"}`, message) });
+				{ value: __(`words.${options.repeat ? "on" : "off"}`, message) });
 		}
 	},
 	guildOnly: true,

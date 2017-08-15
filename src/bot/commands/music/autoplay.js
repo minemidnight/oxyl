@@ -23,7 +23,7 @@ module.exports = {
 
 			await player.setOptions(options);
 			return __("commands.music.autoplay.success", message,
-				{ value: __(`words.${player.autoplay ? "on" : "off"}`, message) });
+				{ value: __(`words.${options.autoplay ? "on" : "off"}`, message) });
 		}
 	},
 	guildOnly: true,
