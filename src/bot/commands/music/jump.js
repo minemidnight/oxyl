@@ -13,7 +13,7 @@ module.exports = {
 			player.connection.stopPlaying();
 
 			await player.setQueue(queue);
-			return __("commands.music.success", message, { queue: message.agrs[0] });
+			return __("commands.music.success", message, { queue: message.args[0] });
 		}
 	},
 	guildOnly: true,

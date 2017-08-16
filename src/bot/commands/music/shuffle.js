@@ -15,7 +15,7 @@ module.exports = {
 		} else {
 			let queue = await player.getQueue();
 			shuffle(queue);
-			await player.saveQueue(queue);
+			await player.setQueue(queue);
 
 			return __("commands.music.shuffle.success", message);
 		}
