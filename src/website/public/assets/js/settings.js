@@ -4,12 +4,12 @@ function setting(action, element) {
 	element.parent().children().attr("disabled", "");
 	let form = element.parent().parent().find("form");
 	let settingName = element.parent()
-											.parent()
-											.parent()
-											.find("div")
-											.first()
-											.find("span")
-											.text();
+		.parent()
+		.parent()
+		.find("div")
+		.first()
+		.find("span")
+		.text();
 
 	if(action === "set") {
 		let formData = {};
@@ -37,7 +37,7 @@ function setting(action, element) {
 				let id = Date.now();
 				$(".notifications").append(`<div id='${id}' style="margin-bottom:-75px"><header>${type}</header>` +
 						`<span onclick="removeNotification($(this).parent())">&times;</span><p>${text}</p></div>`);
-				setTimeout(() => $(`#${id}`).css("margin-bottom", ""), 1)
+				setTimeout(() => $(`#${id}`).css("margin-bottom", ""), 1);
 				setTimeout(() => removeNotification(`#${id}`), 5000);
 			},
 			data: formData,

@@ -6,14 +6,15 @@ module.exports = {
 		} else if(!player.voiceCheck(message.member)) {
 			return __("phrases.notListening", message);
 		} else {
-			if(player.queue.length === 0) return __("phrases.noQueue", message);
+			let queue = await player.getQueue();
+			if(queue.length === 0) return __("phrases.noQueue", message);
 
 			let toRemove = [];
 			if(message.args[0].indexOf("-") !== -1) {
 				let match = message.args[0].match(/((?:\d|l(?:atest)?)+)\s?-\s?((?:\d|l(?:atest)?)+)/);
-				if(match[1] === "l" || match[1] === "latest") match[1] = player.queue.length;
+				if(match[1] === "l" || match[1] === "latest") match[1] = queue.length;
 				else match[1] = parseInt(match[1]);
-				if(match[2] === "l" || match[1] === "latest") match[2] = player.queue.length;
+				if(match[2] === "l" || match[1] === "latest") match[2] = queue.length;
 				else match[2] = parseInt(match[2]);
 
 				if(match[2] < match[1]) return "Invalid range given!";
@@ -25,13 +26,15 @@ module.exports = {
 			}
 
 			toRemove = toRemove.map(int => {
-				if(int === "l" || int === "latest") return player.queue.length;
+				if(int === "l" || int === "latest") return queue.length;
 				else return parseInt(int);
 			});
 			if(toRemove.some(int => isNaN(int))) return __("commands.music.removequeue.invalidQueue", message);
 
-			toRemove.forEach(int => delete player.queue[int]);
-			player.queue = player.queue.filter(item => item !== undefined);
+			toRemove.forEach(int => delete queue[int]);
+			queue = queue.filter(item => item !== undefined);
+
+			player.setQueue(queue);
 			return __("commands.music.removequeue.success", message, { itemCount: toRemove.length });
 		}
 	},

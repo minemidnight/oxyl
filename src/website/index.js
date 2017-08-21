@@ -1,5 +1,6 @@
 global.express = require("express");
-const bodyParser = require("body-parser"),
+const babelify = require("express-babelify-middleware"),
+	bodyParser = require("body-parser"),
 	cookieParser = require("cookie-parser"),
 	fs = require("fs"),
 	handlebars = require("handlebars"),
@@ -16,6 +17,10 @@ server.listen(config.website.port, () => {
 	cluster.worker.send({ type: "startup", port: config.website.port });
 });
 
+app.use(`/assets/js`, babelify(`${__dirname}/public/assets/js`, babelify.browserifySettings, {
+	plugins: ["es6-promise"],
+	presets: ["es2015", "es2016"]
+}));
 app.use(express.static(path.resolve("src", "website", "public")));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());

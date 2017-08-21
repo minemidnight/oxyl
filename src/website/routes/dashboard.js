@@ -126,3 +126,4 @@ router.get("/modlog/*", async (req, res) => {
 });
 
 let settings = require(require("path").resolve("src", "bot", "commands", "admin", "settings")).settings;
+settings = Object.keys(settings).map(key => Object.assign({ name: key }, settings[key]));

@@ -141,16 +141,17 @@ class Player extends EventEmitter {
 		this.setCurrent(song);
 		this.emit("playing", song);
 		this.connection.once("end", async () => {
+			queue = await this.getQueue();
+
 			playerOptions = await this.getOptions();
 			if(playerOptions.repeat) {
 				delete song.stream;
 
-				queue = await this.getQueue();
 				queue.push(song);
 				await this.setQueue(queue);
 			}
 
-			if(queue.length === 0) this.destroy("no_queue");
+			if(!queue.length) this.destroy("no_queue");
 			else setTimeout(() => this.play(), 100);
 		});
 	}
