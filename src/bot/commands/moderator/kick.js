@@ -8,9 +8,9 @@ module.exports = {
 		if(!member) return __("phrases.notInGuild", message);
 
 		if(!member.kickable) {
-			return __("commands.moderator.kick.botCantBan", message, { user: member.user.username });
+			return __("commands.moderator.kick.botCantKick", message, { user: member.user.username });
 		} else if(!member.punishable(message.member)) {
-			return __("commands.moderator.kick.youCantBan", message, { user: member.user.username });
+			return __("commands.moderator.kick.youCantKick", message, { user: member.user.username });
 		} else {
 			if(message.args[1]) {
 				let guild = message.channel.guild;
