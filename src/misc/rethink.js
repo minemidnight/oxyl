@@ -104,12 +104,12 @@ module.exports = {
 		connectionInfo.db = dbName;
 		global.r = rethinkdbdash(connectionInfo); // eslint-disable-line id-length
 
-		if(bot) module.exports.botStuff();
+		if(typeof bot !== "undefined") module.exports.botStuff();
 	},
 	botStuff: async () => {
 		let prefixes = await r.table("settings").filter({ name: "prefix" }).run();
 		prefixes.forEach(setting => {
-			let shard = ~~((setting.guildID / 4194304) % cluster.worker.maxShards);
+			let shard = ~~((setting.guildID / 4194304) % cluster.worker.totalShards);
 			if(shard >= cluster.worker.shardStart && shard <= cluster.worker.shardEnd) {
 				bot.prefixes.set(setting.guildID, setting.value);
 			}
@@ -117,7 +117,7 @@ module.exports = {
 
 		let censors = await r.table("censors").run();
 		censors.forEach(censor => {
-			let shard = ~~((censor.guildID / 4194304) % cluster.worker.maxShards);
+			let shard = ~~((censor.guildID / 4194304) % cluster.worker.totalShards);
 			if(shard >= cluster.worker.shardStart && shard <= cluster.worker.shardEnd) {
 				let censorsCache = bot.censors.get(censor.guildID);
 				if(censorsCache) {
@@ -132,7 +132,7 @@ module.exports = {
 
 		let channels = await r.table("ignoredChannels").run();
 		channels.forEach(ignored => {
-			let shard = ~~((ignored.guildID / 4194304) % cluster.worker.maxShards);
+			let shard = ~~((ignored.guildID / 4194304) % cluster.worker.totalShards);
 			if(shard >= cluster.worker.shardStart && shard <= cluster.worker.shardEnd) {
 				bot.ignoredChannels.set(ignored.channelID, ignored.guildID);
 			}
