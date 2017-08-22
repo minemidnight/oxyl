@@ -5,9 +5,8 @@ module.exports = {
 			return __("commands.default.remind.noTime", message);
 		}
 
-		let split = message.args[0].split(" in ");
-		let action = split[0].trim();
-		let time = split[1].trim()
+		let action = message.args[0].substring(0, message.args[0].lastIndexOf("in")).trim();
+		let time = message.args[0].substring(message.args[0].lastIndexOf("in") + 2).trim()
 			.replace(/weeks?/g, "w")
 			.replace(/days?/g, "d")
 			.replace(/hours?/g, "h")

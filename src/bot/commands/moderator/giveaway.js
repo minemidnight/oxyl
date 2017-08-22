@@ -5,9 +5,8 @@ module.exports = {
 			return __("commands.moderator.giveaway.noTime", message);
 		}
 
-		let split = message.args[0].split(" in ");
-		let item = split[0].trim();
-		let time = split[1].trim()
+		let item = message.args[0].substring(0, message.args[0].lastIndexOf("in")).trim();
+		let time = message.args[0].substring(message.args[0].lastIndexOf("in") + 2).trim()
 			.replace(/weeks?/g, "w")
 			.replace(/days?/g, "d")
 			.replace(/hours?/g, "h")
