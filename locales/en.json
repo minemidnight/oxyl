@@ -149,6 +149,7 @@
                     "noArgs": "You must provide a name and content for this tag! Usage: `tag create <tag> <content>`",
                     "noContent": "You must provide content for this tag! Usage: `tag create <tag> <content>`",
                     "alreadyExists": "Tag `{{name}}` already exists",
+                    "discordPasteInvalid": "That is not a valid DiscordPaste URL!",
                     "success": "Successfully created tag `{{name}}`"
                 }
             },
@@ -329,15 +330,15 @@
                 "pardon": "Pardon",
                 "softban": "Softban",
                 "unban": "Unban",
-								"reason": "Reason",
-								"warn": "Warn"
+				"reason": "Reason",
+				"warn": "Warn"
             },
             "words": {
                 "case": "case",
                 "action": "action",
                 "user": "user",
                 "mod": "mod",
-								"reason": "reason",
+				"reason": "reason",
                 "totalWarnings": "total warnings",
                 "noReason": "Responsible moderator, set this using `reason {{caseNum}}`"
             }

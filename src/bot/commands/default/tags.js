@@ -1,4 +1,7 @@
+const superagent = require("superagent");
 const tags = require("../../modules/tags/main.js");
+const discordPasteRegex = /^(?:https?:\/\/)?(?:www\.)?discordpaste\.me\/([A-Z0-9_-]{7,14})/i;
+
 module.exports = {
 	process: async message => {
 		let arg = message.args[0];
@@ -47,13 +50,24 @@ module.exports = {
 		} else if(arg.toLowerCase().startsWith("create")) {
 			if(!~arg.indexOf(" ")) return __("commands.default.tags.create.noArgs", message);
 
-			let tagName = arg.substring(arg.indexOf(" ") + 1).toLowerCase();
+			let tagName = arg.substring(arg.indexOf(" ") + 1).toLowerCase(), tagType = "plain";
 			let content = tagName.substring(tagName.indexOf(" ") + 1);
 			tagName = tagName.substring(0, tagName.indexOf(" "));
 			if(!content || !content.length) return __("commands.default.tags.create.noContent", message);
 
 			let tag = await tags.get(tagName);
 			if(tag) return __("commands.default.tags.create.alreadyExists", message, { name: tagName });
+
+			if(discordPasteRegex.test(content)) {
+				let [, postID] = content.match(discordPasteRegex);
+				try {
+					({ body: { content } } = await superagent
+						.get(`https://discordpaste.me/api/v1/documents/${postID}`));
+					tagType = "code";
+				} catch(err) {
+					return __("commands.default.tags.create.discordPasteInvalid", message, { id: postID });
+				}
+			}
 
 			await tags.create(tagName, message.author.id, content);
 			return __("commands.default.tags.create.success", message, { name: tagName });
