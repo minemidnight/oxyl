@@ -1,7 +1,5 @@
 const superagent = require("superagent");
-const tags = require("../../modules/tags/main.js");
-const discordPasteRegex = /^(?:https?:\/\/)?(?:www\.)?discordpaste\.me\/([A-Z0-9_-]{7,14})/i;
-
+const tags = require("../../modules/tags.js");
 module.exports = {
 	process: async message => {
 		let arg = message.args[0];
@@ -26,17 +24,6 @@ module.exports = {
 
 			let content = tag.content.replace(/```/g, "\\`\\`\\`");
 			return __("commands.default.tags.raw.success", message, { content, name: tagName });
-		} else if(arg.toLowerCase().startsWith("test")) {
-			if(!~arg.indexOf(" ")) return __("commands.default.tags.test.noContent", message);
-			let content = arg.substring(arg.indexOf(" ") + 1);
-			if(!content || !content.length) return __("commands.default.tags.test.noContent", message);
-
-			try {
-				let res = await tags.run(message, content);
-				return res;
-			} catch(err) {
-				return __("commands.default.tags.error", message, { error: err.message });
-			}
 		} else if(arg.toLowerCase().startsWith("delete")) {
 			if(!~arg.indexOf(" ")) return __("commands.default.tags.delete.noTag", message);
 
@@ -50,24 +37,13 @@ module.exports = {
 		} else if(arg.toLowerCase().startsWith("create")) {
 			if(!~arg.indexOf(" ")) return __("commands.default.tags.create.noArgs", message);
 
-			let tagName = arg.substring(arg.indexOf(" ") + 1).toLowerCase(), tagType = "plain";
+			let tagName = arg.substring(arg.indexOf(" ") + 1).toLowerCase();
 			let content = tagName.substring(tagName.indexOf(" ") + 1);
 			tagName = tagName.substring(0, tagName.indexOf(" "));
 			if(!content || !content.length) return __("commands.default.tags.create.noContent", message);
 
 			let tag = await tags.get(tagName);
 			if(tag) return __("commands.default.tags.create.alreadyExists", message, { name: tagName });
-
-			if(discordPasteRegex.test(content)) {
-				let [, postID] = content.match(discordPasteRegex);
-				try {
-					({ body: { content } } = await superagent
-						.get(`https://discordpaste.me/api/v1/documents/${postID}`));
-					tagType = "code";
-				} catch(err) {
-					return __("commands.default.tags.create.discordPasteInvalid", message, { id: postID });
-				}
-			}
 
 			await tags.create(tagName, message.author.id, content);
 			return __("commands.default.tags.create.success", message, { name: tagName });
@@ -76,23 +52,14 @@ module.exports = {
 			let tag = await tags.get(tagName);
 			if(!tag) return __("commands.default.tags.noTagFound", message, { name: tagName });
 
-			if(tag.type === "plain") {
-				return tag.content;
-			} else {
-				try {
-					let res = await tags.run(message, tag.content);
-					return res;
-				} catch(err) {
-					return __("commands.default.tags.error", message, { error: err.message });
-				}
-			}
+			return tag.content;
 		}
 	},
 	caseSensisitive: true,
-	description: "Create, delete, display, test and use tags",
+	description: "Create, delete, display, and use tags",
 	aliases: ["t", "tag"],
 	args: [{
 		type: "text",
-		label: "<tag name>|list <page>|raw <name>|test <tag content>|delete <name>|create <name> <content>"
+		label: "<tag name>|list [<page>]|raw <name>|delete <name>|create <name> <content>"
 	}]
 };

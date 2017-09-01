@@ -137,9 +137,6 @@
                     "noTag": "Please provide a tag you'd like to see the content of! Correct usage: `tag raw <tag name>`",
                     "success": "Tag `{{name}}`:\n```vb\n{{content}}\n```"
                 },
-                "test": {
-                    "noContent": "Please provide tag content to test! Correct usage: `tag test <content>`"
-                },
                 "delete": {
                     "noTag": "Please provide a tag you'd like to delete! Correct usage: `tag delete <tag name>`",
                     "notOwner": "You cannot delete a tag you do not own",
@@ -149,7 +146,6 @@
                     "noArgs": "You must provide a name and content for this tag! Usage: `tag create <tag> <content>`",
                     "noContent": "You must provide content for this tag! Usage: `tag create <tag> <content>`",
                     "alreadyExists": "Tag `{{name}}` already exists",
-                    "discordPasteInvalid": "That is not a valid DiscordPaste URL!",
                     "success": "Successfully created tag `{{name}}`"
                 }
             },
@@ -281,7 +277,7 @@
                 "invalidURL": "That is an invalid url, or does not have a stream"
             },
             "queue": {
-                "success": "__**Music Queue ({{itemCount}})**__\n {{message}}"
+                "success": "__**Music Queue ({{itemCount}})**__\n{{message}}"
             },
             "removequeue": {
                 "invalidQueue": "Please provide numbers as queue positions",
@@ -311,7 +307,7 @@
         "args": {
             "usageError": "Invalid Usage! Please use the command as such: `{{command}} {{usage}}`"
         },
-				"censor": "{{mention}}, Please don't send messages with censored phrases",
+		"censor": "{{mention}}, Please don't send messages with censored phrases",
         "commands": {
             "guildOnly": "Sorry, but this command is for guilds (servers) only.",
             "creatorOnly": "This command can only be used by the creators of the bot.",
@@ -359,23 +355,23 @@
             "noChannel": "No channel found",
             "notCached": "User from mention not cached",
             "noUserFound": "No user could be found",
-						"andMore": "... and {{users}} more",
+			"andMore": "... and {{users}} more",
             "multipleUsers": "Multiple users found. Please say a number below to choose one in the next 10 seconds: {{users}}",
             "noUserChosen": "No user chosen",
-						"invalidUser": "Invalid user number selected!"
+			"invalidUser": "Invalid user number selected!"
         },
         "timedEvents": {
             "reminder": "You asked me to remind you about this on {{date}}:\n\n {{action}}",
             "giveawayWinner": "__**GIVEAWAY WINNER**__\nCongratulations, {{winner}} you have won {{item}}!",
             "noGiveawayEntries": "__**GIVEAWAY WINNER**__\nSadly, nobody entered the giveaway for {{item}}, so there is no winner."
         },
-				"locales": {
-					"invalidContext": "Invalid context for translation: {{context}}, {{part}} (non existant). Please report this to Support",
-					"incompleteContext": "Incomplete context for translation: {{context}} (non string). Please report this to Support",
-					"invalidPlaceholder": "INVALID PLACEHOLDER, please report this to Support"
-				}
+		"locales": {
+			"invalidContext": "Invalid context for translation: {{context}}, {{part}} (non existant). Please report this to Support",
+			"incompleteContext": "Incomplete context for translation: {{context}} (non string). Please report this to Support",
+			"invalidPlaceholder": "INVALID PLACEHOLDER, please report this to Support"
+		}
     },
-		"phrases": {
+	"phrases": {
         "noMusic": "There is currently no music playing",
         "notListening": "You must be listening to music to use this command",
         "notInGuild": "Error: user not in guild",
