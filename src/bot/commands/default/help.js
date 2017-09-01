@@ -24,18 +24,23 @@ module.exports = {
 				perm: command.perm || __("phrases.noneRequired", message)
 			});
 		} else {
+			let disabled = await r.table("editedCommands")
+				.getAll(message.guild.channel.id, { index: "guildID" })
+				.filter({ enabled: false }).getField("command").run();
+
 			let commandMsg = "", commandTypes = {};
 			for(let cmd in bot.commands) {
 				cmd = bot.commands[cmd];
 				if(cmd.type === "creator") continue;
-				if(!commandTypes[cmd.type]) commandTypes[cmd.type] = [];
+				else if(~disabled.indexOf(cmd.name)) continue;
+				else if(!commandTypes[cmd.type]) commandTypes[cmd.type] = [];
 				commandTypes[cmd.type].push(cmd.name);
 				commandTypes[cmd.type].concat(cmd.aliases);
 			}
 
 			for(let category in commandTypes) {
 				commandTypes[category].sort();
-				commandMsg += `\n__${category.substring(0, 1).toUpperCase() + category.substring(1)}__\n`;
+				commandMsg += `\n__${category.charAt(0).toUpperCase() + category.substring(1)}__\n`;
 				commandMsg += commandTypes[category].join(", ");
 				commandMsg += `\n`;
 			}
