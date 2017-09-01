@@ -3,7 +3,7 @@ const router = module.exports = express.Router(); // eslint-disable-line new-cap
 let emojis = {};
 router.get("/", async (req, res) => {
 	let displayEmojis = emojis;
-	if(req.query.search) displayEmojis = displayEmojis.filter(emoji => ~emoji.name.indexOf(req.query.search));
+	if(req.query.search) displayEmojis = displayEmojis.filter(emoji => ~emojis.name.indexOf(req.query.search));
 
 	let page = req.query.page ? parseInt(req.query.page) : 1;
 	let totalPages = Math.ceil(displayEmojis.length / 1500);

@@ -33,7 +33,8 @@ module.exports = {
 			primary: "userID"
 		}, {
 			name: "editedCommands",
-			primary: "id" // [command, guildID]
+			primary: "id", // [command, guildID]
+			indexes: ["guildID"]
 		}, {
 			name: "ignoredChannels",
 			primary: "channelID"
