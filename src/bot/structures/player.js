@@ -1,3 +1,6 @@
+const { PlayerManager } = require("eris-lavalink");
+const manager = new PlayerManager(bot, [bot.config.lavalink.nodeOptions]);
+
 const Redis = require("ioredis");
 const redis = new Redis({ keyPrefix: bot.config.beta ? "oxylbeta:" : "oxyl:" });
 
@@ -14,6 +17,26 @@ class Player extends EventEmitter {
 		if(data.channelID) this.setChannel(data.channelID);
 		bot.players.set(this.id, this);
 		handlePlayer(this);
+	}
+
+	async connect(channelID) {
+		if(this.connection) return false;
+
+		this.connection = await bot.joinVoiceChannel(channelID);
+		await this.setConnection(channelID);
+
+		this.connection.on("error", err => this.emit("error", err));
+		this.connection.on("disconnect", async () => {
+			this.connection.removeAllListeners();
+
+			await this.setConnection(null);
+			await this.setQueue([]);
+			delete this.connection;
+			this.destroyTimeout = setTimeout(() => this.destroy("inactivity"), 600000);
+		});
+
+		if(this.connection.ready) return true;
+		else return new Promise(resolve => this.connection.once("ready", resolve));
 	}
 
 	async addQueue(data) {
@@ -43,28 +66,6 @@ class Player extends EventEmitter {
 		return true;
 	}
 
-	async connect(channelID) {
-		if(this.connection) return false;
-
-		let connection = this.connection = await bot.joinVoiceChannel(channelID);
-		await this.setConnection(channelID);
-		updateStreamCount();
-
-		connection.on("error", err => this.emit("error", err));
-		connection.on("disconnect", async () => {
-			connection.removeAllListeners();
-
-			await this.setConnection(null);
-			await this.setQueue([]);
-			delete this.connection;
-			updateStreamCount();
-			this.destroyTimeout = setTimeout(() => this.destroy("inactivity"), 600000);
-		});
-
-		if(connection.ready) return true;
-		else return new Promise(resolve => connection.once("ready", resolve));
-	}
-
 	async destroy(reason) {
 		let connection = this.connection;
 		if(connection) bot.leaveVoiceChannel(connection.channelID);
@@ -75,7 +76,6 @@ class Player extends EventEmitter {
 		keys.forEach(key => redis.del(key.substring(redis.options.keyPrefix.length)));
 
 		delete this;
-		updateStreamCount();
 	}
 
 	async play() {
@@ -207,6 +207,7 @@ class Player extends EventEmitter {
 }
 module.exports = Player;
 
+module.exports.manager = manager;
 module.exports.resumeQueues = async () => {
 	let keys = await redis.keys(`${redis.options.keyPrefix}queue:*`);
 	keys.forEach(async key => {
@@ -231,14 +232,6 @@ module.exports.resumeQueues = async () => {
 		}
 	});
 };
-
-async function updateStreamCount() {
-	let streams = (await process.output({
-		type: "all_shards",
-		input: () => [...bot.players.values()].filter(player => player.connection).length
-	})).results.reduce((a, b) => a + b);
-	statsd({ type: "gauge", stat: "streams", value: streams });
-}
 
 function handlePlayer(player) {
 	let createMessage = async embed => {

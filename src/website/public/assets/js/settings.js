@@ -82,3 +82,4 @@ function setting(action, element) {
 		});
 	}
 }
+global.setting = setting;

@@ -7,6 +7,7 @@ const Eris = require("eris-additions")(require("eris"), {
 		"Role.addable"
 	]
 });
+
 const path = require("path");
 const fs = Promise.promisifyAll(require("fs"));
 const config = require(path.resolve("config.json"));

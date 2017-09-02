@@ -31,7 +31,6 @@ async function init() {
 
 	if(totalShards < 1 || isNaN(totalShards)) totalShards = 1;
 	process.totalShards = totalShards;
-	statsd({ type: "gauge", stat: "shards", value: totalShards });
 
 	let shardsPerWorker, fields = [];
 	fields.push({ name: "Total Shards", value: totalShards });
@@ -46,7 +45,6 @@ async function init() {
 
 	const workerCount = Math.ceil(totalShards / shardsPerWorker);
 	fields.push({ name: "Total Workers", value: workerCount });
-	statsd({ type: "gauge", stat: "workers", value: workerCount });
 	for(let i = 0; i < workerCount; i++) {
 		let shardStart = i * shardsPerWorker, shardEnd = ((i + 1) * shardsPerWorker) - 1;
 		if(shardEnd > totalShards - 1) shardEnd = totalShards - 1;

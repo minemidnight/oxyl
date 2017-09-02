@@ -1,7 +1,5 @@
 const commands = require("../../modules/commands.js");
 module.exports = message => {
-	statsd({ type: "increment", stat: "messages" });
-
 	if(message.channel.guild) {
 		message.locale = bot.localeCache.get(message.author.id) || bot.localeCache.get(message.channel.guild.id) || "en";
 	} else {

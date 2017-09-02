@@ -4,7 +4,6 @@ module.exports = async () => {
 		type: "all_shards",
 		input: () => bot.guilds.size
 	})).results.reduce((a, b) => a + b);
-	statsd({ type: "gauge", stat: "guilds", value: guilds });
 
 	if(!bot.config.bot.postStats) return;
 	if(bot.config.bot.dbotsKey) {

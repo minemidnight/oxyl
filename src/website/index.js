@@ -19,7 +19,7 @@ server.listen(config.website.port, () => {
 
 app.use(`/assets/js`, babelify(`${__dirname}/public/assets/js`, babelify.browserifySettings, {
 	plugins: ["es6-promise"],
-	presets: ["es2015", "es2016"]
+	presets: ["es2015"]
 }));
 app.use(express.static(path.resolve("src", "website", "public")));
 app.use(bodyParser.urlencoded({ extended: false }));

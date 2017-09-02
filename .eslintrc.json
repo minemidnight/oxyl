@@ -8,7 +8,6 @@
 		"bot": false,
 		"cluster": false,
 		"r": false,
-		"statsd": false,
 		"__": false,
 		"express": false,
 		"app": false
