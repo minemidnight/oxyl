@@ -16,10 +16,14 @@ class Player extends EventEmitter {
 		handlePlayer(this);
 	}
 
+	get connection() {
+		return bot.voiceConnections.get(this.id);
+	}
+
 	async connect(channelID) {
 		if(this.connection) return false;
 
-		this.connection = await bot.joinVoiceChannel(channelID);
+		await bot.voiceConnections.join(this.id, channelID);
 		await this.setConnection(channelID);
 
 		this.connection.on("error", err => this.emit("error", err));
@@ -66,7 +70,7 @@ class Player extends EventEmitter {
 		let connection = this.connection;
 		if(connection) {
 			if(connection.playing) connection.stop();
-			bot.leaveVoiceChannel(connection.channelId);
+			bot.voiceConnections.leave(this.id);
 		}
 
 		this.emit("destroy", reason);

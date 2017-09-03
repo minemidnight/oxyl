@@ -1,6 +1,6 @@
 const superagent = require("superagent");
 module.exports = async query => {
-	if(/^http|(sc|yt)search/.test(query)) query = `ytsearch:${query}`;
+	if(!/^http|(sc|yt)search/.test(query)) query = `ytsearch:${query}`;
 	let { body } = await superagent.get(bot.config.lavalink.url)
 		.set("Authorization", bot.config.lavalink.auth)
 		.query({ identifier: query });
