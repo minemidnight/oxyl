@@ -52,7 +52,8 @@ module.exports = {
 						return {
 							identifier: video.identifier,
 							length: video.length * 1000,
-							title: video.title
+							title: video.title,
+							uri: video.url
 						};
 					} else {
 						return {};
