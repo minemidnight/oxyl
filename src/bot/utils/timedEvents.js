@@ -41,14 +41,14 @@ module.exports = {
 		let channel = await modLog.channel({ id: data.guildID });
 		let trackedList = await r.table("settings").get(["modLog.track", data.guildID]).run();
 
-		if(channel && trackedList && ~trackedList.value.indexOf(data.roleID)) {
+		if(channel && trackedList && ~trackedList.value.indexOf(data.mutedRole)) {
 			modLog.presetReasons[data.guildID] = {
 				mod: bot.user,
 				reason: muteExpired
 			};
 		}
 
-		await bot.removeGuildMemberRole(data.guildID, data.memberID, data.roleID, muteExpired)
+		await bot.removeGuildMemberRole(data.guildID, data.memberID, data.mutedRole, muteExpired)
 			.catch(err => {}); // eslint-disable-line
 	}
 };
