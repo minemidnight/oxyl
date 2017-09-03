@@ -14,7 +14,7 @@ module.exports = async (query, i = 0) => {
 		return module.exports(search(query), i + 1);
 	}
 
-	if(body && Array.isArray(body)) var data = [body];
+	if(body && Array.isArray(body) && body.length) var data = [body];
 	else throw new Error("No track resolved");
 
 	data.info.track = data.track;
