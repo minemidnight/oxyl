@@ -7,11 +7,11 @@ router.post("/reset/*", async (req, res) => {
 		return;
 	}
 
-	let hasServer = (await process.wsOutput({
-		guildID: id,
+	let { result: hasServer } = await process.output({
+		target: id,
 		input: `return bot.guilds.has("${id}")`,
-		type: "guildEval"
-	})).result;
+		type: "guild"
+	});
 	if(!hasServer) {
 		res.status(404).json({ error: "Bot not in Server" }).end();
 		return;
@@ -32,8 +32,8 @@ router.post("/reset/*", async (req, res) => {
 	}
 
 	if(req.body.name === "prefix") {
-		process.wsOutput({
-			guildID: id,
+		process.output({
+			target: id,
 			input: `bot.prefixes.delete("${id}")`,
 			type: "guildEval"
 		});
@@ -50,11 +50,11 @@ router.post("/set/*", async (req, res) => {
 		return;
 	}
 
-	let hasServer = (await process.wsOutput({
-		guildID: id,
+	let { result: hasServer } = await process.output({
+		target: id,
 		input: `return bot.guilds.has("${id}")`,
-		type: "guildEval"
-	})).result;
+		type: "guild"
+	});
 	if(!hasServer) {
 		res.status(404).json({ error: "Bot not in Server" }).end();
 		return;
@@ -90,10 +90,10 @@ router.post("/set/*", async (req, res) => {
 		}
 
 		if(settingName === "prefix") {
-			process.wsOutput({
-				guildID: id,
-				input: `bot.prefixes.set("${id}", "${req.body[settingName]}")`,
-				type: "guildEval"
+			process.output({
+				target: id,
+				input: `bot.prefixes.set("${id}", "${req.body.prefix}")`,
+				type: "guild"
 			});
 		}
 

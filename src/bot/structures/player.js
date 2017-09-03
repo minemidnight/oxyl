@@ -64,8 +64,11 @@ class Player extends EventEmitter {
 
 	async destroy(reason = "end") {
 		let connection = this.connection;
-		if(connection.playing) connection.stop();
-		if(connection) bot.leaveVoiceChannel(connection.channelId);
+		if(connection) {
+			if(connection.playing) connection.stop();
+			bot.leaveVoiceChannel(connection.channelId);
+		}
+
 		this.emit("destroy", reason);
 		bot.players.delete(this.id);
 

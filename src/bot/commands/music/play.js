@@ -88,6 +88,7 @@ module.exports = {
 			});
 		} else {
 			let result = await resolver(message.args[0]);
+			if(result === "NO_VIDEO") return __("commands.music.play.noVideo", message);
 
 			if(!player.connection) await player.connect(voiceChannel.id);
 			let res2 = await player.addQueue(result);

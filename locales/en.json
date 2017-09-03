@@ -267,7 +267,8 @@
                 "noSavedQueue": "There is no saved queue under save #{{save}}",
                 "loadedSavedQueue": "Loaded queue #{{save}} ({{itemCount}} items)",
                 "addedItem": "Added __{{title}}__ to the queue",
-                "addedPlaylist": "Added __playlist with {{items}} items__ to the queue"
+                "addedPlaylist": "Added __playlist with {{items}} items__ to the queue",
+                "noVideo": "No video was found"
             },
             "queue": {
                 "success": "__**Music Queue ({{itemCount}})**__\n{{message}}"
