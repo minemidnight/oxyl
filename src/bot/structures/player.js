@@ -106,7 +106,7 @@ class Player extends EventEmitter {
 		this.setCurrent(song);
 		console.log("current", await this.getCurrent());
 		this.emit("playing", song);
-		this.connection.once("end", async () => {
+		process.nextTick(() => this.connection.once("end", async () => {
 			queue = await this.getQueue();
 
 			playerOptions = await this.getOptions();
@@ -119,7 +119,7 @@ class Player extends EventEmitter {
 
 			if(!queue.length) this.destroy("no_queue");
 			else setTimeout(() => this.play(), 100);
-		});
+		}));
 	}
 
 	voiceCheck(member) {
