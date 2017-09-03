@@ -63,7 +63,7 @@ class Player extends EventEmitter {
 	}
 
 	async destroy(reason) {
-		console.log("destroying due to ", reason);
+		console.log("destroying due to", reason, "\ncallstack", new Error("test").stack);
 		let connection = this.connection;
 		if(connection) bot.leaveVoiceChannel(connection.channelId);
 		this.emit("destroy", reason);
