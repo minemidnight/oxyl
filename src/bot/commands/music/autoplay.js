@@ -1,4 +1,4 @@
-const autoplay = require("../../modules/audioResolvers/autoplay.js");
+const autoplay = require("../../modules/audio/autoplay.js");
 module.exports = {
 	process: async message => {
 		let donator = await r.db("Oxyl").table("donators").get(message.channel.guild.ownerID).run();
