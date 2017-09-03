@@ -204,7 +204,6 @@ class Player extends EventEmitter {
 }
 module.exports = Player;
 
-module.exports.manager = manager;
 module.exports.resumeQueues = async () => {
 	let keys = await redis.keys(`${redis.options.keyPrefix}queue:*`);
 	keys.forEach(async key => {
