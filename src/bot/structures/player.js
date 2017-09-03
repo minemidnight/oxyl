@@ -63,6 +63,7 @@ class Player extends EventEmitter {
 	}
 
 	async destroy(reason) {
+		console.log("destroying due to ", reason);
 		let connection = this.connection;
 		if(connection) bot.leaveVoiceChannel(connection.channelId);
 		this.emit("destroy", reason);
@@ -212,14 +213,12 @@ function handlePlayer(player) {
 	};
 
 	player.on("playing", async song => {
-		let message = `${__("phrases.nowPlaying", this._guild)}\n**${song.title}**`;
+		let message = `${__("phrases.nowPlaying", this._guild)} **${song.title}**`;
 
 		if(song.author && song.author !== "Unknown artist") message += ` by ${song.author}`;
 		if(song.length && song.length < 900000000000000) {
 			message += ` \`(${bot.utils.secondsToDuration(song.length / 1000)})\``;
 		}
-
-		message += `\nID: ${song.identifier}`;
 		createMessage(message);
 	});
 
