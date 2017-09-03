@@ -93,7 +93,6 @@ class Player extends EventEmitter {
 		}
 
 		if(!song.track) song = await resolver(song.uri || song.identifier);
-		console.log(song);
 
 		let playerOptions = await this.getOptions();
 		if(!playerOptions.repeat && playerOptions.autoplay && song.uri.startsWith("https://www.youtube.com/")) {
