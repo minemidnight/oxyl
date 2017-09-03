@@ -24,9 +24,14 @@ module.exports = {
 				perm: command.perm || __("phrases.noneRequired", message)
 			});
 		} else {
-			let disabled = await r.table("editedCommands")
-				.getAll(message.guild.channel.id, { index: "guildID" })
-				.filter({ enabled: false }).getField("command").run();
+			let disabled;
+			if(message.channel.guild) {
+				disabled = await r.table("editedCommands")
+					.getAll(message.channel.guild.id, { index: "guildID" })
+					.filter({ enabled: false }).getField("command").run();
+			} else {
+				disabled = [];
+			}
 
 			let commandMsg = "", commandTypes = {};
 			for(let cmd in bot.commands) {
