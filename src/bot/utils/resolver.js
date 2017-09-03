@@ -52,7 +52,7 @@ module.exports = {
 		if(!linkFilter.test(input)) throw new Error(__("modules.resolver.invalidLink", message));
 		else return input;
 	},
-	num: (message, input, options) => {
+	num: (message, input, options = {}) => {
 		if(!input.match(/\d+/)) throw new Error(__("modules.resolver.NaN", message));
 		else input = parseInt(input);
 		if(options.min && input < options.min) {

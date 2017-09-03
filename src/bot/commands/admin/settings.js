@@ -17,7 +17,7 @@ module.exports = {
 			let currentValue = await r.table("settings").get([setting.name, guild.id]).run();
 
 			return __("commands.admin.settings.settingInfo", message, {
-				setting: message.args[0],
+				setting: setting.name,
 				description: setting.description,
 				accepted: `${setting.label || `<${setting.arg}>`}|reset`,
 				current: currentValue ? currentValue.value : __("words.noValue", message)
