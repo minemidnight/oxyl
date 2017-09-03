@@ -63,8 +63,8 @@ class Player extends EventEmitter {
 	}
 
 	async destroy(reason = "end") {
-		console.log("destroying due to", reason, "\ncallstack", new Error("test").stack);
 		let connection = this.connection;
+		if(connection.playing) connection.stop();
 		if(connection) bot.leaveVoiceChannel(connection.channelId);
 		this.emit("destroy", reason);
 		bot.players.delete(this.id);
@@ -100,11 +100,9 @@ class Player extends EventEmitter {
 		}
 
 		await this.setQueue(queue);
-		console.log("track", song.track);
-		process.nextTick(() => connection.play(song.track, {}));
+		connection.play(song.track, {});
 
 		this.setCurrent(song);
-		console.log("current", await this.getCurrent());
 		this.emit("playing", song);
 		this.connection.once("end", async () => {
 			queue = await this.getQueue();
