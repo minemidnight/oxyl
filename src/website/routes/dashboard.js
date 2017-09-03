@@ -1,9 +1,9 @@
-const router = module.exports = express.Router(); // eslint-disable-line new-cap
+const router = module.exports = require("express").Router(); // eslint-disable-line new-cap
 
 router.get("/overview/*", async (req, res) => {
 	let id = req.path.substring(9).replace(/\//g, "");
 	if(!id.match(/\d+/)) {
-		res.status(404).send(await app.page(req, "404", { guild: id })).end();
+		res.status(404).send(await req.app.page(req, "404", { guild: id })).end();
 		return;
 	}
 
@@ -30,7 +30,7 @@ router.get("/overview/*", async (req, res) => {
 			type: "guild"
 		})).result;
 
-		res.status(200).send(await app.page(req, "dashboard", {
+		res.status(200).send(await req.app.page(req, "dashboard", {
 			botCount,
 			botPercent: (botCount / memberCount * 100).toFixed(2),
 			channelCount,
@@ -44,14 +44,14 @@ router.get("/overview/*", async (req, res) => {
 			userPercent: ((memberCount - botCount) / memberCount * 100).toFixed(2)
 		})).end();
 	} else {
-		res.status(200).send(await app.page(req, "invite", { guild: id })).end();
+		res.status(200).send(await req.app.page(req, "invite", { guild: id })).end();
 	}
 });
 
 router.get("/settings/*", async (req, res) => {
 	let id = req.path.substring(9).replace(/\//g, "");
 	if(!id.match(/\d+/)) {
-		res.status(404).send(await app.page(req, "404", { guild: id })).end();
+		res.status(404).send(await req.app.page(req, "404", { guild: id })).end();
 		return;
 	}
 
@@ -77,10 +77,15 @@ router.get("/settings/*", async (req, res) => {
 			type: "guild"
 		})).result;
 
-		res.status(200)
-			.send(await app.page(req, "settings", { textChannels, guild: id, modLog, settings: guildSettings, roles })).end();
+		res.status(200).send(await req.app.page(req, "settings", {
+			textChannels,
+			guild: id,
+			modLog,
+			settings: guildSettings,
+			roles
+		})).end();
 	} else {
-		res.status(200).send(await app.page(req, "invite", { guild: id })).end();
+		res.status(200).send(await req.app.page(req, "invite", { guild: id })).end();
 	}
 });
 
@@ -92,7 +97,7 @@ const readableActions = {
 router.get("/modlog/*", async (req, res) => {
 	let id = req.path.substring(7).replace(/\//g, "");
 	if(!id.match(/\d+/)) {
-		res.status(404).send(await app.page(req, "404", { guild: id })).end();
+		res.status(404).send(await req.app.page(req, "404", { guild: id })).end();
 		return;
 	}
 
@@ -116,12 +121,12 @@ router.get("/modlog/*", async (req, res) => {
 			if(data.role) data.role = roles.find(role => role.id === data.role).name || data.role;
 		});
 		if(!cases.length) {
-			res.status(200).send(await app.page(req, "modlog", { guild: id })).end();
+			res.status(200).send(await req.app.page(req, "modlog", { guild: id })).end();
 		} else {
-			res.status(200).send(await app.page(req, "modlog", { guild: id, cases })).end();
+			res.status(200).send(await req.app.page(req, "modlog", { guild: id, cases })).end();
 		}
 	} else {
-		res.status(200).send(await app.page(req, "invite", { guild: id })).end();
+		res.status(200).send(await req.app.page(req, "invite", { guild: id })).end();
 	}
 });
 

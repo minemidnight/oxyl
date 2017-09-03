@@ -8,9 +8,7 @@
 		"bot": false,
 		"cluster": false,
 		"r": false,
-		"__": false,
-		"express": false,
-		"app": false
+		"__": false
 	 },
 	"parserOptions": {
 		"ecmaVersion": 2017

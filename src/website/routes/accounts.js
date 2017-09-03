@@ -1,4 +1,4 @@
-const router = module.exports = express.Router(); // eslint-disable-line new-cap
+const router = module.exports = require("express").Router(); // eslint-disable-line new-cap
 
 router.get("/", async (req, res) => {
 	let accounts = [];
@@ -6,7 +6,7 @@ router.get("/", async (req, res) => {
 		if(!key.startsWith("token_")) continue;
 		try {
 			let cookie = JSON.parse(req.cookies[key]);
-			let info = await app.discordInfo(cookie, "users/@me", req);
+			let info = await req.app.discordInfo(cookie, "users/@me", req);
 			if(!info) continue;
 			info.tokenid = cookie.id;
 
@@ -16,5 +16,5 @@ router.get("/", async (req, res) => {
 		}
 	}
 
-	res.status(200).send(await app.page(req, "accounts", { accounts })).end();
+	res.status(200).send(await req.app.page(req, "accounts", { accounts })).end();
 });

@@ -1,7 +1,7 @@
-global.express = require("express");
 const babelify = require("express-babelify-middleware"),
 	bodyParser = require("body-parser"),
 	cookieParser = require("cookie-parser"),
+	express = require("express"),
 	fs = require("fs"),
 	handlebars = require("handlebars"),
 	path = require("path"),
@@ -9,7 +9,7 @@ const babelify = require("express-babelify-middleware"),
 
 
 Promise.promisifyAll(fs);
-const app = global.app = express();
+const app = express();
 const config = app.config = require(path.resolve("config.json"));
 const server = app.server = require("http").createServer(app);
 server.listen(config.website.port, () => {

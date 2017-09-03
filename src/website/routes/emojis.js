@@ -1,4 +1,4 @@
-const router = module.exports = express.Router(); // eslint-disable-line new-cap
+const router = module.exports = require("express").Router(); // eslint-disable-line new-cap
 
 let emojis = {};
 router.get("/", async (req, res) => {
@@ -9,7 +9,7 @@ router.get("/", async (req, res) => {
 	let totalPages = Math.ceil(displayEmojis.length / 1500);
 	if(page > totalPages) page = totalPages;
 
-	res.status(200).send(await app.page(req, "emojis", {
+	res.status(200).send(await req.app.page(req, "emojis", {
 		emojis: displayEmojis.slice((page - 1) * 750, page * 750),
 		page,
 		totalPages,
