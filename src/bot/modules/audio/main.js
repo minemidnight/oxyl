@@ -10,7 +10,7 @@ module.exports = async (query, searching = false) => {
 		.query({ identifier: query });
 
 	if(body && Array.isArray(body) && body.length) var data = [body];
-	else if(!searching) return module.exports(search(query), true);
+	else if(body && Array.isArray(body) && !body.length && !searching) return module.exports(search(query), true);
 	else throw new Error("No track resolved");
 
 	data.info.track = data.track;
