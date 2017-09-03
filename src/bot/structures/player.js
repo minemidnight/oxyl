@@ -166,7 +166,7 @@ class Player extends EventEmitter {
 	}
 
 	async setConnection(channelID) {
-		if(!channelID) return await redis.del(`connection:${this.id}`);
+		if(channelID === null) return await redis.del(`connection:${this.id}`);
 		else return await redis.set(`connection:${this.id}`, channelID, "EX", 7200);
 	}
 }
