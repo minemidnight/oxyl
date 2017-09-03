@@ -1,6 +1,3 @@
-const { PlayerManager } = require("eris-lavalink");
-const manager = new PlayerManager(bot, [bot.config.lavalink.nodeOptions]);
-
 const Redis = require("ioredis");
 const redis = new Redis({ keyPrefix: bot.config.beta ? "oxylbeta:" : "oxyl:" });
 

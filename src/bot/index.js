@@ -1,12 +1,11 @@
-const Eris = require("eris-additions")(require("eris"), {
-	enabled: [
-		"Channel.awaitMessages",
-		"Member.bannable",
-		"Member.kickable",
-		"Member.punishable",
-		"Role.addable"
-	]
-});
+const Eris = require("eris-additions")(require("eris"),
+	{ enabled: ["Channel.awaitMessages", "Member.bannable", "Member.kickable", "Member.punishable", "Role.addable"] }
+);
+
+const { PlayerManager } = require("eris-lavalink");
+const nodeOptions = Object.assign(bot.config.lavalink.nodeOptions, { numShards: cluster.worker.totalShards });
+const manager = new PlayerManager(bot, [nodeOptions], {});
+Eris.VoiceConnectionManager = manager;
 
 const path = require("path");
 const fs = Promise.promisifyAll(require("fs"));
