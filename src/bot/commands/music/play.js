@@ -50,7 +50,11 @@ module.exports = {
 							title: video.title
 						});
 					} else if(video.service === "SoundCloudTrack") {
-						soundcloud.push(resolver(video.url));
+						soundcloud.push({
+							identifier: video.identifier,
+							length: video.length * 1000,
+							title: video.title
+						});
 					}
 				}
 
