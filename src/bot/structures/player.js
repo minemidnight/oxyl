@@ -212,14 +212,14 @@ function handlePlayer(player) {
 	};
 
 	player.on("playing", async song => {
-		let message = `▶ ${__("phrases.nowPlaying", this._guild)}\n**${song.title}**`;
+		let message = `${__("phrases.nowPlaying", this._guild)}\n**${song.title}**`;
 
-
+		if(song.author && song.author !== "Unknown artist") message += ` by ${song.author}`;
 		if(song.length && song.length < 900000000000000) {
-			message += ` (${bot.utils.secondsToDuration(song.length / 1000)})`;
+			message += ` \`(${bot.utils.secondsToDuration(song.length / 1000)})\``;
 		}
 
-		message += `ID: ${song.identifier}`;
+		message += `\nID: ${song.identifier}`;
 		createMessage(message);
 	});
 
