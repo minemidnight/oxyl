@@ -9,7 +9,8 @@ module.exports = {
 
 		try {
 			await bot.editRole(updateInfo.guild, updateInfo.role, { mentionable: true });
-			await bot.createMessage(updateInfo.channel, `<@&${updateInfo.role}>\n${message.args[0]}`);
+			await bot.createMessage(updateInfo.channel,
+				`<@&${updateInfo.role}>\n${bot.utils.codeBlock(message.args[0], "diff")}`);
 			await bot.editRole(updateInfo.guild, updateInfo.role, { mentionable: false });
 			return "Update released";
 		} catch(err) {

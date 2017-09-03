@@ -205,7 +205,8 @@
                 "missingRolePerms": "I do not have permissions to create the Muted role (needed permission: `Manage Roles`)",
                 "missingChannelPerms": "I cannot correctly configure the Muted role, due to permissions (needed permission: `Manage Channels`)",
                 "muted": "{{user}} has been muted",
-                "unmuted": "{{user}} has been unmuted"
+                "unmuted": "{{user}} has been unmuted",
+                "tempMuted": "{{user}} has been muted until {{date}}"
             },
             "pardon": {
                 "noPerms": "You do not have correct permission to pardon that user",
@@ -384,7 +385,8 @@
         "noneRequired": "None required",
         "nowPlaying": "Now playing",
         "recievedError": "Recieved Error",
-        "rolePersist": "Role Persist"
+        "rolePersist": "Role Persist",
+        "muteExpired": "Temporary mute expired"
     },
     "words": {
         "noValue": "No value",

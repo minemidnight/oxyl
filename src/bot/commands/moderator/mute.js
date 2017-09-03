@@ -1,47 +1,14 @@
 const modLog = require("../../modules/modLog.js");
-async function getMutedRole(message) {
-	const guild = message.channel.guild;
-	let botMember = guild.members.get(bot.user.id);
-	let mutedRole = guild.roles.find(role => role.name.toLowerCase() === __("words.muted", guild));
-
-	if(mutedRole && !mutedRole.addable) {
-		return __("commands.moderator.mute.roleError", message);
-	} else if(!mutedRole) {
-		let rolePerms = botMember.permission.has("manageRoles");
-		let channelPerms = botMember.permission.has("manageChannels");
-		if(!rolePerms && !channelPerms) {
-			return __("commands.moderator.mute.missingBothPerms", message);
-		} else if(!rolePerms) {
-			return __("commands.moderator.mute.missingRolePerms", message);
-		} else if(!channelPerms) {
-			return __("commands.moderator.mute.missingChannelPerms", message);
-		} else {
-			mutedRole = await guild.createRole({
-				name: __("words.muted", guild, {}, true),
-				permissions: 0,
-				color: 0xDF4242
-			}, "Create Muted Role");
-			// mutedRole.editPosition(0);
-
-			guild.channels
-				.filter(ch => ch.type === 0)
-				.forEach(ch => ch.editPermission(mutedRole.id, 0, 2048, "role", "Configure Muted Role"));
-			return mutedRole;
-		}
-	} else {
-		return mutedRole;
-	}
-}
 
 module.exports = {
 	process: async message => {
-		let mutedRole = await getMutedRole(message);
+		let mutedRole = await bot.utils.getMutedRole(message);
 		if(typeof mutedRole === "string") return mutedRole;
 
 		if(message.args[1]) {
 			let guild = message.channel.guild;
 			let channel = await modLog.channel(guild);
-			let trackedList = (await r.table("settings").filter({ guildID: guild.id, name: "modLog.track" }).run())[0];
+			let trackedList = await r.table("settings").get(["modLog.track", guild.id]).run();
 			if(channel && trackedList && ~trackedList.value.indexOf(mutedRole.id)) {
 				modLog.presetReasons[guild.id] = { mod: message.author, reason: message.args[1] };
 			}
