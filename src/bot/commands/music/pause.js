@@ -5,14 +5,16 @@ module.exports = {
 			return __("phrases.noMusic", message);
 		} else if(!player.voiceCheck(message.member)) {
 			return __("phrases.notListening", message);
-		} else if(player.connection.paused) {
-			return __("commands.music.pause.alreadyPaused", message);
 		} else {
 			let options = await player.getOptions();
-			options.paused = true;
-			await player.setOptions(options);
+			if(options.paused) {
+				return __("commands.music.pause.alreadyPaused", message);
+			} else {
+				options.paused = true;
+				await player.setOptions(options);
+			}
 
-			player.connection.pause();
+			player.connection.setPause(options.paused);
 			return __("commands.music.pause.success", message);
 		}
 	},

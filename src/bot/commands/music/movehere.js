@@ -5,7 +5,7 @@ module.exports = {
 			return __("phrases.noMusic", message);
 		} else {
 			let moves = [];
-			let connectionChannel = player.connection.channelID;
+			let connectionChannel = player.connection.channelId;
 			if(message.member && message.member.voiceState && message.member.voiceState.channelID) {
 				let memberChannel = message.channel.guild.channels.get(message.member.voiceState.channelID);
 				if(memberChannel.id !== connectionChannel) {

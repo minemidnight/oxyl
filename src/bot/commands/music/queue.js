@@ -26,13 +26,16 @@ module.exports = {
 			queueMsg += "\n\n";
 			queueMsg += __("phrases.queueError", message);
 		} else {
-			if(!isNaN(current.duration)) var videoDuration = bot.utils.secondsToDuration(current.duration);
-			let playTime = bot.utils.secondsToDuration(Math.floor(player.connection.current.playTime / 1000));
+			if(current.length && current.length < 900000000000000) {
+				var videoDuration = bot.utils.secondsToDuration(current.duration);
+			}
+
+			let playTime = bot.utils.secondsToDuration(Math.floor(player.connection.state.position / 1000));
 
 			queueMsg += "\n\n";
 			queueMsg += __("phrases.currentPlaying", message, {
 				title: current.title,
-				duration: videoDuration ? `${playTime}/${videoDuration}` : current.live ? `${playTime}/LIVE` : playTime
+				duration: videoDuration ? `${playTime}/${videoDuration}` : playTime
 			});
 		}
 

@@ -10,7 +10,7 @@ module.exports = {
 			if(queue.length === 0) return __("phrases.noQueue", message);
 			if(message.args[0] > queue.length) return __("commands.music.jump.invalidQueue", message);
 			queue = queue.slice(message.args[0] - 1).concat(queue.slice(0, message.args[0] - 1));
-			player.connection.stopPlaying();
+			player.connection.stop();
 
 			await player.setQueue(queue);
 			return __("commands.music.jump.success", message, { queue: message.args[0] });

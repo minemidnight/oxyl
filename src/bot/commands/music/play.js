@@ -1,5 +1,5 @@
 const Player = require("../../structures/player.js");
-const mainResolver = require("../../modules/audioResolvers/main.js");
+const resolver = require("../../modules/audio/main.js");
 
 const cheerio = require("cheerio");
 const superagent = require("superagent");
@@ -45,20 +45,16 @@ module.exports = {
 				for(let video of data) {
 					if(video.service === "YouTubeVideo") {
 						youtube.push({
-							duration: video.length,
-							id: video.identifier,
-							service: "youtube",
-							thumbnail: `https://i.ytimg.com/vi/${video.identifier}/hqdefault.jpg`,
+							identifier: video.identifier,
+							length: video.length * 1000,
 							title: video.title
 						});
 					} else if(video.service === "SoundCloudTrack") {
-						soundcloud.push(mainResolver(video.url));
+						soundcloud.push(resolver(video.url));
 					}
 				}
 
-				let res = await player.addQueue(
-					youtube.concat((await Promise.all(soundcloud)).filter(scData => typeof scData === "object"))
-				);
+				let res = await player.addQueue(youtube.concat(await Promise.all(soundcloud)));
 				if(typeof res === "string") return res;
 
 				let display = playlistsDisplay[playlistsFormat.indexOf(message.args[0].replace(/ /g, "-"))];
@@ -80,35 +76,18 @@ module.exports = {
 			if(!savedQueue) return __("commands.music.play.noSavedQueue", message, { save: queueNumber });
 
 			if(!player.connection) await player.connect(voiceChannel.id);
-			await player.addQueue(await Promise.all(savedQueue.queue.map(mainResolver)));
+			await player.addQueue(savedQueue.queue);
 			return __("commands.music.play.loadedSavedQueue", message, {
 				save: queueNumber,
 				itemCount: savedQueue.queue.length
 			});
 		} else {
-			let result = await mainResolver(message.args[0]);
-			if(typeof result === "object") {
-				if(!player.connection) await player.connect(voiceChannel.id);
-				let res2 = await player.addQueue(result);
-				if(typeof res2 === "string") return res2;
-				else return __("commands.music.play.addedItem", message, { title: result.title });
-			} else if(result === "NO_VALID_FORMATS") {
-				return __("commands.music.play.noFormats", message);
-			} else if(result === "INVALID_ID") {
-				return __("commands.music.play.invalidID", message);
-			} else if(result === "NOT_FOUND") {
-				return __("commands.music.play.notFound", message);
-			} else if(result === "INVALID_TYPE") {
-				return __("commands.music.play.invalidType", message);
-			} else if(result === "CHANNEL_OFFLINE") {
-				return __("commands.music.play.channelOffline", message);
-			} else if(result === "NO_RESULTS") {
-				return __("commands.music.play.noSearchResults", message);
-			} else if(result === "INVALID_URL") {
-				return __("commands.music.play.invalidURL", message);
-			} else {
-				return result;
-			}
+			let result = await resolver(message.args[0]);
+
+			if(!player.connection) await player.connect(voiceChannel.id);
+			let res2 = await player.addQueue(result);
+			if(typeof res2 === "string") return res2;
+			else return __("commands.music.play.addedItem", message, { title: result.title });
 		}
 	},
 	caseSensitive: true,
@@ -116,6 +95,6 @@ module.exports = {
 	description: "Add items to the music queue",
 	args: [{
 		type: "text",
-		label: "link|search query|dfm:<playlist>/list|tts:<text>"
+		label: "link|search query|dfm:<playlist>/list"
 	}]
 };

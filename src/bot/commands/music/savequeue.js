@@ -12,22 +12,14 @@ module.exports = {
 		} else if(queue.length === 0) {
 			return __("phrases.noQueue", message);
 		} else {
-			let trimmedQueue = queue.map(song => {
-				if(song.service === "twitch") return `https://twitch.tv/${song.id}`;
-				else if(song.service === "soundcloud") return song.url;
-				else if(song.service === "youtube") return `https://www.youtube.com/watch?v=${song.id}`;
-				else return false;
-			});
-
 			let alreadySaved = await r.table("savedQueues").get([message.args[0], message.author.id]).run();
 			if(alreadySaved) {
 				await r.table("savedQueues").get([message.args[0], message.author.id])
-					.update({ queue: trimmedQueue }).run();
+					.update({ queue }).run();
 			} else {
 				await r.table("savedQueues").insert({
 					id: [message.args[0], message.author.id],
-					queue: trimmedQueue,
-					savedID: message.args[0],
+					queue,
 					userID: message.author.id
 				}).run();
 			}

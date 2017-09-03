@@ -8,7 +8,7 @@ module.exports = {
 		} else {
 			let queue = await player.getQueue();
 			let next = queue[0];
-			player.connection.stopPlaying();
+			player.connection.stop();
 
 			if(next) return __("commands.music.skip.successNextSong", message, { title: next.title });
 			else return __("commands.music.skip.successNoneLeft", message);

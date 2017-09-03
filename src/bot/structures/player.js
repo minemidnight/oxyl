@@ -2,14 +2,14 @@ const Redis = require("ioredis");
 const redis = new Redis({ keyPrefix: bot.config.beta ? "oxylbeta:" : "oxyl:" });
 
 const EventEmitter = require("events").EventEmitter;
-const mainResolver = require("../modules/audioResolvers/main.js");
-const autoplay = require("../modules/audioResolvers/autoplay.js");
+const resolver = require("../modules/audio/main.js");
+const autoplay = require("../modules/audio/autoplay.js");
 
 class Player extends EventEmitter {
 	constructor(guild, data = {}) {
 		super();
 		this.id = guild.id;
-		this.guild = guild;
+		this._guild = guild;
 
 		if(data.channelID) this.setChannel(data.channelID);
 		bot.players.set(this.id, this);
@@ -32,8 +32,7 @@ class Player extends EventEmitter {
 			this.destroyTimeout = setTimeout(() => this.destroy("inactivity"), 600000);
 		});
 
-		if(this.connection.ready) return true;
-		else return new Promise(resolve => this.connection.once("ready", resolve));
+		return true;
 	}
 
 	async addQueue(data) {
@@ -42,8 +41,8 @@ class Player extends EventEmitter {
 		let current = await this.getCurrent();
 		let queue = await this.getQueue();
 		if(queue.length >= 1500) {
-			let donator = await r.db("Oxyl").table("donators").get(this.guild.ownerID).run();
-			if(!donator) return __("modules.player.maxQueue", this.guild);
+			let donator = await r.db("Oxyl").table("donators").get(this._guild.ownerID).run();
+			if(!donator) return __("modules.player.maxQueue", this._guild);
 		}
 
 		if(Array.isArray(data)) queue = queue.concat(data);
@@ -51,11 +50,11 @@ class Player extends EventEmitter {
 		if(!current) this.play();
 
 		if(queue.length >= 1500) {
-			let donator = await r.db("Oxyl").table("donators").get(this.guild.ownerID).run();
+			let donator = await r.db("Oxyl").table("donators").get(this._guild.ownerID).run();
 			if(!donator) {
 				queue = queue.slice(0, (donator ? 10000 : 1500) - 1);
 				await this.setQueue(queue);
-				if(!donator) return __("modules.player.cutOffQueue", this.guild);
+				if(!donator) return __("modules.player.cutOffQueue", this._guild);
 			}
 		}
 
@@ -65,28 +64,21 @@ class Player extends EventEmitter {
 
 	async destroy(reason) {
 		let connection = this.connection;
-		if(connection) bot.leaveVoiceChannel(connection.channelID);
+		if(connection) bot.leaveVoiceChannel(connection.channelId);
 		this.emit("destroy", reason);
 		bot.players.delete(this.id);
 
 		let keys = await redis.keys(`${redis.options.keyPrefix}*:${this.id}`);
 		keys.forEach(key => redis.del(key.substring(redis.options.keyPrefix.length)));
-
-		delete this;
 	}
 
 	async play() {
 		let connection = this.connection;
 		let current = await this.getCurrent();
 
-		if(!connection) return;
-		else if(current && connection.playing) return;
-		else if(!current && connection.playing) connection.stopPlaying();
-		else if(!connection.playing && current) redis.del(`current:${this.id}`);
+		if(!connection || (current && connection.playing)) return;
+		if(this.destroyTimeout) clearTimeout(this.destroyTimeout);
 
-		if(!bot.players.has(this.id) && connection) bot.players.set(this.id, this);
-
-		clearTimeout(this.destroyTimeout);
 		let queue = await this.getQueue();
 		let song = queue[0];
 		if(!song && !current && !queue.length) {
@@ -95,45 +87,19 @@ class Player extends EventEmitter {
 		} else if(!song) {
 			setTimeout(() => this.play(), 100);
 			return;
+		} else {
+			queue.shift();
 		}
 
-		if(queue.length > 1) queue.shift();
-		else queue = [];
-
-		if(!song.stream) song = await mainResolver.extract(song);
-		if(!song.stream) {
-			this.emit("error", new Error(__("modules.player.extractionError", this.guild)));
-			await this.setQueue(queue);
-			this.play();
-			return;
-		} else if(typeof song.stream === "string" && song.stream === "NO_VALID_FORMATS") {
-			this.emit("error", new Error(__("modules.player.noFormats", this.guild)));
-			await this.setQueue(queue);
-			this.play();
-			return;
-		} else if(typeof song.stream === "string" && song.stream.startsWith("ERROR:")) {
-			this.emit("error", song.stream);
-			await this.setQueue(queue);
-			this.play();
-			return;
-		}
-
-		let volume;
-		if(song.live) volume = 1;
-		else volume = 0.3;
-		let options = {};
-
-		options.encoderArgs = ["-af", `volume=${volume}`];
-		options.inputArgs = ["-reconnect", "1", "-reconnect_streamed", "1", "-reconnect_delay_max", "2"];
+		if(!song.track) song = await resolver(song.uri);
 
 		let playerOptions = await this.getOptions();
-		if(!playerOptions.repeat && playerOptions.autoplay && song.service === "youtube") {
-			queue.unshift(await autoplay(song.id));
+		if(!playerOptions.repeat && playerOptions.autoplay && song.uri.startsWith("https://www.youtube.com/")) {
+			queue.unshift(await autoplay(song.identifier));
 		}
 
 		await this.setQueue(queue);
-		connection.play(song.stream, options);
-		if(!bot.players.has(this.id) && connection) bot.players.set(this.id, this);
+		connection.play(song.track, {});
 
 		this.setCurrent(song);
 		this.emit("playing", song);
@@ -155,7 +121,7 @@ class Player extends EventEmitter {
 
 	voiceCheck(member) {
 		if(!member.voiceState || !member.voiceState.channelID || !this.connection) return false;
-		else return member.voiceState.channelID === this.connection.channelID;
+		else return member.voiceState.channelID === this.connection.channelId;
 	}
 
 	async getOptions() {
@@ -169,7 +135,7 @@ class Player extends EventEmitter {
 
 	async getChannel() {
 		let channel = await redis.get(`channel:${this.id}`);
-		return channel ? this.guild.channels.get(channel) : undefined;
+		return channel ? this._guild.channels.get(channel) : undefined;
 	}
 
 	async setChannel(channelID) {
@@ -199,7 +165,8 @@ class Player extends EventEmitter {
 	}
 
 	async setConnection(channelID) {
-		return await redis.set(`connection:${this.id}`, channelID, "EX", 7200);
+		if(!channelID) return await redis.del(`connection:${this.id}`);
+		else return await redis.set(`connection:${this.id}`, channelID, "EX", 7200);
 	}
 }
 module.exports = Player;
@@ -224,13 +191,13 @@ module.exports.resumeQueues = async () => {
 
 		if(options.paused) {
 			await new Promise(resolve => setTimeout(resolve, 2500));
-			player.connection.pause();
+			player.connection.setPause(true);
 		}
 	});
 };
 
 function handlePlayer(player) {
-	let createMessage = async embed => {
+	let createMessage = async message => {
 		if(!player.connection) return;
 
 		let channel = await player.getChannel();
@@ -239,29 +206,28 @@ function handlePlayer(player) {
 		let messageDisabled = await r.table("settings").get(["disable-music-messages", player.id]).run();
 		if(messageDisabled && messageDisabled.value) return;
 
-		let listening = player.guild.channels.get(player.connection.channelID).voiceMembers
+		let listening = player._guild.channels.get(player.connection.channelId).voiceMembers
 			.filter(member => !member.bot && !member.voiceState.selfDeaf).length;
-		if(listening >= 1) channel.createMessage({ embed });
+		if(listening >= 1) channel.createMessage(typeof message === "object" ? { message } : message);
 	};
 
 	player.on("playing", async song => {
-		let embed = {
-			description: `**${song.title}**`,
-			image: { url: song.thumbnail },
-			footer: { text: `${__("words.service", this.guild)}: ${song.service}` },
-			title: `▶ ${__("phrases.nowPlaying", this.guild)}`
-		};
+		let message = `▶ ${__("phrases.nowPlaying", this._guild)}\n**${song.title}**`;
 
-		if(song.id) embed.footer.text = `ID: ${song.id} |${embed.footer.text}`;
-		if(song.duration && !isNaN(song.duration)) embed.description += ` (${bot.utils.secondsToDuration(song.duration)})`;
-		createMessage(embed);
+
+		if(song.length && song.length < 900000000000000) {
+			message += ` (${bot.utils.secondsToDuration(song.length / 1000)})`;
+		}
+
+		message += `ID: ${song.identifier}`;
+		createMessage(message);
 	});
 
 	player.on("error", async err => {
 		createMessage({
 			color: 0xF1C40F,
 			description: err.stack || err.message,
-			title: `⚠ ${__("phrases.recievedError", this.guild)}`
+			title: `⚠ ${__("phrases.recievedError", this._guild)}`
 		});
 	});
 }

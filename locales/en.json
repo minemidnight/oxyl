@@ -266,15 +266,7 @@
                 "invalidSavedQueue": "Invalid save number! Valid save numbers are 1, 2 or 3",
                 "noSavedQueue": "There is no saved queue under save #{{save}}",
                 "loadedSavedQueue": "Loaded queue #{{save}} ({{itemCount}} items)",
-                "addedItem": "Added __{{title}}__ to the queue",
-                "noFormats": "No suitable formats were found",
-                "invalidID": "The ID from playlist/video link was invalid",
-                "notFound": "The resource could not be found, perhaps it has been removed?",
-                "invalidType": "Please only link to SoundCloud songs or playlists",
-                "channelOffline": "That Twitch channel is offline",
-                "noSearchResults": "No results from search query",
-                "addedTTS": "Added text to speech phrase to queue",
-                "invalidURL": "That is an invalid url, or does not have a stream"
+                "addedItem": "Added __{{title}}__ to the queue"
             },
             "queue": {
                 "success": "__**Music Queue ({{itemCount}})**__\n{{message}}"
@@ -341,9 +333,7 @@
         },
         "player": {
             "maxQueue": "You cannot add any more songs! Your queue already has 2000 songs. If you want an unlimited queue size, consider donating.",
-            "cutOffQueue": "Your queue was added, but not fully. Your queue has been capped at 2000 songs. If you want an unlimited queue size, consider donating.",
-            "extractionError": "No stream returned after extraction",
-            "noFormats": "No suitable formats were found"
+            "cutOffQueue": "Your queue was added, but not fully. Your queue has been capped at 2000 songs. If you want an unlimited queue size, consider donating."
         },
         "resolver": {
             "booleanError": "Invalid input! Please provide true/yes or false/no",
@@ -401,7 +391,6 @@
         "and": "and",
         "page": "page",
         "on": "on",
-        "off": "off",
-        "service": "service"
+        "off": "off"
     }
 }
