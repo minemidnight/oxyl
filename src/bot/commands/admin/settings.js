@@ -120,6 +120,10 @@ let settings = module.exports.settings = {
 		description: "Message sent in user log when a user joins " +
 			"(placeholders: {{mention}}, {{username}}, {{id}}, {{discrim}})"
 	},
+	"greeting-dm": {
+		arg: "boolean",
+		description: "Toggle if Oxyl dm's join messages or sends them in a channel"
+	},
 	"disable-music-messages": {
 		arg: "boolean",
 		description: "Toggle if Oxyl sends now playing and error messages"

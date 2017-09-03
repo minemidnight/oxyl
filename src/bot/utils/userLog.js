@@ -15,7 +15,15 @@ module.exports = async (guild, member, type) => {
 		.replace(/{{id}}/g, user.id);
 
 	try {
-		await bot.createMessage(userlog, message);
+		if(type === "join") {
+			var dm = await r.table("settings").get(["greeting-dm", guild.id]).run();
+			if(dm) {
+				let channel = await user.getDMChannel();
+				await channel.createMessage(message);
+			}
+		}
+
+		if(!dm) await bot.createMessage(userlog, message);
 	} catch(err) {
 		return;
 	}
