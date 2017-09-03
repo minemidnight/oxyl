@@ -47,7 +47,6 @@ class Player extends EventEmitter {
 
 		if(Array.isArray(data)) queue = queue.concat(data);
 		else if(typeof data === "object") queue.push(data);
-		if(!current) this.play();
 
 		if(queue.length >= 1500) {
 			let donator = await r.db("Oxyl").table("donators").get(this._guild.ownerID).run();
@@ -59,6 +58,7 @@ class Player extends EventEmitter {
 		}
 
 		await this.setQueue(queue);
+		if(!current) this.play();
 		return true;
 	}
 

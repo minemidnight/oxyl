@@ -27,7 +27,7 @@ module.exports = {
 			queueMsg += __("phrases.queueError", message);
 		} else {
 			if(current.length && current.length < 900000000000000) {
-				var videoDuration = bot.utils.secondsToDuration(current.duration);
+				var videoDuration = bot.utils.secondsToDuration(current.length);
 			}
 
 			let playTime = bot.utils.secondsToDuration(Math.floor(player.connection.state.position / 1000));

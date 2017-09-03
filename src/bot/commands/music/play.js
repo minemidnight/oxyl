@@ -41,24 +41,23 @@ module.exports = {
 				let { body: data } = await superagent
 					.get(`https://temp.discord.fm/libraries/${message.args[0].replace(/ /g, "-")}/json`);
 
-				let soundcloud = [], youtube = [];
-				for(let video of data) {
+				let res = await player.addQueue(data.map(video => {
 					if(video.service === "YouTubeVideo") {
-						youtube.push({
+						return {
 							identifier: video.identifier,
 							length: video.length * 1000,
 							title: video.title
-						});
+						};
 					} else if(video.service === "SoundCloudTrack") {
-						soundcloud.push({
+						return {
 							identifier: video.identifier,
 							length: video.length * 1000,
 							title: video.title
-						});
+						};
+					} else {
+						return {};
 					}
-				}
-
-				let res = await player.addQueue(youtube.concat(await Promise.all(soundcloud)));
+				}));
 				if(typeof res === "string") return res;
 
 				let display = playlistsDisplay[playlistsFormat.indexOf(message.args[0].replace(/ /g, "-"))];
