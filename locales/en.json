@@ -266,7 +266,8 @@
                 "invalidSavedQueue": "Invalid save number! Valid save numbers are 1, 2 or 3",
                 "noSavedQueue": "There is no saved queue under save #{{save}}",
                 "loadedSavedQueue": "Loaded queue #{{save}} ({{itemCount}} items)",
-                "addedItem": "Added __{{title}}__ to the queue"
+                "addedItem": "Added __{{title}}__ to the queue",
+                "addedPlaylist": "Added __playlist with {{items}} items__ to the queue"
             },
             "queue": {
                 "success": "__**Music Queue ({{itemCount}})**__\n{{message}}"

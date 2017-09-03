@@ -9,5 +9,5 @@ module.exports = async videoID => {
 	let title = $(".autoplay-bar .content-wrapper .title").text().trim();
 	let id = $(".autoplay-bar .content-wrapper .content-link").attr("href");
 	id = id.substring(id.indexOf("=") + 1);
-	return main(id);
+	return main(`https://www.youtube.com/watch?v=${id}`);
 };

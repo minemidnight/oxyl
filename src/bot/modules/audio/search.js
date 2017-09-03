@@ -11,5 +11,6 @@ module.exports = async query => {
 			type: "video",
 			key: googleKeys[Math.floor(Math.random() * googleKeys.length)]
 		});
-	return videoId;
+
+	return `https://www.youtube.com/watch?v=${videoId}`;
 };

@@ -46,7 +46,8 @@ module.exports = {
 						return {
 							identifier: video.identifier,
 							length: video.length * 1000,
-							title: video.title
+							title: video.title,
+							uri: `https://www.youtube.com/watch?v=${video.identifier}`
 						};
 					} else if(video.service === "SoundCloudTrack") {
 						return {
@@ -91,7 +92,8 @@ module.exports = {
 			if(!player.connection) await player.connect(voiceChannel.id);
 			let res2 = await player.addQueue(result);
 			if(typeof res2 === "string") return res2;
-			else return __("commands.music.play.addedItem", message, { title: result.title });
+			else if(result.title) return __("commands.music.play.addedItem", message, { title: result.title });
+			else return __("commands.music.play.addedPlaylist", message, { items: result.length });
 		}
 	},
 	caseSensitive: true,

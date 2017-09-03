@@ -92,7 +92,7 @@ class Player extends EventEmitter {
 			queue.shift();
 		}
 
-		if(!song.track) song = await resolver(song.uri || song.identifier);
+		if(!song.track) song = await resolver(song.uri);
 
 		let playerOptions = await this.getOptions();
 		if(!playerOptions.repeat && playerOptions.autoplay && song.uri.startsWith("https://www.youtube.com/")) {
