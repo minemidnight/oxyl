@@ -36,8 +36,7 @@ async function init() {
 
 	const { PlayerManager } = require("eris-lavalink");
 	const nodeOptions = Object.assign(bot.config.lavalink.nodeOptions, { numShards: cluster.worker.totalShards });
-	const manager = new PlayerManager(bot, [nodeOptions], {});
-	Eris.VoiceConnectionManager = manager;
+	bot.voiceConnections = new PlayerManager(bot, [nodeOptions], {});
 
 	let locales = await getFiles(path.resolve("locales"), file => file.endsWith(".json"));
 	bot.locales = locales.map(file => file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".")));
