@@ -9,7 +9,7 @@ module.exports = async (query, searching = false) => {
 		.set("Authorization", bot.config.lavalink.auth)
 		.query({ identifier: query });
 
-	if(body && Array.isArray(body) && body.length) var data = [body];
+	if(body && Array.isArray(body) && body.length) var [data] = body;
 	else if(body && Array.isArray(body) && !body.length && !searching) return module.exports(await search(query), true);
 	else throw new Error("No track resolved");
 
