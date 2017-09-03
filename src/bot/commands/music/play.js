@@ -1,7 +1,6 @@
 const Player = require("../../structures/player.js");
 const mainResolver = require("../../modules/audioResolvers/main.js");
 
-const tts = require("google-tts-api");
 const cheerio = require("cheerio");
 const superagent = require("superagent");
 let playlistsDisplay, playlistsFormat;
@@ -67,17 +66,6 @@ module.exports = {
 			} else {
 				return __("commands.music.play.invalidDFM", message);
 			}
-		} else if(message.args[0].startsWith("tts:")) {
-			message.args[0] = message.cleanContent.substring(4).trim();
-			let url = await tts(message.args[0], "en");
-
-			if(!player.connection) await player.connect(voiceChannel.id);
-			await player.addQueue({
-				service: "google-tts",
-				title: "Text to Speech",
-				stream: url
-			});
-			return __("commands.music.play.addedTTS", message);
 		} else if(message.args[0].startsWith("sq:")) {
 			message.args[0] = message.args[0].substring(3).trim();
 			let donator = await r.db("Oxyl").table("donators").get(message.author.id).run();
