@@ -180,6 +180,12 @@ module.exports.resumeQueues = async () => {
 
 		let player = new Player(bot.guilds.get(id));
 		let connection = await player.getConnection();
+		if(!connection) {
+			let keys2 = await redis.keys(`${redis.options.keyPrefix}*:${id}`);
+			keys2.forEach(key2 => redis.del(key2.substring(redis.options.keyPrefix.length)));
+			return;
+		}
+
 		let current = await player.getCurrent();
 		let options = await player.getOptions();
 		let queue = await player.getQueue();
