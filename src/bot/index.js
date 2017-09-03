@@ -2,11 +2,6 @@ const Eris = require("eris-additions")(require("eris"),
 	{ enabled: ["Channel.awaitMessages", "Member.bannable", "Member.kickable", "Member.punishable", "Role.addable"] }
 );
 
-const { PlayerManager } = require("eris-lavalink");
-const nodeOptions = Object.assign(bot.config.lavalink.nodeOptions, { numShards: cluster.worker.totalShards });
-const manager = new PlayerManager(bot, [nodeOptions], {});
-Eris.VoiceConnectionManager = manager;
-
 const path = require("path");
 const fs = Promise.promisifyAll(require("fs"));
 const config = require(path.resolve("config.json"));
@@ -21,23 +16,28 @@ async function init() {
 	} else if(!config.bot.prefixes) {
 		console.error("No prefix(es) found in config.json");
 		process.exit(0);
-	} else {
-		global.bot = new Eris(config.bot.token, {
-			firstShardID: cluster.worker.shardStart,
-			lastShardID: cluster.worker.shardEnd,
-			maxShards: cluster.worker.totalShards,
-			disableEvents: { TYPING_START: true },
-			messageLimit: 0,
-			defaultImageFormat: "png",
-			defaultImageSize: 256
-		});
 	}
+
+	global.bot = new Eris(config.bot.token, {
+		firstShardID: cluster.worker.shardStart,
+		lastShardID: cluster.worker.shardEnd,
+		maxShards: cluster.worker.totalShards,
+		disableEvents: { TYPING_START: true },
+		messageLimit: 0,
+		defaultImageFormat: "png",
+		defaultImageSize: 256
+	});
 
 	bot.config = config;
 	bot.ignoredChannels = new Map();
 	bot.players = new Map();
 	bot.prefixes = new Map();
 	bot.censors = new Map();
+
+	const { PlayerManager } = require("eris-lavalink");
+	const nodeOptions = Object.assign(bot.config.lavalink.nodeOptions, { numShards: cluster.worker.totalShards });
+	const manager = new PlayerManager(bot, [nodeOptions], {});
+	Eris.VoiceConnectionManager = manager;
 
 	let locales = await getFiles(path.resolve("locales"), file => file.endsWith(".json"));
 	bot.locales = locales.map(file => file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".")));
