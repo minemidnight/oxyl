@@ -1,6 +1,6 @@
 module.exports = async (guild, member, type) => {
 	type = type === "join" ? "greeting" : "farewell";
-	if(type === "join") {
+	if(type === "greeting") {
 		var dm = await r.table("settings").get(["greeting-dm", guild.id]).run();
 		dm = dm ? dm.value : false;
 	}

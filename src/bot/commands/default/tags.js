@@ -3,7 +3,7 @@ const tags = require("../../modules/tags.js");
 module.exports = {
 	process: async message => {
 		let arg = message.args[0];
-		if(arg.toLowerCase().startsWith("list")) {
+		if(arg.toLowerCase() === "list") {
 			let page = 1;
 			if(~arg.indexOf(" ")) page = parseInt(arg.substring(arg.indexOf(" ") + 1));
 			if(isNaN(page) || page < 1) page = 1;
@@ -40,7 +40,7 @@ module.exports = {
 			let tagName = arg.substring(arg.indexOf(" ") + 1).toLowerCase();
 			let content = tagName.substring(tagName.indexOf(" ") + 1);
 			tagName = tagName.substring(0, tagName.indexOf(" "));
-			if(!content || !content.length) return __("commands.default.tags.create.noContent", message);
+			if(!tagName || !content || !content.length) return __("commands.default.tags.create.noContent", message);
 
 			let tag = await tags.get(tagName);
 			if(tag) return __("commands.default.tags.create.alreadyExists", message, { name: tagName });
