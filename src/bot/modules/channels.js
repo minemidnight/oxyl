@@ -6,7 +6,7 @@ module.exports = {
 	},
 	get: async member => {
 		let channel = await redis.get(`channels:${member.guild.id}:${member.id}`);
-		if(channel && member.guild.channels.has(channel)) channel = member.guilds.channels.get(channel);
+		if(channel && member.guild.channels.has(channel)) channel = member.guild.channels.get(channel);
 		return channel;
 	},
 	memberFromChannel: async channel => {
@@ -31,5 +31,24 @@ module.exports = {
 		await redis.del(`channelMemberMap:${channel.id || channel}`);
 
 		if(channel && typeof channel === "object") await channel.delete();
+	},
+	load: async () => {
+		let keys = await redis.keys(`${redis.options.keyPrefix}channels:*`);
+		keys.forEach(async key => {
+			let guildID = key.substring(key.indexOf(":", redis.options.keyPrefix.length) + 1, key.lastIndexOf(":"));
+			let memberID = key.substring(key.lastIndexOf(":") + 1);
+			if(!bot.guilds.has(guildID)) return;
+			let guild = bot.guilds.get(guildID);
+
+			let channelID = await redis.get(key.substring(redis.options.keyPrefix.length));
+			if(!guild.channels.has(channelID)) {
+				module.exports.delete(guild.members.get(memberID));
+			} else {
+				let channel = guild.channels.get(channelID);
+				if(!channel.voiceMembers.filter(voiceMember => !voiceMember.bot).size) {
+					channel.deleteTimeout = setTimeout(() => module.exports.delete(guild.members.get(memberID)), 300000);
+				}
+			}
+		});
 	}
 };
