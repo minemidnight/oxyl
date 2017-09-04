@@ -2,7 +2,7 @@ const channels = require("../../modules/channels.js");
 module.exports = {
 	process: async message => {
 		let enabled = await channels.enabled(message.channel.guild.id);
-		if(!enabled || !enabled.value) return __("commands.default.channel.notEnabled", message);
+		if(!enabled) return __("commands.default.channel.notEnabled", message);
 
 		let botPerms = message.channel.guild.members.get(bot.user.id).permission;
 		if(!botPerms.has("manageChannels")) return __("commands.default.channel.noPerms", message);
