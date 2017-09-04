@@ -10,7 +10,7 @@ module.exports = async (member, newChannel, oldChannel) => {
 	}
 
 	if(channelOwnerOld && typeof channelOwnerOld === "object" &&
-	!channelOwnerOld.voiceMembers.filter(voiceMember => !voiceMember.bot).length) {
+		!oldChannel.voiceMembers.filter(voiceMember => !voiceMember.bot).length) {
 		oldChannel.deleteTimeout = setTimeout(() => channels.delete(channelOwnerOld), 300000);
 	}
 };
