@@ -72,7 +72,7 @@ module.exports = {
 			if(!current) return __("commands.default.channel.needsChannel", message);
 
 			try {
-				message.args[1] = await bot.utils.resolver.num(message, message.args[1], { min: 8, max: 96 });
+				message.args[1] = await bot.utils.resolver.user(message, message.args[1]);
 			} catch(err) {
 				return err.message;
 			}
