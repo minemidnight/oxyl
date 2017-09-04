@@ -77,12 +77,12 @@ module.exports = {
 				return err.message;
 			}
 
-			await bot.editChannelPermission(current.id, message.args[1], 1048576, 0, "member")
+			await bot.editChannelPermission(current.id, message.args[1].id, 1048576, 0, "member")
 				.catch(err => {}); // eslint-disable-line
-			return __("command.default.channel.whitelisted", message,
+			return __("commands.default.channel.whitelisted", message,
 				{ user: `${message.args[1].username}#${message.args[1].discriminator}` });
 		} else {
-			return __("command.default.channel.invalidSubcommand", message);
+			return __("commands.default.channel.invalidSubcommand", message);
 		}
 	},
 	guildOnly: true,

@@ -17,7 +17,7 @@ module.exports = {
 	create: async (member, name) => {
 		let channel = await bot.createChannel(member.guild.id, name, 2,
 			`Channel command (owned by ${member.user.username}#${member.user.discriminator})`);
-		await bot.editChannelPermission(channel.id, member.id, 16, 0, "member",
+		await bot.editChannelPermission(channel.id, member.id, 1048592, 0, "member",
 			`Channel command (owned by ${member.user.username}#${member.user.discriminator})`);
 
 		await redis.set(`channels:${member.guild.id}:${member.id}`, channel.id, "EX", 86400);
@@ -45,7 +45,7 @@ module.exports = {
 				module.exports.delete(guild.members.get(memberID));
 			} else {
 				let channel = guild.channels.get(channelID);
-				if(!channel.voiceMembers.filter(voiceMember => !voiceMember.bot).size) {
+				if(!channel.voiceMembers.filter(voiceMember => !voiceMember.bot).length) {
 					channel.deleteTimeout = setTimeout(() => module.exports.delete(guild.members.get(memberID)), 300000);
 				}
 			}
