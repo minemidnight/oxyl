@@ -110,6 +110,10 @@ module.exports = {
 };
 
 let settings = module.exports.settings = {
+	channels: {
+		arg: "boolean",
+		description: "Toggle whether or not the `channel` comamnd is usable"
+	},
 	farewell: {
 		arg: "text",
 		description: "Message sent in user log when a user leaves " +

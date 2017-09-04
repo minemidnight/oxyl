@@ -70,6 +70,21 @@
             }
         },
         "default": {
+            "channel": {
+                "notEnabled": "This feature is not enabled! Contact an admin to enable the setting `channels` if you think this is an error",
+                "hasChannelAlready": "You already have a channel made named `{{name}}`",
+                "invalidSubcommand": "Invalid sub-command! Please use `channel create <name>`, `channel kick <user>`, `channel bitrate <number>`, `channel userlimit <number>`, or `channel privacy <private/public>`",
+                "noPerms": "Oxyl doesn't have the correct permissions in this server! Please tell a server admin to give Oxyl the `Manage Channels` permission",
+                "created": "Channel named `{{name}}` created! After 5 minutes of nobody in this channel, it will delete itself",
+                "needsChannel": "You need a channel to use this command! Use `channel create <name>`",
+                "cantKick": "The member you want to kick from the channel must be in it!",
+                "changedBitrate": "Bitrate changed to `{{bitrate}}kbps`",
+                "changedUserLimit": "User limit changed to {{limit}} users",
+                "invalidPrivacy": "Invalid privacy option. Valid options: `public`, `private`",
+                "nowPublic": "Your channel is now public to anyone who wants to join",
+                "nowPrivate": "Your channel is now private! You must use `channel whitelist <user>` to whitelist a user",
+                "whitelisted": "I have added {{user}} to the channel whitelist"
+            },
             "donate": {
                 "success": "Thank you for considering donating.\nPatreon Page: https://patreon.com/minemidnight"
             },
@@ -84,13 +99,13 @@
             "invite": {
                 "success": "Support Server: {{server}}\nInvite: {{invite}}"
             },
-						"locale": {
-							"englishName": "English",
-							"nativeName": "English",
-							"noArg": "__**Locale List:**__\n{{locales}}\n\nCurrent Locale: `{{locale}}`\nWanna help translating? Sign up here: <https://poeditor.com/join/project/ng72WfpXkP>",
-							"invalidLocale": "That is not a valid locale!",
-							"changedSuccess": "Set the locale to `{{locale}}`"
-						},
+			"locale": {
+				"englishName": "English",
+				"nativeName": "English",
+				"noArg": "__**Locale List:**__\n{{locales}}\n\nCurrent Locale: `{{locale}}`\nWanna help translating? Sign up here: <https://poeditor.com/join/project/ng72WfpXkP>",
+				"invalidLocale": "That is not a valid locale!",
+				"changedSuccess": "Set the locale to `{{locale}}`"
+			},
             "ping": {
                 "success": "Pong! `{{latency}}ms`"
             },

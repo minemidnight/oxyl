@@ -24,7 +24,7 @@ module.exports = {
 			}
 
 			let channel = await player.getChannel();
-			if(channel.id !== message.channel.id) {
+			if(!channel || channel.id !== message.channel.id) {
 				await player.setChannel(message.channel.id);
 				moves.push(message.channel.mention);
 			}
