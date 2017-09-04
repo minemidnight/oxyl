@@ -1,7 +1,7 @@
 const redis = bot.utils.redis;
 module.exports = {
 	enabled: async guildID => {
-		let enabled = r.table("settings").get(["channels", guildID]).run();
+		let enabled = await r.table("settings").get(["channels", guildID]).run();
 		return enabled ? enabled.value : false;
 	},
 	get: async member => {
