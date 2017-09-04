@@ -40,7 +40,7 @@ module.exports = {
 				return err.message;
 			}
 
-			await current.edit({ bitrate: message.args[1] });
+			await current.edit({ bitrate: message.args[1] * 1000 });
 			return __("commands.default.channel.changedBitrate", message, { bitrate: message.args[1] });
 		} else if(message.args[0] === "userlimit") {
 			let current = await channels.get(message.member);
