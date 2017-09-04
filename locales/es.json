@@ -1,0 +1,411 @@
+{
+    "commands": {
+        "admin": {
+            "autoRole": {
+                "add": {
+                    "noArg": "¡Por favor, proporciona un rol para el sistema de auto-roles!",
+                    "alreadyAutorole": "El rol `{{role}}` ya está en el sistema de auto-roles.",
+                    "success": "El rol `{{role}}` fue agregado al sistema de auto-roles."
+                },
+                "remove": {
+                    "noArg": "¡Por favor, proporciona un rol para eliminar del sistema de auto-roles!",
+                    "notAutorole": "El rol `{{role}}` no está en el sistema de auto-roles.",
+                    "success": "El rol `{{role}}` fue eliminado del sistema de auto-roles."
+                },
+                "list": {
+                    "noAutoroles": "Actualmente no hay ningún rol en el sistema de auto-roles.",
+                    "success": "Lista de roles en el sistema de auto-roles: {{roles}}"
+                },
+                "invalidSubcommand": "¡Sub-comando incorrecto! Por favor, utiliza `autorole <add|remove|list> [<role>]`"
+            },
+            "editCommand": {
+                "commandNotFound": "Ese comando no ha sido encontrado.",
+                "cantEdit": "No puedes editar este comando.",
+                "info": {
+                    "noEdits": "No hay ediciones de este comando.",
+                    "success": "__**Comando**__: {{command}}\nActivado: {{enabled}}\nRoles: {{roles}}"
+                },
+                "reset": {
+                    "success": "Reiniciar comando: `{{command}}`"
+                },
+                "toggle": {
+                    "disabled": "Comando desactivado: `{{command}}`",
+                    "enabled": "Comando activado: `{{command}}`"
+                },
+                "roles": {
+                    "noArg": "¡Por favor, proporciona algunos roles para restringir este comando! Separa los roles con una `,` ",
+                    "invalidRoles": "Los rangos que escribiste son incorrectos. Proporciona los nombres de los roles separándolos con una `,`",
+                    "success": "El comando `{{command}}` solo podrá ser utilizado por los siguientes roles: {{roles}}"
+                },
+                "invalidSubcommand": "¡Sub-comando incorrecto! Por favor, utiliza `editcommand <nombre del comando> <info|reset|toggle|roles> [<roles (separa con una ,)>]`"
+            },
+            "ignore": {
+                "enabled": "Oxyl activado en el canal {{channel}}",
+                "disabled": "Oxyl desactivado en el canal {{channel}}"
+            },
+            "rolePersist": {
+                "add": {
+                    "noArg": "Por favor, proporciona un rol para agregar a los roles persistentes!",
+                    "alreadyPersisted": "El rol `{{role}}` ya es un rol persistente.",
+                    "success": "El rol `{{role}}` fue agregado a los roles persistentes."
+                },
+                "remove": {
+                    "noArg": "¡Por favor, proporciona un rol para remover de los roles persistentes!",
+                    "notPersisted": "El rol `{{role}}` no es un rol persistente.",
+                    "success": "El rol `{{role}}` fue eliminado de los roles persistentes."
+                },
+                "list": {
+                    "noPeristedRoles": "No hay ningún rol persistente. ",
+                    "success": "Lista de roles persistentes: {{roles}}"
+                },
+                "invalidSubcommand": "¡Sub-comando incorrecto! Por favor, utiliza `rolepersist <add|remove|list> [<role>]`"
+            },
+            "settings": {
+                "noArgs": " __**Configuraciones válidas**__:\n{{settings}}\n\nUsa `setting <setting>` para obtener más información sobre una configuración específica. ",
+                "invalidSetting": "¡Configuración incorrecta!",
+                "settingInfo": "__**Configuración**__: {{setting}}\nDescripción: {{description}}\nValores aceptados: {{accepted}}\nValor actual: `{{current}}`",
+                "cantReset": "`{{setting}}` no puede ser reiniciada porque no se ha configurado.",
+                "resetSuccess": "Reiniciar configuración de `{{setting}}` ",
+                "setSuccess": "Establecer `{{setting}}` para {{value}}"
+            }
+        },
+        "default": {
+            "donate": {
+                "success": "Gracias por considerar en donar.\nPágina de Patreon: https://patreon.com/minemidnight"
+            },
+            "google": {
+                "noResults": "No se encontraron resultados."
+            },
+            "help": {
+                "commandNotFound": "El comando no ha sido encontrado.",
+                "commandInfo": "__**Nombre del comando**__: {{command}}\nCategoria: {{category}}\nUso: {{usage}}\nAlias: {{aliases}}\nDescripción: {{description}}\nPermiso requerido: {{perm}}",
+                "commandList": "**Comandos ({{count}} en total)**\n{{commands}}\nUsa `help <command>` para obtener más información de un comando."
+            },
+            "invite": {
+                "success": "Server de soporte: {{server}}\nInvitación: {{invite}}"
+            },
+            "ping": {
+                "success": "Pong! `{{latency}}ms`"
+            },
+            "remind": {
+                "noTime": "Por favor, proporciona un tiempo, usando este formato: `remind <action> in <timespan>`",
+                "invalidTime": "Por favor, solamente crea recordatorios entre 30 segundos y 4 semanas en el futuro.",
+                "success": "Recordatorio creado: `{{action}} en {{time}}"
+            },
+            "roleMe": {
+                "noPerms": "¡No tienes los permisos correctos para hacer esto! Debes tener el permiso de ADMINISTRADOR o ser el dueño del servidor. ",
+                "notAvailable": "Ese rol no está disponible.",
+                "list": {
+                    "noneAvailable": "No hay ningún rol disponible.",
+                    "success": "Lista de roles disponibles: {{roles}}"
+                },
+                "add": {
+                    "alreadyAvailable": "Ese rol ya está disponible.",
+                    "success": "El rol `{{role}}` fue agregado a los roles disponibles."
+                },
+                "remove": {
+                    "success": "El rol `{{role}}` fue eliminado de los roles disponibles."
+                },
+                "invalidBotPerms": "No tengo permisos, o la posición de los rangos es más alta que la mía!",
+                "removedRole": "El rango `{{role}}` se te ha eliminado.",
+                "gaveRole": "Se te ha dado el rango `{{role}}`"
+            },
+            "serverInfo": {
+                "success": "__**Servidor**__: {{guild}}\nCanales: {{channels}}\nMiembros: {{members}}\nUsuarios: {{users}} ({{userPercent}}%)\nBots: {{bots}} ({{botPercent}}%)\nDatos de creación: {{creationDate}}\nDueño: {{owner}} (ID: {{ownerID}})\nIcono: {{icon}}"
+            },
+            "shardInfo": {
+                "success": "__**Shard {{shard}}**__\nServidores: {{guilds}}\nCanales: {{channels}}\nUsuarios: {{users}}\nLatencia: {{latency}}ms\nEstado: {{status}}"
+            },
+            "stats": {
+                "success": "__**Servidores**__\nGrandes (más de 250 miembros): {{largeGuilds}}\nOtros: {{smallGuilds}}\nTotal: {{totalGuilds}}\nTransmisión en: {{streamCount}}\n\n__**Otros**__\nUso de memoria trabajandose: {{workerUsage}}MiB\nUso de memoria total: {{totalUsage}}GiB\nTrabajador: {{worker}} (Shards: {{shardRange}})\nTiempo de actividad: {{uptime}}\nSitio web: {{website}}"
+            },
+            "userInfo": {
+                "success": "__**Usuario**__: {{user}}\nID: {{id}}\nAvatar: {{avatar}}\nJugando a: {{game}}\nEstado: {{status}}\nDato de creación: {{joinDate}}\nEntró al servidor: {{guildJoin}}"
+            },
+            "xkcd": {
+                "invalidComic": "¡Cómic incorrecto! Cómics disponibles: {{comingRange}} "
+            },
+            "locale": {
+                "englishName": "Spanish",
+                "nativeName": "Español",
+                "noArg": "__**Lista de regiones:**__\n{{locales}}\n\nRegión local: `{{locale}}`\n¿Quieres ayudar en la traducción? Registrate aquí:\n <https://poeditor.com/join/project/ng72WfpXkP>",
+                "invalidLocale": "¡Esa no es una región válida!",
+                "changedSuccess": "Región establecida a: `{{locale}}`"
+            },
+            "tags": {
+                "noTagFound": "No se encontró ninguna etiqueta con el nombre `{{name}}`",
+                "error": "Error al ejecutar la etiqueta:\n```{{error}}\n```",
+                "list": {
+                    "noTags": "No hay etiquetas en esta página",
+                    "success": "Etiquetas (página {{page}}):\n```\n{{tags}}```\n\nUsa `tag <tag name>` para ejecutar una etiqueta"
+                },
+                "raw": {
+                    "noTag": "¡Por favor, proporciona el contenido de la etiqueta! Uso correcto: `tag raw <tag name>`",
+                    "success": "Etiqueta `{{name}}`:\n```vb\n{{content}}\n```"
+                },
+                "test": {
+                    "noContent": "¡Por favor, proporciona el contenido de la etiqueta para probar! Uso correcto: `tag test <content>`"
+                },
+                "delete": {
+                    "noTag": "¡Por favor, proporciona una etiqueta para eliminar! Uso correcto: `tag delete <tag name>`",
+                    "notOwner": "No puedes eliminar una etiqueta que no tienes",
+                    "success": "Etiqueta eliminada: `{{name}}`"
+                },
+                "create": {
+                    "noArgs": "¡Debes proporcionar un nombre y contenido para esta etiqueta! Utiliza: `tag create <tag> <content>`",
+                    "noContent": "¡Debes proporcionar un contenido para esta etiqueta! Utiliza: `tag create <tag> <content>`",
+                    "alreadyExists": "La etiqueta `{{name}}` ya existe.",
+                    "success": "La etiqueta `{{name}}` fue creada correctamente."
+                }
+            }
+        },
+        "moderator": {
+            "ban": {
+                "noPerms": "No tengo el permiso para banear miembros.",
+                "botCantBan": "{{user}} no puede ser baneado, porque tiene permisos mayores a los de Oxyl.",
+                "youCantBan": "{{user}} no puede ser baneado, porque tiene permisos mayores a los que tienes.",
+                "success": "{{user}} fue baneado."
+            },
+            "giveaway": {
+                "noTime": "Por favor, proporciona un tiempo, utilizando este formato: `giveaway <item> in <timespan>`",
+                "invalidTime": "Por favor, solamente crea un sorteo de 30 segundos a 4 semanas en el futuro.",
+                "message": " __**SORTEO!**__\nReacciona con un 🎉 para tener la oportunidad de ganar un: {{item}}\nTermina en: {{date}}"
+            },
+            "hackban": {
+                "noPerms": "¡No tengo permisos para banear miembros!",
+                "invalidID": "La ID de esa persona es incorrecta!",
+                "inGuild": "Ese usuario está en el servidor, por favor banealo normalmente! ",
+                "success": "{{user}} ha sido baneado."
+            },
+            "kick": {
+                "noPerms": "¡No tengo permisos para kickear miembros!",
+                "botCantKick": "{{user}} no puede ser kickeado, porque tiene permisos mayores a los de Oxyl.",
+                "youCantKick": "{{user}} no puede ser kickeado, porque tiene permisos mayores a los que tienes.",
+                "success": "{{user}} ha sido kickeado."
+            },
+            "mute": {
+                "roleError": "No tengo permisos, o la posición del rol para silenciar es mayor a la mía! ",
+                "missingBothPerms": "No tengo permisos para crear y configurar un rol para silenciar (Permisos requeridos: `Administrar roles` y `Administrar canales`)",
+                "missingRolePerms": "No tengo permiso para crear un rol para silenciar (Permiso requerido: `Administrar roles`)",
+                "missingChannelPerms": "No puedo configurar correctamente el rol para silenciar por culpa de los permisos (Permisos requeridos: `Administrar canales`)",
+                "muted": "{{user}} ha sido silenciado.",
+                "unmuted": "{{user}} ahora puede hablar."
+            },
+            "pardon": {
+                "noPerms": "No tienes los permisos correctos para perdonar a ese usuario.",
+                "noWarnings": "Ese miembro no tiene advertencias.",
+                "success": "{{user}} ha sido perdonado con éxito (Advertencias totales: {{warnCount}})"
+            },
+            "purge": {
+                "noPerms": "No tengo permisos para administrar mensajes."
+            },
+            "reason": {
+                "noCases": "Todavía no han habido casos en este servidor.",
+                "invalidInput": "Por favor, proporciona un número para los casos.",
+                "invalidCase": "Caso `{{caseNum}}` no encontrado.",
+                "noChannel": "El canal para los logs de moderación todavia no ha sido establecido.",
+                "noMessage": "No fue encontrado el mensaje del caso `{{caseNum}}`",
+                "successOneCase": "✅ Establece una razón para el caso `{{caseNum}}`",
+                "successMultipleCases": "✅ Establece una razón para {{casesCount}} casos."
+            },
+            "softban": {
+                "noPerms": "¡No tengo permisos para banear miembros!",
+                "botCantBan": "{{user}} no puede ser baneado, porque tiene permisos mayores a los de Oxyl.",
+                "youCantBan": "{{user}} no puede ser baneado, porque tiene permisos mayores a los tuyos.",
+                "success": "{{user}} fue suavemente baneado."
+            },
+            "warn": {
+                "noPerms": "Tu no tienes los permisos correctos para advertir a ese usuario.",
+                "success": "La advertencia hacia {{user}} fue satisfactoria. (Total de advertencias: {{warnCount}})"
+            },
+            "censor": {
+                "add": {
+                    "noAction": "¡Por favor, proporciona una acción para ejecutar cuando se active este censor!\n(`none, warn, kick, softban, ban`)",
+                    "invalidAction": "¡Se ha dado una acción incorrecta! Acciones válidas: `none, warn, kick, softban, ban` ",
+                    "noRegex": "¡Por favor, proporciona algunos regex para activar esta censura!",
+                    "success": "La censura fue agregada satisfactoriamente"
+                },
+                "delete": {
+                    "noID": "Por favor, proporciona la ID de la censura para eliminar",
+                    "invalidID": "Por favor, proporciona la ID de la censura que sea un número mayor a 0",
+                    "noCensorFound": "No se encontró ninguna censura",
+                    "success": "La censura fue eliminada satisfactoriamente"
+                },
+                "list": {
+                    "noCensors": "¡No hay censuras para este servidor!\nAgregalos usando `censor add <action> <regex>`",
+                    "success": "Censuras: ```\n{{censors}}\n```\nPara eliminar una censura, usa `censor delete <id>`"
+                },
+                "invalidSubcommand": "¡Sub-comando incorrecto! Por favor, utiliza `censor add <action> <regex>`, `censor delete <id>` o `censor list`"
+            }
+        },
+        "music": {
+            "end": {
+                "success": "Música pausada."
+            },
+            "jump": {
+                "invalidQueue": "El número de la cola es invalido.",
+                "success": "✅ Saltar a la cola #{{queue}}"
+            },
+            "movehere": {
+                "notInVoice": "No estás en un canal de voz, no puedes usar esto!",
+                "nothingToMove": "Nada para trasladarse. Ya está en este canal de voz y texto.",
+                "success": "Trasladado a {{locations}}"
+            },
+            "pause": {
+                "alreadyPaused": "La música ya está pausada. ",
+                "success": "Música pausada."
+            },
+            "play": {
+                "notInVoice": "No estás en un canal de voz.",
+                "dfmPlaylists": "Listas de reproduccion de Discord.FM: {{genres}}",
+                "addedDFM": "Se agregó una lista de reproducción {{genre}} DiscordFM a la cola.",
+                "invalidDFM": "Lista de reproducción de Discord.FM inválida, usa `dfm:list` para ver las listas de reproducción.",
+                "donatorOnly": "¡Necesitas ser un donador para guardar colas!",
+                "invalidSavedQueue": "¡Número de guardado incorrecto! Los números de guardado correctos son 1, 2 o 3. ",
+                "noSavedQueue": "No hay ninguna cola guardada en #{{save}}",
+                "loadedSavedQueue": "La cola #{{save}} ({{itemCount}} elementos) fue cargada.",
+                "addedItem": "Agregado __{{title}}__ para la cola.",
+                "noFormats": "No se encontraron formatos adecuados.",
+                "invalidID": "El ID de la lista de reproducción/video es inválido.",
+                "notFound": "El recurso no se pudo encontrar, quizás fue eliminado?",
+                "invalidType": "Por favor, solamente links de canciones o listas de reproducciones de SoundCloud.",
+                "channelOffline": "Ese canal de Twitch está desconectado.",
+                "noSearchResults": "No se encontraron resultados de la búsqueda consultada.",
+                "addedTTS": "Se agregó una frase de voz a la cola. ",
+                "invalidURL": "Eso es una dirección incorrecta."
+            },
+            "queue": {
+                "success": "__**Cola de Música ({{itemCount}})**__\n {{message}}"
+            },
+            "removequeue": {
+                "invalidQueue": "Por favor, proporciona números para las posiciones de la cola. ",
+                "success": "Se ha eliminado {{itemCount}} elemento(s) de la cola."
+            },
+            "repeat": {
+                "success": "La repetición se ha cambiado a {{value}}"
+            },
+            "resume": {
+                "notPaused": "La música no está pausada.",
+                "success": "La música ha sido reanudada."
+            },
+            "savequeue": {
+                "donatorOnly": "¡Necesitas ser un donador para usar este comando!",
+                "success": "Se guardaron {{itemCount}} elementos en la cola # {{queueNumber}}\nUtiliza `play sq: {{queueNumber}}` para cargar la cola."
+            },
+            "shuffle": {
+                "success": "Cola mezclada."
+            },
+            "skip": {
+                "successNoneLeft": "Canción omitida, no hay más canciones en la cola.",
+                "successNextSong": "Ahora se está reproduciendo __{{title}}__"
+            },
+            "autoplay": {
+                "donatorOnly": "Esta función sólo lo lo pueden utilizar los dueño de un servidor que son donadores.",
+                "noMusicPlaying": "La música debe estar reproduciendose para que la reproducción automática se active. ",
+                "success": "La reproducción automática se ha convertido {{value}}"
+            }
+        }
+    },
+    "phrases": {
+        "noMusic": "Actualmente no hay música reproduciéndose.",
+        "notListening": "Debes estar escuchando música para utilizar este comando. ",
+        "notInGuild": "Error: usuario no en el servidor.",
+        "invalidRange": "Se ha dado un rango inválido!",
+        "cantJoin": "No puedo entrar a ese canal (No tengo permisos).",
+        "cantSpeak": "No puedo hablar en ese canal (No tengo permisos).",
+        "queueError": "Reproduciendo: Nada (¿Sigues haciendo cola?)",
+        "currentPlaying": "Reproduciendo: {{title}} ({{duration}})",
+        "repeat": "Repetir: {{repeat}}",
+        "noQueue": "No hay nada en la cola",
+        "otherResults": "Otros resultados",
+        "warningThreshold": "Advertencia de límite",
+        "noneProvided": "Ninguno proporcionado",
+        "noneRequired": "Ninguno requerido",
+        "nowPlaying": "Ahora reproduciendo",
+        "recievedError": "Error recibido",
+        "rolePersist": "Persistir rol",
+        "searchResults": "Resultados de la búsqueda",
+        "dictionary": "Diccionario",
+        "translation": "Traducción",
+        "calculator": "Calculadora",
+        "infoCard": "Tarjeta de información"
+    },
+    "words": {
+        "noValue": "Sin valor",
+        "none": "ninguna",
+        "muted": "silenciado",
+        "and": "y",
+        "page": "pagina",
+        "on": "en",
+        "off": "apagado",
+        "service": "servicio"
+    },
+    "modules": {
+        "args": {
+            "usageError": "¡Uso incorrecto! Por favor, utiliza el comando como tal: `{{command}} {{ussage}}`"
+        },
+        "commands": {
+            "guildOnly": "Lo siento, pero este comando es solamente para los servidores.",
+            "creatorOnly": "Este comando sólo puede ser utilizado por los creadores del bot.",
+            "adminOnly": "No puedes utilizar este comando sin el permiso de ADMINISTRADOR.",
+            "noPerms": "No puedes utilizar este comando sin el permiso de {{perm}}.",
+            "noRoles": "No tienes los roles correctos para utilizar este comando, necesitas uno de los siguientes roles: {{roles}}",
+            "permissionFail": "El comando ha fallado debido a un error de permisos.",
+            "errorRunning": "¡Ocurrió un error a la hora de ejecutar este comando!  Rastro de pila: {{stack}}"
+        },
+        "modLog": {
+            "actions": {
+                "specialRoleAdd": "Rol especial agregado",
+                "specialRoleRemove": "Rol especial eliminado",
+                "ban": "Ban",
+                "kick": "Kick",
+                "pardon": "Perdonar",
+                "softban": "Softban",
+                "unban": "Unban",
+                "reason": "Razón",
+                "warn": "Advertir"
+            },
+            "words": {
+                "case": "caso",
+                "action": "acción",
+                "user": "usuario",
+                "mod": "mod",
+                "totalWarnings": "advertencias totales",
+                "noReason": "Moderador responsable, establezca esto utilizando `reason {{caseNum}}`",
+                "reason": "razón"
+            }
+        },
+        "player": {
+            "maxQueue": "¡No puedes agregar más canciones! Tu cola ya tiene 2000 canciones. Si quieres un tamaño de cola ilimitado, considera en donar. ",
+            "cutOffQueue": "Se agregó la cola, pero no en su totalidad. Su cola quedó con 2000 canciones. Si quieres un tamaño de cola ilimitado, considera en donar.",
+            "extractionError": "No se devuelve el directo después de la extracción.",
+            "noFormats": "No se encontraron formatos adecuados."
+        },
+        "resolver": {
+            "booleanError": "¡Entrada inválida! Por favor, proporciona verdadero/yes o falso/no.",
+            "invalidLink": "Link incorrecto.",
+            "NaN": "El argumento proporcionado no es un número.",
+            "underMin": "El argumento proporcionado es menor que la cantidad mínima ({{min}})",
+            "aboveMax": "El argumento proporcionado es mayor que la cantidad máxima ({{max}})",
+            "noRole": "El rol no fue encontrado.",
+            "noChannel": "El canal no fue encontrado.",
+            "notCached": "La mención del usuario no fue guardada en el caché.",
+            "noUserFound": "No se pudo encontrar el usuario.",
+            "multipleUsers": "Se encontraron varios usuarios. Por favor, diga un número para elegir uno de ellos dentro de los próximos 10 segundos: {{users}} ",
+            "noUserChosen": "Ningún usuario elegido.",
+            "andMore": "... y {{users}} más ",
+            "invalidUser": "¡Se ha dado un número de un usuario incorrecto!"
+        },
+        "timedEvents": {
+            "reminder": "Me pediste que te recordara esto {{date}}:\n\n{{action}}",
+            "giveawayWinner": "__**GANADOR DEL SORTEO**__\nFelicidades {{winner}}, has ganado un {{item}}!",
+            "noGiveawayEntries": "__**GANADOR DEL SORTEO**__\nLamentablemente nadie participó en el sorteo por un {{item}}, por lo cual no hay ningún ganador."
+        },
+        "locales": {
+            "invalidContext": "Contexto incorrecto para la traducción: {{context}}, {{part}} (inexistente).\nPor favor, reporta esto al Soporte de Oxyl.",
+            "incompleteContext": "Contexto incorrecto para la traducción: {{context}}, {{part}} (sin cuerdas).\nPor favor, reporta esto al Soporte de Oxyl.",
+            "invalidPlaceholder": "MARCADOR DE POSICIÓN INCORRECTO.\nPor favor, reporta esto al Soporte de Oxyl."
+        },
+        "censor": "Por favor, no envíes mensajes con frases censuradas {{mention}}"
+    }
+}
