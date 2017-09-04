@@ -78,6 +78,7 @@
                 "created": "Channel named `{{name}}` created! After 5 minutes of nobody in this channel, it will delete itself",
                 "needsChannel": "You need a channel to use this command! Use `channel create <name>`",
                 "cantKick": "The member you want to kick from the channel must be in it!",
+                "kicked": "I have kicked {{user}} from the channel and blacklisted him",
                 "changedBitrate": "Bitrate changed to `{{bitrate}}kbps`",
                 "changedUserLimit": "User limit changed to {{limit}} users",
                 "invalidPrivacy": "Invalid privacy option. Valid options: `public`, `private`",
