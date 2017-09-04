@@ -4,7 +4,7 @@ const channels = require("../../modules/channels");
 module.exports = () => {
 	console.startup(`Worker ${cluster.worker.id} bot ready (took ${bot.utils.parseMs(process.uptime() * 1000)})`);
 
-	bot.voiceConnections = new PlayerManager(bot, bot.lavalink.nodes, {
+	bot.voiceConnections = new PlayerManager(bot, bot.config.lavalink.nodes, {
 		numShards: cluster.worker.totalShards,
 		userId: bot.user.id
 	});
