@@ -22,7 +22,7 @@ module.exports = {
 
 		await redis.set(`channels:${member.guild.id}:${member.id}`, channel.id, "EX", 86400);
 		await redis.set(`channelMemberMap:${channel.id}`, member.id, "EX", 86400);
-		channel.deleteTimeout = setTimeout(() => channels.delete(channelOwner), 300000);
+		channel.deleteTimeout = setTimeout(() => module.exports.delete(member), 300000);
 		return channel;
 	},
 	delete: async member => {
