@@ -29,6 +29,7 @@
     "eris": "^0.7.1",
     "eris-additions": "^1.2.5",
     "eris-lavalink": "git+https://github.com/briantanner/eris-lavalink.git",
+    "es6-promise": "^4.1.1",
     "express": "^4.15.3",
     "express-babelify-middleware": "^0.2.1",
     "google-tts-api": "0.0.1",
