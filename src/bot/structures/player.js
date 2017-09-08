@@ -25,11 +25,7 @@ class Player extends EventEmitter {
 		await this.setConnection(channelID);
 
 		this.connection.on("error", err => this.emit("error", err));
-		this.connection.on("disconnect", async () => {
-			await this.setConnection(null);
-			await this.setQueue([]);
-			this.destroyTimeout = setTimeout(() => this.destroy("inactivity"), 600000);
-		});
+		this.connection.on("disconnect", async () => this.destroy("disconnect"));
 
 		return true;
 	}
@@ -62,11 +58,8 @@ class Player extends EventEmitter {
 	}
 
 	async destroy(reason = "end") {
-		console.log("ending", this.id, reason);
-		console.trace();
 		let connection = this.connection;
 		if(connection) {
-			console.log("stopping connection");
 			if(connection.playing) connection.stop();
 			bot.voiceConnections.leave(this.id);
 		}
@@ -83,7 +76,6 @@ class Player extends EventEmitter {
 		let current = await this.getCurrent();
 
 		if(!connection || (current && connection.playing)) return;
-		if(this.destroyTimeout) clearTimeout(this.destroyTimeout);
 
 		let queue = await this.getQueue();
 		let song = queue[0];
@@ -91,7 +83,7 @@ class Player extends EventEmitter {
 			this.destroy("no_queue");
 			return;
 		} else if(!song) {
-			setTimeout(() => this.play(), 100);
+			this.play();
 			return;
 		} else {
 			queue.shift();
@@ -110,7 +102,6 @@ class Player extends EventEmitter {
 		this.setCurrent(song);
 		this.emit("playing", song);
 		this.connection.once("end", async () => {
-			console.log("song end", this.id);
 			queue = await this.getQueue();
 
 			playerOptions = await this.getOptions();
@@ -122,7 +113,7 @@ class Player extends EventEmitter {
 			}
 
 			if(!queue.length) this.destroy("no_queue");
-			else setTimeout(() => this.play(), 100);
+			else this.play();
 		});
 	}
 
@@ -203,7 +194,7 @@ module.exports.resumeQueues = async () => {
 		await player.play();
 
 		if(options.paused) {
-			await new Promise(resolve => setTimeout(resolve, 2500));
+			await new Promise(resolve => setTimeout(resolve, 1500));
 			player.connection.setPause(true);
 		}
 	});
