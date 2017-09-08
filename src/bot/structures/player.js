@@ -63,6 +63,7 @@ class Player extends EventEmitter {
 
 	async destroy(reason = "end") {
 		console.log("ending", this.id, reason);
+		console.trace();
 		let connection = this.connection;
 		if(connection) {
 			console.log("stopping connection");
