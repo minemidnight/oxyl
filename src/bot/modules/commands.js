@@ -68,7 +68,8 @@ module.exports = async message => {
 						!(message.member.permission.has(command.perm) || message.author.id === guild.ownerID)) {
 		message.channel.createMessage(__("modules.commands.noPerms", message, { perm: command.perm }));
 		return false;
-	} else if(editedInfo.roles && !editedInfo.roles.some(roleID => ~message.member.roles.indexOf(roleID))) {
+	} else if(editedInfo.roles && editedInfo.roles.length &&
+						!editedInfo.roles.some(roleID => ~message.member.roles.indexOf(roleID))) {
 		let roleNames = editedInfo.roles.map(roleID => guild.roles.has(roleID) ? guild.roles.get(roleID).name : roleID);
 		message.channel.createMessage(__("modules.commands.noRoles", message, { roles: `\`${roleNames.join("`, `")}\`` }));
 		return false;
