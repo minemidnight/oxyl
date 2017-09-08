@@ -26,11 +26,8 @@ class Player extends EventEmitter {
 
 		this.connection.on("error", err => this.emit("error", err));
 		this.connection.on("disconnect", async () => {
-			this.connection.removeAllListeners();
-
 			await this.setConnection(null);
 			await this.setQueue([]);
-			delete this.connection;
 			this.destroyTimeout = setTimeout(() => this.destroy("inactivity"), 600000);
 		});
 
@@ -65,8 +62,10 @@ class Player extends EventEmitter {
 	}
 
 	async destroy(reason = "end") {
+		console.log("ending", this.id, reason);
 		let connection = this.connection;
 		if(connection) {
+			console.log("stopping connection");
 			if(connection.playing) connection.stop();
 			bot.voiceConnections.leave(this.id);
 		}
@@ -110,6 +109,7 @@ class Player extends EventEmitter {
 		this.setCurrent(song);
 		this.emit("playing", song);
 		this.connection.once("end", async () => {
+			console.log("song end", this.id);
 			queue = await this.getQueue();
 
 			playerOptions = await this.getOptions();
@@ -220,7 +220,7 @@ function handlePlayer(player) {
 
 		let listening = player._guild.channels.get(player.connection.channelId).voiceMembers
 			.filter(member => !member.bot && !member.voiceState.selfDeaf).length;
-		if(listening >= 1) channel.createMessage(typeof message === "object" ? { message } : message);
+		if(listening >= 1) channel.createMessage(typeof message === "object" ? { embed: message } : message);
 	};
 
 	player.on("playing", async song => {

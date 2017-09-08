@@ -24,7 +24,7 @@ router.post("/reset/*", async (req, res) => {
 		req.currentToken = JSON.parse(req.cookies[`token_${req.cookies.currentToken}`]);
 	}
 
-	let guilds = await req.req.app.discordInfo(null, "users/@me/guilds", req);
+	let guilds = await req.app.discordInfo(null, "users/@me/guilds", req);
 	let isAdmin = guilds.find(guild => guild.id === id).permissions & (1 << 3);
 	if(!isAdmin) {
 		res.status(401).json({ error: "Insufficient permissions" }).end();
@@ -67,7 +67,7 @@ router.post("/set/*", async (req, res) => {
 		req.currentToken = JSON.parse(req.cookies[`token_${req.cookies.currentToken}`]);
 	}
 
-	let guilds = await req.req.app.discordInfo(null, "users/@me/guilds", req);
+	let guilds = await req.app.discordInfo(null, "users/@me/guilds", req);
 	let isAdmin = guilds.find(guild => guild.id === id).permissions & (1 << 3);
 	if(!isAdmin) {
 		res.status(401).json({ error: "Insufficient permissions" }).end();
