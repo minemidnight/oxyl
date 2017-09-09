@@ -53,7 +53,7 @@ class Player extends EventEmitter {
 		}
 
 		await this.setQueue(queue);
-		if(!current) this.play();
+		if(!current) setTimeout(() => this.play(), 100);
 		return true;
 	}
 
@@ -81,7 +81,7 @@ class Player extends EventEmitter {
 			this.destroy("no_queue");
 			return;
 		} else if(!song) {
-			this.play();
+			setTimeout(() => this.play(), 100);
 			return;
 		} else {
 			queue.shift();
@@ -99,7 +99,7 @@ class Player extends EventEmitter {
 
 		this.setCurrent(song);
 		this.emit("playing", song);
-		this.connection.once("end", async () => {
+		connection.once("end", async () => {
 			queue = await this.getQueue();
 
 			playerOptions = await this.getOptions();
@@ -111,7 +111,7 @@ class Player extends EventEmitter {
 			}
 
 			if(!queue.length) this.destroy("no_queue");
-			else this.play();
+			else setTimeout(() => this.play(), 100);
 		});
 	}
 
