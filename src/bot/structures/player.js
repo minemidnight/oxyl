@@ -25,7 +25,7 @@ class Player extends EventEmitter {
 		await this.setConnection(channelID);
 
 		this.connection.on("error", err => this.emit("error", err));
-		this.connection.once("disconnect", () => this.destroy("disconnect"));
+		this.connection.on("disconnect", () => this.destroy("disconnect"));
 
 		return true;
 	}
@@ -60,8 +60,9 @@ class Player extends EventEmitter {
 	async destroy(reason = "end") {
 		let connection = this.connection;
 		if(connection) {
+			connection.removeAllListeners();
 			if(connection.playing) connection.stop();
-			bot.voiceConnections.leave(this.id);
+			if(bot.voiceConnections.has(this.id)) bot.voiceConnections.leave(this.id);
 		}
 
 		bot.players.delete(this.id);
