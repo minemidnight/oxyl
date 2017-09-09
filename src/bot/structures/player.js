@@ -25,7 +25,7 @@ class Player extends EventEmitter {
 		await this.setConnection(channelID);
 
 		this.connection.on("error", err => this.emit("error", err));
-		this.connection.on("disconnect", async () => this.destroy("disconnect"));
+		this.connection.once("disconnect", () => this.destroy("disconnect"));
 
 		return true;
 	}
@@ -64,9 +64,7 @@ class Player extends EventEmitter {
 			bot.voiceConnections.leave(this.id);
 		}
 
-		this.emit("destroy", reason);
 		bot.players.delete(this.id);
-
 		let keys = await redis.keys(`${redis.options.keyPrefix}player:*:${this.id}`);
 		keys.forEach(key => redis.del(key.substring(redis.options.keyPrefix.length)));
 	}
