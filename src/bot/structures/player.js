@@ -24,12 +24,6 @@ class Player extends EventEmitter {
 		await bot.voiceConnections.join(this.id, channelID);
 		await this.setConnection(channelID);
 
-		let updateTime = this.setTime;
-		this.connection.stateUpdate = state => {
-			this.connection.state = state;
-			updateTime(state.position);
-		};
-
 		this.connection.on("error", err => this.emit("error", err));
 		this.connection.on("disconnect", () => this.destroy("disconnect"));
 		this.connection.on("end", async () => {
@@ -170,7 +164,7 @@ class Player extends EventEmitter {
 		else return await redis.set(`player:connection:${this.id}`, channelID, "EX", 7200);
 	}
 
-	async getTime(time) {
+	async getTime() {
 		return await redis.get(`player:time:${this.id}`);
 	}
 

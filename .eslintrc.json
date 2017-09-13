@@ -83,7 +83,6 @@
 		"computed-property-spacing": "error",
 		"consistent-this": "error",
 		"eol-last": "error",
-		"func-names": "error",
 		"func-style": ["error", "declaration", { "allowArrowFunctions": true }],
 		"id-length": ["error", { "exceptions": ["i", "j", "a", "b"] }],
 		"indent": ["error", "tab", { "SwitchCase": 1 }],

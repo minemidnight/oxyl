@@ -1,10 +1,15 @@
-const { PlayerManager } = require("eris-lavalink");
+const lavalink = require("eris-lavalink");
+lavalink.Player.prototype.stateUpdate = function(state) {
+	this.state = state;
+	bot.players.get(this.guildId).setTime(state.position);
+};
+
 const Player = require("../../structures/player");
 const channels = require("../../modules/channels");
 module.exports = () => {
 	console.startup(`Worker ${cluster.worker.id} bot ready (took ${bot.utils.parseMs(process.uptime() * 1000)})`);
 
-	bot.voiceConnections = new PlayerManager(bot, bot.config.lavalink.nodes, {
+	bot.voiceConnections = new lavalink.PlayerManager(bot, bot.config.lavalink.nodes, {
 		numShards: cluster.worker.totalShards,
 		userId: bot.user.id
 	});
