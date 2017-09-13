@@ -203,7 +203,7 @@ module.exports.resumeQueues = async () => {
 		await player.connect(connection);
 		await player.setQueue(queue);
 		await player.setOptions(options);
-		await player.play({ startTime: time });
+		await player.play({ startTime: time && !isNaN(time) ? time : 0 });
 
 		if(options.paused) {
 			await new Promise(resolve => setTimeout(resolve, 1500));
