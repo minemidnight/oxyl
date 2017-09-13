@@ -7,7 +7,7 @@ module.exports = async (guild, member, type) => {
 
 	let userlog = await r.table("settings").get(["userlog", guild.id]).run();
 	if(!userlog && !dm) return;
-	else userlog = userlog.value;
+	else if(userlog) userlog = userlog.value;
 
 	let message = await r.table("settings").get([type, guild.id]).run();
 	if(!message) return;
