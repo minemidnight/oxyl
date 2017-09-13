@@ -24,8 +24,26 @@ class Player extends EventEmitter {
 		await bot.voiceConnections.join(this.id, channelID);
 		await this.setConnection(channelID);
 
+		let updateTime = this.setTime;
+		this.connection.stateUpdate = state => {
+			this.connection.state = state;
+			updateTime(state.position);
+		};
+
 		this.connection.on("error", err => this.emit("error", err));
 		this.connection.on("disconnect", () => this.destroy("disconnect"));
+		this.connection.on("end", async () => {
+			let queue = await this.getQueue();
+
+			let playerOptions = await this.getOptions();
+			if(playerOptions.repeat) {
+				queue.push(await this.getCurrent());
+				await this.setQueue(queue);
+			}
+
+			if(!queue.length) this.destroy("no_queue");
+			else setTimeout(() => this.play(), 100);
+		});
 
 		return true;
 	}
@@ -70,7 +88,7 @@ class Player extends EventEmitter {
 		keys.forEach(key => redis.del(key.substring(redis.options.keyPrefix.length)));
 	}
 
-	async play() {
+	async play(options) {
 		let connection = this.connection;
 		let current = await this.getCurrent();
 
@@ -96,24 +114,10 @@ class Player extends EventEmitter {
 		}
 
 		await this.setQueue(queue);
-		connection.play(song.track, {});
+		connection.play(song.track, options);
 
 		this.setCurrent(song);
 		this.emit("playing", song);
-		connection.once("end", async () => {
-			queue = await this.getQueue();
-
-			playerOptions = await this.getOptions();
-			if(playerOptions.repeat) {
-				delete song.stream;
-
-				queue.push(song);
-				await this.setQueue(queue);
-			}
-
-			if(!queue.length) this.destroy("no_queue");
-			else setTimeout(() => this.play(), 100);
-		});
 	}
 
 	voiceCheck(member) {
@@ -165,6 +169,14 @@ class Player extends EventEmitter {
 		if(channelID === null) return await redis.del(`player:connection:${this.id}`);
 		else return await redis.set(`player:connection:${this.id}`, channelID, "EX", 7200);
 	}
+
+	async getTime(time) {
+		return await redis.get(`player:time:${this.id}`);
+	}
+
+	async setTime(time) {
+		return await redis.set(`player:time:${this.id}`, time, "EX", 7200);
+	}
 }
 module.exports = Player;
 
@@ -185,12 +197,13 @@ module.exports.resumeQueues = async () => {
 		let current = await player.getCurrent();
 		let options = await player.getOptions();
 		let queue = await player.getQueue();
+		let time = await player.getTime();
 
 		queue.unshift(current);
 		await player.connect(connection);
 		await player.setQueue(queue);
 		await player.setOptions(options);
-		await player.play();
+		await player.play({ startTime: time });
 
 		if(options.paused) {
 			await new Promise(resolve => setTimeout(resolve, 1500));

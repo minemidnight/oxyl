@@ -53,7 +53,7 @@
 		"no-throw-literal": "error",
 		"no-unmodified-loop-condition": "error",
 		"no-unused-expressions": "error",
-		"no-unused-vars": "off",
+		"no-unused-vars": ["error", { "args": "none" }],
 		"no-console": "off",
 		"no-useless-call": "error",
 		"no-useless-concat": "error",
