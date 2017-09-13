@@ -185,7 +185,7 @@
 					"invalidAction": "Invalid action given! Valid actions: `none, warn, kick, softban, ban`",
 					"noRegex": "Please provide some regex to trigger this censor with!",
                     "success": "Censor successfully added",
-                    "invalidRegex": "Invalid regular expression (`{{error}}`)! Please contact Support for help with regular expressions."
+                    "invalidRegex": "{{error}}. Please contact Support for help with regular expressions."
 			    },
 				"delete": {
 					"noID": "Please provide a censor ID to delete",
