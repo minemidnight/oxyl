@@ -32,14 +32,10 @@
     "es6-promise": "^4.1.1",
     "express": "^4.15.4",
     "express-babelify-middleware": "^0.2.1",
-    "google-tts-api": "0.0.1",
     "handlebars": "^4.0.10",
-    "hot-shots": "^4.5.0",
     "ioredis": "^3.1.4",
     "raven": "^2.1.2",
     "rethinkdbdash": "^2.3.31",
-    "superagent": "^3.6.0",
-    "youtube-dl": "^1.11.1",
-    "ytdl-core": "^0.14.4"
+    "superagent": "^3.6.0"
   }
 }
