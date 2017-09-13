@@ -3,16 +3,14 @@ const resolver = require("../../modules/audio/main.js");
 
 const cheerio = require("cheerio");
 const superagent = require("superagent");
-let playlistsDisplay, playlistsFormat;
-async function updateDFM() {
-	playlistsDisplay = [];
-	const $ = cheerio.load((await superagent.get("http://temp.discord.fm/")).text); // eslint-disable-line id-length
-	$("li.collection-item.avatar span").each((i, ele) => playlistsDisplay.push($(ele).text()));
-	playlistsDisplay = playlistsDisplay.map(genre => genre.substring(0, genre.indexOf("(") - 1));
-	playlistsFormat = playlistsDisplay.map(genre => genre.toLowerCase().replace(/ /g, "-"));
-}
-updateDFM();
-setInterval(updateDFM, 3600000);
+const fs = require("fs");
+let dfm = fs.readdirSync(`${__dirname}/../../../../discordfm`).reduce((all, playlist) => {
+	let listname = playlist.substring(0, playlist.lastIndexOf(".")).replace(/-/g, " ");
+	all[listname] = `${__dirname}/../../../../discordfm/${playlist}`;
+	require(all[listname]);
+
+	return all;
+}, {});
 
 module.exports = {
 	process: async message => {
@@ -34,36 +32,15 @@ module.exports = {
 			return __("phrases.cantSpeak", message);
 		} else if(message.args[0].startsWith("dfm:")) {
 			message.args[0] = message.args[0].substring(4).trim();
+			let key = Object.keys(dfm).find(loopKey => loopKey.toLowerCase() === message.args[0]);
 			if(message.args[0] === "list") {
-				return __("commands.music.play.dfmPlaylists", message, { genres: playlistsDisplay.join(", ") });
-			} else if(~playlistsFormat.indexOf(message.args[0].replace(/ /g, "-"))) {
+				return __("commands.music.play.dfmPlaylists", message, { genres: Object.keys(dfm).join(", ") });
+			} else if(key) {
 				if(!player.connection) await player.connect(voiceChannel.id);
-				let { body: data } = await superagent
-					.get(`https://temp.discord.fm/libraries/${message.args[0].replace(/ /g, "-")}/json`);
+				let res = await player.addQueue(require(dfm[key]));
 
-				let res = await player.addQueue(data.map(video => {
-					if(video.service === "YouTubeVideo") {
-						return {
-							identifier: video.identifier,
-							length: video.length * 1000,
-							title: video.title,
-							uri: `https://www.youtube.com/watch?v=${video.identifier}`
-						};
-					} else if(video.service === "SoundCloudTrack") {
-						return {
-							identifier: video.identifier,
-							length: video.length * 1000,
-							title: video.title,
-							uri: video.url
-						};
-					} else {
-						return {};
-					}
-				}));
 				if(typeof res === "string") return res;
-
-				let display = playlistsDisplay[playlistsFormat.indexOf(message.args[0].replace(/ /g, "-"))];
-				return __("commands.music.play.addedDFM", message, { genre: display });
+				return __("commands.music.play.addedDFM", message, { genre: key });
 			} else {
 				return __("commands.music.play.invalidDFM", message);
 			}

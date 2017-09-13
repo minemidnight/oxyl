@@ -1,0 +1,3635 @@
+[
+	{
+		"identifier": "c2orBsXp4HM",
+		"title": "Shirobon - Regain Control",
+		"length": 196000,
+		"uri": "https://www.youtube.com/watch?v=c2orBsXp4HM",
+		"service": "youtube"
+	},
+	{
+		"identifier": "ekawaLsryiU",
+		"title": "Shirobon - On The Run",
+		"length": 269000,
+		"uri": "https://www.youtube.com/watch?v=ekawaLsryiU",
+		"service": "youtube"
+	},
+	{
+		"identifier": "_sC6epraFkY",
+		"title": "HARD -- Learning Chiptune",
+		"length": 98000,
+		"uri": "https://www.youtube.com/watch?v=_sC6epraFkY",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Cao09dP7gM0",
+		"title": "QOMB -- Learning Chiptune",
+		"length": 88000,
+		"uri": "https://www.youtube.com/watch?v=Cao09dP7gM0",
+		"service": "youtube"
+	},
+	{
+		"identifier": "nw2qiR6f05Q",
+		"title": "TIME -- Learning Chiptune",
+		"length": 110000,
+		"uri": "https://www.youtube.com/watch?v=nw2qiR6f05Q",
+		"service": "youtube"
+	},
+	{
+		"identifier": "mabK8AEGY3s",
+		"title": "MYST -- Learning Chiptune",
+		"length": 33000,
+		"uri": "https://www.youtube.com/watch?v=mabK8AEGY3s",
+		"service": "youtube"
+	},
+	{
+		"identifier": "e9f2sX3_JzM",
+		"title": "SLIDE -- Learning Chiptune",
+		"length": 107000,
+		"uri": "https://www.youtube.com/watch?v=e9f2sX3_JzM",
+		"service": "youtube"
+	},
+	{
+		"identifier": "6hqxj-I9f8o",
+		"title": "SKRATCH -- Learning Chiptune",
+		"length": 158000,
+		"uri": "https://www.youtube.com/watch?v=6hqxj-I9f8o",
+		"service": "youtube"
+	},
+	{
+		"identifier": "LvcRvOp4Y8g",
+		"title": "LIQUID -- Learning Chiptune",
+		"length": 195000,
+		"uri": "https://www.youtube.com/watch?v=LvcRvOp4Y8g",
+		"service": "youtube"
+	},
+	{
+		"identifier": "xRkczJrr5mI",
+		"title": "Peace & Love (On Planet Earth) -- Chiptune Remix",
+		"length": 78000,
+		"uri": "https://www.youtube.com/watch?v=xRkczJrr5mI",
+		"service": "youtube"
+	},
+	{
+		"identifier": "5UUwc0llyEk",
+		"title": "Sven Co-op 5.0 Theme -- Chiptune Remix",
+		"length": 104000,
+		"uri": "https://www.youtube.com/watch?v=5UUwc0llyEk",
+		"service": "youtube"
+	},
+	{
+		"identifier": "wjKHEXsA7lg",
+		"title": "Toasty And Tippy -- OC",
+		"length": 138000,
+		"uri": "https://www.youtube.com/watch?v=wjKHEXsA7lg",
+		"service": "youtube"
+	},
+	{
+		"identifier": "33dNh9H-o5c",
+		"title": "Meta-Dimensional -- OC",
+		"length": 208000,
+		"uri": "https://www.youtube.com/watch?v=33dNh9H-o5c",
+		"service": "youtube"
+	},
+	{
+		"identifier": "RF1rFSoN3JQ",
+		"title": "Big Giant Circles - The Glory Days: \"Go For Distance\"",
+		"length": 289000,
+		"uri": "https://www.youtube.com/watch?v=RF1rFSoN3JQ",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Em_B1AcfJL0",
+		"title": "Big Giant Circles - The Glory Days: \"Relapse\"",
+		"length": 147000,
+		"uri": "https://www.youtube.com/watch?v=Em_B1AcfJL0",
+		"service": "youtube"
+	},
+	{
+		"identifier": "dnwdYWXuU4s",
+		"title": "Big Giant Circles - The Glory Days: \"No Party Like a Mojang Party\"",
+		"length": 352000,
+		"uri": "https://www.youtube.com/watch?v=dnwdYWXuU4s",
+		"service": "youtube"
+	},
+	{
+		"identifier": "YWQ0dBnl_7k",
+		"title": "Big Giant Circles - The Glory Days: \"A Rose in a Field\"",
+		"length": 197000,
+		"uri": "https://www.youtube.com/watch?v=YWQ0dBnl_7k",
+		"service": "youtube"
+	},
+	{
+		"identifier": "yhviMWU_AxM",
+		"title": "Big Giant Circles - The Glory Days: \"Sevcon\"",
+		"length": 280000,
+		"uri": "https://www.youtube.com/watch?v=yhviMWU_AxM",
+		"service": "youtube"
+	},
+	{
+		"identifier": "9OquWmdUYXw",
+		"title": "Big Giant Circles - The Glory Days: \"Chip Zeal\"",
+		"length": 217000,
+		"uri": "https://www.youtube.com/watch?v=9OquWmdUYXw",
+		"service": "youtube"
+	},
+	{
+		"identifier": "ALq1ENqfu8E",
+		"title": "Big Giant Circles - The Glory Days: \"Houston\"",
+		"length": 324000,
+		"uri": "https://www.youtube.com/watch?v=ALq1ENqfu8E",
+		"service": "youtube"
+	},
+	{
+		"identifier": "3bZfVORx54g",
+		"title": "Big Giant Circles - The Glory Days: \"Gront is a Muppet\"",
+		"length": 217000,
+		"uri": "https://www.youtube.com/watch?v=3bZfVORx54g",
+		"service": "youtube"
+	},
+	{
+		"identifier": "eGynKE9eRAs",
+		"title": "Big Giant Circles - The Glory Days: \"The Trials of MAN\"",
+		"length": 231000,
+		"uri": "https://www.youtube.com/watch?v=eGynKE9eRAs",
+		"service": "youtube"
+	},
+	{
+		"identifier": "1vBxDS0lliQ",
+		"title": "Big Giant Circles - The Glory Days: \"Snowcones\"",
+		"length": 189000,
+		"uri": "https://www.youtube.com/watch?v=1vBxDS0lliQ",
+		"service": "youtube"
+	},
+	{
+		"identifier": "joNX2QJ7jto",
+		"title": "Big Giant Circles - The Glory Days: \"Viceroy Danny von B\"",
+		"length": 242000,
+		"uri": "https://www.youtube.com/watch?v=joNX2QJ7jto",
+		"service": "youtube"
+	},
+	{
+		"identifier": "py_I6a9rUUI",
+		"title": "Big Giant Circles - The Glory Days: \"Artifact Hunter\"",
+		"length": 183000,
+		"uri": "https://www.youtube.com/watch?v=py_I6a9rUUI",
+		"service": "youtube"
+	},
+	{
+		"identifier": "yRDmUeM4PQI",
+		"title": "Big Giant Circles - The Glory Days: \"VIRTuoso Sexy\"",
+		"length": 182000,
+		"uri": "https://www.youtube.com/watch?v=yRDmUeM4PQI",
+		"service": "youtube"
+	},
+	{
+		"identifier": "TF5IETKtvGg",
+		"title": "Big Giant Circles - The Glory Days: \"Vindicate Me (instrumental)\"",
+		"length": 209000,
+		"uri": "https://www.youtube.com/watch?v=TF5IETKtvGg",
+		"service": "youtube"
+	},
+	{
+		"identifier": "kmI_VYPXub0",
+		"title": "Big Giant Circles - The Glory Days: \"Wintory Fresh\"",
+		"length": 126000,
+		"uri": "https://www.youtube.com/watch?v=kmI_VYPXub0",
+		"service": "youtube"
+	},
+	{
+		"identifier": "KGO0RcIDR8U",
+		"title": "Big Giant Circles - The Glory Days: \"Biceps Blaster\"",
+		"length": 153000,
+		"uri": "https://www.youtube.com/watch?v=KGO0RcIDR8U",
+		"service": "youtube"
+	},
+	{
+		"identifier": "5Unwj0PFwf4",
+		"title": "Big Giant Circles - The Glory Days: \"Micksplosions\"",
+		"length": 257000,
+		"uri": "https://www.youtube.com/watch?v=5Unwj0PFwf4",
+		"service": "youtube"
+	},
+	{
+		"identifier": "izMEU4orFBU",
+		"title": "Big Giant Circles - The Glory Days: \"Peanut Butter Cupquakes\"",
+		"length": 308000,
+		"uri": "https://www.youtube.com/watch?v=izMEU4orFBU",
+		"service": "youtube"
+	},
+	{
+		"identifier": "xPmAHhcWEvE",
+		"title": "Big Giant Circles - The Glory Days: \"The Glory Days\"",
+		"length": 335000,
+		"uri": "https://www.youtube.com/watch?v=xPmAHhcWEvE",
+		"service": "youtube"
+	},
+	{
+		"identifier": "ryhybXuK1r0",
+		"title": "Big Giant Circles - The Glory Days: \"The Chiptune Legacy\"",
+		"length": 219000,
+		"uri": "https://www.youtube.com/watch?v=ryhybXuK1r0",
+		"service": "youtube"
+	},
+	{
+		"identifier": "00vYncpl0pk",
+		"title": "Surfing on a Sine Wave",
+		"length": 304000,
+		"uri": "https://www.youtube.com/watch?v=00vYncpl0pk",
+		"service": "youtube"
+	},
+	{
+		"identifier": "hzGmbwS_Drs",
+		"title": "Rolling Down The Street, In My Katamari",
+		"length": 276000,
+		"uri": "https://www.youtube.com/watch?v=hzGmbwS_Drs",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Zpu861-LpCE",
+		"title": "Fearofdark - Get A Brian Morans!",
+		"length": 262000,
+		"uri": "https://www.youtube.com/watch?v=Zpu861-LpCE",
+		"service": "youtube"
+	},
+	{
+		"identifier": "4ILeW9CMfBA",
+		"title": "Fast City",
+		"length": 361000,
+		"uri": "https://www.youtube.com/watch?v=4ILeW9CMfBA",
+		"service": "youtube"
+	},
+	{
+		"identifier": "VUTUuAoBFPk",
+		"title": "Flame Repellent (NSF)",
+		"length": 179000,
+		"uri": "https://www.youtube.com/watch?v=VUTUuAoBFPk",
+		"service": "youtube"
+	},
+	{
+		"identifier": "55mbyhqIcNo",
+		"title": "Shape - Artillery | C64 demo, Full HD 50 fps, Real SID",
+		"length": 452000,
+		"uri": "https://www.youtube.com/watch?v=55mbyhqIcNo",
+		"service": "youtube"
+	},
+	{
+		"identifier": "wkFhhnApeF4",
+		"title": "Tetris Theme A",
+		"length": 110000,
+		"uri": "https://www.youtube.com/watch?v=wkFhhnApeF4",
+		"service": "youtube"
+	},
+	{
+		"identifier": "1VNyQgGSXzQ",
+		"title": "Tetris Theme B",
+		"length": 115000,
+		"uri": "https://www.youtube.com/watch?v=1VNyQgGSXzQ",
+		"service": "youtube"
+	},
+	{
+		"identifier": "O9WPbCmLmD4",
+		"title": "Tetris Theme C",
+		"length": 100000,
+		"uri": "https://www.youtube.com/watch?v=O9WPbCmLmD4",
+		"service": "youtube"
+	},
+	{
+		"identifier": "C8uAc-oCtR8",
+		"title": "Tetris - High Score",
+		"length": 66000,
+		"uri": "https://www.youtube.com/watch?v=C8uAc-oCtR8",
+		"service": "youtube"
+	},
+	{
+		"identifier": "4qsWFFuYZYI",
+		"title": "Rymdreglage - 8-bit trip",
+		"length": 230000,
+		"uri": "https://www.youtube.com/watch?v=4qsWFFuYZYI",
+		"service": "youtube"
+	},
+	{
+		"identifier": "4Yi9fb4pyTc",
+		"title": "FTL Advanced Edition Soundtrack: Colony Ship 2008",
+		"length": 235000,
+		"uri": "https://www.youtube.com/watch?v=4Yi9fb4pyTc",
+		"service": "youtube"
+	},
+	{
+		"identifier": "9TTnTu3ql_g",
+		"title": "Spectra",
+		"length": 241000,
+		"uri": "https://www.youtube.com/watch?v=9TTnTu3ql_g",
+		"service": "youtube"
+	},
+	{
+		"identifier": "iCNfYjZ26ow",
+		"title": "Anamanaguchi - My Skateboard Will Go On",
+		"length": 196000,
+		"uri": "https://www.youtube.com/watch?v=iCNfYjZ26ow",
+		"service": "youtube"
+	},
+	{
+		"identifier": "oSeQ1_QNf-c",
+		"title": "Anamanaguchi - Meow",
+		"length": 212000,
+		"uri": "https://www.youtube.com/watch?v=oSeQ1_QNf-c",
+		"service": "youtube"
+	},
+	{
+		"identifier": "euTyRhnqFtA",
+		"title": "Anamanaguchi - Endless Fantasy",
+		"length": 358000,
+		"uri": "https://www.youtube.com/watch?v=euTyRhnqFtA",
+		"service": "youtube"
+	},
+	{
+		"identifier": "I7e-65ziIe0",
+		"title": "Anamanaguchi - Power Supply",
+		"length": 193000,
+		"uri": "https://www.youtube.com/watch?v=I7e-65ziIe0",
+		"service": "youtube"
+	},
+	{
+		"identifier": "6kHckkkJI9o",
+		"title": "PSURG Sound Team - Your Deathtiny",
+		"length": 127000,
+		"uri": "https://www.youtube.com/watch?v=6kHckkkJI9o",
+		"service": "youtube"
+	},
+	{
+		"identifier": "nY3ac_FkoSw",
+		"title": "Gnomoria Soundtrack - Classic - 4 Post Bed",
+		"length": 295000,
+		"uri": "https://www.youtube.com/watch?v=nY3ac_FkoSw",
+		"service": "youtube"
+	},
+	{
+		"identifier": "tU5zyCQb1Wk",
+		"title": "Gnomoria Soundtrack - Classic - Days Work",
+		"length": 139000,
+		"uri": "https://www.youtube.com/watch?v=tU5zyCQb1Wk",
+		"service": "youtube"
+	},
+	{
+		"identifier": "cUDuKLNB8Ec",
+		"title": "Gnomoria Soundtrack - Classic - Deep Long Night Song",
+		"length": 357000,
+		"uri": "https://www.youtube.com/watch?v=cUDuKLNB8Ec",
+		"service": "youtube"
+	},
+	{
+		"identifier": "c92bEgiFAF4",
+		"title": "Gnomoria Soundtrack - Classic - Deep Mine Dance",
+		"length": 169000,
+		"uri": "https://www.youtube.com/watch?v=c92bEgiFAF4",
+		"service": "youtube"
+	},
+	{
+		"identifier": "9BoWlVmlQa0",
+		"title": "Gnomoria Soundtrack - Classic - Farming Groove",
+		"length": 111000,
+		"uri": "https://www.youtube.com/watch?v=9BoWlVmlQa0",
+		"service": "youtube"
+	},
+	{
+		"identifier": "o0vDydAHGp0",
+		"title": "Gnomoria Soundtrack - Classic - Sound of the Underground",
+		"length": 153000,
+		"uri": "https://www.youtube.com/watch?v=o0vDydAHGp0",
+		"service": "youtube"
+	},
+	{
+		"identifier": "wuCHmGbve0c",
+		"title": "Gnomoria Soundtrack - Classic - Village at Peace",
+		"length": 133000,
+		"uri": "https://www.youtube.com/watch?v=wuCHmGbve0c",
+		"service": "youtube"
+	},
+	{
+		"identifier": "mgE398yDoPA",
+		"title": "Bonetrousle (8 Bit Remix Cover Version) [Tribute to Undertale] - 8 Bit Universe",
+		"length": 59000,
+		"uri": "https://www.youtube.com/watch?v=mgE398yDoPA",
+		"service": "youtube"
+	},
+	{
+		"identifier": "IcYpQLyHsxc",
+		"title": "Megalovania 8 Bit Remix - Undertale",
+		"length": 319000,
+		"uri": "https://www.youtube.com/watch?v=IcYpQLyHsxc",
+		"service": "youtube"
+	},
+	{
+		"identifier": "s7RRgF5Ve_E",
+		"title": "Undertale OST: 001 - Once Upon A Time",
+		"length": 90000,
+		"uri": "https://www.youtube.com/watch?v=s7RRgF5Ve_E",
+		"service": "youtube"
+	},
+	{
+		"identifier": "QyPR77rg1to",
+		"title": "Undertale OST: 005 - Ruins",
+		"length": 93000,
+		"uri": "https://www.youtube.com/watch?v=QyPR77rg1to",
+		"service": "youtube"
+	},
+	{
+		"identifier": "OSPbX0lkTmQ",
+		"title": "Undertale OST: 008 - Unnecessary Tension",
+		"length": 18000,
+		"uri": "https://www.youtube.com/watch?v=OSPbX0lkTmQ",
+		"service": "youtube"
+	},
+	{
+		"identifier": "JRU6GnETSN4",
+		"title": "Undertale OST: 009 - Enemy Approaching",
+		"length": 57000,
+		"uri": "https://www.youtube.com/watch?v=JRU6GnETSN4",
+		"service": "youtube"
+	},
+	{
+		"identifier": "W1i4mTyidOc",
+		"title": "Undertale OST: 011 - Determination",
+		"length": 51000,
+		"uri": "https://www.youtube.com/watch?v=W1i4mTyidOc",
+		"service": "youtube"
+	},
+	{
+		"identifier": "xflkF-sqNaM",
+		"title": "Undertale OST: 014 - Heartache",
+		"length": 109000,
+		"uri": "https://www.youtube.com/watch?v=xflkF-sqNaM",
+		"service": "youtube"
+	},
+	{
+		"identifier": "FKdtstAo6iU",
+		"title": "Undertale OST: 016 - Nyeh Heh Heh!",
+		"length": 33000,
+		"uri": "https://www.youtube.com/watch?v=FKdtstAo6iU",
+		"service": "youtube"
+	},
+	{
+		"identifier": "woPff-Tpkns",
+		"title": "Undertale OST: 021 - Dogsong",
+		"length": 38000,
+		"uri": "https://www.youtube.com/watch?v=woPff-Tpkns",
+		"service": "youtube"
+	},
+	{
+		"identifier": "zdeZwAk6ULE",
+		"title": "Undertale OST: 024 - Bonetrousle",
+		"length": 58000,
+		"uri": "https://www.youtube.com/watch?v=zdeZwAk6ULE",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Zzo6L3wsf8c",
+		"title": "Undertale OST: 015 - sans.",
+		"length": 51000,
+		"uri": "https://www.youtube.com/watch?v=Zzo6L3wsf8c",
+		"service": "youtube"
+	},
+	{
+		"identifier": "dtYwq4aBr0E",
+		"title": "Undertale OST: 025 - Dating Start!",
+		"length": 117000,
+		"uri": "https://www.youtube.com/watch?v=dtYwq4aBr0E",
+		"service": "youtube"
+	},
+	{
+		"identifier": "ShK_Tj-Ee3Y",
+		"title": "Undertale OST: 026 - Dating Tense!",
+		"length": 27000,
+		"uri": "https://www.youtube.com/watch?v=ShK_Tj-Ee3Y",
+		"service": "youtube"
+	},
+	{
+		"identifier": "JQ8bpWkoC7A",
+		"title": "Undertale OST: 027 - Dating Fight!",
+		"length": 37000,
+		"uri": "https://www.youtube.com/watch?v=JQ8bpWkoC7A",
+		"service": "youtube"
+	},
+	{
+		"identifier": "VH6HIHmhvQU",
+		"title": "Undertale OST: 030 - Undyne",
+		"length": 47000,
+		"uri": "https://www.youtube.com/watch?v=VH6HIHmhvQU",
+		"service": "youtube"
+	},
+	{
+		"identifier": "PPapt88_3aU",
+		"title": "Undertale OST: 032 - Run!",
+		"length": 27000,
+		"uri": "https://www.youtube.com/watch?v=PPapt88_3aU",
+		"service": "youtube"
+	},
+	{
+		"identifier": "XxMf4BdVq_g",
+		"title": "Best VGM 888 - Deus Ex - Main Theme",
+		"length": 145000,
+		"uri": "https://www.youtube.com/watch?v=XxMf4BdVq_g",
+		"service": "youtube"
+	},
+	{
+		"identifier": "eijdNQMYikY",
+		"title": "Undertale OST: 034 - Memory",
+		"length": 76000,
+		"uri": "https://www.youtube.com/watch?v=eijdNQMYikY",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Z51lfE2k7jU",
+		"title": "Undertale OST: 035 - Bird That Carries You Over A Disproportionately Small Gap",
+		"length": 26000,
+		"uri": "https://www.youtube.com/watch?v=Z51lfE2k7jU",
+		"service": "youtube"
+	},
+	{
+		"identifier": "N3epEVMNJdY",
+		"title": "Undertale OST: 036 - Dummy!",
+		"length": 147000,
+		"uri": "https://www.youtube.com/watch?v=N3epEVMNJdY",
+		"service": "youtube"
+	},
+	{
+		"identifier": "nu_ruGyTNEs",
+		"title": "Undertale OST: 037 - Pathetic House",
+		"length": 39000,
+		"uri": "https://www.youtube.com/watch?v=nu_ruGyTNEs",
+		"service": "youtube"
+	},
+	{
+		"identifier": "ewxyxByJPP0",
+		"title": "Undertale OST: 042 - Thundersnail",
+		"length": 43000,
+		"uri": "https://www.youtube.com/watch?v=ewxyxByJPP0",
+		"service": "youtube"
+	},
+	{
+		"identifier": "PLDyWLbuptQ",
+		"title": "Undertale OST: 045 - NGAHHH!!",
+		"length": 83000,
+		"uri": "https://www.youtube.com/watch?v=PLDyWLbuptQ",
+		"service": "youtube"
+	},
+	{
+		"identifier": "qrBB3_rFPjg",
+		"title": "Undertale OST: 046 - Spear of Justice",
+		"length": 116000,
+		"uri": "https://www.youtube.com/watch?v=qrBB3_rFPjg",
+		"service": "youtube"
+	},
+	{
+		"identifier": "xG2AtyD3elY",
+		"title": "Undertale OST: 048 - Alphys",
+		"length": 86000,
+		"uri": "https://www.youtube.com/watch?v=xG2AtyD3elY",
+		"service": "youtube"
+	},
+	{
+		"identifier": "9uwEAugeH8w",
+		"title": "Undertale OST: 049 - It's Showtime!",
+		"length": 47000,
+		"uri": "https://www.youtube.com/watch?v=9uwEAugeH8w",
+		"service": "youtube"
+	},
+	{
+		"identifier": "P0PpyUsvT9w",
+		"title": "Undertale OST: 050 - Metal Crusher",
+		"length": 64000,
+		"uri": "https://www.youtube.com/watch?v=P0PpyUsvT9w",
+		"service": "youtube"
+	},
+	{
+		"identifier": "qzQyP99Q0pE",
+		"title": "Undertale OST: 056 - Confession",
+		"length": 43000,
+		"uri": "https://www.youtube.com/watch?v=qzQyP99Q0pE",
+		"service": "youtube"
+	},
+	{
+		"identifier": "YZ3XjVVNagU",
+		"title": "Undertale OST: 059 - Spider Dance",
+		"length": 107000,
+		"uri": "https://www.youtube.com/watch?v=YZ3XjVVNagU",
+		"service": "youtube"
+	},
+	{
+		"identifier": "gTCSQevpuOg",
+		"title": "Undertale OST: 060 - Wrong Enemy",
+		"length": 59000,
+		"uri": "https://www.youtube.com/watch?v=gTCSQevpuOg",
+		"service": "youtube"
+	},
+	{
+		"identifier": "tDuEWw648jo",
+		"title": "Undertale OST: 065 - CORE",
+		"length": 167000,
+		"uri": "https://www.youtube.com/watch?v=tDuEWw648jo",
+		"service": "youtube"
+	},
+	{
+		"identifier": "2TgO-tN5wAM",
+		"title": "Undertale OST: 068 - Death by Glamour",
+		"length": 135000,
+		"uri": "https://www.youtube.com/watch?v=2TgO-tN5wAM",
+		"service": "youtube"
+	},
+	{
+		"identifier": "YivzBeEwzWI",
+		"title": "Undertale Ost: 076 - Bergentrückung",
+		"length": 22000,
+		"uri": "https://www.youtube.com/watch?v=YivzBeEwzWI",
+		"service": "youtube"
+	},
+	{
+		"identifier": "hMa4hZQbrms",
+		"title": "Undertale Ost: 077 - ASGORE",
+		"length": 157000,
+		"uri": "https://www.youtube.com/watch?v=hMa4hZQbrms",
+		"service": "youtube"
+	},
+	{
+		"identifier": "yWjavxcGfqM",
+		"title": "Undertale OST: 080 - Finale",
+		"length": 113000,
+		"uri": "https://www.youtube.com/watch?v=yWjavxcGfqM",
+		"service": "youtube"
+	},
+	{
+		"identifier": "tz82xbLvK_k",
+		"title": "Undertale Ost: 087 - Hopes and Dreams",
+		"length": 182000,
+		"uri": "https://www.youtube.com/watch?v=tz82xbLvK_k",
+		"service": "youtube"
+	},
+	{
+		"identifier": "mZRP7nQkfrM",
+		"title": "Undertale Ost: 089 - SAVE the World",
+		"length": 114000,
+		"uri": "https://www.youtube.com/watch?v=mZRP7nQkfrM",
+		"service": "youtube"
+	},
+	{
+		"identifier": "WgRfPc1lfJk",
+		"title": "Undertale OST: 092 - Reunited",
+		"length": 285000,
+		"uri": "https://www.youtube.com/watch?v=WgRfPc1lfJk",
+		"service": "youtube"
+	},
+	{
+		"identifier": "x_P5smsopK0",
+		"title": "Undertale OST: 095 - Bring It In, Guys!",
+		"length": 253000,
+		"uri": "https://www.youtube.com/watch?v=x_P5smsopK0",
+		"service": "youtube"
+	},
+	{
+		"identifier": "aWBtpBwzzdM",
+		"title": "Undertale Ost: 098 - Battle Against a True Hero",
+		"length": 157000,
+		"uri": "https://www.youtube.com/watch?v=aWBtpBwzzdM",
+		"service": "youtube"
+	},
+	{
+		"identifier": "VM83BpH2_3U",
+		"title": "Slimegirls - HEART ON WAVE - (Track 1) HEART ON WAVE",
+		"length": 242000,
+		"uri": "https://www.youtube.com/watch?v=VM83BpH2_3U",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Qet3zBfaM78",
+		"title": "VIDEO GIRL - Slime Girls",
+		"length": 271000,
+		"uri": "https://www.youtube.com/watch?v=Qet3zBfaM78",
+		"service": "youtube"
+	},
+	{
+		"identifier": "G8DpAL2B9MQ",
+		"title": "Slime girls - HEART ON WAVE - (Track 3) HEART ON WAVE (SYNCHRONICITY VER)",
+		"length": 258000,
+		"uri": "https://www.youtube.com/watch?v=G8DpAL2B9MQ",
+		"service": "youtube"
+	},
+	{
+		"identifier": "PThRzauX8pk",
+		"title": "Slime girls - HEART ON WAVE - (Track 4) HEART ON WAVE (astroskeleton)",
+		"length": 265000,
+		"uri": "https://www.youtube.com/watch?v=PThRzauX8pk",
+		"service": "youtube"
+	},
+	{
+		"identifier": "lC_RwbN8h9s",
+		"title": "Slime girls - HEART ON WAVE - (Track 5) Video girl (kanon_kid)",
+		"length": 227000,
+		"uri": "https://www.youtube.com/watch?v=lC_RwbN8h9s",
+		"service": "youtube"
+	},
+	{
+		"identifier": "ZSEmhhyuktU",
+		"title": "CCIvory GHOST",
+		"length": 189000,
+		"uri": "https://www.youtube.com/watch?v=ZSEmhhyuktU",
+		"service": "youtube"
+	},
+	{
+		"identifier": "EnDBauPSjLI",
+		"title": "Fountain - CCIvory",
+		"length": 204000,
+		"uri": "https://www.youtube.com/watch?v=EnDBauPSjLI",
+		"service": "youtube"
+	},
+	{
+		"identifier": "1DWD_hEz4HI",
+		"title": "CCivory - The Knife",
+		"length": 257000,
+		"uri": "https://www.youtube.com/watch?v=1DWD_hEz4HI",
+		"service": "youtube"
+	},
+	{
+		"identifier": "7SY2zTT9tos",
+		"title": "CCivory - Spaceflight",
+		"length": 257000,
+		"uri": "https://www.youtube.com/watch?v=7SY2zTT9tos",
+		"service": "youtube"
+	},
+	{
+		"identifier": "8zuiIENc7lE",
+		"title": "CCivory - Frosting",
+		"length": 138000,
+		"uri": "https://www.youtube.com/watch?v=8zuiIENc7lE",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Ixb08g2ND5M",
+		"title": "CCivory - Lets Get Out of Here",
+		"length": 187000,
+		"uri": "https://www.youtube.com/watch?v=Ixb08g2ND5M",
+		"service": "youtube"
+	},
+	{
+		"identifier": "tOlsYflFiEE",
+		"title": "CC Ivory | The Dance",
+		"length": 151000,
+		"uri": "https://www.youtube.com/watch?v=tOlsYflFiEE",
+		"service": "youtube"
+	},
+	{
+		"identifier": "85K4BI-GsGw",
+		"title": "bignic-purpose",
+		"length": 227000,
+		"uri": "https://www.youtube.com/watch?v=85K4BI-GsGw",
+		"service": "youtube"
+	},
+	{
+		"identifier": "WptSlwpJ5Jk",
+		"title": "bignic - blade runner",
+		"length": 183000,
+		"uri": "https://www.youtube.com/watch?v=WptSlwpJ5Jk",
+		"service": "youtube"
+	},
+	{
+		"identifier": "8JHiCljnMVs",
+		"title": "bignic - domino",
+		"length": 136000,
+		"uri": "https://www.youtube.com/watch?v=8JHiCljnMVs",
+		"service": "youtube"
+	},
+	{
+		"identifier": "tqLgJ9puo_c",
+		"title": "bignic - help",
+		"length": 250000,
+		"uri": "https://www.youtube.com/watch?v=tqLgJ9puo_c",
+		"service": "youtube"
+	},
+	{
+		"identifier": "eW6RBQQEfQM",
+		"title": "bignic - nice dudes theme",
+		"length": 173000,
+		"uri": "https://www.youtube.com/watch?v=eW6RBQQEfQM",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Y5ZMPJyxNLI",
+		"title": "bignic - flameout",
+		"length": 148000,
+		"uri": "https://www.youtube.com/watch?v=Y5ZMPJyxNLI",
+		"service": "youtube"
+	},
+	{
+		"identifier": "UbHmYTbHlmA",
+		"title": "bignic - dont ask",
+		"length": 221000,
+		"uri": "https://www.youtube.com/watch?v=UbHmYTbHlmA",
+		"service": "youtube"
+	},
+	{
+		"identifier": "UyNllqk-4iM",
+		"title": "bignic - life",
+		"length": 233000,
+		"uri": "https://www.youtube.com/watch?v=UyNllqk-4iM",
+		"service": "youtube"
+	},
+	{
+		"identifier": "7en8t8gZBlo",
+		"title": "bignic - junk",
+		"length": 195000,
+		"uri": "https://www.youtube.com/watch?v=7en8t8gZBlo",
+		"service": "youtube"
+	},
+	{
+		"identifier": "YfScJUuSV68",
+		"title": "bignic - volume",
+		"length": 207000,
+		"uri": "https://www.youtube.com/watch?v=YfScJUuSV68",
+		"service": "youtube"
+	},
+	{
+		"identifier": "ddQpf8m4ij0",
+		"title": "Bignic - Tetrapod",
+		"length": 174000,
+		"uri": "https://www.youtube.com/watch?v=ddQpf8m4ij0",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Bl62_UMR0qI",
+		"title": "Zombes - Zombies Theme (Main Menu)",
+		"length": 115000,
+		"uri": "https://www.youtube.com/watch?v=Bl62_UMR0qI",
+		"service": "youtube"
+	},
+	{
+		"identifier": "kEE3LDIcXxk",
+		"title": "bignic - thump (music video)",
+		"length": 126000,
+		"uri": "https://www.youtube.com/watch?v=kEE3LDIcXxk",
+		"service": "youtube"
+	},
+	{
+		"identifier": "0CoZG3S_JzA",
+		"title": "bignic - Book Of Days",
+		"length": 212000,
+		"uri": "https://www.youtube.com/watch?v=0CoZG3S_JzA",
+		"service": "youtube"
+	},
+	{
+		"identifier": "ztOR6RpWjgY",
+		"title": "Zombies OST Track 14: Sorry",
+		"length": 147000,
+		"uri": "https://www.youtube.com/watch?v=ztOR6RpWjgY",
+		"service": "youtube"
+	},
+	{
+		"identifier": "rrMueRMVsTM",
+		"title": "Lethal League OST - Scream",
+		"length": 173000,
+		"uri": "https://www.youtube.com/watch?v=rrMueRMVsTM",
+		"service": "youtube"
+	},
+	{
+		"identifier": "kcPtMyOPgBw",
+		"title": "2080 - My Megadrive (official video) HD",
+		"length": 219000,
+		"uri": "https://www.youtube.com/watch?v=kcPtMyOPgBw",
+		"service": "youtube"
+	},
+	{
+		"identifier": "JHqMxtYEArY",
+		"title": "01 - The Lonely Tower - Tower of Heaven Original Soundtrack",
+		"length": 53000,
+		"uri": "https://www.youtube.com/watch?v=JHqMxtYEArY",
+		"service": "youtube"
+	},
+	{
+		"identifier": "36Yh5PMynrg",
+		"title": "Tower of Heaven Soundtrack - Stairway to Revelation",
+		"length": 134000,
+		"uri": "https://www.youtube.com/watch?v=36Yh5PMynrg",
+		"service": "youtube"
+	},
+	{
+		"identifier": "cAMumZKiKRQ",
+		"title": "09 - Pillars of Creation - Tower of Heaven Original Soundtrack",
+		"length": 143000,
+		"uri": "https://www.youtube.com/watch?v=cAMumZKiKRQ",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Zmd2nbHP5kQ",
+		"title": "10 - Farewell, Traveller - Tower of Heaven Original Soundtrack",
+		"length": 82000,
+		"uri": "https://www.youtube.com/watch?v=Zmd2nbHP5kQ",
+		"service": "youtube"
+	},
+	{
+		"identifier": "wPqwxBnNxWU",
+		"title": "08 - Eternal Sanctity - Tower of Heaven Original Soundtrack",
+		"length": 184000,
+		"uri": "https://www.youtube.com/watch?v=wPqwxBnNxWU",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Y46QKkIjZwc",
+		"title": "06 - Luna Ascension - Tower of Heaven Original Soundtrack",
+		"length": 99000,
+		"uri": "https://www.youtube.com/watch?v=Y46QKkIjZwc",
+		"service": "youtube"
+	},
+	{
+		"identifier": "V_c2pjuxWMM",
+		"title": "04 - Indignant Divinity - Tower of Heaven Original Soundtrack",
+		"length": 123000,
+		"uri": "https://www.youtube.com/watch?v=V_c2pjuxWMM",
+		"service": "youtube"
+	},
+	{
+		"identifier": "sSjyrEtVb6U",
+		"title": "03 - Sanctuary Zero - Tower of Heaven Original Soundtrack",
+		"length": 44000,
+		"uri": "https://www.youtube.com/watch?v=sSjyrEtVb6U",
+		"service": "youtube"
+	},
+	{
+		"identifier": "jy1scistRy0",
+		"title": "02 - Stairway to Revelation - Tower of Heaven Original Soundtrack",
+		"length": 134000,
+		"uri": "https://www.youtube.com/watch?v=jy1scistRy0",
+		"service": "youtube"
+	},
+	{
+		"identifier": "J67nkzoJ_2M",
+		"title": "Best VGM 71 - Donkey Kong Country 2 - Stickerbush Symphony (Bramble Blast)",
+		"length": 270000,
+		"uri": "https://www.youtube.com/watch?v=J67nkzoJ_2M",
+		"service": "youtube"
+	},
+	{
+		"identifier": "OFgGAVBA2NY",
+		"title": "Spider Dance (8 Bit Remix Cover Version) [Tribute to Undertale] - 8 Bit Universe",
+		"length": 109000,
+		"uri": "https://www.youtube.com/watch?v=OFgGAVBA2NY",
+		"service": "youtube"
+	},
+	{
+		"identifier": "C4RkHNgUcxM",
+		"title": "Papers Please OST - Death",
+		"length": 94000,
+		"uri": "https://www.youtube.com/watch?v=C4RkHNgUcxM",
+		"service": "youtube"
+	},
+	{
+		"identifier": "umdi-RZ8ntM",
+		"title": "Papers Please OST - Main Theme",
+		"length": 104000,
+		"uri": "https://www.youtube.com/watch?v=umdi-RZ8ntM",
+		"service": "youtube"
+	},
+	{
+		"identifier": "YjQ0tFIpAn8",
+		"title": "Papers Please OST - Victory",
+		"length": 158000,
+		"uri": "https://www.youtube.com/watch?v=YjQ0tFIpAn8",
+		"service": "youtube"
+	},
+	{
+		"identifier": "NLTkBltKlrM",
+		"title": "Title Screen | Please, Don't Touch Anything OST",
+		"length": 131000,
+		"uri": "https://www.youtube.com/watch?v=NLTkBltKlrM",
+		"service": "youtube"
+	},
+	{
+		"identifier": "eLibL3JuhrA",
+		"title": "Don't Touch My Papers | Please, Don't Touch Anything OST",
+		"length": 170000,
+		"uri": "https://www.youtube.com/watch?v=eLibL3JuhrA",
+		"service": "youtube"
+	},
+	{
+		"identifier": "UvvsZalq5QA",
+		"title": "Runes | Please, Don't Touch Anything OST",
+		"length": 86000,
+		"uri": "https://www.youtube.com/watch?v=UvvsZalq5QA",
+		"service": "youtube"
+	},
+	{
+		"identifier": "knPVJ9rj5dM",
+		"title": "The Essence of Machines | Please, Don't Touch Anything OST",
+		"length": 99000,
+		"uri": "https://www.youtube.com/watch?v=knPVJ9rj5dM",
+		"service": "youtube"
+	},
+	{
+		"identifier": "_UZwzA9qr2I",
+		"title": "Rainbow Good | Please, Don't Touch Anything OST",
+		"length": 25000,
+		"uri": "https://www.youtube.com/watch?v=_UZwzA9qr2I",
+		"service": "youtube"
+	},
+	{
+		"identifier": "C68qUfkJYSI",
+		"title": "Leviathan | Please, Don't Touch Anything OST",
+		"length": 56000,
+		"uri": "https://www.youtube.com/watch?v=C68qUfkJYSI",
+		"service": "youtube"
+	},
+	{
+		"identifier": "-C_7CHq6XsQ",
+		"title": "Judgement | Please, Don't Touch Anything OST",
+		"length": 68000,
+		"uri": "https://www.youtube.com/watch?v=-C_7CHq6XsQ",
+		"service": "youtube"
+	},
+	{
+		"identifier": "rT8k9N_K0Q8",
+		"title": "Awaiting Input | Please, Don't Touch Anything OST",
+		"length": 161000,
+		"uri": "https://www.youtube.com/watch?v=rT8k9N_K0Q8",
+		"service": "youtube"
+	},
+	{
+		"identifier": "JtnYO3-4zMg",
+		"title": "Language | Please, Don't Touch Anything OST",
+		"length": 97000,
+		"uri": "https://www.youtube.com/watch?v=JtnYO3-4zMg",
+		"service": "youtube"
+	},
+	{
+		"identifier": "oge5XXXMcys",
+		"title": "The Final Credits | Please, Don't Touch Anything OST",
+		"length": 97000,
+		"uri": "https://www.youtube.com/watch?v=oge5XXXMcys",
+		"service": "youtube"
+	},
+	{
+		"identifier": "N2P7nkAf030",
+		"title": "Overgrown City | Please, Don't Touch Anything OST",
+		"length": 103000,
+		"uri": "https://www.youtube.com/watch?v=N2P7nkAf030",
+		"service": "youtube"
+	},
+	{
+		"identifier": "MIe1LMMQ5m4",
+		"title": "Meteor Rain | Please, Don't Touch Anything OST",
+		"length": 74000,
+		"uri": "https://www.youtube.com/watch?v=MIe1LMMQ5m4",
+		"service": "youtube"
+	},
+	{
+		"identifier": "HWbE2mz68ZE",
+		"title": "Robot New | Please, Don't Touch Anything OST",
+		"length": 111000,
+		"uri": "https://www.youtube.com/watch?v=HWbE2mz68ZE",
+		"service": "youtube"
+	},
+	{
+		"identifier": "J5fo4XpIYNk",
+		"title": "Future | Please, Don't Touch Anything OST",
+		"length": 97000,
+		"uri": "https://www.youtube.com/watch?v=J5fo4XpIYNk",
+		"service": "youtube"
+	},
+	{
+		"identifier": "A_E-QcfWwSs",
+		"title": "Reverse | Please, Don't Touch Anything OST",
+		"length": 111000,
+		"uri": "https://www.youtube.com/watch?v=A_E-QcfWwSs",
+		"service": "youtube"
+	},
+	{
+		"identifier": "d-DKo_pDaNE",
+		"title": "Etno Beat | Please, Don't Touch Anything OST",
+		"length": 65000,
+		"uri": "https://www.youtube.com/watch?v=d-DKo_pDaNE",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Y_XxFAJanhE",
+		"title": "Pentagram | Please, Don't Touch Anything OST",
+		"length": 111000,
+		"uri": "https://www.youtube.com/watch?v=Y_XxFAJanhE",
+		"service": "youtube"
+	},
+	{
+		"identifier": "EcTl3TFZwFg",
+		"title": "Screen OFF | Please, Don't Touch Anything OST",
+		"length": 56000,
+		"uri": "https://www.youtube.com/watch?v=EcTl3TFZwFg",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Zp9bb3MB4Qc",
+		"title": "Viva La Atome | Please, Don't Touch Anything OST",
+		"length": 56000,
+		"uri": "https://www.youtube.com/watch?v=Zp9bb3MB4Qc",
+		"service": "youtube"
+	},
+	{
+		"identifier": "LCP6ZviZjb0",
+		"title": "Main Theme | Please, Don't Touch Anything OST",
+		"length": 97000,
+		"uri": "https://www.youtube.com/watch?v=LCP6ZviZjb0",
+		"service": "youtube"
+	},
+	{
+		"identifier": "jvPIdPSmf2A",
+		"title": "Chipzel - Otis (Hexagoner)",
+		"length": 158000,
+		"uri": "https://www.youtube.com/watch?v=jvPIdPSmf2A",
+		"service": "youtube"
+	},
+	{
+		"identifier": "UXD6rTBj8ek",
+		"title": "Chipzel - Courtesy (Super Hexagon)",
+		"length": 195000,
+		"uri": "https://www.youtube.com/watch?v=UXD6rTBj8ek",
+		"service": "youtube"
+	},
+	{
+		"identifier": "hewBOkOuSts",
+		"title": "ParagonX9 - Chaoz Fantasy (8-bit) [Official Remix]",
+		"length": 128000,
+		"uri": "https://www.youtube.com/watch?v=hewBOkOuSts",
+		"service": "youtube"
+	},
+	{
+		"identifier": "vhDToOmsKUo",
+		"title": "Chipzel - Focus (Hexagonest)",
+		"length": 165000,
+		"uri": "https://www.youtube.com/watch?v=vhDToOmsKUo",
+		"service": "youtube"
+	},
+	{
+		"identifier": "83jGCWCcBzc",
+		"title": "Undertale OST: 003 - Your Best Friend",
+		"length": 24000,
+		"uri": "https://www.youtube.com/watch?v=83jGCWCcBzc",
+		"service": "youtube"
+	},
+	{
+		"identifier": "jCFdBhby0jc",
+		"title": "Super Doobie Bros - Long Train Runnin'",
+		"length": 183000,
+		"uri": "https://www.youtube.com/watch?v=jCFdBhby0jc",
+		"service": "youtube"
+	},
+	{
+		"identifier": "NnVx_6Mdsj4",
+		"title": "Donkey Kong Country 3 OST Water World",
+		"length": 166000,
+		"uri": "https://www.youtube.com/watch?v=NnVx_6Mdsj4",
+		"service": "youtube"
+	},
+	{
+		"identifier": "aTBSQKh8teE",
+		"title": "Anamanaguchi - Prom Night (ft Bianca Raquel)",
+		"length": 228000,
+		"uri": "https://www.youtube.com/watch?v=aTBSQKh8teE",
+		"service": "youtube"
+	},
+	{
+		"identifier": "FTrumdi55tA",
+		"title": "Zelda Link's Awakening Music - Overworld  Main Theme",
+		"length": 95000,
+		"uri": "https://www.youtube.com/watch?v=FTrumdi55tA",
+		"service": "youtube"
+	},
+	{
+		"identifier": "ObclY0UOj3c",
+		"title": "Zelda Link's Awakening Music - Mysterious Woods",
+		"length": 103000,
+		"uri": "https://www.youtube.com/watch?v=ObclY0UOj3c",
+		"service": "youtube"
+	},
+	{
+		"identifier": "A4wYdsQ8_JY",
+		"title": "Zelda Link's Awakening Music - Kanalet Castle",
+		"length": 62000,
+		"uri": "https://www.youtube.com/watch?v=A4wYdsQ8_JY",
+		"service": "youtube"
+	},
+	{
+		"identifier": "y0zqju5Eevc",
+		"title": "Zelda Link's Awakening Music - Level 3 Key Cavern",
+		"length": 92000,
+		"uri": "https://www.youtube.com/watch?v=y0zqju5Eevc",
+		"service": "youtube"
+	},
+	{
+		"identifier": "WYZs4ExdlfA",
+		"title": "Zelda Link's Awakening Music - Dream Shrine ~ Lower Level",
+		"length": 47000,
+		"uri": "https://www.youtube.com/watch?v=WYZs4ExdlfA",
+		"service": "youtube"
+	},
+	{
+		"identifier": "h848dMB0LgU",
+		"title": "Zelda Link's Awakening Music - Mt. Tamaranch  Tal Tal Heights",
+		"length": 170000,
+		"uri": "https://www.youtube.com/watch?v=h848dMB0LgU",
+		"service": "youtube"
+	},
+	{
+		"identifier": "d7hghjDM7_I",
+		"title": "Zelda Link's Awakening Music - Level 5 Catfish's Maw",
+		"length": 137000,
+		"uri": "https://www.youtube.com/watch?v=d7hghjDM7_I",
+		"service": "youtube"
+	},
+	{
+		"identifier": "4X6UqQDmjBk",
+		"title": "Zelda Link's Awakening Music - Level 6 Face Shrine",
+		"length": 115000,
+		"uri": "https://www.youtube.com/watch?v=4X6UqQDmjBk",
+		"service": "youtube"
+	},
+	{
+		"identifier": "OJvNVDn7BgU",
+		"title": "Zelda Link's Awakening Music - Level 8 Turtle Rock",
+		"length": 93000,
+		"uri": "https://www.youtube.com/watch?v=OJvNVDn7BgU",
+		"service": "youtube"
+	},
+	{
+		"identifier": "TyLNQsGTby8",
+		"title": "Zelda Link's Awakening Music - Nightmare Battles",
+		"length": 200000,
+		"uri": "https://www.youtube.com/watch?v=TyLNQsGTby8",
+		"service": "youtube"
+	},
+	{
+		"identifier": "bFQmrye0jss",
+		"title": "Zelda Link's Awakening Music - Color Dungeon",
+		"length": 128000,
+		"uri": "https://www.youtube.com/watch?v=bFQmrye0jss",
+		"service": "youtube"
+	},
+	{
+		"identifier": "25m3Gk7mRQM",
+		"title": "VVVVVV Soundtrack 04/16 \"Pushing Onwards\"",
+		"length": 220000,
+		"uri": "https://www.youtube.com/watch?v=25m3Gk7mRQM",
+		"service": "youtube"
+	},
+	{
+		"identifier": "uxiaYyRkxMQ",
+		"title": "Cave Story 3D OST - Last Battle",
+		"length": 131000,
+		"uri": "https://www.youtube.com/watch?v=uxiaYyRkxMQ",
+		"service": "youtube"
+	},
+	{
+		"identifier": "JfxM1QCtvb4",
+		"title": "Niji - Air Ornithopter Arrange Album Original Soundtrack",
+		"length": 206000,
+		"uri": "https://www.youtube.com/watch?v=JfxM1QCtvb4",
+		"service": "youtube"
+	},
+	{
+		"identifier": "eA36OFxe-uY",
+		"title": "Fez - Original Game Soundtrack - Spirit [HD]",
+		"length": 173000,
+		"uri": "https://www.youtube.com/watch?v=eA36OFxe-uY",
+		"service": "youtube"
+	},
+	{
+		"identifier": "kRTJoouX2z8",
+		"title": "Fez - Original Game Soundtrack - Formations [HD]",
+		"length": 141000,
+		"uri": "https://www.youtube.com/watch?v=kRTJoouX2z8",
+		"service": "youtube"
+	},
+	{
+		"identifier": "C0j6pe043L4",
+		"title": "VVVVVV Soundtrack 06/16 \"Passion For Exploring\"",
+		"length": 173000,
+		"uri": "https://www.youtube.com/watch?v=C0j6pe043L4",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Tp3qiOKuEBM",
+		"title": "VVVVVV Soundtrack 07/16 \"Positive Force\"",
+		"length": 169000,
+		"uri": "https://www.youtube.com/watch?v=Tp3qiOKuEBM",
+		"service": "youtube"
+	},
+	{
+		"identifier": "twPSaCABakA",
+		"title": "Kirby's Dream Land - Green Greens",
+		"length": 92000,
+		"uri": "https://www.youtube.com/watch?v=twPSaCABakA",
+		"service": "youtube"
+	},
+	{
+		"identifier": "P1YBW-rj_jk",
+		"title": "Kirby's Dream Land - Float Islands",
+		"length": 115000,
+		"uri": "https://www.youtube.com/watch?v=P1YBW-rj_jk",
+		"service": "youtube"
+	},
+	{
+		"identifier": "96AzlkwtRmc",
+		"title": "[Best NGM 1] Yoshi's Island - Koopa",
+		"length": 165000,
+		"uri": "https://www.youtube.com/watch?v=96AzlkwtRmc",
+		"service": "youtube"
+	},
+	{
+		"identifier": "kMmpRcld1FU",
+		"title": "Flower Garden - Yoshi's Island",
+		"length": 175000,
+		"uri": "https://www.youtube.com/watch?v=kMmpRcld1FU",
+		"service": "youtube"
+	},
+	{
+		"identifier": "kDssUvBiHFk",
+		"title": "Best VGM 13 - Yoshi's Island - Overworld Stage (Touch Fuzzy, Get Dizzy)",
+		"length": 92000,
+		"uri": "https://www.youtube.com/watch?v=kDssUvBiHFk",
+		"service": "youtube"
+	},
+	{
+		"identifier": "xYtBAbqJO9k",
+		"title": "Ending Theme - Super Mario Land",
+		"length": 132000,
+		"uri": "https://www.youtube.com/watch?v=xYtBAbqJO9k",
+		"service": "youtube"
+	},
+	{
+		"identifier": "D5o_UOPNaQQ",
+		"title": "Zelda Link's Awakening Music - The Storm",
+		"length": 53000,
+		"uri": "https://www.youtube.com/watch?v=D5o_UOPNaQQ",
+		"service": "youtube"
+	},
+	{
+		"identifier": "avyasO9uqfo",
+		"title": "Donkey Kong Country OST 3 Simian Segue",
+		"length": 155000,
+		"uri": "https://www.youtube.com/watch?v=avyasO9uqfo",
+		"service": "youtube"
+	},
+	{
+		"identifier": "wAPpVplHiDE",
+		"title": "Donkey Kong Country OST 9 Aquatic Ambiance",
+		"length": 207000,
+		"uri": "https://www.youtube.com/watch?v=wAPpVplHiDE",
+		"service": "youtube"
+	},
+	{
+		"identifier": "9lyRI_M8ZXE",
+		"title": "Donkey Kong Country OST 20 Ice Cave Chant",
+		"length": 204000,
+		"uri": "https://www.youtube.com/watch?v=9lyRI_M8ZXE",
+		"service": "youtube"
+	},
+	{
+		"identifier": "lS7_tcwsj4E",
+		"title": "Donkey Kong Country OST 22 Gang-Plank Galleon",
+		"length": 193000,
+		"uri": "https://www.youtube.com/watch?v=lS7_tcwsj4E",
+		"service": "youtube"
+	},
+	{
+		"identifier": "TY-mhdPdtq0",
+		"title": "Bayou Boogie - Donkey Kong Country 2",
+		"length": 101000,
+		"uri": "https://www.youtube.com/watch?v=TY-mhdPdtq0",
+		"service": "youtube"
+	},
+	{
+		"identifier": "8ir0d7bjMIk",
+		"title": "Stickerbush Symphony - Donkey Kong Country 2",
+		"length": 144000,
+		"uri": "https://www.youtube.com/watch?v=8ir0d7bjMIk",
+		"service": "youtube"
+	},
+	{
+		"identifier": "eV7YovopMxw",
+		"title": "Primal Rave - Donkey Kong Country 2",
+		"length": 111000,
+		"uri": "https://www.youtube.com/watch?v=eV7YovopMxw",
+		"service": "youtube"
+	},
+	{
+		"identifier": "slKNBP7VEvI",
+		"title": "Forest Interlude - Donkey Kong Country 2",
+		"length": 192000,
+		"uri": "https://www.youtube.com/watch?v=slKNBP7VEvI",
+		"service": "youtube"
+	},
+	{
+		"identifier": "zLcyg4Tq5uY",
+		"title": "Brinstar Overgrown with Vegetation Area - Super Metroid",
+		"length": 222000,
+		"uri": "https://www.youtube.com/watch?v=zLcyg4Tq5uY",
+		"service": "youtube"
+	},
+	{
+		"identifier": "wGFpMPgSbB4",
+		"title": "They Bleed Pixels OST - Voracity",
+		"length": 178000,
+		"uri": "https://www.youtube.com/watch?v=wGFpMPgSbB4",
+		"service": "youtube"
+	},
+	{
+		"identifier": "iPe3LT37h-Y",
+		"title": "Crypt of the Necrodancer OST - Disco Descent (1-1)",
+		"length": 181000,
+		"uri": "https://www.youtube.com/watch?v=iPe3LT37h-Y",
+		"service": "youtube"
+	},
+	{
+		"identifier": "TNh7wxRsOyE",
+		"title": "Crypt of the Necrodancer OST - For Whom the Knell Tolls (Dead Ringer)",
+		"length": 196000,
+		"uri": "https://www.youtube.com/watch?v=TNh7wxRsOyE",
+		"service": "youtube"
+	},
+	{
+		"identifier": "ICJezWy9m8g",
+		"title": "Crypt of the Necrodancer OST - Stone Cold (3-1 Cold)",
+		"length": 165000,
+		"uri": "https://www.youtube.com/watch?v=ICJezWy9m8g",
+		"service": "youtube"
+	},
+	{
+		"identifier": "KUTHBCpiU8Y",
+		"title": "La Mulana OST - Mr. Explorer",
+		"length": 220000,
+		"uri": "https://www.youtube.com/watch?v=KUTHBCpiU8Y",
+		"service": "youtube"
+	},
+	{
+		"identifier": "CIZ1FIK3-HU",
+		"title": "Super Meat Boy! - Digital Special Edition Soundtrack - 06 Betus Blues (Ch 2 Light World)",
+		"length": 193000,
+		"uri": "https://www.youtube.com/watch?v=CIZ1FIK3-HU",
+		"service": "youtube"
+	},
+	{
+		"identifier": "PaQxdGtSjVA",
+		"title": "Super Meat Boy! - Digital Special Edition Soundtrack - 11 Fast Track to Browntown (Ch 3 Boss)",
+		"length": 145000,
+		"uri": "https://www.youtube.com/watch?v=PaQxdGtSjVA",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Xu04qI3BsBA",
+		"title": "Super Meat Boy! - Digital Special Edition Soundtrack - 26 Can o' Salt RETRO (Ch 3 Warp Zone)",
+		"length": 202000,
+		"uri": "https://www.youtube.com/watch?v=Xu04qI3BsBA",
+		"service": "youtube"
+	},
+	{
+		"identifier": "P5ChKb_9JoY",
+		"title": "Arctic Oscillation - Risk of Rain OST, Chris Christodoulou",
+		"length": 403000,
+		"uri": "https://www.youtube.com/watch?v=P5ChKb_9JoY",
+		"service": "youtube"
+	},
+	{
+		"identifier": "TVyBV_HC8eg",
+		"title": "Dew Point - Risk of Rain OST, Chris Christodoulou",
+		"length": 209000,
+		"uri": "https://www.youtube.com/watch?v=TVyBV_HC8eg",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Pb6KyewC_Vg",
+		"title": "Waterflame - Electroman Adventures (HD)",
+		"length": 153000,
+		"uri": "https://www.youtube.com/watch?v=Pb6KyewC_Vg",
+		"service": "youtube"
+	},
+	{
+		"identifier": "afwK743PL2Y",
+		"title": "Waterflame - Hexagon Force",
+		"length": 260000,
+		"uri": "https://www.youtube.com/watch?v=afwK743PL2Y",
+		"service": "youtube"
+	},
+	{
+		"identifier": "SIPGFhFPJhg",
+		"title": "Double Fucking Rainbow - Risk of Rain OST, Chris Christodoulou",
+		"length": 251000,
+		"uri": "https://www.youtube.com/watch?v=SIPGFhFPJhg",
+		"service": "youtube"
+	},
+	{
+		"identifier": "wqAYMZSOQao",
+		"title": "Shovel Knight OST - Strike the Earth! Plains of Passage",
+		"length": 225000,
+		"uri": "https://www.youtube.com/watch?v=wqAYMZSOQao",
+		"service": "youtube"
+	},
+	{
+		"identifier": "uv85Ai8bwfA",
+		"title": "Zelda Link's Awakening Music - Level 2 Bottle Grotto",
+		"length": 128000,
+		"uri": "https://www.youtube.com/watch?v=uv85Ai8bwfA",
+		"service": "youtube"
+	},
+	{
+		"identifier": "DI9weHFUtuk",
+		"title": "Zelda Link's Awakening Music - Level 4 Angler's Tunnel.wmv",
+		"length": 41000,
+		"uri": "https://www.youtube.com/watch?v=DI9weHFUtuk",
+		"service": "youtube"
+	},
+	{
+		"identifier": "nUf07IdSPFQ",
+		"title": "Zelda Link's Awakening Music - Southern Shrine",
+		"length": 81000,
+		"uri": "https://www.youtube.com/watch?v=nUf07IdSPFQ",
+		"service": "youtube"
+	},
+	{
+		"identifier": "4hAz3oI-VD0",
+		"title": "Shirobon - Out Of Love",
+		"length": 284000,
+		"uri": "https://www.youtube.com/watch?v=4hAz3oI-VD0",
+		"service": "youtube"
+	},
+	{
+		"identifier": "336OIKnPA54",
+		"title": "Hot-Head Bop - Donkey Kong Country 2",
+		"length": 130000,
+		"uri": "https://www.youtube.com/watch?v=336OIKnPA54",
+		"service": "youtube"
+	},
+	{
+		"identifier": "4rJFgTNiRuQ",
+		"title": "Crypt of the Necrodancer OST - Deep Sea Bass (Coral Riff)",
+		"length": 131000,
+		"uri": "https://www.youtube.com/watch?v=4rJFgTNiRuQ",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Q1kf-OJdvb4",
+		"title": "Shovel Knight OST - High Above the Land (The Flying Machine)",
+		"length": 242000,
+		"uri": "https://www.youtube.com/watch?v=Q1kf-OJdvb4",
+		"service": "youtube"
+	},
+	{
+		"identifier": "WdVfnKCYdJ8",
+		"title": "Shovel Knight OST - An Underlying Problem (The Lost City)",
+		"length": 229000,
+		"uri": "https://www.youtube.com/watch?v=WdVfnKCYdJ8",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Yr0chA6MNAI",
+		"title": "Nightshade (NES) OST - Nightshade! Fight!",
+		"length": 101000,
+		"uri": "https://www.youtube.com/watch?v=Yr0chA6MNAI",
+		"service": "youtube"
+	},
+	{
+		"identifier": "zKtJHPSv0pI",
+		"title": "Nano Hoedown  -  Royalty Free Music",
+		"length": 154000,
+		"uri": "https://www.youtube.com/watch?v=zKtJHPSv0pI",
+		"service": "youtube"
+	},
+	{
+		"identifier": "VM2UJ6E5D-U",
+		"title": "Eye of the Tiger (8 Bit Remix Cover Version) [Tribute to Survivor] - 8 Bit Universe",
+		"length": 242000,
+		"uri": "https://www.youtube.com/watch?v=VM2UJ6E5D-U",
+		"service": "youtube"
+	},
+	{
+		"identifier": "pfshXZRcQ2c",
+		"title": "DLC Quest OST - The Dark Zone",
+		"length": 126000,
+		"uri": "https://www.youtube.com/watch?v=pfshXZRcQ2c",
+		"service": "youtube"
+	},
+	{
+		"identifier": "6DB6hBRPsWc",
+		"title": "Kubbi / Up In My Jam (All Of A Sudden)",
+		"length": 221000,
+		"uri": "https://www.youtube.com/watch?v=6DB6hBRPsWc",
+		"service": "youtube"
+	},
+	{
+		"identifier": "RzrT1iK2B0s",
+		"title": "Chipzel - We Knew",
+		"length": 202000,
+		"uri": "https://www.youtube.com/watch?v=RzrT1iK2B0s",
+		"service": "youtube"
+	},
+	{
+		"identifier": "8nBgXXHvKHU",
+		"title": "Kirby Nightmare in Dream Land - Dedede Battle (Fountain of Dreams)",
+		"length": 173000,
+		"uri": "https://www.youtube.com/watch?v=8nBgXXHvKHU",
+		"service": "youtube"
+	},
+	{
+		"identifier": "CZMWszd5SRk",
+		"title": "Final Fantasy VIII - Force Your Way [HQ]",
+		"length": 234000,
+		"uri": "https://www.youtube.com/watch?v=CZMWszd5SRk",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Jxk9DqdYsJ4",
+		"title": "Pokemon Gold/Silver/Crystal - Battle! Champion & Red Music (HQ)",
+		"length": 180000,
+		"uri": "https://www.youtube.com/watch?v=Jxk9DqdYsJ4",
+		"service": "youtube"
+	},
+	{
+		"identifier": "2AZnFWbQB_Q",
+		"title": "BIT SHIFTER // HEXADECIMAL GENOME",
+		"length": 199000,
+		"uri": "https://www.youtube.com/watch?v=2AZnFWbQB_Q",
+		"service": "youtube"
+	},
+	{
+		"identifier": "-4vpdkEkup8",
+		"title": "Pokemon FireRed/LeafGreen - Battle! Champion Rival Music (HQ)",
+		"length": 180000,
+		"uri": "https://www.youtube.com/watch?v=-4vpdkEkup8",
+		"service": "youtube"
+	},
+	{
+		"identifier": "rq_F7lGOj7I",
+		"title": "Pokemon Red/Blue/Yellow - Bicycle Music (HQ)",
+		"length": 135000,
+		"uri": "https://www.youtube.com/watch?v=rq_F7lGOj7I",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Fupfr_eVLPo",
+		"title": "Pokemon Red/Blue/Yellow - Battle! Trainer Music (HQ)",
+		"length": 180000,
+		"uri": "https://www.youtube.com/watch?v=Fupfr_eVLPo",
+		"service": "youtube"
+	},
+	{
+		"identifier": "z26SXn-J9NY",
+		"title": "Pokemon Red/Blue/Yellow - Route 4 Music (HQ)",
+		"length": 80000,
+		"uri": "https://www.youtube.com/watch?v=z26SXn-J9NY",
+		"service": "youtube"
+	},
+	{
+		"identifier": "RJKIrqO1Zas",
+		"title": "Pokemon Red/Blue/Yellow - Battle! Gym Leader Music (HQ)",
+		"length": 180000,
+		"uri": "https://www.youtube.com/watch?v=RJKIrqO1Zas",
+		"service": "youtube"
+	},
+	{
+		"identifier": "gBC5cnFjPpU",
+		"title": "Pokemon Red/Blue/Yellow - Cerulean City Music (HQ)",
+		"length": 65000,
+		"uri": "https://www.youtube.com/watch?v=gBC5cnFjPpU",
+		"service": "youtube"
+	},
+	{
+		"identifier": "69wxutaRWO4",
+		"title": "Pokemon Red/Blue/Yellow - Rocket Hideout Music (HQ)",
+		"length": 140000,
+		"uri": "https://www.youtube.com/watch?v=69wxutaRWO4",
+		"service": "youtube"
+	},
+	{
+		"identifier": "rt_H9qkzeMQ",
+		"title": "Pokemon Red/Blue/Yellow - Lavender Town Music (HQ)",
+		"length": 100000,
+		"uri": "https://www.youtube.com/watch?v=rt_H9qkzeMQ",
+		"service": "youtube"
+	},
+	{
+		"identifier": "CaG0lnjaYNs",
+		"title": "Pokemon Red/Blue/Yellow - Pokemon Tower Music (HQ)",
+		"length": 120000,
+		"uri": "https://www.youtube.com/watch?v=CaG0lnjaYNs",
+		"service": "youtube"
+	},
+	{
+		"identifier": "nXgAj5KdAC0",
+		"title": "Pokemon Red/Blue/Yellow - Battle! Champion Music (HQ)",
+		"length": 180000,
+		"uri": "https://www.youtube.com/watch?v=nXgAj5KdAC0",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Qd78OMGLkVA",
+		"title": "Super Mario Bros 3 (NES) Music - Overworld Theme 1",
+		"length": 181000,
+		"uri": "https://www.youtube.com/watch?v=Qd78OMGLkVA",
+		"service": "youtube"
+	},
+	{
+		"identifier": "2sH-l2xN3gU",
+		"title": "Super Mario Bros 3 (NES) Music - Overworld Theme 2",
+		"length": 181000,
+		"uri": "https://www.youtube.com/watch?v=2sH-l2xN3gU",
+		"service": "youtube"
+	},
+	{
+		"identifier": "decbYrsCjOk",
+		"title": "Super Mario Bros 3 (NES) Music - Underground Theme",
+		"length": 181000,
+		"uri": "https://www.youtube.com/watch?v=decbYrsCjOk",
+		"service": "youtube"
+	},
+	{
+		"identifier": "B7D0GKJDU3I",
+		"title": "Super Mario Bros 3 (NES) Music - Underwater Theme",
+		"length": 181000,
+		"uri": "https://www.youtube.com/watch?v=B7D0GKJDU3I",
+		"service": "youtube"
+	},
+	{
+		"identifier": "ibjNly0E_gk",
+		"title": "Super Mario Bros 3 (NES) Music - Sky Theme",
+		"length": 181000,
+		"uri": "https://www.youtube.com/watch?v=ibjNly0E_gk",
+		"service": "youtube"
+	},
+	{
+		"identifier": "ixA3SzX6uUc",
+		"title": "Super Mario Bros 3 (NES) Music - Castle Theme",
+		"length": 181000,
+		"uri": "https://www.youtube.com/watch?v=ixA3SzX6uUc",
+		"service": "youtube"
+	},
+	{
+		"identifier": "1yfxp1NhLIs",
+		"title": "Super Mario Bros 3 (NES) Music - World Map 1",
+		"length": 181000,
+		"uri": "https://www.youtube.com/watch?v=1yfxp1NhLIs",
+		"service": "youtube"
+	},
+	{
+		"identifier": "8Tj3-bmDnS8",
+		"title": "Super Mario Bros 3 (NES) Music - Boss Battle",
+		"length": 181000,
+		"uri": "https://www.youtube.com/watch?v=8Tj3-bmDnS8",
+		"service": "youtube"
+	},
+	{
+		"identifier": "IbFEEfNE1YQ",
+		"title": "Uptown Funk (8 Bit Remix Cover Version) [Tribute to Mark Ronson ft. Bruno Mars] - 8 Bit Universe",
+		"length": 271000,
+		"uri": "https://www.youtube.com/watch?v=IbFEEfNE1YQ",
+		"service": "youtube"
+	},
+	{
+		"identifier": "9NcPvmk4vfo",
+		"title": "Never Gonna Give You Up (8 Bit Remix Cover Version) [Tribute to Rick Astley] - 8 Bit Universe",
+		"length": 197000,
+		"uri": "https://www.youtube.com/watch?v=9NcPvmk4vfo",
+		"service": "youtube"
+	},
+	{
+		"identifier": "jRpPp0RCh-4",
+		"title": "Star Wars Imperial March Theme (8 Bit Remix Cover Version) - 8 Bit Universe",
+		"length": 102000,
+		"uri": "https://www.youtube.com/watch?v=jRpPp0RCh-4",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Zjgst_cWtrs",
+		"title": "Radioactive (8 Bit Remix Cover Version) [Tribute to Imagine Dragons] - 8 Bit Universe",
+		"length": 184000,
+		"uri": "https://www.youtube.com/watch?v=Zjgst_cWtrs",
+		"service": "youtube"
+	},
+	{
+		"identifier": "2SYYM78rjYQ",
+		"title": "Turn Down For What (8 Bit Remix Version) [Tribute to DJ Snake & Lil Jon] - 8 Bit Galaxy Cover",
+		"length": 218000,
+		"uri": "https://www.youtube.com/watch?v=2SYYM78rjYQ",
+		"service": "youtube"
+	},
+	{
+		"identifier": "e5lcETwAItA",
+		"title": "Ghostbusters (8 Bit Remix Cover Version) [Tribute to Ray Parker, Jr.] - 8 Bit Universe",
+		"length": 232000,
+		"uri": "https://www.youtube.com/watch?v=e5lcETwAItA",
+		"service": "youtube"
+	},
+	{
+		"identifier": "VQWeJYI033Q",
+		"title": "Thriller (8 Bit Remix Cover Version) [Tribute to Michael Jackson] - 8 Bit Universe",
+		"length": 310000,
+		"uri": "https://www.youtube.com/watch?v=VQWeJYI033Q",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Q88wKrzj3QM",
+		"title": "Star Wars Cantina Theme (8 Bit Remix Cover Version) - 8 Bit Universe",
+		"length": 113000,
+		"uri": "https://www.youtube.com/watch?v=Q88wKrzj3QM",
+		"service": "youtube"
+	},
+	{
+		"identifier": "wR3gaYTqkDQ",
+		"title": "Pokémon Theme (8 Bit Remix Cover Version) [Tribute to Pokémon] - 8 Bit Universe",
+		"length": 197000,
+		"uri": "https://www.youtube.com/watch?v=wR3gaYTqkDQ",
+		"service": "youtube"
+	},
+	{
+		"identifier": "f4ERRGkGtpo",
+		"title": "Sandstorm (8 Bit Remix Cover Version) [Tribute to Darude] - 8 Bit Universe",
+		"length": 223000,
+		"uri": "https://www.youtube.com/watch?v=f4ERRGkGtpo",
+		"service": "youtube"
+	},
+	{
+		"identifier": "z6oOVUyCi6Y",
+		"title": "Friends Theme Song (8 Bit Remix Cover Version) - 8 Bit Universe",
+		"length": 45000,
+		"uri": "https://www.youtube.com/watch?v=z6oOVUyCi6Y",
+		"service": "youtube"
+	},
+	{
+		"identifier": "1MR5xe1z-eU",
+		"title": "X-Files Theme (8 Bit Cover Version) [Tribute to The X-Files] - 8 Bit Universe",
+		"length": 45000,
+		"uri": "https://www.youtube.com/watch?v=1MR5xe1z-eU",
+		"service": "youtube"
+	},
+	{
+		"identifier": "aDlNMawir4o",
+		"title": "Get Lucky (8 Bit Remix Cover Version) [Tribute to Daft Punk] - 8 Bit Universe",
+		"length": 258000,
+		"uri": "https://www.youtube.com/watch?v=aDlNMawir4o",
+		"service": "youtube"
+	},
+	{
+		"identifier": "ghPbv7HiNzY",
+		"title": "Crypt of the Necrodancer OST - Rhythmortis (Lobby)",
+		"length": 153000,
+		"uri": "https://www.youtube.com/watch?v=ghPbv7HiNzY",
+		"service": "youtube"
+	},
+	{
+		"identifier": "ZS5oJ2-MmEU",
+		"title": "Crypt of the NecroDancer OST - Dance of the Decorous (3-2 Cold)",
+		"length": 168000,
+		"uri": "https://www.youtube.com/watch?v=ZS5oJ2-MmEU",
+		"service": "youtube"
+	},
+	{
+		"identifier": "_-NcLHvn2I0",
+		"title": "Crypt of the NecroDancer OST - A Cold Sweat (3-3 Cold)",
+		"length": 180000,
+		"uri": "https://www.youtube.com/watch?v=_-NcLHvn2I0",
+		"service": "youtube"
+	},
+	{
+		"identifier": "LE_Lrs8LomE",
+		"title": "Super Meat Boy: Dr  Fetus' Castle (Indie Game Music HD)",
+		"length": 183000,
+		"uri": "https://www.youtube.com/watch?v=LE_Lrs8LomE",
+		"service": "youtube"
+	},
+	{
+		"identifier": "xLsuam9o9BA",
+		"title": "Undertale OST: 051 - Another Medium",
+		"length": 143000,
+		"uri": "https://www.youtube.com/watch?v=xLsuam9o9BA",
+		"service": "youtube"
+	},
+	{
+		"identifier": "dBgfMPLX4GA",
+		"title": "Final Boss (Simon/Slick's Theme) - River City Ransom",
+		"length": 159000,
+		"uri": "https://www.youtube.com/watch?v=dBgfMPLX4GA",
+		"service": "youtube"
+	},
+	{
+		"identifier": "dhmWsZwy6Oo",
+		"title": "Danimal Cannon - Rhapsody",
+		"length": 377000,
+		"uri": "https://www.youtube.com/watch?v=dhmWsZwy6Oo",
+		"service": "youtube"
+	},
+	{
+		"identifier": "7inlPoDzn3Q",
+		"title": "Pond5 - Soniau - Happy Chiptune",
+		"length": 123000,
+		"uri": "https://www.youtube.com/watch?v=7inlPoDzn3Q",
+		"service": "youtube"
+	},
+	{
+		"identifier": "cKu3kdtv5Tw",
+		"title": "Klagmar's Top VGM #2,038 - Crawl - Toccata",
+		"length": 255000,
+		"uri": "https://www.youtube.com/watch?v=cKu3kdtv5Tw",
+		"service": "youtube"
+	},
+	{
+		"identifier": "LNaBcbRc8fI",
+		"title": "C4RF_D3TR4CT0R",
+		"length": 329000,
+		"uri": "https://www.youtube.com/watch?v=LNaBcbRc8fI",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Ih8c6I1zH7I",
+		"title": "Sonic 2 Music: Oil Ocean Zone",
+		"length": 131000,
+		"uri": "https://www.youtube.com/watch?v=Ih8c6I1zH7I",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Fn0khIn2wfc",
+		"title": "Overworld Theme - Super Mario World",
+		"length": 178000,
+		"uri": "https://www.youtube.com/watch?v=Fn0khIn2wfc",
+		"service": "youtube"
+	},
+	{
+		"identifier": "liS5Ggo-zpI",
+		"title": "Pokémon Go Title Theme [8 Bit Cover Tribute to Pokémon Go] - 8 Bit Universe",
+		"length": 68000,
+		"uri": "https://www.youtube.com/watch?v=liS5Ggo-zpI",
+		"service": "youtube"
+	},
+	{
+		"identifier": "7Tfld2gtbAQ",
+		"title": "hacker evolution music- adrenalin.wmv",
+		"length": 186000,
+		"uri": "https://www.youtube.com/watch?v=7Tfld2gtbAQ",
+		"service": "youtube"
+	},
+	{
+		"identifier": "H8Ns760f0KE",
+		"title": "Zinogre Theme 【8-bit Remix】",
+		"length": 135000,
+		"uri": "https://www.youtube.com/watch?v=H8Ns760f0KE",
+		"service": "youtube"
+	},
+	{
+		"identifier": "TKVwRb9hchU",
+		"title": "Rocketchip - Zero Gravity Love",
+		"length": 237000,
+		"uri": "https://www.youtube.com/watch?v=TKVwRb9hchU",
+		"service": "youtube"
+	},
+	{
+		"identifier": "rp59Blvc1pc",
+		"title": "Kompositkrut Nostalgic Regret Amiga 500 Music",
+		"length": 286000,
+		"uri": "https://www.youtube.com/watch?v=rp59Blvc1pc",
+		"service": "youtube"
+	},
+	{
+		"identifier": "XJsy5jJ7Dp0",
+		"title": "Trauma Center DS 2: Gentle Breeze",
+		"length": 162000,
+		"uri": "https://www.youtube.com/watch?v=XJsy5jJ7Dp0",
+		"service": "youtube"
+	},
+	{
+		"identifier": "HJkIEY6QEQg",
+		"title": "Final Fantasy 6 Battle Theme 8-bit NES Remix",
+		"length": 219000,
+		"uri": "https://www.youtube.com/watch?v=HJkIEY6QEQg",
+		"service": "youtube"
+	},
+	{
+		"identifier": "1PdW6a77kEk",
+		"title": "Gimmick! Music (FC / NES) - Good Morning [Introduction]",
+		"length": 82000,
+		"uri": "https://www.youtube.com/watch?v=1PdW6a77kEk",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Q0j9RDEefts",
+		"title": "Ace Attorney - Turnabout Sisters' Theme 2001 (PC-98 Remix)",
+		"length": 161000,
+		"uri": "https://www.youtube.com/watch?v=Q0j9RDEefts",
+		"service": "youtube"
+	},
+	{
+		"identifier": "AbcQWHn6Jk4",
+		"title": "Corpse Party: Blood Covered OST - Chapter 5's Main Building Theme 2 (Extended)",
+		"length": 291000,
+		"uri": "https://www.youtube.com/watch?v=AbcQWHn6Jk4",
+		"service": "youtube"
+	},
+	{
+		"identifier": "xpi-_LnEPQY",
+		"title": "Pokemon HeartGold & SoulSilver - Battle! Johto Champion [8bit]",
+		"length": 300000,
+		"uri": "https://www.youtube.com/watch?v=xpi-_LnEPQY",
+		"service": "youtube"
+	},
+	{
+		"identifier": "is1LOjoPsto",
+		"title": "Pokemon FR/LG & Remix - Gym Leader Battle Music [Mashup] (HQ)",
+		"length": 180000,
+		"uri": "https://www.youtube.com/watch?v=is1LOjoPsto",
+		"service": "youtube"
+	},
+	{
+		"identifier": "WEL7myVHm6Y",
+		"title": "Pokemon HG/SS & Remix - Trainer Red Battle Music [Mashup] (HQ)",
+		"length": 420000,
+		"uri": "https://www.youtube.com/watch?v=WEL7myVHm6Y",
+		"service": "youtube"
+	},
+	{
+		"identifier": "i10VFZLYd0k",
+		"title": "Pokemon FR/LG & Remix - Champion Blue/Green Battle Music [Mashup] (HQ)",
+		"length": 250000,
+		"uri": "https://www.youtube.com/watch?v=i10VFZLYd0k",
+		"service": "youtube"
+	},
+	{
+		"identifier": "3xMIDQknOjc",
+		"title": "Pokemon B/W & Remix - N final Battle Music [Mashup] (HQ)",
+		"length": 180000,
+		"uri": "https://www.youtube.com/watch?v=3xMIDQknOjc",
+		"service": "youtube"
+	},
+	{
+		"identifier": "GWM3nJm6pKY",
+		"title": "Cynthia Battle 8 Bit - Pokemon Diamond/Pearl/Platinum",
+		"length": 173000,
+		"uri": "https://www.youtube.com/watch?v=GWM3nJm6pKY",
+		"service": "youtube"
+	},
+	{
+		"identifier": "zeIDriOLp8c",
+		"title": "Legendary Trio Battle Theme 8 Bit - Pokemon X/Y",
+		"length": 170000,
+		"uri": "https://www.youtube.com/watch?v=zeIDriOLp8c",
+		"service": "youtube"
+	},
+	{
+		"identifier": "nDGsmDJfqH8",
+		"title": "Pokemon X/Y Trainer Battle Theme 8 Bit",
+		"length": 171000,
+		"uri": "https://www.youtube.com/watch?v=nDGsmDJfqH8",
+		"service": "youtube"
+	},
+	{
+		"identifier": "5JK3F0m788w",
+		"title": "Lysandre Battle 8 Bit - Pokemon X/Y",
+		"length": 168000,
+		"uri": "https://www.youtube.com/watch?v=5JK3F0m788w",
+		"service": "youtube"
+	},
+	{
+		"identifier": "ethotbuoRbw",
+		"title": "Rival Hugh Battle 8 Bit - Pokemon Black 2/White 2",
+		"length": 143000,
+		"uri": "https://www.youtube.com/watch?v=ethotbuoRbw",
+		"service": "youtube"
+	},
+	{
+		"identifier": "2d5FGIXzRHA",
+		"title": "Littleroot Town 8 Bit - Pokemon Ruby/Sapphire/Emerald",
+		"length": 122000,
+		"uri": "https://www.youtube.com/watch?v=2d5FGIXzRHA",
+		"service": "youtube"
+	},
+	{
+		"identifier": "htQXUEQ-5o4",
+		"title": "Super Smash Bros. 3DS 8 Bit",
+		"length": 104000,
+		"uri": "https://www.youtube.com/watch?v=htQXUEQ-5o4",
+		"service": "youtube"
+	},
+	{
+		"identifier": "fc_pUo5RZXc",
+		"title": "Super Smash Bros. Melee Theme 8 Bit",
+		"length": 186000,
+		"uri": "https://www.youtube.com/watch?v=fc_pUo5RZXc",
+		"service": "youtube"
+	},
+	{
+		"identifier": "EfzefeBpNY4",
+		"title": "Super Smash Bros. Brawl Theme 8 Bit",
+		"length": 195000,
+		"uri": "https://www.youtube.com/watch?v=EfzefeBpNY4",
+		"service": "youtube"
+	},
+	{
+		"identifier": "4bFugwoIsyE",
+		"title": "Fighting Polygon Team 8 Bit - Super Smash Bros.",
+		"length": 100000,
+		"uri": "https://www.youtube.com/watch?v=4bFugwoIsyE",
+		"service": "youtube"
+	},
+	{
+		"identifier": "PL4lSYq73bw",
+		"title": "Escape from the City 8 Bit Remix - Sonic Adventure 2",
+		"length": 141000,
+		"uri": "https://www.youtube.com/watch?v=PL4lSYq73bw",
+		"service": "youtube"
+	},
+	{
+		"identifier": "hJ5O4cg2B60",
+		"title": "Windy and Ripply 8 Bit - Sonic Adventure",
+		"length": 192000,
+		"uri": "https://www.youtube.com/watch?v=hJ5O4cg2B60",
+		"service": "youtube"
+	},
+	{
+		"identifier": "C6AeaSmOgKA",
+		"title": "Splash Hill Zone 8 Bit (All Themes) - Sonic the Hedgehog 4 Ep.1",
+		"length": 284000,
+		"uri": "https://www.youtube.com/watch?v=C6AeaSmOgKA",
+		"service": "youtube"
+	},
+	{
+		"identifier": "-vq2A_o_qOU",
+		"title": "Emerald Hill Zone 8 Bit - Sonic the Hedgehog 2",
+		"length": 101000,
+		"uri": "https://www.youtube.com/watch?v=-vq2A_o_qOU",
+		"service": "youtube"
+	},
+	{
+		"identifier": "irjyhnYMtqY",
+		"title": "Chemical Plant Zone 8 Bit - Sonic the Hedgehog 2",
+		"length": 126000,
+		"uri": "https://www.youtube.com/watch?v=irjyhnYMtqY",
+		"service": "youtube"
+	},
+	{
+		"identifier": "W3uX5qNiAHs",
+		"title": "Bob-omb Battlefield 8 Bit - Super Mario 64",
+		"length": 154000,
+		"uri": "https://www.youtube.com/watch?v=W3uX5qNiAHs",
+		"service": "youtube"
+	},
+	{
+		"identifier": "SsB8Z31wkv8",
+		"title": "Sweet Sweet Canyon 8 Bit - Mario Kart 8",
+		"length": 124000,
+		"uri": "https://www.youtube.com/watch?v=SsB8Z31wkv8",
+		"service": "youtube"
+	},
+	{
+		"identifier": "CAunVxU3cUY",
+		"title": "Rainbow Road 8 Bit - Super Mario Kart",
+		"length": 132000,
+		"uri": "https://www.youtube.com/watch?v=CAunVxU3cUY",
+		"service": "youtube"
+	},
+	{
+		"identifier": "D5s0kUgKbPQ",
+		"title": "Pokemon Gold/Silver/Crystal - Battle! Team Rocket Music (HQ)",
+		"length": 180000,
+		"uri": "https://www.youtube.com/watch?v=D5s0kUgKbPQ",
+		"service": "youtube"
+	},
+	{
+		"identifier": "hGC6Vs5L5uk",
+		"title": "Tetris Theme Song (8 Bit Remix Cover Version) - 8 Bit Universe",
+		"length": 91000,
+		"uri": "https://www.youtube.com/watch?v=hGC6Vs5L5uk",
+		"service": "youtube"
+	},
+	{
+		"identifier": "HI9tIYTg4Ps",
+		"title": "Bring Me To Life [8 Bit Cover Tribute to Evanescence] - 8 Bit Universe",
+		"length": 239000,
+		"uri": "https://www.youtube.com/watch?v=HI9tIYTg4Ps",
+		"service": "youtube"
+	},
+	{
+		"identifier": "0WLe5JPCTTw",
+		"title": "Dangerous Woman (8 Bit Remix Cover Version) [Tribute to Ariana Grande] - 8 Bit Universe",
+		"length": 231000,
+		"uri": "https://www.youtube.com/watch?v=0WLe5JPCTTw",
+		"service": "youtube"
+	},
+	{
+		"identifier": "kea4k2LK3hY",
+		"title": "Hymn For The Weekend (REMASTERED) [8 Bit Cover Tribute to Coldplay feat. Beyonce] - 8 Bit Universe",
+		"length": 245000,
+		"uri": "https://www.youtube.com/watch?v=kea4k2LK3hY",
+		"service": "youtube"
+	},
+	{
+		"identifier": "DHHTrx_r92c",
+		"title": "Encounter! Wild Pokémon [8 Bit Cover Tribute to Pokémon Go] - 8 Bit Universe",
+		"length": 82000,
+		"uri": "https://www.youtube.com/watch?v=DHHTrx_r92c",
+		"service": "youtube"
+	},
+	{
+		"identifier": "5xyWqQltgb4",
+		"title": "Battle Frontier [8 Bit Cover Tribute to Pokémon: Battle Frontier] - 8 Bit Universe",
+		"length": 123000,
+		"uri": "https://www.youtube.com/watch?v=5xyWqQltgb4",
+		"service": "youtube"
+	},
+	{
+		"identifier": "fxWKPoEisus",
+		"title": "Let It Go (8 Bit Cover Remastered) [Tribute to James Bay] - 8 Bit Universe",
+		"length": 259000,
+		"uri": "https://www.youtube.com/watch?v=fxWKPoEisus",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Q9Bug9ClgjM",
+		"title": "Game of Thrones Theme Song (8 Bit Remix Cover Version) - 8 Bit Universe",
+		"length": 98000,
+		"uri": "https://www.youtube.com/watch?v=Q9Bug9ClgjM",
+		"service": "youtube"
+	},
+	{
+		"identifier": "noT852yxEjM",
+		"title": "Your Best Nightmare (8 Bit Remix Cover Version) [Tribute to Undertale] - 8 Bit Universe",
+		"length": 242000,
+		"uri": "https://www.youtube.com/watch?v=noT852yxEjM",
+		"service": "youtube"
+	},
+	{
+		"identifier": "1tghyHKyE4Q",
+		"title": "Careless Whisper (DJ Stutter 8 Bit Breaks Remix) [Tribute to George Michael] - 8 Bit Universe",
+		"length": 283000,
+		"uri": "https://www.youtube.com/watch?v=1tghyHKyE4Q",
+		"service": "youtube"
+	},
+	{
+		"identifier": "bJ-sZxgRi8M",
+		"title": "I Fight Dragons - Fanfare",
+		"length": 31000,
+		"uri": "https://www.youtube.com/watch?v=bJ-sZxgRi8M",
+		"service": "youtube"
+	},
+	{
+		"identifier": "v4zfS2T3IF8",
+		"title": "I Fight Dragons - Gloria (Interlude)",
+		"length": 53000,
+		"uri": "https://www.youtube.com/watch?v=v4zfS2T3IF8",
+		"service": "youtube"
+	},
+	{
+		"identifier": "O3SVeFIfJgk",
+		"title": "Auxcide - Fateful Encounter | Chiptunes = WIN: Volume 3",
+		"length": 212000,
+		"uri": "https://www.youtube.com/watch?v=O3SVeFIfJgk",
+		"service": "youtube"
+	},
+	{
+		"identifier": "8RI5P346wXU",
+		"title": "Auxcide - Continuum | Chiptunes = WIN: Volume 4",
+		"length": 270000,
+		"uri": "https://www.youtube.com/watch?v=8RI5P346wXU",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Ql43f497qzA",
+		"title": "[Theme of Dewprism - Dewprism/Threads of Fate OST]",
+		"length": 94000,
+		"uri": "https://www.youtube.com/watch?v=Ql43f497qzA",
+		"service": "youtube"
+	},
+	{
+		"identifier": "MUUVjfWbweg",
+		"title": "Blink 182 M & M's 8bit Remix",
+		"length": 165000,
+		"uri": "https://www.youtube.com/watch?v=MUUVjfWbweg",
+		"service": "youtube"
+	},
+	{
+		"identifier": "s7ltvUKRFrs",
+		"title": "【8bit】 Call To Action 【Chiptune】",
+		"length": 226000,
+		"uri": "https://www.youtube.com/watch?v=s7ltvUKRFrs",
+		"service": "youtube"
+	},
+	{
+		"identifier": "251257683",
+		"title": "Brain Power (8-N163+FDS+VRC6)",
+		"length": 110872,
+		"uri": "116138050710536192",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "svZK485aVIU",
+		"title": "Sabrepulse Turbo - Spirit",
+		"length": 220000,
+		"uri": "https://www.youtube.com/watch?v=svZK485aVIU",
+		"service": "youtube"
+	},
+	{
+		"identifier": "45750826",
+		"title": "Lee Nicklen - Skywire Menu Song",
+		"length": 123971,
+		"uri": "116138050710536192",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "45750827",
+		"title": "Lee Nicklen - Skywire Main Song",
+		"length": 192308,
+		"uri": "116138050710536192",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "45750828",
+		"title": "Lee Nicklen - Skywire Boss Song",
+		"length": 312960,
+		"uri": "116138050710536192",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "45750829",
+		"title": "Lee Nicklen - Skywire Boss Extra Song 1",
+		"length": 332821,
+		"uri": "116138050710536192",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "45750830",
+		"title": "Lee Nicklen - Skywire Boss Extra Song 2",
+		"length": 201715,
+		"uri": "116138050710536192",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "45750831",
+		"title": "Lee Nicklen - Skywire Boss Extra Song 3",
+		"length": 237987,
+		"uri": "116138050710536192",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "45750832",
+		"title": "Lee Nicklen - Skywire Boss Extra Song 4",
+		"length": 227195,
+		"uri": "116138050710536192",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "151137470",
+		"title": "Game Theory Opening Theme Science Chiptune Blaster",
+		"length": 140107,
+		"uri": "https://soundcloud.com/equilibrium-the-second/game-theory-opening-theme-science-chiptune-blaster",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "131871933",
+		"title": "Motherchip & Malmen - A Thousand Sunflowers",
+		"length": 224072,
+		"uri": "https://soundcloud.com/motherchip/motherchip-malmen-a-thousand",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "aZRhXBsFNDw",
+		"title": "Title Theme - Kirby's Dream Land",
+		"length": 34000,
+		"uri": "https://www.youtube.com/watch?v=aZRhXBsFNDw",
+		"service": "youtube"
+	},
+	{
+		"identifier": "1LhoYFH19WQ",
+		"title": "Boss Battle - Kirby's Dream Land",
+		"length": 42000,
+		"uri": "https://www.youtube.com/watch?v=1LhoYFH19WQ",
+		"service": "youtube"
+	},
+	{
+		"identifier": "cwgVjhTbtzg",
+		"title": "Castle Lololo - Kirby's Dream Land",
+		"length": 106000,
+		"uri": "https://www.youtube.com/watch?v=cwgVjhTbtzg",
+		"service": "youtube"
+	},
+	{
+		"identifier": "74TqfTxkP30",
+		"title": "Mint Breath - Kirby's Dream Land",
+		"length": 64000,
+		"uri": "https://www.youtube.com/watch?v=74TqfTxkP30",
+		"service": "youtube"
+	},
+	{
+		"identifier": "K6lz3Akqr_U",
+		"title": "Bubbly Clouds - Kirby's Dream Land",
+		"length": 125000,
+		"uri": "https://www.youtube.com/watch?v=K6lz3Akqr_U",
+		"service": "youtube"
+	},
+	{
+		"identifier": "qFesrZLSYsM",
+		"title": "Mt. Dedede - Kirby's Dream Land",
+		"length": 61000,
+		"uri": "https://www.youtube.com/watch?v=qFesrZLSYsM",
+		"service": "youtube"
+	},
+	{
+		"identifier": "xtjvaCm0GHw",
+		"title": "Ending Theme - Kirby's Dream Land",
+		"length": 102000,
+		"uri": "https://www.youtube.com/watch?v=xtjvaCm0GHw",
+		"service": "youtube"
+	},
+	{
+		"identifier": "-1pyGYjcQF0",
+		"title": "Kirby & The Amazing Mirror (GBA) Music - Area 00 First Stage",
+		"length": 61000,
+		"uri": "https://www.youtube.com/watch?v=-1pyGYjcQF0",
+		"service": "youtube"
+	},
+	{
+		"identifier": "s0lJXkLFraM",
+		"title": "Kirby & The Amazing Mirror (GBA) Music - Area 01 Ranbow Route",
+		"length": 83000,
+		"uri": "https://www.youtube.com/watch?v=s0lJXkLFraM",
+		"service": "youtube"
+	},
+	{
+		"identifier": "zQfPOVWX8gY",
+		"title": "Kirby & The Amazing Mirror (GBA) Music - Area 02 Moonlight Mansion &  Area 05 Carrot Mansion",
+		"length": 58000,
+		"uri": "https://www.youtube.com/watch?v=zQfPOVWX8gY",
+		"service": "youtube"
+	},
+	{
+		"identifier": "TUjChyL7HCs",
+		"title": "Kirby & The Amazing Mirror (GBA) Music - Area 03 Cabbage Caven",
+		"length": 111000,
+		"uri": "https://www.youtube.com/watch?v=TUjChyL7HCs",
+		"service": "youtube"
+	},
+	{
+		"identifier": "y0ZCwramhCU",
+		"title": "Kirby & The Amazing Mirror (GBA) Music - Area 04 Mustard Mountain",
+		"length": 120000,
+		"uri": "https://www.youtube.com/watch?v=y0ZCwramhCU",
+		"service": "youtube"
+	},
+	{
+		"identifier": "iKYL3rCOaQg",
+		"title": "Kirby & The Amazing Mirror (GBA) Music - Area 06 Olive Ocean",
+		"length": 97000,
+		"uri": "https://www.youtube.com/watch?v=iKYL3rCOaQg",
+		"service": "youtube"
+	},
+	{
+		"identifier": "n4gecLG74bc",
+		"title": "Kirby & The Amazing Mirror (GBA) Music - Area 07 Peppermint Place",
+		"length": 144000,
+		"uri": "https://www.youtube.com/watch?v=n4gecLG74bc",
+		"service": "youtube"
+	},
+	{
+		"identifier": "4_tF7BcGCok",
+		"title": "Kirby & The Amazing Mirror (GBA) Music - Area 08 Radish Ruins",
+		"length": 142000,
+		"uri": "https://www.youtube.com/watch?v=4_tF7BcGCok",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Fs4kD4yUQ1k",
+		"title": "Kirby & The Amazing Mirror (GBA) Music - Area 09 Candy Costellation",
+		"length": 147000,
+		"uri": "https://www.youtube.com/watch?v=Fs4kD4yUQ1k",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Z1qd4kauL-Y",
+		"title": "Kirby & The Amazing Mirror (GBA) Music - Boss Battle",
+		"length": 101000,
+		"uri": "https://www.youtube.com/watch?v=Z1qd4kauL-Y",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Ilxjnz7zCSw",
+		"title": "Kirby & The Amazing Mirror (GBA) Music - Dark Meta Knight Battle",
+		"length": 84000,
+		"uri": "https://www.youtube.com/watch?v=Ilxjnz7zCSw",
+		"service": "youtube"
+	},
+	{
+		"identifier": "tPblstqNM1o",
+		"title": "Kirby & The Amazing Mirror (GBA) Music - Dark Mind Eye Form",
+		"length": 111000,
+		"uri": "https://www.youtube.com/watch?v=tPblstqNM1o",
+		"service": "youtube"
+	},
+	{
+		"identifier": "FvE-2PMC9uc",
+		"title": "Kirby & The Amazing Mirror (GBA) Music - Dark Mind Final Battle",
+		"length": 132000,
+		"uri": "https://www.youtube.com/watch?v=FvE-2PMC9uc",
+		"service": "youtube"
+	},
+	{
+		"identifier": "d-N8f9_xNmE",
+		"title": "Kirby & The Amazing Mirror (GBA) Music - Kirby Wave Ride Sub Game",
+		"length": 83000,
+		"uri": "https://www.youtube.com/watch?v=d-N8f9_xNmE",
+		"service": "youtube"
+	},
+	{
+		"identifier": "coUWYHKmkZQ",
+		"title": "Kirby & The Amazing Mirror (GBA) Music - Speed Eaters Sub Game",
+		"length": 95000,
+		"uri": "https://www.youtube.com/watch?v=coUWYHKmkZQ",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Bz7RsAdu4hk",
+		"title": "Kirby & The Amazing Mirror (GBA) Music - Ending Theme",
+		"length": 118000,
+		"uri": "https://www.youtube.com/watch?v=Bz7RsAdu4hk",
+		"service": "youtube"
+	},
+	{
+		"identifier": "z_sBr1Bj1XE",
+		"title": "Pop Star - Kirby's Dream Land 3",
+		"length": 235000,
+		"uri": "https://www.youtube.com/watch?v=z_sBr1Bj1XE",
+		"service": "youtube"
+	},
+	{
+		"identifier": "VZiau4CTL4o",
+		"title": "Grass Land 1 - Kirby's Dream Land 3",
+		"length": 172000,
+		"uri": "https://www.youtube.com/watch?v=VZiau4CTL4o",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Fn3m3cNwqAM",
+		"title": "Grass Land 2 - Kirby's Dream Land 3",
+		"length": 112000,
+		"uri": "https://www.youtube.com/watch?v=Fn3m3cNwqAM",
+		"service": "youtube"
+	},
+	{
+		"identifier": "hNrG5sEYu80",
+		"title": "Grass Land 3 - Kirby's Dream Land 3",
+		"length": 100000,
+		"uri": "https://www.youtube.com/watch?v=hNrG5sEYu80",
+		"service": "youtube"
+	},
+	{
+		"identifier": "BuBQJ3eeCT8",
+		"title": "Grass Land 4 - Kirby's Dream Land 3",
+		"length": 125000,
+		"uri": "https://www.youtube.com/watch?v=BuBQJ3eeCT8",
+		"service": "youtube"
+	},
+	{
+		"identifier": "miWmGwFjytg",
+		"title": "Ripple Field Map - Kirby's Dream Land 3",
+		"length": 60000,
+		"uri": "https://www.youtube.com/watch?v=miWmGwFjytg",
+		"service": "youtube"
+	},
+	{
+		"identifier": "InMWh0hMoYI",
+		"title": "Ripple Field 1 - Kirby's Dream Land 3",
+		"length": 173000,
+		"uri": "https://www.youtube.com/watch?v=InMWh0hMoYI",
+		"service": "youtube"
+	},
+	{
+		"identifier": "6FaV_fQ_IXs",
+		"title": "Ripple Field 2 - Kirby's Dream Land 3",
+		"length": 112000,
+		"uri": "https://www.youtube.com/watch?v=6FaV_fQ_IXs",
+		"service": "youtube"
+	},
+	{
+		"identifier": "MnFdDNYnoNA",
+		"title": "Ripple Field 3 - Kirby's Dream Land 3",
+		"length": 171000,
+		"uri": "https://www.youtube.com/watch?v=MnFdDNYnoNA",
+		"service": "youtube"
+	},
+	{
+		"identifier": "cITumqjYU_k",
+		"title": "Sand Canyon 1 - Kirby's Dream Land 3",
+		"length": 160000,
+		"uri": "https://www.youtube.com/watch?v=cITumqjYU_k",
+		"service": "youtube"
+	},
+	{
+		"identifier": "15Ms08TDzK0",
+		"title": "Sand Canyon 2 - Kirby's Dream Land 3",
+		"length": 138000,
+		"uri": "https://www.youtube.com/watch?v=15Ms08TDzK0",
+		"service": "youtube"
+	},
+	{
+		"identifier": "GEiJzuXYZ98",
+		"title": "Sand Canyon 3 - Kirby's Dream Land 3",
+		"length": 128000,
+		"uri": "https://www.youtube.com/watch?v=GEiJzuXYZ98",
+		"service": "youtube"
+	},
+	{
+		"identifier": "QvkaRYvrdZM",
+		"title": "Cloudy Park - Kirby's Dream Land 3",
+		"length": 112000,
+		"uri": "https://www.youtube.com/watch?v=QvkaRYvrdZM",
+		"service": "youtube"
+	},
+	{
+		"identifier": "fmI93WqFLXQ",
+		"title": "Iceberg - Kirby's Dream Land 3",
+		"length": 171000,
+		"uri": "https://www.youtube.com/watch?v=fmI93WqFLXQ",
+		"service": "youtube"
+	},
+	{
+		"identifier": "42GjrIv70XI",
+		"title": "King Dedede - Kirby's Dream Land 3",
+		"length": 111000,
+		"uri": "https://www.youtube.com/watch?v=42GjrIv70XI",
+		"service": "youtube"
+	},
+	{
+		"identifier": "0n8Iw8_AV48",
+		"title": "Hyper Zone 1 - Kirby's Dream Land 3",
+		"length": 111000,
+		"uri": "https://www.youtube.com/watch?v=0n8Iw8_AV48",
+		"service": "youtube"
+	},
+	{
+		"identifier": "SKrJDHMIb8U",
+		"title": "Hyper Zone 2 - Kirby's Dream Land 3",
+		"length": 92000,
+		"uri": "https://www.youtube.com/watch?v=SKrJDHMIb8U",
+		"service": "youtube"
+	},
+	{
+		"identifier": "xrBEfAPmN8g",
+		"title": "Cast Montage - Kirby's Dream Land 3",
+		"length": 166000,
+		"uri": "https://www.youtube.com/watch?v=xrBEfAPmN8g",
+		"service": "youtube"
+	},
+	{
+		"identifier": "s6E1IPGlCFM",
+		"title": "Final Fantasy IV - Battle 2 Famitracker Cover (8-bit)",
+		"length": 183000,
+		"uri": "https://www.youtube.com/watch?v=s6E1IPGlCFM",
+		"service": "youtube"
+	},
+	{
+		"identifier": "NI1goOON0yg",
+		"title": "Commodore 64 - ATF Advanced Tactical Fighter Title Music",
+		"length": 133000,
+		"uri": "https://www.youtube.com/watch?v=NI1goOON0yg",
+		"service": "youtube"
+	},
+	{
+		"identifier": "MRxgL1UGF4A",
+		"title": "The Ooze - Stage 1-A/B [Genesis] Music",
+		"length": 177000,
+		"uri": "https://www.youtube.com/watch?v=MRxgL1UGF4A",
+		"service": "youtube"
+	},
+	{
+		"identifier": "fsVCuYDlQdY",
+		"title": "Super Ghouls 'N Ghosts (SNES) Music - Stage 01",
+		"length": 181000,
+		"uri": "https://www.youtube.com/watch?v=fsVCuYDlQdY",
+		"service": "youtube"
+	},
+	{
+		"identifier": "VD_sHfowNfA",
+		"title": "Star Fox (SNES) Music - Corneria Theme",
+		"length": 182000,
+		"uri": "https://www.youtube.com/watch?v=VD_sHfowNfA",
+		"service": "youtube"
+	},
+	{
+		"identifier": "8C3hwd_qHak",
+		"title": "Commodore 64 Music - 012 - Druid II Enlightenment",
+		"length": 176000,
+		"uri": "https://www.youtube.com/watch?v=8C3hwd_qHak",
+		"service": "youtube"
+	},
+	{
+		"identifier": "-LYB7iLZNWE",
+		"title": "Sonic 2 Music: Chemical Plant Zone",
+		"length": 132000,
+		"uri": "https://www.youtube.com/watch?v=-LYB7iLZNWE",
+		"service": "youtube"
+	},
+	{
+		"identifier": "YJ8iIGHp6Zs",
+		"title": "Multiball - Pinball Music - Swords Of Fury (Unknown 4)",
+		"length": 106000,
+		"uri": "https://www.youtube.com/watch?v=YJ8iIGHp6Zs",
+		"service": "youtube"
+	},
+	{
+		"identifier": "pGzs1myPXdk",
+		"title": "Columns - BGM 1 [Genesis] Music",
+		"length": 182000,
+		"uri": "https://www.youtube.com/watch?v=pGzs1myPXdk",
+		"service": "youtube"
+	},
+	{
+		"identifier": "xT7CkgGLi0I",
+		"title": "The Terminator (Genesis) Music - Holocaust (Level 1)",
+		"length": 139000,
+		"uri": "https://www.youtube.com/watch?v=xT7CkgGLi0I",
+		"service": "youtube"
+	},
+	{
+		"identifier": "bJ_IDqunQtk",
+		"title": "02 - Vampire Killer - Vampire Killer (MSX2) - Soundtrack - MSX",
+		"length": 67000,
+		"uri": "https://www.youtube.com/watch?v=bJ_IDqunQtk",
+		"service": "youtube"
+	},
+	{
+		"identifier": "x4fXPmqron0",
+		"title": "Maktone - Class05 [SID]",
+		"length": 103000,
+		"uri": "https://www.youtube.com/watch?v=x4fXPmqron0",
+		"service": "youtube"
+	},
+	{
+		"identifier": "As9phjZncy8",
+		"title": "Maktone - The Armor of God",
+		"length": 116000,
+		"uri": "https://www.youtube.com/watch?v=As9phjZncy8",
+		"service": "youtube"
+	},
+	{
+		"identifier": "mL1QLzqoAbA",
+		"title": "Maktone & Natan1 - Bacongrytor [MOD]",
+		"length": 164000,
+		"uri": "https://www.youtube.com/watch?v=mL1QLzqoAbA",
+		"service": "youtube"
+	},
+	{
+		"identifier": "4EcgruWlXnQ",
+		"title": "Rob Hubbard - Monty on the Run Theme [C64]",
+		"length": 398000,
+		"uri": "https://www.youtube.com/watch?v=4EcgruWlXnQ",
+		"service": "youtube"
+	},
+	{
+		"identifier": "pFjEkKKKQlo",
+		"title": "Supremacy (C64) Title Theme",
+		"length": 231000,
+		"uri": "https://www.youtube.com/watch?v=pFjEkKKKQlo",
+		"service": "youtube"
+	},
+	{
+		"identifier": "b39O1WkWdYc",
+		"title": "Tintin on the Moon Main Theme",
+		"length": 230000,
+		"uri": "https://www.youtube.com/watch?v=b39O1WkWdYc",
+		"service": "youtube"
+	},
+	{
+		"identifier": "s7iUL1pyAjQ",
+		"title": "Adventure Meme",
+		"length": 104000,
+		"uri": "https://www.youtube.com/watch?v=s7iUL1pyAjQ",
+		"service": "youtube"
+	},
+	{
+		"identifier": "283779597",
+		"title": "梅干茶漬け - おわりとはじまりのおと(Owari to Hajimari no Oto)【VOEZ】",
+		"length": 144418,
+		"uri": "https://soundcloud.com/umecha24909/rotekjdfveei",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "274383772",
+		"title": "梅干茶漬け - OmochiMochip Pe​-​ta​-​ta​-​Turn【Chiptunes = WIN: Volume 5】",
+		"length": 185720,
+		"uri": "https://soundcloud.com/umecha24909/omochimochip-pe-ta-ta-turnchiptunes-win-volume-5",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "165873321",
+		"title": "梅干茶漬け - エルピスの園【Chiptunes = WIN: Volume 3】",
+		"length": 318121,
+		"uri": "https://soundcloud.com/umecha24909/elpispark",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "lKJlkpdfe9g",
+		"title": "Dubmood - Toffelskater (2002)",
+		"length": 188000,
+		"uri": "https://www.youtube.com/watch?v=lKJlkpdfe9g",
+		"service": "youtube"
+	},
+	{
+		"identifier": "E-BH54CO7Ic",
+		"title": "Rez - Popcorn",
+		"length": 41000,
+		"uri": "https://www.youtube.com/watch?v=E-BH54CO7Ic",
+		"service": "youtube"
+	},
+	{
+		"identifier": "LoiaRjfOfjI",
+		"title": "Oxygene IV - Stein Pedersen - (1989) - C64 chiptune",
+		"length": 220000,
+		"uri": "https://www.youtube.com/watch?v=LoiaRjfOfjI",
+		"service": "youtube"
+	},
+	{
+		"identifier": "E-lPrWLzGSM",
+		"title": "Dubmood - 3D Galax",
+		"length": 223000,
+		"uri": "https://www.youtube.com/watch?v=E-lPrWLzGSM",
+		"service": "youtube"
+	},
+	{
+		"identifier": "QIxRDU_l8Bc",
+		"title": "Dubmood - Cydonian sky",
+		"length": 176000,
+		"uri": "https://www.youtube.com/watch?v=QIxRDU_l8Bc",
+		"service": "youtube"
+	},
+	{
+		"identifier": "144487080",
+		"title": "Scanlines",
+		"length": 246461,
+		"uri": "https://soundcloud.com/home-2001/scanlines",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "1UZecQmQC4E",
+		"title": "Chemical Plant (Classic) - Sonic Generations [OST]",
+		"length": 233000,
+		"uri": "https://www.youtube.com/watch?v=1UZecQmQC4E",
+		"service": "youtube"
+	},
+	{
+		"identifier": "186183619",
+		"title": "Real Blue (.it)",
+		"length": 207143,
+		"uri": "https://soundcloud.com/maakmusic/real-blue-it",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "215940126",
+		"title": "JANX RAVE GALAXY - Halfpipe Gigashark (ChipWIN: Vol. 4)",
+		"length": 237109,
+		"uri": "https://soundcloud.com/aydan-scott/janx-rave-galaxy-chiptunes-win-volume-4-28-halfpipe-gigashark",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "207873785",
+		"title": "maze of stars (LSDJ)",
+		"length": 150949,
+		"uri": "https://soundcloud.com/bryface/maze-of-stars-lsdj",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "183631471",
+		"title": "Maxo - Parasol",
+		"length": 160640,
+		"uri": "https://soundcloud.com/ubiktune/maxo-parasol",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "261697994",
+		"title": "Hyperluminal",
+		"length": 261142.99999999997,
+		"uri": "https://soundcloud.com/graviton-flux/hyperluminal",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "188049686",
+		"title": "Eigenstate",
+		"length": 224935,
+		"uri": "https://soundcloud.com/graviton-flux/eigenstate",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "137755677",
+		"title": "Wave Function Collapse",
+		"length": 261118,
+		"uri": "https://soundcloud.com/graviton-flux/wave-function-collapse",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "95780464",
+		"title": "Singularity",
+		"length": 302056,
+		"uri": "https://soundcloud.com/graviton-flux/singularity",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "103725810",
+		"title": "Tetrion Cascade Failure",
+		"length": 303205,
+		"uri": "https://soundcloud.com/graviton-flux/tetrion-cascade-failure",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "zK_0nT0fWX8",
+		"title": "Kobito of the Shining Needle~Little Princess 8bit",
+		"length": 247000,
+		"uri": "https://www.youtube.com/watch?v=zK_0nT0fWX8",
+		"service": "youtube"
+	},
+	{
+		"identifier": "K0Pt2LQycM8",
+		"title": "Kalos Power Plant/Poké Ball Factory - Pokémon X/Y - Famitracker (8-Bit)",
+		"length": 145000,
+		"uri": "https://www.youtube.com/watch?v=K0Pt2LQycM8",
+		"service": "youtube"
+	},
+	{
+		"identifier": "KF32DRg9opA",
+		"title": "DuckTales Music (NES) - The Moon Theme",
+		"length": 93000,
+		"uri": "https://www.youtube.com/watch?v=KF32DRg9opA",
+		"service": "youtube"
+	},
+	{
+		"identifier": "wmOzXzG_-So",
+		"title": "I Fight Dragons – The Near Future V. Meeting",
+		"length": 64000,
+		"uri": "https://www.youtube.com/watch?v=wmOzXzG_-So",
+		"service": "youtube"
+	},
+	{
+		"identifier": "kuSVN_czxEw",
+		"title": "I Fight Dragons – The Near Future VI. Rescue",
+		"length": 78000,
+		"uri": "https://www.youtube.com/watch?v=kuSVN_czxEw",
+		"service": "youtube"
+	},
+	{
+		"identifier": "99700196",
+		"title": "Bots and Bricks Main Theme",
+		"length": 157401,
+		"uri": "https://soundcloud.com/spellingphailer/bots-and-bricks-main-theme",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "uF43bSO95iI",
+		"title": "[Chiptune] - Toni - They Come From Above",
+		"length": 215000,
+		"uri": "https://www.youtube.com/watch?v=uF43bSO95iI",
+		"service": "youtube"
+	},
+	{
+		"identifier": "UfK0Lg6byrw",
+		"title": "Harvest Moon Music SNES - Summer",
+		"length": 54000,
+		"uri": "https://www.youtube.com/watch?v=UfK0Lg6byrw",
+		"service": "youtube"
+	},
+	{
+		"identifier": "rkorJU0xTy8",
+		"title": "Runescape 8-bit music - Scape original (aka old theme)",
+		"length": 187000,
+		"uri": "https://www.youtube.com/watch?v=rkorJU0xTy8",
+		"service": "youtube"
+	},
+	{
+		"identifier": "zfn2BSqgUTQ",
+		"title": "Mega Man 2 Medley 8-Bit (NES)",
+		"length": 233000,
+		"uri": "https://www.youtube.com/watch?v=zfn2BSqgUTQ",
+		"service": "youtube"
+	},
+	{
+		"identifier": "AGluuQdBl1U",
+		"title": "Harvest Moon Music SNES - Winter",
+		"length": 122000,
+		"uri": "https://www.youtube.com/watch?v=AGluuQdBl1U",
+		"service": "youtube"
+	},
+	{
+		"identifier": "SxvVqJ3ge8U",
+		"title": "Harvest Moon Music SNES - Fall",
+		"length": 58000,
+		"uri": "https://www.youtube.com/watch?v=SxvVqJ3ge8U",
+		"service": "youtube"
+	},
+	{
+		"identifier": "185428712",
+		"title": "01 - Logic Gatekeeper",
+		"length": 298763,
+		"uri": "https://soundcloud.com/denis-frolov-11/01-logic-gatekeeper",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "185428711",
+		"title": "02 - Legacy",
+		"length": 317130,
+		"uri": "https://soundcloud.com/denis-frolov-11/02-legacy",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "185428708",
+		"title": "03 - Chronos",
+		"length": 269765,
+		"uri": "https://soundcloud.com/denis-frolov-11/03-chronos",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "185428705",
+		"title": "04 - Rhapsody",
+		"length": 373062,
+		"uri": "https://soundcloud.com/denis-frolov-11/04-rhapsody",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "185428703",
+		"title": "05 - Glitch",
+		"length": 347460,
+		"uri": "https://soundcloud.com/denis-frolov-11/05-glitch",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "185428701",
+		"title": "06 - The Lunar Whale",
+		"length": 275851,
+		"uri": "https://soundcloud.com/denis-frolov-11/06-the-lunar-whale",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "185428698",
+		"title": "07 - Corrupted",
+		"length": 376720,
+		"uri": "https://soundcloud.com/denis-frolov-11/07-corrupted",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "185428696",
+		"title": "08 - Parallel Processing",
+		"length": 509042,
+		"uri": "https://soundcloud.com/denis-frolov-11/08-parallel-processing",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "ve7TB0FggaY",
+		"title": "Doctor",
+		"length": 158000,
+		"uri": "https://www.youtube.com/watch?v=ve7TB0FggaY",
+		"service": "youtube"
+	},
+	{
+		"identifier": "WdrbxCRLNgA",
+		"title": "Max Coveri - Running In the 90's 8bit",
+		"length": 169000,
+		"uri": "https://www.youtube.com/watch?v=WdrbxCRLNgA",
+		"service": "youtube"
+	},
+	{
+		"identifier": "NTa6Xbzfq1U",
+		"title": "Super Mario Bros. Theme Song",
+		"length": 83000,
+		"uri": "https://www.youtube.com/watch?v=NTa6Xbzfq1U",
+		"service": "youtube"
+	},
+	{
+		"identifier": "4gtGeZ2wOmo",
+		"title": "Artificial Intelligence Bomb",
+		"length": 135000,
+		"uri": "https://www.youtube.com/watch?v=4gtGeZ2wOmo",
+		"service": "youtube"
+	},
+	{
+		"identifier": "MltJnhBLGtw",
+		"title": "Feel Good Inc. [8 Bit Tribute to Gorillaz] - 8 Bit Universe",
+		"length": 222000,
+		"uri": "https://www.youtube.com/watch?v=MltJnhBLGtw",
+		"service": "youtube"
+	},
+	{
+		"identifier": "297123650",
+		"title": "A Death In The Kindom",
+		"length": 96087,
+		"uri": "https://soundcloud.com/sleethpasta/a-death-in-the-kindom",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "6gYSFw5trhE",
+		"title": "8 Bit Ezio's Family Assassins Creed 2 Theme",
+		"length": 245000,
+		"uri": "https://www.youtube.com/watch?v=6gYSFw5trhE",
+		"service": "youtube"
+	},
+	{
+		"identifier": "dUUs7OT7fdU",
+		"title": "Bit Blaster XL - Splash [Soundtrack]",
+		"length": 167000,
+		"uri": "https://www.youtube.com/watch?v=dUUs7OT7fdU",
+		"service": "youtube"
+	},
+	{
+		"identifier": "hWpxv1oh6zI",
+		"title": "Bit Blaster XL - And so It Begins [Soundtrack]",
+		"length": 174000,
+		"uri": "https://www.youtube.com/watch?v=hWpxv1oh6zI",
+		"service": "youtube"
+	},
+	{
+		"identifier": "JSBTSW_B81Y",
+		"title": "Mini-Boss - Yoshi's Island",
+		"length": 74000,
+		"uri": "https://www.youtube.com/watch?v=JSBTSW_B81Y",
+		"service": "youtube"
+	},
+	{
+		"identifier": "gPRJCVOTREc",
+		"title": "Kubbi / Compass",
+		"length": 312000,
+		"uri": "https://www.youtube.com/watch?v=gPRJCVOTREc",
+		"service": "youtube"
+	},
+	{
+		"identifier": "298399612",
+		"title": "Hay Runner | Final Battle",
+		"length": 281835,
+		"uri": "https://soundcloud.com/skyrunnerdnb/hay-runner-final-battle",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "MkgR0SxmMKo",
+		"title": "Scandroid - Neo Tokyo (Dance With The Dead Remix)",
+		"length": 353000,
+		"uri": "https://www.youtube.com/watch?v=MkgR0SxmMKo",
+		"service": "youtube"
+	},
+	{
+		"identifier": "BbqiGw76Kvc",
+		"title": "Dubmood - 3D Galax",
+		"length": 221000,
+		"uri": "https://www.youtube.com/watch?v=BbqiGw76Kvc",
+		"service": "youtube"
+	},
+	{
+		"identifier": "140930035",
+		"title": "Cosmic Drift Theme (8-bit)",
+		"length": 113747,
+		"uri": "https://soundcloud.com/aethernaut/cosmic-drift-theme-8-bit",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "vwKycWY4lV8",
+		"title": "Fearofdark - Dancing 0n the m%n",
+		"length": 299000,
+		"uri": "https://www.youtube.com/watch?v=vwKycWY4lV8",
+		"service": "youtube"
+	},
+	{
+		"identifier": "4PBFaqUaM6g",
+		"title": "Shelter (8 Bit Cover) - Porter Robinson & Madeon",
+		"length": 217000,
+		"uri": "https://www.youtube.com/watch?v=4PBFaqUaM6g",
+		"service": "youtube"
+	},
+	{
+		"identifier": "FSKtNeBUO1E",
+		"title": "Dubmood - Afterburner",
+		"length": 232000,
+		"uri": "https://www.youtube.com/watch?v=FSKtNeBUO1E",
+		"service": "youtube"
+	},
+	{
+		"identifier": "323036265",
+		"title": "Unreasonable Behavior 8-bit Chiptune Cover",
+		"length": 116255,
+		"uri": "https://soundcloud.com/roadcrosser/unreasonable-behavior",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "vBK0bxuDfs8",
+		"title": "Coda - Dorito dust",
+		"length": 297000,
+		"uri": "https://www.youtube.com/watch?v=vBK0bxuDfs8",
+		"service": "youtube"
+	},
+	{
+		"identifier": "wR659nEq3w4",
+		"title": "Virt - Staring at my spaceship (DX Edition)",
+		"length": 277000,
+		"uri": "https://www.youtube.com/watch?v=wR659nEq3w4",
+		"service": "youtube"
+	},
+	{
+		"identifier": "cbgmxiRZc-8",
+		"title": "Fearofdark - Penguins of the apocalypse",
+		"length": 187000,
+		"uri": "https://www.youtube.com/watch?v=cbgmxiRZc-8",
+		"service": "youtube"
+	},
+	{
+		"identifier": "RCTyjQa6fHA",
+		"title": "bo en - My Time (OMORI ver.) 8 bit remix (Famitracker VRC6 + MMC5)",
+		"length": 189000,
+		"uri": "https://www.youtube.com/watch?v=RCTyjQa6fHA",
+		"service": "youtube"
+	},
+	{
+		"identifier": "ugz0vr3Eeik",
+		"title": "Darkman007 - Sad song",
+		"length": 199000,
+		"uri": "https://www.youtube.com/watch?v=ugz0vr3Eeik",
+		"service": "youtube"
+	},
+	{
+		"identifier": "NvVena0EY28",
+		"title": "Zalza - Waves of Energy",
+		"length": 219000,
+		"uri": "https://www.youtube.com/watch?v=NvVena0EY28",
+		"service": "youtube"
+	},
+	{
+		"identifier": "11yewfkUSQM",
+		"title": "Dubmood - Monkey Island (8 Bit Music)",
+		"length": 158000,
+		"uri": "https://www.youtube.com/watch?v=11yewfkUSQM",
+		"service": "youtube"
+	},
+	{
+		"identifier": "h7FHVkt2HS4",
+		"title": "Zalza - Magnolia Bakery",
+		"length": 215000,
+		"uri": "https://www.youtube.com/watch?v=h7FHVkt2HS4",
+		"service": "youtube"
+	},
+	{
+		"identifier": "tRCZ8l4pAk4",
+		"title": "Joule and Ko0x - Caroline in neon hot pants",
+		"length": 131000,
+		"uri": "https://www.youtube.com/watch?v=tRCZ8l4pAk4",
+		"service": "youtube"
+	},
+	{
+		"identifier": "RiP7l6XKrOc",
+		"title": "Zalza - Back to the chipland",
+		"length": 222000,
+		"uri": "https://www.youtube.com/watch?v=RiP7l6XKrOc",
+		"service": "youtube"
+	},
+	{
+		"identifier": "wIEUnBYPtFM",
+		"title": "Dubmood and Zabutom - Supersquatting (Razor 1911 intro edit)",
+		"length": 278000,
+		"uri": "https://www.youtube.com/watch?v=wIEUnBYPtFM",
+		"service": "youtube"
+	},
+	{
+		"identifier": "97A3AwkmzV4",
+		"title": "Dubmood - Paradox #3",
+		"length": 106000,
+		"uri": "https://www.youtube.com/watch?v=97A3AwkmzV4",
+		"service": "youtube"
+	},
+	{
+		"identifier": "dhEykn3Jhgs",
+		"title": "Shirobon and Radix - Cyber party",
+		"length": 170000,
+		"uri": "https://www.youtube.com/watch?v=dhEykn3Jhgs",
+		"service": "youtube"
+	},
+	{
+		"identifier": "8DA8CchVOn0",
+		"title": "Trash80 - Icarus",
+		"length": 257000,
+		"uri": "https://www.youtube.com/watch?v=8DA8CchVOn0",
+		"service": "youtube"
+	},
+	{
+		"identifier": "QP1uvEtxJs4",
+		"title": "Malmen and Joule - Tomorrow without you",
+		"length": 209000,
+		"uri": "https://www.youtube.com/watch?v=QP1uvEtxJs4",
+		"service": "youtube"
+	},
+	{
+		"identifier": "yUwKzaPqtAM",
+		"title": "Tempest - Acidjazzed evening",
+		"length": 194000,
+		"uri": "https://www.youtube.com/watch?v=yUwKzaPqtAM",
+		"service": "youtube"
+	},
+	{
+		"identifier": "UwPOWFv_NNo",
+		"title": "Fearofdark - Hopeless romantic",
+		"length": 167000,
+		"uri": "https://www.youtube.com/watch?v=UwPOWFv_NNo",
+		"service": "youtube"
+	},
+	{
+		"identifier": "anYZ67T34L4",
+		"title": "Elwood - Spark",
+		"length": 237000,
+		"uri": "https://www.youtube.com/watch?v=anYZ67T34L4",
+		"service": "youtube"
+	},
+	{
+		"identifier": "W2AQ9p5LjMs",
+		"title": "Zabutom and Dubmood - ST-Style",
+		"length": 140000,
+		"uri": "https://www.youtube.com/watch?v=W2AQ9p5LjMs",
+		"service": "youtube"
+	},
+	{
+		"identifier": "CPnMjrQP39E",
+		"title": "Jayster - Runnin' through castles",
+		"length": 206000,
+		"uri": "https://www.youtube.com/watch?v=CPnMjrQP39E",
+		"service": "youtube"
+	},
+	{
+		"identifier": "sCXQ1YHw19M",
+		"title": "Trash80 - Lazerscale 2010 - 03",
+		"length": 161000,
+		"uri": "https://www.youtube.com/watch?v=sCXQ1YHw19M",
+		"service": "youtube"
+	},
+	{
+		"identifier": "OEYox7zoOvU",
+		"title": "BeaT - Celestial Fantasia",
+		"length": 349000,
+		"uri": "https://www.youtube.com/watch?v=OEYox7zoOvU",
+		"service": "youtube"
+	},
+	{
+		"identifier": "TXl23owycko",
+		"title": "Arachno - A sad touch",
+		"length": 111000,
+		"uri": "https://www.youtube.com/watch?v=TXl23owycko",
+		"service": "youtube"
+	},
+	{
+		"identifier": "078MUL1U4WU",
+		"title": "Zabutom and Dubmood - Pamp radion",
+		"length": 119000,
+		"uri": "https://www.youtube.com/watch?v=078MUL1U4WU",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Qatfjpn5wuU",
+		"title": "Elwood - Sweet dreams",
+		"length": 178000,
+		"uri": "https://www.youtube.com/watch?v=Qatfjpn5wuU",
+		"service": "youtube"
+	},
+	{
+		"identifier": "P1ITMTbd5_8",
+		"title": "FantomenK - Audio Avenue",
+		"length": 266000,
+		"uri": "https://www.youtube.com/watch?v=P1ITMTbd5_8",
+		"service": "youtube"
+	},
+	{
+		"identifier": "hL0Vkz0etwg",
+		"title": "Dubmood - Cydonian sky 2 (Sleepless, Morning sky or Quantum cracktro)",
+		"length": 335000,
+		"uri": "https://www.youtube.com/watch?v=hL0Vkz0etwg",
+		"service": "youtube"
+	},
+	{
+		"identifier": "hj8dgILfSKQ",
+		"title": "千本桜  - Senbonzakura 【8bit】【chiptune】【vocaloid cover】",
+		"length": 233000,
+		"uri": "https://www.youtube.com/watch?v=hj8dgILfSKQ",
+		"service": "youtube"
+	},
+	{
+		"identifier": "6tGiDSRLJLs",
+		"title": "►Chiptune - Toni Leys - Through A Cardboard World◄",
+		"length": 205000,
+		"uri": "https://www.youtube.com/watch?v=6tGiDSRLJLs",
+		"service": "youtube"
+	},
+	{
+		"identifier": "cDAa1rsLHNk",
+		"title": "Fearofdark - Polaris",
+		"length": 406000,
+		"uri": "https://www.youtube.com/watch?v=cDAa1rsLHNk",
+		"service": "youtube"
+	},
+	{
+		"identifier": "6is0zT1Qf-0",
+		"title": "Joule and Coda - Going nuts!",
+		"length": 180000,
+		"uri": "https://www.youtube.com/watch?v=6is0zT1Qf-0",
+		"service": "youtube"
+	},
+	{
+		"identifier": "-APwaWnDomg",
+		"title": "Virt - Cool as a cucumber",
+		"length": 221000,
+		"uri": "https://www.youtube.com/watch?v=-APwaWnDomg",
+		"service": "youtube"
+	},
+	{
+		"identifier": "FIR4qgE95zg",
+		"title": "Virt - Lick the alphabet",
+		"length": 139000,
+		"uri": "https://www.youtube.com/watch?v=FIR4qgE95zg",
+		"service": "youtube"
+	},
+	{
+		"identifier": "Nr2SD-mFRps",
+		"title": "JazzCat - Electric city",
+		"length": 251000,
+		"uri": "https://www.youtube.com/watch?v=Nr2SD-mFRps",
+		"service": "youtube"
+	},
+	{
+		"identifier": "dn-yGnad4UQ",
+		"title": "Cerror and Xylo - Dans la rue",
+		"length": 164000,
+		"uri": "https://www.youtube.com/watch?v=dn-yGnad4UQ",
+		"service": "youtube"
+	},
+	{
+		"identifier": "3e1zMX-0vk4",
+		"title": "Mekakucity Actors - 「daze」 (Chiptune) FULL",
+		"length": 236000,
+		"uri": "https://www.youtube.com/watch?v=3e1zMX-0vk4",
+		"service": "youtube"
+	},
+	{
+		"identifier": "xDm3ypJCrD0",
+		"title": "Zabutom - Let's shooting",
+		"length": 235000,
+		"uri": "https://www.youtube.com/watch?v=xDm3ypJCrD0",
+		"service": "youtube"
+	},
+	{
+		"identifier": "OQnJ9m94dbI",
+		"title": "Darkman007 - Grass near the house",
+		"length": 188000,
+		"uri": "https://www.youtube.com/watch?v=OQnJ9m94dbI",
+		"service": "youtube"
+	},
+	{
+		"identifier": "yrJU9E2s-Gk",
+		"title": "Darkman007 - Pill of sorrow",
+		"length": 337000,
+		"uri": "https://www.youtube.com/watch?v=yrJU9E2s-Gk",
+		"service": "youtube"
+	},
+	{
+		"identifier": "19kGCF1F_nY",
+		"title": "Kagerou Project - Lost Time Memory (Fanmade Chiptune Arrangement)",
+		"length": 282000,
+		"uri": "https://www.youtube.com/watch?v=19kGCF1F_nY",
+		"service": "youtube"
+	},
+	{
+		"identifier": "rGUtixaYw7w",
+		"title": "Various artists - The megatune",
+		"length": 398000,
+		"uri": "https://www.youtube.com/watch?v=rGUtixaYw7w",
+		"service": "youtube"
+	},
+	{
+		"identifier": "aytu3ya4KV4",
+		"title": "[チップチューン風]カゲロウデイズ[アレンジver.] (Kagerou Days Chiptune Arr.)",
+		"length": 231000,
+		"uri": "https://www.youtube.com/watch?v=aytu3ya4KV4",
+		"service": "youtube"
+	},
+	{
+		"identifier": "GVWHFRdnNos",
+		"title": "Jeroen Tel - Supremacy",
+		"length": 234000,
+		"uri": "https://www.youtube.com/watch?v=GVWHFRdnNos",
+		"service": "youtube"
+	},
+	{
+		"identifier": "S6NHU046lR4",
+		"title": "8bit - 1, 2 Fanclub (いーあるふぁんくらぶ)",
+		"length": 236000,
+		"uri": "https://www.youtube.com/watch?v=S6NHU046lR4",
+		"service": "youtube"
+	},
+	{
+		"identifier": "2l2_AmAuA78",
+		"title": "[チップチューン風]ヘッドフォンアクター[アレンジver.] (Headphone Actor Chiptune Arr.)",
+		"length": 212000,
+		"uri": "https://www.youtube.com/watch?v=2l2_AmAuA78",
+		"service": "youtube"
+	},
+	{
+		"identifier": "9fZbmM0zH7Q",
+		"title": "ドーナツホールを8bitっぽくしてみた【音源配布】",
+		"length": 209000,
+		"uri": "https://www.youtube.com/watch?v=9fZbmM0zH7Q",
+		"service": "youtube"
+	},
+	{
+		"identifier": "k4V2oQoGlhI",
+		"title": "【Vocaloid】Outer Science 「8 Bit Ver」",
+		"length": 208000,
+		"uri": "https://www.youtube.com/watch?v=k4V2oQoGlhI",
+		"service": "youtube"
+	},
+	{
+		"identifier": "331615606",
+		"title": "Uptown Assets",
+		"length": 139820,
+		"uri": "https://soundcloud.com/reset-memory/uptown-assets",
+		"service": "soundcloud"
+	},
+	{
+		"identifier": "nK6hpQkI0aU",
+		"title": "Kamiko OST - 01: Theme Song",
+		"length": 69000,
+		"uri": "https://www.youtube.com/watch?v=nK6hpQkI0aU",
+		"service": "youtube"
+	},
+	{
+		"identifier": "dJf6nAfLt2w",
+		"title": "Kamiko OST - 02: Player Select",
+		"length": 53000,
+		"uri": "https://www.youtube.com/watch?v=dJf6nAfLt2w",
+		"service": "youtube"
+	},
+	{
+		"identifier": "khAoAb6YnaA",
+		"title": "Kamiko OST - 03: Prologue",
+		"length": 23000,
+		"uri": "https://www.youtube.com/watch?v=khAoAb6YnaA",
+		"service": "youtube"
+	},
+	{
+		"identifier": "DEKZdjHtGs0",
+		"title": "Kamiko OST - 04: The Forest of Awakening",
+		"length": 76000,
+		"uri": "https://www.youtube.com/watch?v=DEKZdjHtGs0",
+		"service": "youtube"
+	},
+	{
+		"identifier": "vSWikFYPivw",
+		"title": "Kamiko OST - 05: The Sunken Relics",
+		"length": 69000,
+		"uri": "https://www.youtube.com/watch?v=vSWikFYPivw",
+		"service": "youtube"
+	},
+	{
+		"identifier": "YXsXOtD_q_U",
+		"title": "Kamiko OST - 06: The Scorching Labyrinth",
+		"length": 63000,
+		"uri": "https://www.youtube.com/watch?v=YXsXOtD_q_U",
+		"service": "youtube"
+	},
+	{
+		"identifier": "inNMvCBZAIg",
+		"title": "Kamiko OST - 07: The Ruins of Yamataikoku",
+		"length": 78000,
+		"uri": "https://www.youtube.com/watch?v=inNMvCBZAIg",
+		"service": "youtube"
+	},
+	{
+		"identifier": "x6Z7h4vV0Sc",
+		"title": "Kamiko OST - 08: Fight to the Death",
+		"length": 41000,
+		"uri": "https://www.youtube.com/watch?v=x6Z7h4vV0Sc",
+		"service": "youtube"
+	},
+	{
+		"identifier": "OotmalPfZyI",
+		"title": "Kamiko OST - 09: Stage Clear",
+		"length": 11000,
+		"uri": "https://www.youtube.com/watch?v=OotmalPfZyI",
+		"service": "youtube"
+	},
+	{
+		"identifier": "zvbFiDRMkJQ",
+		"title": "Kamiko OST - 10: The Last Battle",
+		"length": 71000,
+		"uri": "https://www.youtube.com/watch?v=zvbFiDRMkJQ",
+		"service": "youtube"
+	},
+	{
+		"identifier": "AMs8kbJp_dU",
+		"title": "Kamiko OST - 11: Epilogue",
+		"length": 58000,
+		"uri": "https://www.youtube.com/watch?v=AMs8kbJp_dU",
+		"service": "youtube"
+	},
+	{
+		"identifier": "G8Vd33k1EqY",
+		"title": "Kamiko OST - 12: Ending Theme",
+		"length": 150000,
+		"uri": "https://www.youtube.com/watch?v=G8Vd33k1EqY",
+		"service": "youtube"
+	},
+	{
+		"identifier": "8PsxfCVNkYE",
+		"title": "Shirobon - Born Survivor",
+		"length": 304000,
+		"uri": "https://www.youtube.com/watch?v=8PsxfCVNkYE",
+		"service": "youtube"
+	}
+]
