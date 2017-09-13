@@ -1,7 +1,7 @@
 const modLog = require("../modules/modLog.js");
 module.exports = async message => {
 	let censors = bot.censors.get(message.channel.guild.id);
-	if(!censors) return;
+	if(!censors || !message.member) return;
 	else if(message.member.permission.has("manageMessages")) return;
 
 	for(let censor of Array.from(censors.values())) {
