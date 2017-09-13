@@ -10,6 +10,12 @@ module.exports = {
 			} else if(!message.args[2]) {
 				return __("commands.moderator.censor.add.noRegex", message);
 			} else {
+				try {
+					let isValid = new RegExp(message.args[2]);
+				} catch(err) {
+					return __("commands.moderator.censor.add.invalidRegex", message, { error: err.message });
+				}
+
 				let id = 1, censors = await r.table("censors").getAll(message.channel.guild.id, { index: "guildID" }).run();
 				if(censors.length) id = Math.max(...censors.map(censor => censor.censorID)) + 1;
 
