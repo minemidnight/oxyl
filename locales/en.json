@@ -312,6 +312,11 @@
             "skip": {
                 "successNoneLeft": "Song skipped, no more songs in queue",
                 "successNextSong": "Now playing __{{title}}__"
+            },
+            "volume": {
+                "donatorOnly": "This feature can only be used in servers in which the owner is a donator",
+                "noMusicPlaying": "Music must be playing for volume to be changed",
+                "success": "Volume changed to {{volume}}"
             }
         }
     },
