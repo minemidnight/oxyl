@@ -6,7 +6,7 @@ module.exports = message => {
 		message.locale = bot.localeCache.get(message.author.id) || "en";
 	}
 
-	if(message.author.bot) return;
+	if(message.author.bot || !message.member) return;
 	else if(bot.ignoredChannels.has(message.channel.id) &&
 		!(message.member.permission.has("administrator") || message.author.id === message.channel.guild.ownerID)) return;
 	else commands(message);

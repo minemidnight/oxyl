@@ -1,7 +1,7 @@
 const lavalink = require("eris-lavalink");
 lavalink.Player.prototype.stateUpdate = function(state) {
 	this.state = state;
-	bot.players.get(this.guildId).setTime(state.position);
+	if(bot.players.has(this.guildId)) bot.players.get(this.guildId).setTime(state.position);
 };
 
 const Player = require("../../structures/player");
