@@ -3,6 +3,7 @@ module.exports = async (member, mod, reason) => {
 	let { length: warnCount } = await r.table("warnings")
 		.getAll(member.id, { index: "userID" })
 		.filter({ guildID: member.guild.id }).run();
+	warnCount++;
 
 	let kick, ban;
 	let kickAt = await r.table("settings").get(["modLog.kickat", member.guild.id]).run();

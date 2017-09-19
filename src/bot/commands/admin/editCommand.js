@@ -6,7 +6,7 @@ module.exports = {
 		if(!command) {
 			return __("commands.admin.editCommand.commandNotFound", message);
 		} else if(command.name === "editcommand" || command.type === "creator") {
-			__("commands.admin.editCommand.cantEdit", message);
+			return __("commands.admin.editCommand.cantEdit", message);
 		}
 
 		if(message.args[1] === "info") {

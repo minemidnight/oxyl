@@ -13,7 +13,8 @@ const __ = global.__ = (context, object = { locale: "en" }, values = {}, capitia
 	if(object.ownerID) object.locale = bot.localeCache.get(object.id) || "en";
 	let string = locales[object.locale];
 	for(let part of context.split(".")) {
-		if(!string[part]) return __("modules.locales.invalidContext", object, { context, part });
+		if(!string[part] && object.locale !== "en") return __(context, undefined, values, capitializeFirst);
+		else if(!string[part]) return __("modules.locales.invalidContext", object, { context, part });
 		else string = string[part];
 	}
 

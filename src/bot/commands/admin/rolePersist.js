@@ -26,7 +26,7 @@ module.exports = {
 				return __("commands.admin.rolePersist.remove.notPersisted", message, { role: message.args[1].name });
 			}
 
-			await r.table("rolePersistRules").get(roleData.id).delete().run();
+			await r.table("rolePersistRules").get(roleData.roleID).delete().run();
 			return __("commands.admin.rolePersist.remove.success", message, { role: message.args[1].name });
 		} else if(message.args[0] === "list") {
 			if(roleData.length === 0) return __("commands.admin.rolePersist.list.noPersistedRoles", message);
