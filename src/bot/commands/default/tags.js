@@ -1,4 +1,3 @@
-const superagent = require("superagent");
 const tags = require("../../modules/tags.js");
 module.exports = {
 	process: async message => {
@@ -55,7 +54,7 @@ module.exports = {
 			return tag.content;
 		}
 	},
-	caseSensisitive: true,
+	caseSensitive: true,
 	description: "Create, delete, display, and use tags",
 	aliases: ["t", "tag"],
 	args: [{

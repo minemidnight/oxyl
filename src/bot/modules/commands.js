@@ -1,5 +1,4 @@
 const argHandler = require("./args.js");
-const handleCensor = require("./censors.js");
 
 module.exports = async message => {
 	const guild = message.channel.guild;
@@ -24,12 +23,8 @@ module.exports = async message => {
 	prefix = new RegExp(prefix, "i");
 
 	let match = message.content.match(prefix);
-	if(!match && guild) {
-		handleCensor(message);
-		return false;
-	} else if(match) {
-		message.content = match[1];
-	}
+	if(!match) return false;
+	else if(match) message.content = match[1];
 
 	let command;
 	if(!~message.content.indexOf(" ")) {
