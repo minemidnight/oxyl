@@ -121,12 +121,15 @@ module.exports = {
 			let shard = ~~((censor.guildID / 4194304) % cluster.worker.totalShards);
 			if(shard >= cluster.worker.shardStart && shard <= cluster.worker.shardEnd) {
 				let censorsCache = bot.censors.get(censor.guildID);
+				let censorObject = { action: censor.action, regex: censor.regex };
+				if(censor.message) censorObject.message = censor.message;
+
 				if(censorsCache) {
-					censorsCache.set(censor.censorID, { action: censor.action, regex: censor.regex });
+					censorsCache.set(censor.censorID, censorObject);
 				} else {
 					bot.censors.set(censor.guildID, new Map())
 						.get(censor.guildID)
-						.set(censor.censorID, { action: censor.action, regex: censor.regex });
+						.set(censor.censorID, censorObject);
 				}
 			}
 		});

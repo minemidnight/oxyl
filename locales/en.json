@@ -192,7 +192,13 @@
 					"invalidID": "Please provide a censor ID which is a number and above 0",
 					"noCensorFound": "No censor found",
 					"success": "Censor successfully deleted"
-				},
+                },
+                "message": {
+                    "noID": "Please provide a censor ID to delete",
+                    "invalidID": "Please provide a censor ID which is a number and above 0",
+                    "noCensorFound": "No censor found",
+                    "success": "Successfully set censor {{id}}'s message to {{message}}"
+                },
 				"list": {
 					"noCensors": "There are no censors for this guild!\nAdd them using `censor add <action> <regex>`",
 					"success": "Censors: ```\n{{censors}}\n```\nTo delete a censor, use `censor delete <id>`"

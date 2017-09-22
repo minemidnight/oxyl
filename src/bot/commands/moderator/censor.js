@@ -11,7 +11,7 @@ module.exports = {
 				return __("commands.moderator.censor.add.noRegex", message);
 			} else {
 				try {
-					let isValid = new RegExp(message.args[2]);
+					RegExp(message.args[2]);
 				} catch(err) {
 					return __("commands.moderator.censor.add.invalidRegex", message, { error: err.message });
 				}
@@ -37,24 +37,34 @@ module.exports = {
 				}).run();
 				return __("commands.moderator.censor.add.success", message);
 			}
+		} else if(message.args[0] === "message") {
+			if(!message.args[1]) return __("commands.moderator.censor.message.noID", message);
+
+			let id = parseInt(message.args[1]);
+			if(isNaN(id) || id < 1) {
+				return __("commands.moderator.censor.message.invalidID", message);
+			} else if(!bot.censors.has(message.channel.guild.id) || !bot.censors.get(message.channel.guild.id).has(id)) {
+				return __("commands.moderator.message.noCensorFound", message);
+			}
+
+			await r.table("censors").get([id, message.channel.guild.id]).update({ message: message.args[2] }).run();
+			return __("comamnds.moderator.message.success", message, { id, message: message.args[2] });
 		} else if(message.args[0] === "delete" || message.args[0] === "remove") {
 			if(!message.args[1]) return __("commands.moderator.censor.delete.noID", message);
 
 			let id = parseInt(message.args[1]);
-			if(isNaN(id) || id < 1) {
-				return __("commands.moderator.censor.delete.invalidID", message);
-			} else {
-				let { deleted } = await r.table("censors").get([id, message.channel.guild.id]).delete().run();
-				if(deleted) {
-					let censorsCache = bot.censors.get(message.channel.guild.id);
-					if(!censorsCache) return __("commands.moderator.censor.delete.success", message);
-					if(censorsCache.size === 1) bot.censors.delete(message.channel.guild.id);
-					else censorsCache.delete(id);
+			if(isNaN(id) || id < 1) return __("commands.moderator.censor.delete.invalidID", message);
 
-					return __("commands.moderator.censor.delete.success", message);
-				} else {
-					return __("commands.moderator.censor.delete.noCensorFound", message);
-				}
+			let { deleted } = await r.table("censors").get([id, message.channel.guild.id]).delete().run();
+			if(deleted) {
+				let censorsCache = bot.censors.get(message.channel.guild.id);
+				if(!censorsCache) return __("commands.moderator.censor.delete.success", message);
+				if(censorsCache.size === 1) bot.censors.delete(message.channel.guild.id);
+				else censorsCache.delete(id);
+
+				return __("commands.moderator.censor.delete.success", message);
+			} else {
+				return __("commands.moderator.censor.delete.noCensorFound", message);
 			}
 		} else if(message.args[0] === "list") {
 			let censors = await r.table("censors").getAll(message.channel.guild.id, { index: "guildID" }).run();
@@ -78,14 +88,14 @@ module.exports = {
 	description: "Add or remove censors",
 	args: [{
 		type: "text",
-		label: "add|delete|list"
+		label: "add|delete|message|list"
 	}, {
 		type: "text",
 		label: "action|id",
 		optional: true
 	}, {
 		type: "text",
-		label: "regex",
+		label: "regex|message",
 		optional: true
 	}]
 };
