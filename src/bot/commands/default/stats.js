@@ -28,7 +28,7 @@ module.exports = {
 			workerUsage: (workerUsage / Math.pow(1024, 2)).toFixed(2),
 			totalUsage: (totalUsage / Math.pow(1024, 3)).toFixed(2),
 			worker: cluster.worker.id,
-			shardRange: `${cluster.worker.shardStart}-${cluster.worker.shardEnd}`,
+			shardRange: `${cluster.worker.shardRange}`,
 			uptime: bot.utils.parseMs(Date.now() - bot.startTime),
 			website: "http://minemidnight.work"
 		});

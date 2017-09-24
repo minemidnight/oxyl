@@ -40,6 +40,8 @@ module.exports = {
 		}
 
 		queueMsg += "\n";
+		queueMsg += __("phrases.autoplay", message, { autoplay: __(`words.${options.autoplay ? "on" : "off"}`, message) });
+		queueMsg += "\n";
 		queueMsg += __("phrases.repeat", message, { repeat: __(`words.${options.repeat ? "on" : "off"}`, message) });
 		return __("commands.music.queue.success", message, {
 			itemCount: queue.length,
