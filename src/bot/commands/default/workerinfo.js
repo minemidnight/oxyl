@@ -40,7 +40,7 @@ module.exports = {
 		maxLen.uptime = Math.max(...info.map(data => bot.utils.parseMs(data.uptime).length));
 
 		const workerInfo = [];
-		info.forEach(data => {
+		info.sort((a, b) => b.id - a.id).forEach(data => {
 			let line = "";
 			line += cluster.worker.id === data.id ? "* " : "  ";
 			line += left(data.id, maxLen.id);
