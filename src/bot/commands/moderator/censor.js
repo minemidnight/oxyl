@@ -73,7 +73,7 @@ module.exports = {
 			} else {
 				return __("commands.moderator.censor.list.success", message, {
 					censors: censors
-						.sort((a, b) => b.censorID - a.censorID)
+						.sort((a, b) => a.censorID - b.censorID)
 						.map(cen => `${cen.censorID}. ${cen.regex.replace(/\\/g, "\\\\")} (${cen.action})`)
 						.join("\n")
 				});
