@@ -11,7 +11,7 @@ module.exports = {
 				return __("commands.music.seek.error", message, { max: current.length / 1000 });
 			}
 
-			await player.seek(message.args[0] * 1000);
+			await player.connection.seek(message.args[0] * 1000);
 			return __("commands.music.seek.success", message, { time: message.args[0] });
 		}
 	},
