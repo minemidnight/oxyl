@@ -34,7 +34,7 @@ module.exports = {
 		const totalStreams = info.reduce((a, b) => a + b.streams, 0);
 		maxLen.streams = totalStreams.toString().length;
 
-		const totalShards = bot.totalShards;
+		const totalShards = bot.options.maxShards;
 		maxLen.shards = Math.max(...info.map(data => data.shards.length));
 
 		maxLen.uptime = Math.max(...info.map(data => bot.utils.parseMs(data.uptime).length));
