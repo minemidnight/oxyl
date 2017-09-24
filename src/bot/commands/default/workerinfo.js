@@ -37,8 +37,7 @@ module.exports = {
 		const totalShards = bot.totalShards;
 		maxLen.shards = Math.max(...info.map(data => data.shards.length));
 
-		const totalUptime = bot.utils.secondsToDuration(info.reduce((a, b) => a + b.uptime, 0) / 1000);
-		maxLen.uptime = totalUptime.length;
+		maxLen.uptime = Math.max(...info.map(data => bot.utils.parseMs(data.uptime).length));
 
 		const workerInfo = [];
 		info.forEach(data => {
@@ -53,13 +52,13 @@ module.exports = {
 			line += left(data.shards, maxLen.shards);
 			line += ", RAM ";
 			line += left((data.memoryUsed / Math.pow(1024, 3)).toFixed(2), maxLen.memory);
-			line += "GB, UP ";
-			line += left(bot.utils.secondsToDuration(data.uptime / 1000), maxLen.uptime);
+			line += "GiB, UP ";
+			line += left(bot.utils.parseMs(data.uptime), maxLen.uptime);
 
 			workerInfo.push(line);
 		});
 		workerInfo.push(`  T: GUILD ${totalGuilds}, STREAM ${totalStreams}, SHARD ${left(totalShards, maxLen.shards)}, ` +
-			`RAM ${left(totalMemory, maxLen.memory)}GB, UP ${totalUptime}`);
+			`RAM ${left(totalMemory, maxLen.memory)}GiB`);
 
 		return bot.utils.codeBlock(workerInfo.join("\n"), "prolog");
 	},
