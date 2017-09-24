@@ -5,7 +5,7 @@ module.exports = async message => {
 	else if(message.member.permission.has("manageMessages")) return;
 
 	for(let censor of censors) {
-		if(!(new RegExp(censor.regex, "i")).test(message.content)) continue;
+		if(!message.content.match(new RegExp(censor.regex, "i"))) continue;
 		message.delete();
 		message.channel.createMessage(censor.message ?
 			censor.message.replace(/{{mention}}/g, message.author.mention)
