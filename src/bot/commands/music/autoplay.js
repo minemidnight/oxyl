@@ -15,7 +15,7 @@ module.exports = {
 		} else {
 			let options = await player.getOptions();
 			options.autoplay = !player.options;
-			if(!options.repeat && options.autoplay && current.service === "youtube") {
+			if(!options.repeat && options.autoplay && current.uri.startsWith("https://www.youtube.com/")) {
 				let queue = await player.getQueue();
 				queue.unshift(await autoplay(current.id));
 				await player.setQueue(queue);

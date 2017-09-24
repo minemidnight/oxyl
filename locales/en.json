@@ -312,6 +312,10 @@
                 "donatorOnly": "You must be a donator to use this command!",
                 "success": "Saved {{itemCount}} items under saved queue #{{queueNumber}}\nUse `play sq:{{queueNumber}}` to load the queue"
             },
+            "seek": {
+                "error": "You can't seek past the whole song! (The song is only {{max}} seconds long)",
+                "success": "Successfully seeked {{time}} seconds into the song"
+            },
             "shuffle": {
                 "success": "Queue shuffled"
             },
