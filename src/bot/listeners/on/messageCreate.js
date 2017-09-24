@@ -1,5 +1,5 @@
 const commands = require("../../modules/commands.js");
-const handleCensor = require("../../modulescensors.js");
+const handleCensor = require("../../modules/censors.js");
 
 module.exports = message => {
 	if(message.author.bot || !message.member) return;
