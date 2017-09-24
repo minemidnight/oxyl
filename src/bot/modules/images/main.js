@@ -3,7 +3,7 @@ const path = require("path");
 
 module.exports = {
 	byeMom: async text => {
-		const { stdout } = await exec(`node ${path.resolve(`${__dirname}/byemom.js`)}`, {
+		const stdout = await exec(`node ${path.resolve(`${__dirname}/byemom.js`)}`, {
 			env: { TEXT: text },
 			maxBuffer: Infinity
 		});

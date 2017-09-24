@@ -8,7 +8,7 @@ async function generate(text) {
 
 	const image = await Jimp.read(`${__dirname}/byemom.png`);
 	image.composite(textImage, 200, 200);
-	image.getBase64(Jimp.MIME_PNG, console.log);
+	image.getBase64(Jimp.MIME_PNG, (err, data) => process.stdout.write(data));
 }
 
 generate(process.env.TEXT);
