@@ -1,7 +1,7 @@
 const left = (string, length, spacing = " ") => {
 	string = string.toString();
 	if(string.length >= length) return string;
-	else return string + spacing.repeat(length - string.length);
+	else return spacing.repeat(length - string.length) + string;
 };
 
 module.exports = {
@@ -43,8 +43,7 @@ module.exports = {
 		const workerInfo = [];
 		info.forEach(data => {
 			let line = "";
-			let isCurrent = cluster.worker.id === data.id ? "*" : "";
-			line += left(isCurrent, 2).reverse();
+			line += cluster.worker.id === data.id ? "* " : "  ";
 			line += left(data.id, maxLen.id);
 			line += ": GUILD ";
 			line += left(data.guilds, maxLen.guilds);
