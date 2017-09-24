@@ -19,8 +19,7 @@ module.exports = {
 		});
 
 		const maxLen = {};
-		const totalWorkers = info.length;
-		maxLen.id = totalWorkers.toString().length;
+		maxLen.id = Math.max(...info.map(data => data.id.toString()));
 
 		const totalGuilds = info.reduce((a, b) => a + b.guilds, 0);
 		maxLen.guilds = totalGuilds.toString().length;
