@@ -14,6 +14,7 @@ Object.defineProperty(cluster, "onlineWorkers", {
 		.filter(work => work.isConnected())
 });
 
+const config = require(`${__dirname}/../config.json`);
 async function init() {
 	await (require("./misc/rethink")).init();
 	const { body: { shards: totalShards } } = await superagent.get("https://discordapp.com/api/gateway/bot")
@@ -40,7 +41,6 @@ async function init() {
 		handleWorker(worker);
 	}
 
-	let config = require(require("path").resolve("config.json"));
 	if(!config.beta && config.website) {
 		const website = cluster.fork();
 		Object.assign(website, { type: "website" });
