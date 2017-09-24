@@ -48,7 +48,7 @@ module.exports = {
 			}
 
 			await r.table("censors").get([id, message.channel.guild.id]).update({ message: message.args[2] }).run();
-			return __("comamnds.moderator.message.success", message, { id, message: message.args[2] });
+			return __("commands.moderator.message.success", message, { id, message: message.args[2] });
 		} else if(message.args[0] === "delete" || message.args[0] === "remove") {
 			if(!message.args[1]) return __("commands.moderator.censor.delete.noID", message);
 
