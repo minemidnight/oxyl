@@ -13,7 +13,7 @@ module.exports = {
 				guilds: bot.guilds.size,
 				memoryUsed: process.memoryUsage().heapUsed,
 				streams: Array.from(bot.players.values()).filter(player => player.connection).length,
-				shards: cluster.worker.shardRange.substring(7),
+				shards: cluster.worker.shardRange.substring(cluster.worker.shardRange.indexOf(" ") + 1),
 				uptime: Date.now() - bot.startTime
 			})
 		});
@@ -44,11 +44,11 @@ module.exports = {
 			let line = "";
 			line += cluster.worker.id === data.id ? "* " : "  ";
 			line += left(data.id, maxLen.id);
-			line += ": GUILD ";
+			line += ": GUILDS ";
 			line += left(data.guilds, maxLen.guilds);
-			line += ", STREAM ";
+			line += ", STREAMS ";
 			line += left(data.streams, maxLen.streams);
-			line += ", SHARD ";
+			line += ", SHARDS ";
 			line += left(data.shards, maxLen.shards);
 			line += ", RAM ";
 			line += left((data.memoryUsed / Math.pow(1024, 3)).toFixed(2), maxLen.memory);
@@ -57,8 +57,8 @@ module.exports = {
 
 			workerInfo.push(line);
 		});
-		workerInfo.push(`  T: GUILD ${totalGuilds}, STREAM ${totalStreams}, SHARD ${left(totalShards, maxLen.shards)}, ` +
-			`RAM ${left(totalMemory, maxLen.memory)}GiB`);
+		workerInfo.push(`  T: GUILDS ${totalGuilds}, STREAMS ${totalStreams}, ` +
+			`SHARDS ${left(totalShards, maxLen.shards)}, RAM ${left(totalMemory, maxLen.memory)}GiB`);
 
 		return bot.utils.codeBlock(workerInfo.join("\n"), "prolog");
 	},
