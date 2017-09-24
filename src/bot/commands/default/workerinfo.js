@@ -44,21 +44,21 @@ module.exports = {
 			let line = "";
 			line += cluster.worker.id === data.id ? "* " : "  ";
 			line += left(data.id, maxLen.id);
-			line += ": GUILDS ";
+			line += ": Guilds ";
 			line += left(data.guilds, maxLen.guilds);
-			line += ", STREAMS ";
+			line += ", Streams ";
 			line += left(data.streams, maxLen.streams);
-			line += ", SHARDS ";
+			line += ", Shards ";
 			line += left(data.shards, maxLen.shards);
 			line += ", RAM ";
 			line += left((data.memoryUsed / Math.pow(1024, 3)).toFixed(2), maxLen.memory);
-			line += "GiB, UP ";
+			line += "GiB, Uptime ";
 			line += left(bot.utils.parseMs(data.uptime), maxLen.uptime);
 
 			workerInfo.push(line);
 		});
-		workerInfo.push(`  T: GUILDS ${totalGuilds}, STREAMS ${totalStreams}, ` +
-			`SHARDS ${left(totalShards, maxLen.shards)}, RAM ${left(totalMemory, maxLen.memory)}GiB`);
+		workerInfo.push(`  T: Guilds ${totalGuilds}, Streams ${totalStreams}, ` +
+			`Shards ${left(totalShards, maxLen.shards)}, RAM ${left(totalMemory, maxLen.memory)}GiB`);
 
 		return bot.utils.codeBlock(workerInfo.join("\n"), "prolog");
 	},

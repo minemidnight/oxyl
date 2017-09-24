@@ -3,13 +3,6 @@ function setting(action, element) {
 	element = $(element);
 	element.parent().children().attr("disabled", "");
 	let form = element.parent().parent().find("form");
-	let settingName = element.parent()
-		.parent()
-		.parent()
-		.find("div")
-		.first()
-		.find("span")
-		.text();
 
 	if(action === "set") {
 		let formData = {};
