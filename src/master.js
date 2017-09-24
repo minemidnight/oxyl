@@ -1,19 +1,8 @@
-const argv = require("argv")
-	.option({
-		name: "shards",
-		short: "s",
-		type: "int",
-		description: "Amount of shards for the bot"
-	}).option({
-		name: "perworker",
-		short: "p",
-		type: "int",
-		description: "Amount of shards to spawn on each worker (leave blank for automatic across cpu cores)"
-	}).run().options;
+const superagent = require("superagent");
 const webhook = require("./misc/webhookStatus");
-
 const botHandler = require("./worker_handling/bot");
 const siteHandler = require("./worker_handling/site");
+
 function handleWorker(worker) {
 	if(worker.type === "bot") botHandler(worker);
 	else if(worker.type === "website") siteHandler(worker);
@@ -25,22 +14,18 @@ Object.defineProperty(cluster, "onlineWorkers", {
 		.filter(work => work.isConnected())
 });
 
-let totalShards = argv.shards || 1;
 async function init() {
 	await (require("./misc/rethink")).init();
-
-	if(totalShards < 1 || isNaN(totalShards)) totalShards = 1;
+	const { body: { shards: totalShards } } = await superagent.get("https://discordapp.com/api/gateway/bot")
+		.set("Authorization", config.bot.token);
 	process.totalShards = totalShards;
 
 	let shardsPerWorker, fields = [];
 	fields.push({ name: "Total Shards", value: totalShards });
-	if(argv.perWorker && argv.perWorker >= 1 && !isNaN(argv.perWorker)) {
-		shardsPerWorker = argv.perWorker;
-	} else {
-		let coreCount = require("os").cpus().length;
-		if(coreCount >= totalShards) shardsPerWorker = 1;
-		else shardsPerWorker = Math.ceil(totalShards / coreCount);
-	}
+
+	const coreCount = require("os").cpus().length;
+	if(coreCount >= totalShards) shardsPerWorker = 1;
+	else shardsPerWorker = Math.ceil(totalShards / coreCount);
 	fields.push({ name: "Shards per Worker", value: shardsPerWorker });
 
 	const workerCount = Math.ceil(totalShards / shardsPerWorker);

@@ -105,7 +105,7 @@ process.on("unhandledRejection", err => {
 	try {
 		let resp = JSON.parse(err.response);
 		// these codes mean someone bamboozled perms
-		if(~[10003, 10008, 40005, 50001, 50013].indexOf(resp.code)) return;
+		if(~[0, 10003, 10008, 40005, 50001, 50013].indexOf(resp.code)) return;
 		else throw err;
 	} catch(err2) {
 		if(raven.installed) raven.captureException(err);
