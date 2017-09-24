@@ -17,7 +17,7 @@ module.exports = {
 			options.autoplay = !player.options;
 			if(!options.repeat && options.autoplay && current.uri.startsWith("https://www.youtube.com/")) {
 				let queue = await player.getQueue();
-				queue.unshift(await autoplay(current.id));
+				queue.unshift(await autoplay(current.identifier));
 				await player.setQueue(queue);
 			}
 
