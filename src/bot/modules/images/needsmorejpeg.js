@@ -1,7 +1,7 @@
 const Jimp = require("jimp");
 
-async function generate(image) {
-	image = await new Jimp(image);
+async function generate(url) {
+	const image = await Jimp.read(url);
 	image.quality(80);
 
 	image.getBase64(Jimp.MIME_JPEG, (err, data) => {

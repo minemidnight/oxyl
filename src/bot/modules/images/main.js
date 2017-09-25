@@ -11,7 +11,7 @@ module.exports = {
 		return module.exports.imageFromURI(stdout);
 	},
 	needsMoreJpeg: async url => {
-		const stdout = await exec(`node ${path.resolve(`${__dirname}/neesdmorejpeg.js`)}`, {
+		const stdout = await exec(`node ${path.resolve(`${__dirname}/needsmorejpeg.js`)}`, {
 			env: { IMAGE_URL: url },
 			maxBuffer: Infinity
 		});
