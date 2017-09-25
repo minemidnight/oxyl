@@ -19,7 +19,7 @@ module.exports = {
 		});
 
 		const maxLen = {};
-		maxLen.id = Math.max(...info.map(data => data.id.toString()));
+		maxLen.id = Math.max(...info.map(data => data.id.toString().length));
 
 		const totalGuilds = info.reduce((a, b) => a + b.guilds, 0);
 		maxLen.guilds = totalGuilds.toString().length;
