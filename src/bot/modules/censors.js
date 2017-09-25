@@ -1,11 +1,11 @@
 const modLog = require("../modules/modLog.js");
 module.exports = async message => {
 	let censors = bot.censors.get(message.channel.guild.id);
-	if(!censors || !message.member) return;
-	else if(message.member.permission.has("manageMessages")) return;
+	if(!censors || !message.member) return true;
+	else if(message.member.permission.has("manageMessages")) return true;
 
-	for(let censor of censors) {
-		if(!message.content.match(new RegExp(censor.regex, "i"))) continue;
+	for(let censor of Array.from(censors.values())) {
+		if(!(new RegExp(censor.regex, "i")).test(message.content)) continue;
 		message.delete();
 		message.channel.createMessage(censor.message ?
 			censor.message.replace(/{{mention}}/g, message.author.mention)
@@ -43,4 +43,5 @@ module.exports = async message => {
 
 		break;
 	}
+	return true;
 };

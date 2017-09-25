@@ -1,10 +1,10 @@
 const commands = require("../../modules/commands.js");
 const handleCensor = require("../../modules/censors.js");
 
-module.exports = message => {
+module.exports = async message => {
 	if(message.author.bot || !message.member) return;
 	if(message.channel.guild) {
-		handleCensor(message);
+		await handleCensor(message);
 		message.locale = bot.localeCache.get(message.author.id) || bot.localeCache.get(message.channel.guild.id) || "en";
 	} else {
 		message.locale = bot.localeCache.get(message.author.id) || "en";
