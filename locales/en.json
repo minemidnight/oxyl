@@ -380,7 +380,8 @@
 			"andMore": "... and {{users}} more",
             "multipleUsers": "Multiple users found. Please say a number below to choose one in the next 10 seconds: {{users}}",
             "noUserChosen": "No user chosen",
-			"invalidUser": "Invalid user number selected!"
+            "invalidUser": "Invalid user number selected!",
+            "invalidImage": "Please send a link to a valid image, or upload it as an attachment!"
         },
         "timedEvents": {
             "reminder": "You asked me to remind you about this on {{date}}:\n\n {{action}}",

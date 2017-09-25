@@ -10,6 +10,14 @@ module.exports = {
 
 		return module.exports.imageFromURI(stdout);
 	},
+	needsMoreJpeg: async image => {
+		const stdout = await exec(`node ${path.resolve(`${__dirname}/neesdmorejpeg.js`)}`, {
+			env: { IMAGE: image.toString("base64") },
+			maxBuffer: Infinity
+		});
+
+		return module.exports.imageFromURI(stdout);
+	},
 	imageFromURI: data => {
 		let [, ext, buffer] = data.match(/^data:image\/([A-Za-z-+\/]+);base64,(.+)$/);
 		buffer = Buffer.from(buffer, "base64");

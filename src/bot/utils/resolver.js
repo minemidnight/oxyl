@@ -1,10 +1,12 @@
+const superagent = require("superagent");
 const linkFilter = /^((https|http|ftp|rtsp|mms)?:\/\/)?(([0-9a-z_!~*'().&=+$%-]+:)?[0-9a-z_!~*'().&=+$%-]+@)?(([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-z_!~*'()-]+\.)*([0-9a-z][0-9a-z-]{0,61})?[0-9a-z]\.[a-z]{2,6})(:[0-9]{1,4})?((\/?)|(\/[0-9a-z_!~*'().;?:@&=+$,%#-]+)+\/?)$/im; // eslint-disable-line max-len
+
 function matchUser(user, input) {
 	let username = user.user ? user.user.username.toLowerCase() : user.username.toLowerCase();
 	let nick = user.nick ? user.nick.toLowerCase() : null;
 	input = input.toLowerCase();
 
-	if(input.includes("#")) {
+	if(~input.indexOf("#")) {
 		let index = input.lastIndexOf("#");
 		var discrim = input.substring(index + 1);
 		input = input.substring(0, index);
@@ -47,6 +49,22 @@ module.exports = {
 		if(~["enable", "yes", "true", "1"].indexOf(input)) return true;
 		else if(~["disable", "no", "false", "0"].indexOf(input)) return false;
 		else throw new Error(__("modules.resolver.booleanError", message));
+	},
+	image: async (message, input) => {
+		let imageURL;
+		if(message.attachments.length && message.attachments[0].width && message.attachments[0].height) {
+			imageURL = message.attachments[0].url;
+		} else {
+			imageURL = module.exports.link(message, input);
+		}
+
+		try {
+			const { body } = await superagent.get(imageURL)
+				.accept("image/*");
+			return body;
+		} catch(err) {
+			throw new Error(__("modules.resolver.invalidImage", message));
+		}
 	},
 	link: (message, input) => {
 		if(!linkFilter.test(input)) throw new Error(__("modules.resolver.invalidLink", message));
