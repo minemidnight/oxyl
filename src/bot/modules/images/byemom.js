@@ -7,7 +7,8 @@ async function generate(text) {
 	if(text !== "how to rotate text in ms paint") textImage.rotate(-25, false);
 
 	const image = await Jimp.read(`${__dirname}/byemom.png`);
-	image.composite(textImage, 325, 235);
+	if(text === "how to rotate text in ms paint") image.composite(textImage, 340, 250);
+	else image.composite(textImage, 325, 235);
 	image.getBase64(Jimp.MIME_PNG, (err, data) => {
 		if(err) throw err;
 		process.stdout.write(data);
