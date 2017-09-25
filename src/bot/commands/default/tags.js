@@ -36,9 +36,9 @@ module.exports = {
 		} else if(arg.toLowerCase().startsWith("create")) {
 			if(!~arg.indexOf(" ")) return __("commands.default.tags.create.noArgs", message);
 
-			let tagName = arg.substring(arg.indexOf(" ") + 1).toLowerCase();
+			let tagName = arg.substring(arg.indexOf(" ") + 1);
 			let content = tagName.substring(tagName.indexOf(" ") + 1);
-			tagName = tagName.substring(0, tagName.indexOf(" "));
+			tagName = tagName.substring(0, tagName.indexOf(" ")).toLowerCase();
 			if(!tagName || !content || !content.length) return __("commands.default.tags.create.noContent", message);
 
 			let tag = await tags.get(tagName);
