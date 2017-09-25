@@ -10,4 +10,4 @@ async function generate(image) {
 	});
 }
 
-generate(Buffer.from(process.env.IMAGE, "base64"));
+generate(process.env.IMAGE_URL);

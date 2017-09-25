@@ -50,7 +50,7 @@ module.exports = {
 		else if(~["disable", "no", "false", "0"].indexOf(input)) return false;
 		else throw new Error(__("modules.resolver.booleanError", message));
 	},
-	image: async (message, input) => {
+	image: async (message, input, options = {}) => {
 		let imageURL;
 		if(message.attachments.length && message.attachments[0].width && message.attachments[0].height) {
 			imageURL = message.attachments[0].url;
@@ -61,7 +61,9 @@ module.exports = {
 		try {
 			const { body } = await superagent.get(imageURL)
 				.accept("image/*");
-			return body;
+
+			if(options.buffer) return body;
+			else return imageURL;
 		} catch(err) {
 			throw new Error(__("modules.resolver.invalidImage", message));
 		}

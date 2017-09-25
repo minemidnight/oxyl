@@ -10,9 +10,9 @@ module.exports = {
 
 		return module.exports.imageFromURI(stdout);
 	},
-	needsMoreJpeg: async image => {
+	needsMoreJpeg: async url => {
 		const stdout = await exec(`node ${path.resolve(`${__dirname}/neesdmorejpeg.js`)}`, {
-			env: { IMAGE: image.toString("base64") },
+			env: { IMAGE_URL: url },
 			maxBuffer: Infinity
 		});
 
