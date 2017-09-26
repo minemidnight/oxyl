@@ -56,7 +56,7 @@ module.exports = {
 
 			workerInfo.push(line);
 		});
-		workerInfo.push(`  T: Guilds ${totalGuilds}, Streams ${totalStreams}, ` +
+		workerInfo.push(`  ${left("T", maxLen.id)}: Guilds ${totalGuilds}, Streams ${totalStreams}, ` +
 			`Shards ${left(totalShards, maxLen.shards)}, RAM ${left(totalMemory, maxLen.memory)}GiB`);
 
 		return bot.utils.codeBlock(workerInfo.join("\n"), "prolog");
