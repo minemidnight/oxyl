@@ -16,11 +16,17 @@
   },
   "homepage": "https://github.com/minemidnight/oxyl#readme",
   "dependencies": {
+    "babel-preset-env": "^1.6.0",
+    "cookie-parser": "^1.4.3",
+    "ejs": "^2.5.7",
     "eris": "^0.7.2",
     "eris-additions": "^1.2.5",
     "eris-lavalink": "git+https://github.com/briantanner/eris-lavalink.git",
     "eris-wiggle": "0.0.2",
+    "express": "^4.16.1",
+    "express-babelify-middleware": "^0.2.1",
     "rethinkdbdash": "^2.3.31",
-    "superagent": "^3.6.3"
+    "superagent": "^3.6.3",
+    "ws": "^3.2.0"
   }
 }

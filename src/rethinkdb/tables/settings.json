@@ -1,0 +1,5 @@
+{
+	"name": "settings",
+	"primary": "id",
+	"indexes": ["guildID"]
+}

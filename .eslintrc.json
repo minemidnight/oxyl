@@ -4,12 +4,6 @@
 		"node": true,
 		"es6": true
 	},
-	"globals": {
-		"bot": false,
-		"cluster": false,
-		"r": false,
-		"__": false
-	 },
 	"parserOptions": {
 		"ecmaVersion": 2017
 	},
