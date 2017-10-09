@@ -4,18 +4,19 @@ const cookieParser = require("cookie-parser");
 const express = require("express");
 const fs = require("fs");
 const oauth = require("../oauth/index");
+const path = require("path");
 
 const app = express();
 app.locals.url = config.panelURL;
 app.locals.redirectURI = `https://discordapp.com/oauth2/authorize?response_type=code&redirect_uri=` +
 	`${`${encodeURIComponent(config.panelURL)}/callback`}&scope=identify&client_id=${config.clientID}`;
 
-app.set("views", "./views");
+app.set("views", path.resolve(__dirname, "views"));
 app.set("view engine", "ejs");
 require("http").createServer(app).listen(config.panelPort);
 
-app.use(`/js`, babelify(`./public/js`, babelify.browserifySettings, { presets: ["env"] }));
-app.use(express.static("./public"));
+app.use(`/js`, babelify(path.resolve(__dirname, "public", "js"), babelify.browserifySettings, { presets: ["env"] }));
+app.use(express.static(path.resolve(__dirname, "public")));
 app.use(cookieParser());
 
 app.use(async (req, res, next) => {
