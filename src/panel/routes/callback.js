@@ -8,7 +8,7 @@ router.get("/", async (req, res) => {
 	}
 
 	try {
-		const token = await oauth.token(req.query.code);
+		const token = await oauth.token(req.query.code, req.apps.locals.redirectURI);
 		res.set("Set-Cookie", `token=${JSON.stringify(token).replace(/"/g, `\\"`)}; Max-Age=31,540,000`);
 
 		res.redirect(req.app.locals.url);
