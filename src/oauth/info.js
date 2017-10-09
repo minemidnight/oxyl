@@ -3,7 +3,7 @@ const refresh = require("./refresh");
 const superagent = require("superagent");
 
 module.exports = async (token, path) => {
-	if(infoCache.has(`${token.accessToken}/${path}`)) return infoCache.get(`${token.access_token}/${path}`);
+	if(infoCache.has(`${token.accessToken}/${path}`)) return infoCache.get(`${token.accessToken}/${path}`);
 
 	let refreshed = false;
 	if(Date.now() - token.timestamp >= token.expiresIn) {
