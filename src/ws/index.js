@@ -3,7 +3,7 @@ const oauth = require("../oauth/index");
 const WebSocket = require("ws");
 const server = new WebSocket.Server({
 	port: config.websocketPort,
-	verifyClient: ({ req }, cb) => {
+	verifyClient: async ({ req }, cb) => {
 		if(!req.headers.Authorization) return cb({ result: false, code: 401, name: "No Authorization header" });
 		let auth;
 		try {
