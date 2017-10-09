@@ -1,6 +1,6 @@
 const { readdir } = require("fs");
-const { promisfy } = require("util");
-const readdirAsync = promisfy(readdir);
+const { promisify } = require("util");
+const readdirAsync = promisify(readdir);
 
 module.exports = async r => { // eslint-disable-line id-length
 	const tableList = await r.tableList().run();
