@@ -8,7 +8,7 @@ const path = require("path");
 
 const app = express();
 app.locals.url = config.panelURL;
-app.locals.redirectURI = `https://discordapp.com/oauth2/authorize?response_type=code&redirect_uri=` +
+app.locals.oauthURI = `https://discordapp.com/oauth2/authorize?response_type=code&redirect_uri=` +
 	`${`${encodeURIComponent(config.panelURL)}/callback`}&scope=identify&client_id=${config.clientID}`;
 
 app.set("views", path.resolve(__dirname, "views"));
@@ -22,12 +22,12 @@ app.use(cookieParser());
 app.use(async (req, res, next) => {
 	if(req.path === "/callback") return next();
 
-	if(!req.cookies.token) return res.redirect(req.app.locals.redirectURI);
+	if(!req.cookies.token) return res.redirect(req.app.locals.oauthURI);
 	let token;
 	try {
 		token = JSON.parse(token);
 	} catch(err) {
-		return res.redirect(req.app.locals.redirectURI);
+		return res.redirect(req.app.locals.oauthURI);
 	}
 
 	try {
@@ -39,7 +39,7 @@ app.use(async (req, res, next) => {
 
 		if(!~config.owners.indexOf(info.id)) return res.status(403).send("Forbidden");
 	} catch(err) {
-		return res.redirect(req.app.locals.redirectURI);
+		return res.redirect(req.app.locals.oauthURI);
 	}
 
 	return next();
