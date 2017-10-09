@@ -12,7 +12,7 @@ const server = new WebSocket.Server({
 			return cb({ result: false, code: 400, name: "Authorization header not JSON" });
 		}
 
-		const info = oauth.info(auth, "users/@me");
+		const info = await oauth.info(auth, "users/@me");
 		if(~config.owners.indexOf(info.id)) return cb({ result: true });
 		else return cb({ result: false, code: 403, name: "Forbidden" });
 	}
