@@ -45,9 +45,11 @@ app.use(async (req, res, next) => {
 	return next();
 });
 
-const routes = fs.readdirSync("./routes");
+const routes = fs.readdirSync(path.resolve(__dirname, "routes"));
 routes.forEach(script => {
 	const name = script.slice(0, -2);
-	if(name === "index") app.use("/", require(`./routes/${script}`));
-	else app.use(`/${name}`, require(`./routes/${script}`));
+	const router = require(path.resolve(__dirname, "routes", script));
+
+	if(name === "index") app.use("/", router);
+	else app.use(`/${name}`, router);
 });
