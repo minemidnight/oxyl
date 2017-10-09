@@ -25,7 +25,7 @@ app.use(async (req, res, next) => {
 	if(!req.cookies.token) return res.redirect(req.app.locals.oauthURI);
 	let token;
 	try {
-		token = JSON.parse(token);
+		token = JSON.parse(req.cookies.token);
 	} catch(err) {
 		return res.redirect(req.app.locals.oauthURI);
 	}
@@ -33,7 +33,7 @@ app.use(async (req, res, next) => {
 	try {
 		let info = oauth.info(token, "users/@me");
 		if(info.token) {
-			res.set("Set-Cookie", `token=${JSON.stringify(info.token).replace(/"/g, `\\"`)}; Max-Age=31,540,000`);
+			res.set("Set-Cookie", `token=${JSON.stringify(info.token)}; Max-Age=31,540,000`);
 			info = info.data;
 		}
 
