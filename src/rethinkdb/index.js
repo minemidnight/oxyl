@@ -1,7 +1,10 @@
 const cluster = require("cluster");
 const { database } = require("../../config");
 const rethinkdbdash = require("rethinkdbdash");
-const r = rethinkdbdash(Object.assign(database, { silent: true })); // eslint-disable-line id-length
+
+let r; // eslint-disable-line id-length
+if(process.env.NO_RETHINK) r = {};
+else r = rethinkdbdash(Object.assign(database, { silent: true }));
 
 if(cluster.isMaster) module.exports = require("./setup")(r);
 else module.exports = require("./main")(r);

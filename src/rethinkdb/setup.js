@@ -5,6 +5,8 @@ const readdirAsync = promisify(readdir);
 const path = require("path");
 
 module.exports = async r => { // eslint-disable-line id-length
+	if(process.env.NO_RETHINK) return Promise.resolve();
+
 	const dbList = await r.dbList().run();
 	if(!~dbList.indexOf(config.database.db)) await r.dbCreate(config.database.db).run();
 
