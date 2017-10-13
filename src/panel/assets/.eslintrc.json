@@ -10,7 +10,21 @@
 		"getInfo": false,
 		"superagent": false,
 		"app": false,
+<<<<<<< Updated upstream
 		"ws": false
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+		"ws": false,
+		"Chart": false,
+		"VueCharts": false
+=======
+		"ws": false
+>>>>>>> d3eecd57f51c7e4ddaa2bdce905e4c2242fc6d5c
+=======
+		"ws": false
+>>>>>>> d3eecd57f51c7e4ddaa2bdce905e4c2242fc6d5c
+>>>>>>> Stashed changes
 	},
 	"parserOptions": {
 		"ecmaVersion": 2017,
