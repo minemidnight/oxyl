@@ -9,7 +9,10 @@
 	<body>
 		<div id="app">
 			<nav-bar></nav-bar>
-			<router-view></router-view>
+			<div class="bg-elegant" style="height:100vh;width:100vw;position:fixed;top:0;left:0;z-index:-5"></div>
+			<div class="container-fluid justify-content-center bg-elegant">
+				<router-view></router-view>
+			</div>
 		</div>
 		<script src="/js/app.bundle.js"></script>
 	</body>

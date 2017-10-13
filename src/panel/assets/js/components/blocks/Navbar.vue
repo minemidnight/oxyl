@@ -1,12 +1,17 @@
 <template>
-	<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+	<nav class="navbar navbar-expand-md navbar-dark bg-elegant-dark mb-4">
 		<ul class="navbar-nav">	
 			<li class="nav-item">
 				<router-link class="navbar-brand" :to="{ name: 'home' }">Oxyl Panel</router-link>
 			</li>
-			<li class="nav-item">
-				<router-link class="nav-link" :to="{ name: 'overview' }">Overview</router-link>
+			<li class="nav-item" :class="{ active: $route.name === 'home' }">
+				<router-link class="nav-link" :to="{ name: 'home' }">Overview</router-link>
 			</li>
+			<li class="nav-item" :class="{ active: $route.name === 'bot' }">
+				<router-link class="nav-link" :to="{ name: 'bot' }">Bot</router-link>
+			</li>
+			<li class="nav-item" :class="{ active: $route.name === 'processes' }">
+				<router-link class="nav-link" :to="{ name: 'processes' }">Processes</router-link>
 		</ul>
 	</nav>
 </template>

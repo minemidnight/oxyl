@@ -5,22 +5,25 @@ const server = new WebSocket.Server({ port: config.websocketPort });
 
 server.on("connection", ws => {
 	ws.authenicated = false;
+	ws.sendJSON = json => ws.send(JSON.stringify(json));
+
 	ws.on("message", async message => {
 		message = JSON.parse(message);
 
-		if(ws.authenicated === false && message.op !== "identify") return message.send({ op: "error", code: 401 });
+		if(ws.authenicated === false && message.op !== "identify") return message.sendJSON({ op: "error", code: 401 });
 		switch(message.op) {
 			case "identify": {
-				if(!message.token) return ws.send({ op: "error", code: 400 });
+				if(!message.token) return ws.sendJSON({ op: "error", code: 400 });
 
 				const info = await oauth.info(message.token, "users/@me");
-				if(~config.owners.indexOf(info.id)) return ws.send({ op: "error", code: 403 });
+				if(!~config.owners.indexOf(info.id)) return ws.sendJSON({ op: "error", code: 403 });
 
+				delete ws.authenicated;
 				break;
 			}
 
 			default: {
-				return message.send({ op: "error", code: 400 });
+				return message.sendJSON({ op: "error", code: 400 });
 			}
 		}
 

@@ -1,5 +1,5 @@
 config.json
-src/panel/public
+src/panel/assets/public
 
 # Logs
 logs
