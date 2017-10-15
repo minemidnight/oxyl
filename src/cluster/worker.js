@@ -1,4 +1,5 @@
 const cluster = require("cluster");
+const messageHandler = require("./workerMessages");
 
 function handleMessage(message) {
 	if(message.op !== "startup") {
@@ -7,6 +8,7 @@ function handleMessage(message) {
 	}
 
 	require(`../${message.type}/index`);
+	cluster.worker.on("message", messageHandler);
 }
 
 cluster.worker.once("message", handleMessage);

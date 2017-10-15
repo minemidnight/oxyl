@@ -8,7 +8,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.resolve(__dirname, "public")));
-require("http").createServer(app).listen(config.panelPort);
+require("http").createServer(app).listen(config.panelPort, () => process.output({ op: "ready" }));
 
 app.get("/api/info", async (req, res) => {
 	if(!req.query.path) {
@@ -49,3 +49,5 @@ app.post("/api/callback", async (req, res) => {
 });
 
 app.get("*", (req, res) => res.status(200).sendFile(path.resolve(__dirname, "index.html")));
+
+process.evalContext = { app };

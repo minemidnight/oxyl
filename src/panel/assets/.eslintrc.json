@@ -9,10 +9,7 @@
 		"API_BASE": false,
 		"getInfo": false,
 		"superagent": false,
-		"app": false,
-		"Chart": false,
-		"VueCharts": false,
-		"ws": false
+		"app": false
 	},
 	"parserOptions": {
 		"ecmaVersion": 2017,

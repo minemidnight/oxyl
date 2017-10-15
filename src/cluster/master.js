@@ -1,15 +1,24 @@
 const cluster = require("cluster");
-const messageHandler = require("./messages");
+const messageHandler = require("./masterMessages");
 const workerData = new Map();
 const workerCrashes = new Map();
 
 function spawnWorker(type) {
 	const worker = cluster.fork();
-	workerData.set(worker.id, { type });
+	workerData.set(worker.id, { type, status: "offline", id: worker.id });
 
-	worker.on("message", message => messageHandler(message, worker));
+	worker.on("message", message => messageHandler(message, worker, workerData));
 	worker.on("exit", async (code, signal) => {
-		if(signal || !code) return;
+		if(signal) return;
+
+		if(process.uptime() >= 20) {
+			process.output({
+				op: "eval",
+				target: "ws",
+				input: `context.server.broadcast({ op: "workerOffline", workerID: ${worker.id}, code: ${code} })`
+			}, workerData);
+		}
+		if(!code) return;
 
 		workerData.delete(worker.id);
 		const crashes = (workerCrashes.get(worker.id) || 0) + 1;
@@ -27,6 +36,17 @@ function spawnWorker(type) {
 
 	return new Promise(resolve => {
 		worker.once("online", () => {
+			if(process.uptime() >= 20) {
+				process.output({
+					op: "eval",
+					target: "ws",
+					input: `context.server.broadcast({ op: "workerOnline", type: "${type}", id: ${worker.id}, ` +
+					`status: "online", startTime: ${Date.now()} })`
+				}, workerData);
+			}
+
+			workerData.get(worker.id).status = "online";
+			workerData.get(worker.id).startTime = Date.now();
 			worker.send({ op: "startup", type });
 			resolve(worker);
 		});
@@ -39,3 +59,5 @@ async function init() {
 	await spawnWorker("panel");
 }
 init();
+
+process.evalContext = { workerData, workerCrashes };

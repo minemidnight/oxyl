@@ -1,21 +1,13 @@
 import VueRouter from "vue-router";
 
 const routes = [{
-	name: "bot",
-	path: "/bot",
-	component: require("./components/pages/Bot.vue")
-}, {
 	name: "forbidden",
 	path: "/forbidden",
 	component: require("./components/pages/Forbidden.vue")
 }, {
 	name: "home",
 	path: "/",
-	component: require("./components/pages/Overview.vue")
-}, {
-	name: "processes",
-	path: "/processes",
-	component: require("./components/pages/Processes.vue")
+	component: require("./components/pages/Home.vue")
 }];
 
 module.exports = Vue => {

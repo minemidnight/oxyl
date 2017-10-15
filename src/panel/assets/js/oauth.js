@@ -33,5 +33,5 @@ module.exports = async () => {
 	}
 
 	app.$router.push({ name: "home" });
-	if(!window.ws) window.ws = await require("./ws")();
+	if(!app.ws) app.ws = await require("./ws")();
 };

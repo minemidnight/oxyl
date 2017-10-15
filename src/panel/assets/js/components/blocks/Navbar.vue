@@ -5,13 +5,8 @@
 				<router-link class="navbar-brand" :to="{ name: 'home' }">Oxyl Panel</router-link>
 			</li>
 			<li class="nav-item" :class="{ active: $route.name === 'home' }">
-				<router-link class="nav-link" :to="{ name: 'home' }">Overview</router-link>
+				<router-link class="nav-link" :to="{ name: 'home' }">Home</router-link>
 			</li>
-			<li class="nav-item" :class="{ active: $route.name === 'bot' }">
-				<router-link class="nav-link" :to="{ name: 'bot' }">Bot</router-link>
-			</li>
-			<li class="nav-item" :class="{ active: $route.name === 'processes' }">
-				<router-link class="nav-link" :to="{ name: 'processes' }">Processes</router-link>
 		</ul>
 	</nav>
 </template>
