@@ -129,7 +129,7 @@ module.exports = async (message, sentFrom, workerData, spawnWorker) => {
 		}
 
 		case "startBot": {
-			const { body: { totalShards: shardCount } } = await superagent.get("https://discordapp.com/api/gateway/bot")
+			const { body: { shards: shardCount } } = await superagent.get("https://discordapp.com/api/gateway/bot")
 				.set("Authorization", config.token);
 
 			const coreCount = os.cpus().length;
@@ -204,7 +204,7 @@ module.exports = async (message, sentFrom, workerData, spawnWorker) => {
 
 		case "ready": {
 			workerData.get(sentFrom.id).status = "ready";
-			if(process.uptime() >= 20) {
+			if(process.uptime() >= 10) {
 				process.output({
 					op: "eval",
 					target: "ws",

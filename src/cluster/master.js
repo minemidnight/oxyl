@@ -12,7 +12,7 @@ function spawnWorker(data) {
 	worker.on("exit", async (code, signal) => {
 		if(signal) return;
 
-		if(process.uptime() >= 20) {
+		if(process.uptime() >= 10) {
 			process.output({
 				op: "eval",
 				target: "ws",
@@ -37,7 +37,7 @@ function spawnWorker(data) {
 
 	return new Promise(resolve => {
 		worker.once("online", () => {
-			if(process.uptime() >= 20) {
+			if(process.uptime() >= 10) {
 				process.output({
 					op: "eval",
 					target: "ws",

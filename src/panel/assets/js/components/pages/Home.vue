@@ -12,7 +12,7 @@
 					<div class="card-body bg-elegant">
 						<h5 class="card-title">Type: {{ worker.type }}</h5>
 						<p class="card-text" v-if="worker.status !== 'offline'">Memory Usage (GiB): {{ worker.heap / Math.pow(1024, 3) }}</p>
-						<p class="card-text" v-if="worker.type === 'bot'">Shards: {{ worker.shards }}</p>
+						<p class="card-text" v-if="worker.type === 'bot' && worker.shards">Shards: {{ worker.shards.substring(worker.shards.indexOf(" ") + 1) }}</p>
 						<p class="card-text" v-if="worker.status !== 'offline'">Start Time: {{ new Date(worker.startTime).toLocaleString("en-US") }}</p>
 					</div>
 				</div>

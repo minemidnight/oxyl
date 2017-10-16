@@ -22,7 +22,7 @@ module.exports = async () => {
 			}
 
 			case "workerOnline": {
-				// app.workers.push(message);
+				app.workers.push(message);
 				app.logs.push(`Worker ${message.id} online, type ${message.type}`);
 
 				break;

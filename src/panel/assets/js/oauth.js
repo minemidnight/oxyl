@@ -16,7 +16,7 @@ module.exports = async () => {
 		const { code } = app.$route.query;
 		if(!code) {
 			window.location.href = `https://discordapp.com/oauth2/authorize?response_type=code&redirect_uri=` +
-				`${encodeURIComponent(window.location.origin)}&scope=identify&client_id=255832257519026178`;
+				`${encodeURIComponent(window.location.origin)}&scope=identify&client_id=297479151437217802`;
 			return;
 		}
 

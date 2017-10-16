@@ -31901,9 +31901,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         staticClass: "card-title"
       }, [_vm._v("Type: " + _vm._s(worker.type))]), _vm._v(" "), (worker.status !== 'offline') ? _c('p', {
         staticClass: "card-text"
-      }, [_vm._v("Memory Usage (GiB): " + _vm._s(worker.heap / Math.pow(1024, 3)))]) : _vm._e(), _vm._v(" "), (worker.type === 'bot') ? _c('p', {
+      }, [_vm._v("Memory Usage (GiB): " + _vm._s(worker.heap / Math.pow(1024, 3)))]) : _vm._e(), _vm._v(" "), (worker.type === 'bot' && worker.shards) ? _c('p', {
         staticClass: "card-text"
-      }, [_vm._v("Shards: " + _vm._s(worker.shards))]) : _vm._e(), _vm._v(" "), (worker.status !== 'offline') ? _c('p', {
+      }, [_vm._v("Shards: " + _vm._s(worker.shards.substring(worker.shards.indexOf(" ") + 1)))]) : _vm._e(), _vm._v(" "), (worker.status !== 'offline') ? _c('p', {
         staticClass: "card-text"
       }, [_vm._v("Start Time: " + _vm._s(new Date(worker.startTime).toLocaleString("en-US")))]) : _vm._e()])])])
     }))
@@ -32088,7 +32088,7 @@ module.exports = _asyncToGenerator(regeneratorRuntime.mark(function _callee2() {
 						break;
 					}
 
-					window.location.href = "https://discordapp.com/oauth2/authorize?response_type=code&redirect_uri=" + (encodeURIComponent(window.location.origin) + "&scope=identify&client_id=255832257519026178");
+					window.location.href = "https://discordapp.com/oauth2/authorize?response_type=code&redirect_uri=" + (encodeURIComponent(window.location.origin) + "&scope=identify&client_id=297479151437217802");
 					return _context2.abrupt("return");
 
 				case 5:
@@ -32190,6 +32190,7 @@ module.exports = _asyncToGenerator(regeneratorRuntime.mark(function _callee() {
 
 							case "workerOnline":
 								{
+									app.workers.push(message);
 									app.logs.push("Worker " + message.id + " online, type " + message.type);
 
 									break;

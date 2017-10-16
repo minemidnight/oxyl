@@ -19,10 +19,10 @@
   "homepage": "https://github.com/minemidnight/oxyl#readme",
   "dependencies": {
     "body-parser": "^1.18.2",
-    "eris": "^0.7.2",
+    "eris": "^0.8.0",
     "eris-additions": "^1.2.5",
     "eris-lavalink": "git+https://github.com/briantanner/eris-lavalink.git",
-    "eris-wiggle": "0.0.2",
+    "eris-wiggle": "git+https://github.com/minemidnight/eris-wiggle.git",
     "express": "^4.16.2",
     "rethinkdbdash": "^2.3.31",
     "superagent": "^3.6.3",
