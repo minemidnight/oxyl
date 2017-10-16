@@ -15,14 +15,14 @@ module.exports = async () => {
 		switch(op) {
 			case "workerOffline": {
 				const worker = app.workers.find(({ id }) => id === message.workerID);
-				worker.status = "offline";
 				app.logs.push(`Worker ${worker.id} died, code ${message.code}`);
+				worker.status = "offline";
 
 				break;
 			}
 
 			case "workerOnline": {
-				app.workers.push(message);
+				// app.workers.push(message);
 				app.logs.push(`Worker ${message.id} online, type ${message.type}`);
 
 				break;

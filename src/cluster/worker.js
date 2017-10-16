@@ -7,7 +7,7 @@ function handleMessage(message) {
 		return;
 	}
 
-	require(`../${message.type}/index`);
+	process.context = require(`../${message.type}/index`);
 	cluster.worker.on("message", messageHandler);
 }
 

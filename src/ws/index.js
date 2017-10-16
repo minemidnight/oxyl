@@ -39,15 +39,21 @@ server.on("connection", client => {
 				break;
 			}
 
-			case "botStartup": {
+			case "startBot": {
+				await process.output({ op: "startBot" });
+
 				break;
 			}
 
-			case "botHardRestart": {
+			case "restartBotHard": {
+				await process.output({ op: "restartBotHard" });
+
 				break;
 			}
 
-			case "botRollingRestart": {
+			case "restartBotRolling": {
+				await process.output({ op: "restartBotRolling" });
+
 				break;
 			}
 
@@ -57,33 +63,16 @@ server.on("connection", client => {
 				break;
 			}
 
-			case "git-pull": {
+			case "exec": {
 				try {
-					const { stdout } = await exec("git pull", {
+					const { stdout } = await exec(message.command, {
 						cwd: path.resolve(__dirname, "..", ".."),
 						maxBuffer: Infinity
 					});
 
-					client.sendJSON({ op: "log", message: `git pull successful:\n${stdout}` });
+					client.sendJSON({ op: "log", message: stdout });
 				} catch(err) {
-					client.sendJSON({ op: "log", message: `git pull errored:\n${err.message}` });
-				}
-
-				break;
-			}
-
-			case "npm-i": {
-				client.sendJSON({ op: "log", message: `npm installing...` });
-
-				try {
-					const { stdout } = await exec("npm i", {
-						cwd: path.resolve(__dirname, "..", ".."),
-						maxBuffer: Infinity
-					});
-
-					client.sendJSON({ op: "log", message: `npm i successful:\n${stdout}` });
-				} catch(err) {
-					client.sendJSON({ op: "log", message: `npm i errored:\n${err.message}` });
+					client.sendJSON({ op: "log", message: err.message });
 				}
 
 				break;
@@ -101,6 +90,12 @@ server.on("connection", client => {
 				const targetValue = message.id;
 				await process.output({ op: "eval", target: "worker", targetValue, input: () => process.exit(1) });
 				client.sendJSON({ op: "log", message: `Worker ${targetValue} restarted` });
+
+				break;
+			}
+
+			case "startSite": {
+				await process.output({ op: "startSite" });
 
 				break;
 			}
@@ -149,4 +144,4 @@ setInterval(async () => {
 }, 30000);
 
 process.output({ op: "ready" });
-process.evalContext = { server };
+module.exports = { server };

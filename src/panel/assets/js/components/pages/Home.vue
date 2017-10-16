@@ -20,28 +20,31 @@
 		</div>
 
 		<h2 class="text-white mt-4">Logs</h2>
-		<div class="jumbotron p-2" style="height:350px;overflow-y:auto">
-			<button type="button" class="btn btn-primary" @click="logs = []" style="position:absolute">Clear</button>
-			<pre v-for="(log, index) in logs" :key="log">
-				<var>{{ new Date().toLocaleString("en-US") }}</var>
-				<samp>{{logs[logs.length - 1 - index]}}</samp>
-			</pre>
+		<div class="jumbotron p-0 terminal">
+			<div class="terminal-container">
+				<div class="terminal-lines p-2">
+					<pre v-for="log in logs" :key="log">{{ log }}</pre>
+				</div>
+
+				<div class="input">
+					<input @keyup.enter="ws.sendJSON({ op: 'exec', command: $event.target.value });$event.target.value = ''" />
+				</div>
+			</div>
 		</div>
 
 		<h2 class="text-white mt-4">Actions</h2>
 		<div class="container mb-2 d-flex justify-content-center">
-			<h5 class="mr-auto text-white">Other</h5>
+			<h5 class="mr-auto text-white">Bot</h5>
 			<div class="btn-group" role="group">
-				<button type="button" class="btn btn-primary" @click="ws.sendJSON({ op: 'git-pull' })">git pull</button>
-				<button type="button" class="btn btn-secondary" @click="ws.sendJSON({ op: 'npm-i' })">npm i</button>
+				<button type="button" class="btn btn-success" v-if="botData.startable" @click="ws.sendJSON({ op: 'startBot' })">Start</button>
+				<button type="button" class="btn btn-danger" v-if="botData.restartable" @click="ws.sendJSON({ op: 'restartBotHard' })">Hard Restart</button>
+				<button type="button" class="btn btn-warning" v-if="botData.restartable" @click="ws.sendJSON({ op: 'restartBotRolling' })">Rolling Restart</button>
 			</div>
 		</div>
 		<div class="container mb-2 d-flex justify-content-center">
-			<h5 class="mr-auto text-white">Bot</h5>
+			<h5 class="mr-auto text-white">Site</h5>
 			<div class="btn-group" role="group">
-				<button type="button" class="btn btn-success" v-if="botData.startable" @click="ws.sendJSON({ op: 'botStartup' })">Start</button>
-				<button type="button" class="btn btn-danger" v-if="botData.restartable" @click="ws.sendJSON({ op: 'botHardRestart' })">Hard Restart</button>
-				<button type="button" class="btn btn-warning" v-if="botData.restartable" @click="ws.sendJSON({ op: 'botRollingRestart' })">Rolling Restart</button>
+				<button type="button" class="btn btn-success" @click="ws.sendJSON({ op: 'startSite' })">Start</button>
 			</div>
 		</div>
 		<div class="container mb-5 d-flex justify-content-center">
@@ -63,6 +66,14 @@ export default {
 			const chunkified = [];
 			for(let i = 0; i < array.length; i += size) chunkified.push(array.slice(i, i + size));
 			return chunkified;
+		}
+	},
+	watch: {
+		logs: (val, oldVal) => {
+			app.$nextTick(() => {
+				const div = document.querySelector(".terminal-container .terminal-lines")
+				div.scrollTop = div.scrollHeight;
+			});
 		}
 	}
 }

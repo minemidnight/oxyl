@@ -3,11 +3,12 @@ const messageHandler = require("./masterMessages");
 const workerData = new Map();
 const workerCrashes = new Map();
 
-function spawnWorker(type) {
+function spawnWorker(data) {
 	const worker = cluster.fork();
-	workerData.set(worker.id, { type, status: "offline", id: worker.id });
+	data = Object.assign(data, { status: "offline", id: worker.id });
+	workerData.set(worker.id, data);
 
-	worker.on("message", message => messageHandler(message, worker, workerData));
+	worker.on("message", message => messageHandler(message, worker, workerData, spawnWorker));
 	worker.on("exit", async (code, signal) => {
 		if(signal) return;
 
@@ -25,7 +26,7 @@ function spawnWorker(type) {
 		workerCrashes.delete(worker.id);
 		if(crashes >= 3) return;
 
-		const newWorker = await spawnWorker(type);
+		const newWorker = await spawnWorker(data);
 		workerCrashes.set(newWorker.id, crashes);
 
 		await new Promise(resolve => setTimeout(resolve, 30000));
@@ -40,14 +41,15 @@ function spawnWorker(type) {
 				process.output({
 					op: "eval",
 					target: "ws",
-					input: `context.server.broadcast({ op: "workerOnline", type: "${type}", id: ${worker.id}, ` +
+					input: `context.server.broadcast({ op: "workerOnline", type: "${data.type}", id: ${worker.id}, ` +
 					`status: "online", startTime: ${Date.now()} })`
 				}, workerData);
 			}
 
-			workerData.get(worker.id).status = "online";
-			workerData.get(worker.id).startTime = Date.now();
-			worker.send({ op: "startup", type });
+			data = workerData.get(worker.id);
+			data.status = "online";
+			data.startTime = Date.now();
+			worker.send(Object.assign({}, data, { op: "startup" }));
 			resolve(worker);
 		});
 	});
@@ -55,8 +57,8 @@ function spawnWorker(type) {
 
 async function init() {
 	await require("../rethinkdb/index");
-	await spawnWorker("ws");
-	await spawnWorker("panel");
+	await spawnWorker({ type: "ws" });
+	await spawnWorker({ type: "panel" });
 }
 init();
 
