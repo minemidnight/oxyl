@@ -1,0 +1,5 @@
+{
+	"name": "feeds",
+	"primary": "id",
+	"indexes": ["guilds"]
+}

@@ -42,6 +42,9 @@ module.exports = async ({ shardStart, shardEnd, shardCount, shards }) => {
 		})
 		.connect();
 
+	client.locals.config = config;
 	client.locals.shardDisplay = shards;
 	return { client };
 };
+
+process.on("unhandledRejection", err => console.error(err.stack));

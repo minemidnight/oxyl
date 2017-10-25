@@ -59,6 +59,7 @@ async function init() {
 	await require("../rethinkdb/index");
 	await spawnWorker({ type: "ws" });
 	await spawnWorker({ type: "panel" });
+	await spawnWorker({ type: "feeds" });
 }
 init();
 

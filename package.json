@@ -24,6 +24,7 @@
     "eris-lavalink": "git+https://github.com/briantanner/eris-lavalink.git",
     "eris-wiggle": "git+https://github.com/minemidnight/eris-wiggle.git",
     "express": "^4.16.2",
+    "ioredis": "^3.1.4",
     "rethinkdbdash": "^2.3.31",
     "superagent": "^3.6.3",
     "ws": "^3.2.0"
