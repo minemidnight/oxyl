@@ -1,0 +1,4 @@
+{
+	"prefix": "errors.",
+	"notCreator": "You can't run this command (creators only)"
+}

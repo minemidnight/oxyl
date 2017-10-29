@@ -1,7 +1,0 @@
-{
-	"commands.ping": "Pong! `{{latency}}ms`",
-	"commands.ping.pinging": "pinging...",
-	"commands.notCreator": "You can't run this command (creators only)",
-	"description.ping": "Test Oxyl's responsiveness",
-	"description.eval": "Evaluate code"
-}

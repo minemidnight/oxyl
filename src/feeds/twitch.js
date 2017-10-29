@@ -2,7 +2,7 @@ const clientID = "jzkbprff40iqj646a697cyrvl0zt2m6";
 const createMessage = require("./createMessage");
 const superagent = require("superagent");
 module.exports = redis => {
-	setInterval(() => checkChannels(redis), 30000);
+	setInterval(() => checkChannels(redis), 60000);
 };
 
 async function checkChannels(redis) {
@@ -18,7 +18,7 @@ async function checkChannels(redis) {
 			limit: 100
 		}));
 
-	(await Promise.all(requests)).map(res => res.body.stream)
+	(await Promise.all(requests)).map(res => res.body.streams)
 		.reduce((a, b) => a.concat(b), [])
 		.forEach(async stream => {
 			const index = onlineData.indexOf(`feeds:twitchData:${stream.channel.name}`);
@@ -33,12 +33,11 @@ async function checkChannels(redis) {
 			}
 		});
 
-	(await Promise.all(Object.keys(onlineData)
-		.map(key => key.substring(key.lastIndexOf(":") + 1))
+	onlineData.map(key => key.substring(key.lastIndexOf(":") + 1))
 		.map(async key => Promise.all([
-			superagent.get(`https://api.twitch.tv/kraken/channels/${key}`).set("Client-ID", clientID),
+			await superagent.get(`https://api.twitch.tv/kraken/channels/${key}`).set("Client-ID", clientID),
 			JSON.parse(await redis.get(`feeds:twitchData:${key}`))
-		]))))
+		]))
 		.forEach(async ([channelData, redisData]) => {
 			sendOffline(redis, {
 				channel: channelData.name,
@@ -52,7 +51,7 @@ async function checkChannels(redis) {
 }
 
 async function sendOffline(redis, data) {
-	const channels = JSON.parse(await redis.get(`feeds:twitchData:${data.channel}`));
+	const channels = JSON.parse(await redis.get(`feeds:twitch:${data.channel}`));
 	const embed = {
 		color: 0xff3333,
 		url: data.url,
@@ -76,12 +75,12 @@ async function sendOffline(redis, data) {
 }
 
 async function sendOnline(redis, stream) {
-	const channels = JSON.parse(await redis.get(`feeds:twitchData:${stream.channel.name}`));
+	const channels = JSON.parse(await redis.get(`feeds:twitch:${stream.channel.name}`));
 	const embed = {
 		color: 0x56d696,
 		url: stream.channel.url,
 		title: `${stream.channel.display_name} went online`,
-		thumbnail: { url: stream.preview.large }
+		image: { url: stream.preview.large }
 	};
 
 	channels.forEach(channel => createMessage(channel, embed));

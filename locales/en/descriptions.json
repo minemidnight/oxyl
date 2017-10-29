@@ -1,0 +1,6 @@
+{
+	"prefix": "description.",
+	"eval": "Evaluate code",
+	"help": "List commands, or get info on a certain one",
+	"ping": "Test Oxyl's responsiveness"
+}

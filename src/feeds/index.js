@@ -1,12 +1,13 @@
 const config = require("../../config");
-const Redis = require("ioredis");
-const redis = new Redis({ db: config.redisDB });
-const r = require("../rethinkdb/index"); // eslint-disable-line id-length
+const r = require("../rethinkdb/index");
 
-require("./reddit")(r, redis);
-require("./twitch")(r, redis);
-require("./twitter")(r, redis);
-require("./youtube")(r, redis);
+let Redis;
+if(process.env.DEV) Redis = require("ioredis-mock");
+else Redis = require("ioredis");
+const redis = new Redis({ db: config.redisDB });
+
+require("./reddit")(redis);
+require("./twitch")(redis);
 
 async function init() {
 	let feeds = await r.table("feeds").run();
@@ -20,12 +21,15 @@ async function init() {
 	}, {});
 
 	const multi = redis.multi();
-	Object.entries(feeds).forEach((service, value) => {
-		Object.entries(value).forEach((identifier, subbed) => {
+	Object.entries(feeds).forEach(([service, value]) => {
+		Object.entries(value).forEach(([identifier, subbed]) => {
 			multi.set(`feeds:${service}:${identifier}`, JSON.stringify(subbed));
 		});
 	});
 
-	multi.exec();
+	await multi.exec();
+	process.send({ op: "ready" });
 }
 init();
+
+process.on("unhandledRejection", err => console.log(err.stack));

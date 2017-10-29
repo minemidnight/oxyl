@@ -1,13 +1,13 @@
 module.exports = {
-	run: async ctx => {
-		if(ctx.flags.https) {
+	run: async ({ channel, flags, guild, reply, t }) => {
+		if(flags.https) {
 			const now = Date.now();
-			const msg = await ctx.reply(ctx.t("commands.ping", { latency: ctx.t("commands.ping.pinging") }));
-			msg.edit(ctx.t("commands.ping", { latency: Date.now() - now }));
+			const msg = await reply(t("commands.ping", { latency: t("commands.ping.pinging") }));
+			msg.edit(t("commands.ping", { latency: Date.now() - now }));
 			return undefined;
 		} else {
-			const latency = ctx.guild ? ctx.guild.shard.latency : ctx.channel._client.shards.get(0).latency;
-			return ctx.t("commands.ping", { latency });
+			const latency = guild ? guild.shard.latency : channel._client.shards.get(0).latency;
+			return t("commands.ping", { latency });
 		}
 	},
 	flags: [{

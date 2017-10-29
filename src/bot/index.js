@@ -4,7 +4,8 @@ require("eris-additions")(require("eris"), {
 		"Member.bannable",
 		"Member.kickable",
 		"Member.punishable",
-		"Role.addable"
+		"Role.addable",
+		"User.createMessage"
 	]
 });
 
