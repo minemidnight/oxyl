@@ -2,14 +2,14 @@ const config = require("../../config");
 const r = require("../rethinkdb/index");
 
 let Redis;
-if(process.env.DEV) Redis = require("ioredis-mock");
+if(process.env.NODE_ENV === "development") Redis = require("ioredis-mock");
 else Redis = require("ioredis");
 const redis = new Redis({ db: config.redisDB });
 
 require("./reddit")(redis);
 require("./twitch")(redis);
 
-async function init() {
+module.exports = async () => {
 	let feeds = await r.table("feeds").run();
 	feeds = feeds.reduce((a, { id: [service, identifier, channel], type }) => {
 		if(type) service = `${service}:${type}`;
@@ -29,7 +29,5 @@ async function init() {
 
 	await multi.exec();
 	process.send({ op: "ready" });
-}
-init();
-
-process.on("unhandledRejection", err => console.log(err.stack));
+	return { redis };
+};

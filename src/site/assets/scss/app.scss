@@ -1,0 +1,18 @@
+@import "variables";
+@import "node_modules/bootstrap/scss/bootstrap";
+@import "node_modules/font-awesome/scss/font-awesome";
+@import url(https://fonts.googleapis.com/css?family=Raleway:30);
+@import url(https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-flash.min.css);
+@import url(https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css);
+
+body {
+	font-family: "Raleway", sans-serif;
+}
+
+.bg-elegant {
+	background: #2e2e2e;
+}
+
+.bg-elegant-dark {
+	background: #212121;
+}

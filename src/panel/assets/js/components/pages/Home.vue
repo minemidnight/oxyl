@@ -47,12 +47,6 @@
 				<button type="button" class="btn btn-success" @click="ws.sendJSON({ op: 'startSite' })">Start</button>
 			</div>
 		</div>
-		<div class="container mb-5 d-flex justify-content-center">
-			<h5 class="mr-auto text-white">Redis</h5>
-			<div class="btn-group" role="group">
-				<button type="button" class="btn btn-info" @click="ws.sendJSON({ op: 'clearRedis' })">Clear Cache</button>
-			</div>
-		</div>
 	</div>
 </template>
 

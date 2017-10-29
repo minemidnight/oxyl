@@ -3,14 +3,21 @@ const path = require("path");
 const webpack = require("webpack");
 
 module.exports = {
-	entry: [
-		"babel-polyfill",
-		path.resolve("src", "panel", "assets", "js", "app.js"),
-		path.resolve("src", "panel", "assets", "scss", "app.scss")
-	],
+	entry: {
+		[path.join("panel", "public")]: [
+			"babel-polyfill",
+			path.resolve("src", "panel", "assets", "js", "app.js"),
+			path.resolve("src", "panel", "assets", "scss", "app.scss")
+		],
+		[path.join("site", "public")]: [
+			"babel-polyfill",
+			path.resolve("src", "site", "assets", "js", "app.js"),
+			path.resolve("src", "site", "assets", "scss", "app.scss")
+		]
+	},
 	output: {
-		filename: "app.bundle.js",
-		path: path.resolve(__dirname, "src", "panel", "public", "js")
+		filename: path.join("[name]", "js", "app.bundle.js"),
+		path: path.resolve(__dirname, "src")
 	},
 	resolve: {
 		alias: { vue$: "vue/dist/vue.esm.js" },
@@ -26,7 +33,11 @@ module.exports = {
 			use: { loader: "babel-loader" }
 		}, {
 			test: /\.scss$/,
-			include: [/node_modules/, path.resolve(__dirname, "src", "panel", "assets", "scss")],
+			include: [
+				/node_modules/,
+				path.resolve(__dirname, "src", "panel", "assets", "scss"),
+				path.resolve(__dirname, "src", "site", "assets", "scss")
+			],
 			loader: ExtractTextPlugin.extract({
 				fallback: "style-loader",
 				use: ["css-loader", "sass-loader"]
@@ -40,10 +51,7 @@ module.exports = {
 		}]
 	},
 	plugins: [
-		new ExtractTextPlugin(path.relative(
-			path.resolve(__dirname, "src", "panel", "public", "js"),
-			path.resolve(__dirname, "src", "panel", "public", "css", "app.bundle.css")
-		)),
+		new ExtractTextPlugin(path.join("[name]", "css", "app.bundle.css")),
 		new webpack.DefinePlugin({ "process.env": { NODE_ENV: `'${process.env.NODE_ENV}'` } })
 	]
 };

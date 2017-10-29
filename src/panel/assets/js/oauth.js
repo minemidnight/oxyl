@@ -12,11 +12,12 @@ window.getInfo = async path => {
 };
 
 module.exports = async () => {
+	const { body: { clientID, owners } } = await superagent.get(`${API_BASE}/config`);
 	if(!localStorage.token) {
 		const { code } = app.$route.query;
 		if(!code) {
 			window.location.href = `https://discordapp.com/oauth2/authorize?response_type=code&redirect_uri=` +
-				`${encodeURIComponent(window.location.origin)}&scope=identify&client_id=297479151437217802`;
+				`${encodeURIComponent(window.location.origin)}&scope=identify&client_id=${clientID}`;
 			return;
 		}
 
@@ -27,7 +28,7 @@ module.exports = async () => {
 
 	const { id } = await getInfo("/users/@me");
 
-	if(!~["155112606661607425"].indexOf(id)) {
+	if(!~owners.indexOf(id)) {
 		window.location.pathname = app.$router.push({ name: "forbidden" });
 		return;
 	}
