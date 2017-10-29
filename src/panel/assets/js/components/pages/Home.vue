@@ -36,15 +36,8 @@
 		<div class="container mb-2 d-flex justify-content-center">
 			<h5 class="mr-auto text-white">Bot</h5>
 			<div class="btn-group" role="group">
-				<button type="button" class="btn btn-success" v-if="botData.startable" @click="ws.sendJSON({ op: 'startBot' })">Start</button>
-				<button type="button" class="btn btn-danger" v-if="botData.restartable" @click="ws.sendJSON({ op: 'restartBotHard' })">Hard Restart</button>
-				<button type="button" class="btn btn-warning" v-if="botData.restartable" @click="ws.sendJSON({ op: 'restartBotRolling' })">Rolling Restart</button>
-			</div>
-		</div>
-		<div class="container mb-2 d-flex justify-content-center">
-			<h5 class="mr-auto text-white">Site</h5>
-			<div class="btn-group" role="group">
-				<button type="button" class="btn btn-success" @click="ws.sendJSON({ op: 'startSite' })">Start</button>
+				<button type="button" class="btn btn-danger" @click="ws.sendJSON({ op: 'restartBotHard' })">Hard Restart</button>
+				<button type="button" class="btn btn-warning" @click="ws.sendJSON({ op: 'restartBotRolling' })">Rolling Restart</button>
 			</div>
 		</div>
 	</div>

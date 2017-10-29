@@ -28,12 +28,6 @@ module.exports = async (client, message) => {
 			break;
 		}
 
-		case "startBot": {
-			await process.output({ op: "startBot" });
-
-			break;
-		}
-
 		case "restartBotHard": {
 			await process.output({ op: "restartBotHard" });
 
@@ -73,12 +67,6 @@ module.exports = async (client, message) => {
 			const targetValue = message.id;
 			await process.output({ op: "eval", target: "worker", targetValue, input: () => process.exit(1) });
 			client.sendJSON({ op: "log", message: `Worker ${targetValue} restarted` });
-
-			break;
-		}
-
-		case "startSite": {
-			await process.output({ op: "startSite" });
 
 			break;
 		}

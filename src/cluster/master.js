@@ -60,6 +60,8 @@ async function init() {
 	await spawnWorker({ type: "ws" });
 	await spawnWorker({ type: "panel" });
 	await spawnWorker({ type: "feeds" });
+	await spawnWorker({ type: "site" });
+	await process.output({ op: "startBot" });
 }
 init();
 

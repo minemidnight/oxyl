@@ -196,12 +196,6 @@ module.exports = async (message, sentFrom, workerData, spawnWorker) => {
 			break;
 		}
 
-		case "startSite": {
-			await spawnWorker({ type: "site" });
-
-			break;
-		}
-
 		case "ready": {
 			workerData.get(sentFrom.id).status = "ready";
 			if(process.uptime() >= 10) {
