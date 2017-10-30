@@ -61,7 +61,7 @@ async function init() {
 	await spawnWorker({ type: "panel" });
 	await spawnWorker({ type: "feeds" });
 	await spawnWorker({ type: "site" });
-	await process.output({ op: "startBot" });
+	await process.output({ op: "startBot" }, workerData, spawnWorker);
 }
 init();
 

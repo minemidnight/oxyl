@@ -1,5 +1,5 @@
 module.exports = (waitingOutputs, type) => {
-	process.output = (message, target) => {
+	process.output = (message, target, spawnWorker) => {
 		const id = (process.hrtime().reduce((a, b) => a + b, 0) + Date.now()).toString(36);
 		message.id = id;
 
@@ -13,7 +13,7 @@ module.exports = (waitingOutputs, type) => {
 
 		if(type === "worker") process.send(message);
 		else if(!(target instanceof Map)) target.send(message);
-		else require("./masterMessages")(message, undefined, target);
+		else require("./masterMessages")(message, undefined, target, spawnWorker);
 
 		return new Promise((resolve, reject) => {
 			waitingOutputs.set(id, result => {
