@@ -8,22 +8,40 @@
 		<div class="navbar-collapse collapse" id="main-nav">
 			<ul class="navbar-nav">	
 				<li class="nav-item">
-					<router-link class="nav-link" :class="{ active: $route.name === 'home' }" :to="{ name: 'home' }">Home</router-link>
+					<router-link class="nav-link" :class="{ active: $route.name === 'home' }" :to="{ name: 'home' }">
+						<i class="fa fa-home" aria-hidden="true"></i>
+						Home
+					</router-link>
 				</li>
 				<li class="nav-item">
-					<router-link class="nav-link" :class="{ active: $route.name === 'commands' }" :to="{ name: 'commands' }">Commands</router-link>
+					<router-link class="nav-link" :class="{ active: $route.name === 'commands' }" :to="{ name: 'commands' }">
+						<i class="fa fa-home" aria-hidden="true"></i>
+						Commands
+					</router-link>
 				</li>
 				<li class="nav-item">
-					<router-link class="nav-link" :class="{ active: $route.name === 'config' }" :to="{ name: 'config' }">Configuration</router-link>
+					<router-link class="nav-link" :class="{ active: $route.name === 'config' }" :to="{ name: 'config' }">
+						<i class="fa fa-cogs" aria-hidden="true"></i>
+						Configuration
+					</router-link>
 				</li>
 				<li class="nav-item">
-					<router-link class="nav-link" :class="{ active: $route.name === 'patreon' }" :to="{ name: 'patreon' }">Patreon</router-link>
+					<router-link class="nav-link" :class="{ active: $route.name === 'patreon' }" :to="{ name: 'patreon' }">
+						<i class="fa fa-usd" aria-hidden="true"></i>
+						Patreon
+					</router-link>
 				</li>
 				<li class="nav-item">
-					<router-link class="nav-link" :class="{ active: $route.name === 'invite' }" :to="{ name: 'invite' }">Invite</router-link>
+					<router-link class="nav-link" :class="{ active: $route.name === 'invite' }" :to="{ name: 'invite' }">
+						<i class="fa fa-sign-in" aria-hidden="true"></i>
+						Invite
+					</router-link>
 				</li>
 				<li class="nav-item">
-					<router-link class="nav-link" :class="{ active: $route.name === 'support' }" :to="{ name: 'support' }">Support</router-link>
+					<router-link class="nav-link" :class="{ active: $route.name === 'support' }" :to="{ name: 'support' }">
+						<i class="fa fa-question" aria-hidden="true"></i>
+						Support
+					</router-link>
 				</li>
 			</ul>
 		</div>
