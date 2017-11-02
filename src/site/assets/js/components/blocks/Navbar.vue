@@ -1,5 +1,5 @@
 <template>
-	<nav class="navbar navbar-expand-md navbar-dark bg-elegant-dark mb-4 ">
+	<nav class="navbar navbar-expand-md navbar-dark color-630">
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-nav" aria-controls="main-nav" aria-expanded="false">
 			<span class="navbar-toggler-icon"></span>
 		</button>
@@ -20,7 +20,7 @@
 					</router-link>
 				</li>
 				<li class="nav-item">
-					<router-link class="nav-link" :class="{ active: $route.name === 'config' }" :to="{ name: 'config' }">
+					<router-link class="nav-link" :class="{ active: $route.path.startsWith('/config') }" :to="{ name: 'general' }">
 						<i class="fa fa-cogs" aria-hidden="true"></i>
 						Configuration
 					</router-link>

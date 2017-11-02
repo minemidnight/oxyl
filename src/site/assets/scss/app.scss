@@ -9,10 +9,25 @@ body {
 	font-family: "Raleway", sans-serif;
 }
 
-.bg-elegant {
-	background: #2e2e2e;
+.color {
+	&-100 { background: #f5f5f5; }
+	&-200 { background: #d5d5d5; }
+	&-300 { background: #ababab; }
+	&-400 { background: #585858; }
+	&-500 { background: #2e2e2e; }
+	&-600 { background: #1f1f1f; }
+	&-630 { background: #1b1b1b; }
+	&-700 { background: #121212; }
+	&-800 { background: #0e0e0e; }
+	&-900 { background: #020202; }
 }
 
-.bg-elegant-dark {
-	background: #212121;
+.dark-pills {
+	.nav-link {
+		color: rgba(255, 255, 255, .5);
+	}
+
+	.nav-link.active {
+		background: rgba(0, 0, 0, .3);
+	}
 }
