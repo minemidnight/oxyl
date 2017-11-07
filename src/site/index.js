@@ -1,8 +1,9 @@
-const api = require("./api");
+const api = require("./api/index");
 const bodyParser = require("body-parser");
 const config = require("../../config");
 const express = require("express");
 const path = require("path");
+const r = require("../rethinkdb/index");
 
 let Redis;
 if(process.env.NODE_ENV === "development") Redis = require("ioredis-mock");
@@ -11,6 +12,7 @@ const redis = new Redis({ db: config.redisDB });
 
 const app = express();
 app.locals.config = config;
+app.locals.r = r;
 app.locals.redis = redis;
 app.set("env", process.env.NODE_ENV);
 app.set("x-powered-by", false);

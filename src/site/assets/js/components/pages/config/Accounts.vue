@@ -30,7 +30,7 @@ module.exports = {
 	async created() {
 		const updatedAccounts = [];
 		for(let i = 0; i < this.accounts.length; i++) {
-			const { error, body, token } = await apiCall("get", "info", {
+			const { error, body, token } = await apiCall("get", "oauth/info", {
 				query: { path: "/users/@me" },
 				token: this.accounts[i]
 			});
