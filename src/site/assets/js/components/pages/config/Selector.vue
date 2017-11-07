@@ -1,11 +1,11 @@
 <template>
 	<div>
-		<div class="container" v-if="loaded">
+		<div class="container-fluid" v-if="loaded">
 			<div class="card-group my-2" :key="i" v-for="(guildGroup, i) in chunkify(guilds, [4, 3, 2].find(size => !(guilds.length % size)) || 4)">
 				<router-link class="card color-600 color-hover-630 color-text color-text-hover-100 transition no-decoration" style="cursor:pointer" :key="index" v-for="(guild, index) in guildGroup" :to="{ name: 'dashboard', params: { guild: guild.id } }">
-					<div class="card-body d-flex justify-content-center">
-						<h4 class="card-title">{{ guild.name }}</h4>
-						<img v-if="guild.icon" class="rounded-circle" :src="`https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`" style="max-height:96px;max-width:96px" />
+					<div class="card-body d-flex align-items-center">
+						<h4 class="card-title text-truncate">{{ guild.name }}</h4>
+						<img v-if="guild.icon" class="rounded-circle ml-auto" :src="`https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`" style="max-height:96px;max-width:96px" />
 					</div>
 				</router-link>
 			</div>

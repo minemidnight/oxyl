@@ -1,7 +1,7 @@
 <template>
 	<div class="row">
-		<nav class="col-2 px-0 color-600">
-			<ul class="nav nav-pills flex-column text-light p-2 dark-pills">
+		<nav class="col-2 px-0 color-600 collapse show d-none d-lg-flex flex-column">
+			<ul class="nav nav-pills text-light p-2 dark-pills flex-column">
 				<li class="nav-item">
 					<router-link class="nav-link navbar-brand color-text-hover-100 transition" :to="{ name: 'accounts' }">
 						Switch Account
@@ -49,6 +49,12 @@
 					</router-link>
 				</li>
 				<li class="nav-item">
+					<router-link class="nav-link" :class="{ active: $route.name === 'dashboard_roblox' }" :to="{ name: 'dashboard_roblox' }">
+						<i class="fa fa-id-card" aria-hidden="true"></i>
+						Roblox Verification
+					</router-link>
+				</li>
+				<li class="nav-item">
 					<router-link class="nav-link" :class="{ active: $route.name === 'dashboard_roles' }" :to="{ name: 'dashboard_roles' }">
 						<i class="fa fa-plus-circle" aria-hidden="true"></i>
 						Roles
@@ -74,7 +80,7 @@
 				</li>
 			</ul>
 		</nav>
-		<div class="col-10 container ml-0">
+		<div class="col-lg-10 col-12 container ml-0">
 			<router-view></router-view>
 		</div>
 	</div>

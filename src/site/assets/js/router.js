@@ -56,6 +56,10 @@ const routes = [{
 		path: "reddit",
 		component: require("./components/pages/config/Reddit.vue")
 	}, {
+		name: "dashboard_roblox",
+		path: "roblox",
+		component: require("./components/pages/config/Roblox.vue")
+	}, {
 		name: "dashboard_roles",
 		path: "roles",
 		component: require("./components/pages/config/Roles.vue")
