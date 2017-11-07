@@ -71,7 +71,7 @@ async function sendOffline(redis, data) {
 		}]
 	};
 
-	channels.forEach(channel => createMessage(channel, embed));
+	channels.forEach((channel, i) => createMessage(channel, embed, i * 1250));
 }
 
 async function sendOnline(redis, stream) {
@@ -83,5 +83,5 @@ async function sendOnline(redis, stream) {
 		image: { url: stream.preview.large }
 	};
 
-	channels.forEach(channel => createMessage(channel, embed));
+	channels.forEach((channel, i) => createMessage(channel, embed, i * 1250));
 }

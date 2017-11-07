@@ -5,7 +5,7 @@
 <script>
 module.exports = {
 	created() {
-		window.location.href = `${window.location.origin}/invite`;
+		window.location.href = `${window.location.origin}/oauth`;
 	}
 };
 </script>

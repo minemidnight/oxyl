@@ -1,13 +1,15 @@
 module.exports = (waitingOutputs, type) => {
 	process.output = (message, target, spawnWorker) => {
-		const id = (process.hrtime().reduce((a, b) => a + b, 0) + Date.now()).toString(36);
-		message.id = id;
+		if(!message.id) {
+			const id = (process.hrtime().reduce((a, b) => a + b, 0) + Date.now()).toString(36);
+			message.id = id;
 
-		if(message.op === "eval") {
-			if(typeof message.input === "function") {
-				message.input = `(${message.input.toString().replace(/\\(t|r|n)/gi, "")}).call()`;
-			} else if(typeof message.input === "string") {
-				message.input = `(async function(){${message.input}}).call()`;
+			if(message.op === "eval") {
+				if(typeof message.input === "function") {
+					message.input = `(${message.input.toString().replace(/\\(t|r|n)/gi, "")}).call()`;
+				} else if(typeof message.input === "string") {
+					message.input = `(async function(){${message.input}}).call()`;
+				}
 			}
 		}
 
@@ -16,13 +18,17 @@ module.exports = (waitingOutputs, type) => {
 		else require("./masterMessages")(message, undefined, target, spawnWorker);
 
 		return new Promise((resolve, reject) => {
-			waitingOutputs.set(id, result => {
+			waitingOutputs.set(message.id, result => {
 				if(result.error) {
 					if(type === "worker") reject(result.message ? new Error(result.message) : result);
 					else resolve(result);
 				} else if(!result.error) {
-					if(type === "worker") resolve(result.results || result.result || result);
-					else resolve(result);
+					if(type === "worker") {
+						resolve(result.results !== undefined ? result.results :
+							result.result !== undefined ? result.result : result);
+					} else {
+						resolve(result);
+					}
 				}
 			});
 		});

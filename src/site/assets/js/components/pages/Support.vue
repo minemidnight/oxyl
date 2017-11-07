@@ -1,7 +1,11 @@
+<template>
+	<div></div>
+</template>
+
 <script>
-export default {
+module.exports = {
 	created() {
-		window.location.href = "https://discord.gg/9wkTDcE";
+		window.location.href = `${window.location.origin}/support`;
 	}
-}
+};
 </script>

@@ -20,7 +20,7 @@
 					</router-link>
 				</li>
 				<li class="nav-item">
-					<router-link class="nav-link" :class="{ active: $route.path.startsWith('/config') }" :to="{ name: 'general' }">
+					<router-link class="nav-link" :class="{ active: ~['accounts', 'selector'].indexOf($route.name) || $route.name.startsWith('dashboard') }" :to="{ name: 'config' }">
 						<i class="fa fa-cogs" aria-hidden="true"></i>
 						Configuration
 					</router-link>

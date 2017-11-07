@@ -1,5 +1,5 @@
 {
 	"name": "feeds",
 	"primary": "id",
-	"indexes": ["guilds"]
+	"indexes": ["guildID"]
 }

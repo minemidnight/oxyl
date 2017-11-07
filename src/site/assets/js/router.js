@@ -1,4 +1,14 @@
-import VueRouter from "vue-router";
+const { default: VueRouter } = require("vue-router");
+
+const configEnter = (to, from, next) => {
+	if(from.params.guild && to.name === "config") {
+		return next({ name: "dashboard", params: from.params });
+	} else if(~["config", "dashboard", "selector"].indexOf(to.name) && !localStorage.token) {
+		return next({ name: "accounts" });
+	} else if(to.name === "config") { return next({ name: "selector" }); } else {
+		return next();
+	}
+};
 
 const routes = [{
 	name: "commands",
@@ -7,48 +17,62 @@ const routes = [{
 }, {
 	name: "config",
 	path: "/config",
-	component: require("./components/pages/Config.vue"),
+	beforeEnter: configEnter
+}, {
+	name: "accounts",
+	path: "/accounts",
+	component: require("./components/pages/config/Accounts.vue"),
+	beforeEnter: configEnter
+}, {
+	name: "selector",
+	path: "/selector",
+	component: require("./components/pages/config/Selector.vue"),
+	beforeEnter: configEnter
+}, {
+	path: "/config/:guild",
+	component: require("./components/pages/config/Dashboard.vue"),
 	children: [{
-		name: "general",
+		name: "dashboard",
 		path: "/",
 		component: require("./components/pages/config/General.vue")
 	}, {
-		name: "censors",
+		name: "dashboard_censors",
 		path: "censors",
 		component: require("./components/pages/config/Censors.vue")
 	}, {
-		name: "config_commands",
+		name: "dashboard_commands",
 		path: "commands",
 		component: require("./components/pages/config/Commands.vue")
 	}, {
-		name: "modlog",
+		name: "dashboard_modlog",
 		path: "modlog",
 		component: require("./components/pages/config/ModLog.vue")
 	}, {
-		name: "music",
+		name: "dashboard_music",
 		path: "music",
 		component: require("./components/pages/config/Music.vue")
 	}, {
-		name: "reddit",
+		name: "dashboard_reddit",
 		path: "reddit",
 		component: require("./components/pages/config/Reddit.vue")
 	}, {
-		name: "roles",
+		name: "dashboard_roles",
 		path: "roles",
 		component: require("./components/pages/config/Roles.vue")
 	}, {
-		name: "tags",
+		name: "dashboard_tags",
 		path: "tags",
 		component: require("./components/pages/config/Tags.vue")
 	}, {
-		name: "twitch",
+		name: "dashboard_twitch",
 		path: "twitch",
 		component: require("./components/pages/config/Twitch.vue")
 	}, {
-		name: "userlog",
+		name: "dashboard_userlog",
 		path: "userlog",
 		component: require("./components/pages/config/UserLog.vue")
-	}]
+	}],
+	beforeEnter: configEnter
 }, {
 	name: "home",
 	path: "/",
@@ -58,6 +82,10 @@ const routes = [{
 	path: "/invite",
 	component: require("./components/pages/Invite.vue")
 }, {
+	name: "oauth",
+	path: "/oauth",
+	component: require("./components/pages/OAuth.vue")
+}, {
 	name: "patreon",
 	path: "/patreon",
 	alias: "/donate",
@@ -66,6 +94,11 @@ const routes = [{
 	name: "support",
 	path: "/support",
 	component: require("./components/pages/Support.vue")
+}, {
+	name: "404",
+	path: "/404",
+	alias: "*",
+	component: require("./components/pages/404.vue")
 }];
 
 module.exports = Vue => {

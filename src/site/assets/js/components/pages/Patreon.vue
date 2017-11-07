@@ -1,7 +1,11 @@
+<template>
+	<div></div>
+</template>
+
 <script>
-export default {
+module.exports = {
 	created() {
-		window.location.href = "https://www.patreon.com/minemidnight";
+		window.location.href = `${window.location.origin}/patreon`;
 	}
-}
+};
 </script>

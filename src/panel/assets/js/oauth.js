@@ -1,7 +1,7 @@
 window.getInfo = async path => {
 	let { body } = await superagent.get(`${API_BASE}/info/`)
 		.set("Authorization", localStorage.token)
-		.query({ path: "/users/@me" });
+		.query({ path });
 
 	if(body.token) {
 		localStorage.token = JSON.stringify(body.token);
@@ -23,7 +23,7 @@ module.exports = async () => {
 
 		const { body } = await superagent.post(`${API_BASE}/callback`).send({ code });
 		localStorage.token = JSON.stringify(body);
-		app.$router.push(window.location.pathname);
+		app.$router.replace(window.location.pathname);
 	}
 
 	const { id } = await getInfo("/users/@me");

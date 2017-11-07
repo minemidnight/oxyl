@@ -23,7 +23,7 @@ module.exports = async () => {
 	const multi = redis.multi();
 	Object.entries(feeds).forEach(([service, value]) => {
 		Object.entries(value).forEach(([identifier, subbed]) => {
-			multi.set(`feeds:${service}:${identifier}`, JSON.stringify(subbed));
+			multi.set(`feeds:${service}:${identifier}`, JSON.stringify(subbed), "EX", "2419200");
 		});
 	});
 
