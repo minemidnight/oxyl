@@ -138,7 +138,7 @@ router.patch("/:guild(\\d{17,21})", async (req, res) => {
 			res.status(400).json({ error: "Invalid subreddit", invalidSubreddit: true });
 			return;
 		} else {
-			req.body.subreddit = data.subreddit;
+			edited.subreddit = data.subreddit;
 		}
 	} catch(err) {
 		res.status(400).json({ error: "Invalid subreddit", invalidSubreddit: true });

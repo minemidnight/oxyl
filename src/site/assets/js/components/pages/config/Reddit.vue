@@ -6,7 +6,7 @@
 				<p class="form-text text-danger" v-if="errors.add.alreadyExists">You already have the same subreddit posting to the same channel, please edit it instead.</p>
 				<div class="form-group">
 					<label for="subreddit">Subreddit</label>
-					<input id="subreddit" class="form-control" placeholder="Enter a subreddit" required pattern="^(?:\/?r\/)?[A-Za-z0-9_]{3,21}" />
+					<input id="subreddit" class="form-control" placeholder="Enter a subreddit" required pattern="^(?:\/?r\/)?[A-Za-z0-9_]{3,21}$" />
 					<small class="form-text text-danger" v-if="errors.add.invalidSubreddit">Please only enter valid subreddits.</small>
 				</div>
 				<div class="form-group">
@@ -54,7 +54,7 @@
 						<div class="modal-body">
 							<div class="form-group">
 								<label for="subreddit-edit">Subreddit</label>
-								<input id="subreddit-edit" class="form-control" placeholder="Enter a subreddit" required pattern="^(?:\/?r\/)?[A-Za-z0-9_]{3,21}" />
+								<input id="subreddit-edit" class="form-control" placeholder="Enter a subreddit" required pattern="^(?:\/?r\/)?[A-Za-z0-9_]{3,21}$" />
 								<small class="form-text text-danger" v-if="errors.edit.invalidSubreddit">Please only enter valid subreddits.</small>
 							</div>
 							<div class="form-group">

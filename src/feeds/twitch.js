@@ -11,7 +11,7 @@ async function checkChannels(redis) {
 
 	let requests = [];
 	for(let i = 0; i < toCheck.length; i += 100) requests.push(toCheck.slice(i, i + 100));
-	requests = requests.map(channel => superagent.get(`https://api.twitch.tv/kraken/streams/`)
+	requests = requests.map(channel => superagent.get("https://api.twitch.tv/kraken/streams/")
 		.set("Client-ID", clientID)
 		.query({
 			channel: channel.join(","),
