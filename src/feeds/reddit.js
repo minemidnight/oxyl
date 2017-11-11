@@ -2,7 +2,7 @@ const createMessage = require("./createMessage");
 const superagent = require("superagent");
 module.exports = redis => {
 	setInterval(() => postNew(redis), 15000);
-	setInterval(() => postTop(redis), 900000 / 5);
+	setInterval(() => postTop(redis), 300000);
 };
 
 async function getNew(redis) {

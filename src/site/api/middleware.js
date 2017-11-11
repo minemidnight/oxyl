@@ -32,7 +32,7 @@ module.exports = {
 				guilds = guilds.info;
 			}
 
-			const guild = guilds.find(({ id }) => id === guild);
+			guild = guilds.find(({ id }) => id === guild);
 			if(!guild) {
 				return res.status(400).json({ error: "User not in server", redirect: { name: "selector" } });
 			} else if(!guild.owner || !(guild.permissions & 32)) {

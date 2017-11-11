@@ -11,43 +11,47 @@ async function checkChannels(redis) {
 
 	let requests = [];
 	for(let i = 0; i < toCheck.length; i += 100) requests.push(toCheck.slice(i, i + 100));
-	requests = requests.map(channel => superagent.get("https://api.twitch.tv/kraken/streams/")
+	requests = requests.map(channels => superagent.get("https://api.twitch.tv/kraken/streams/")
 		.set("Client-ID", clientID)
 		.query({
-			channel: channel.join(","),
+			channel: channels.join(","),
 			limit: 100
 		}));
+	requests = (await Promise.all(requests))
+		.map(({ body: { streams } }) => streams)
+		.reduce((a, b) => a.concat(b), []);
 
-	(await Promise.all(requests)).map(res => res.body.streams)
-		.reduce((a, b) => a.concat(b), [])
-		.forEach(async stream => {
-			const index = onlineData.indexOf(`feeds:twitchData:${stream.channel.name}`);
-			if(!~index) {
-				sendOnline(redis, stream);
-				onlineData.splice(index, 1);
-				await redis.set(`feeds:twitchData:${stream.channel.name}`, JSON.stringify({
-					followers: stream.channel.followers,
-					time: new Date(stream.created_at).getTime(),
-					views: stream.channel.views
-				}), 1814400);
-			}
-		});
+	for(const stream of requests) {
+		const index = onlineData.indexOf(`feeds:twitchData:${stream.channel.name}`);
+		if(~index) return;
 
-	onlineData.map(key => key.substring(key.lastIndexOf(":") + 1))
-		.map(async key => Promise.all([
-			await superagent.get(`https://api.twitch.tv/kraken/channels/${key}`).set("Client-ID", clientID),
-			JSON.parse(await redis.get(`feeds:twitchData:${key}`))
-		]))
-		.forEach(async ([channelData, redisData]) => {
-			sendOffline(redis, {
-				channel: channelData.name,
-				display: channelData.display_name,
-				followersGained: channelData.followers - redisData.followers,
-				viewsGained: channelData.views - redisData.views,
-				timeStreamed: Date.now() - redisData.time,
-				url: channelData.url
-			});
+		sendOnline(redis, stream);
+		onlineData.splice(index, 1);
+		await redis.set(`feeds:twitchData:${stream.channel.name}`, JSON.stringify({
+			followers: stream.channel.followers,
+			time: new Date(stream.created_at).getTime(),
+			views: stream.channel.views
+		}), 1814400);
+	}
+
+	const offlineData = onlineData
+		.map(key => key.substring(key.lastIndexOf(":") + 1))
+		.map(key => [
+			superagent.get(`https://api.twitch.tv/kraken/channels/${key}`).set("Client-ID", clientID),
+			JSON.parse(redis.get(`feeds:twitchData:${key}`))
+		])
+		.map(promises => Promise.all(promises));
+
+	for(const [channelData, redisData] of await Promise.all(offlineData)) {
+		sendOffline(redis, {
+			channel: channelData.name,
+			display: channelData.display_name,
+			followersGained: channelData.followers - redisData.followers,
+			viewsGained: channelData.views - redisData.views,
+			timeStreamed: Date.now() - redisData.time,
+			url: channelData.url
 		});
+	}
 }
 
 async function sendOffline(redis, data) {

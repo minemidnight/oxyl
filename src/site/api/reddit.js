@@ -2,7 +2,8 @@ const router = module.exports = require("express").Router(); // eslint-disable-l
 const superagent = require("superagent");
 
 const middleware = require("./middleware");
-router.param("guild", middleware.hasGuild(), middleware.canManage());
+router.param("guild", middleware.hasGuild());
+router.param("guild", middleware.canManage());
 
 async function getChannels(id) {
 	return await process.output({

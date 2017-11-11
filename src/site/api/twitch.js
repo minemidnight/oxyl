@@ -3,7 +3,8 @@ const clientID = "jzkbprff40iqj646a697cyrvl0zt2m6";
 const superagent = require("superagent");
 
 const middleware = require("./middleware");
-router.param("guild", middleware.hasGuild(), middleware.canManage());
+router.param("guild", middleware.hasGuild());
+router.param("guild", middleware.canManage());
 
 async function getChannels(id) {
 	return await process.output({
@@ -129,24 +130,24 @@ router.patch("/:guild(\\d{17,21})", async (req, res) => {
 		return;
 	}
 
-	const { deleted } = await r.table("feeds").get(["twitch", previous.subreddit, previous.channel]).delete().run();
+	const { deleted } = await r.table("feeds").get(["twitch", previous.channel, previous.textChannel]).delete().run();
 	if(!deleted) {
 		res.status(400).json({ error: "Feed does not exist" });
 		return;
 	}
 
-	let channelsRemove = await redis.get(`feeds:twitch:${previous.subreddit}`);
+	let channelsRemove = await redis.get(`feeds:twitch:${previous.channel}`);
 	channelsRemove = channelsRemove ? JSON.parse(channelsRemove) : [];
-	channelsRemove.splice(channelsRemove.indexOf(previous.channel), 1);
-	await redis.set(`feeds:twitch:${previous.subreddit}`, JSON.stringify(channelsRemove), "EX", 2419200);
+	channelsRemove.splice(channelsRemove.indexOf(previous.textChannel), 1);
+	await redis.set(`feeds:twitch:${previous.channel}`, JSON.stringify(channelsRemove), "EX", 2419200);
 
-	let channelsAdd = await redis.get(`feeds:twitch:${edited.subreddit}`);
+	let channelsAdd = await redis.get(`feeds:twitch:${edited.channel}`);
 	channelsAdd = channelsAdd ? JSON.parse(channelsAdd) : [];
-	await redis.set(`feeds:twitch:${edited.subreddit}`,
-		JSON.stringify(channelsAdd.concat(edited.channel)), "EX", 2419200);
+	await redis.set(`feeds:twitch:${edited.channel}`,
+		JSON.stringify(channelsAdd.concat(edited.textChannel)), "EX", 2419200);
 
 	const toAdd = {
-		id: ["twitch", edited.subreddit, edited.channel],
+		id: ["twitch", edited.channel, edited.textChannel],
 		guildID: req.params.guild
 	};
 
