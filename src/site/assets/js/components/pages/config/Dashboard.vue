@@ -1,17 +1,18 @@
 <template>
 	<div class="row">
-		<nav class="col-2 px-0 color-600 collapse show d-none d-lg-flex flex-column">
-			<ul class="nav nav-pills text-light p-2 dark-pills flex-column">
+		<nav class="col-2 px-0 color-600 d-none d-lg-flex flex-column">
+			<ul class="nav nav-pills text-light p-2 dark-pills" style="overflow-y:auto">
 				<li class="nav-item">
-					<router-link class="nav-link navbar-brand color-text-hover-100 transition" :to="{ name: 'accounts' }">
+					<router-link class="nav-link color-text-hover-100 transition" :to="{ name: 'accounts' }">
 						Switch Account
 					</router-link>
 				</li>
 				<li class="nav-item">
-					<router-link class="nav-link navbar-brand color-text-hover-100 transition" :to="{ name: 'selector' }">
+					<router-link class="nav-link color-text-hover-100 transition" :to="{ name: 'selector' }">
 						Switch Server
 					</router-link>
 				</li>
+				<div class="dropdown-divider"></div>
 				<li class="nav-item">
 					<router-link class="nav-link" :class="{ active: $route.name === 'dashboard' }" :to="{ name: 'dashboard', params: { guild: $route.params.guild } }">
 						<i class="fa fa-cog" aria-hidden="true"></i>
@@ -98,5 +99,9 @@ nav {
 	position: absolute;
 	bottom: 0;
 	width: inherit;
+}
+
+li.nav-item {
+	width: 100%;
 }
 </style>

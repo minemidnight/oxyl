@@ -25,54 +25,54 @@
 						Configuration
 					</a>
 					<div class="dropdown-menu color-700" aria-labelledby="dashboardDropdown">
-						<router-link class="dropdown-item" :to="{ name: 'accounts' }">
+						<router-link class="dropdown-item color-hover-800 color-text-hover-100 transition" :to="{ name: 'accounts' }">
 							Switch Account
 						</router-link>
-						<router-link class="dropdown-item" :to="{ name: 'selector' }">
+						<router-link class="dropdown-item color-hover-800 color-text-hover-100 transition" :to="{ name: 'selector' }">
 							Switch Server
 						</router-link>
 						<div class="dropdown-divider border-dark"></div>
-						<router-link class="dropdown-item" :class="{ active: $route.name === 'dashboard' }" :to="{ name: 'dashboard', params: { guild: $route.params.guild } }">
+						<router-link class="dropdown-item color-hover-800 color-text-hover-100 transition" :class="{ active: $route.name === 'dashboard' }" :to="{ name: 'dashboard', params: { guild: $route.params.guild } }">
 							<i class="fa fa-cog" aria-hidden="true"></i>
 							General
 						</router-link>
-						<router-link class="dropdown-item" :class="{ active: $route.name === 'dashboard_censors' }" :to="{ name: 'dashboard_censors' }">
+						<router-link class="dropdown-item color-hover-800 color-text-hover-100 transition" :class="{ active: $route.name === 'dashboard_censors' }" :to="{ name: 'dashboard_censors' }">
 							<i class="fa fa-asterisk" aria-hidden="true"></i>
 							Censors
 						</router-link>
-						<router-link class="dropdown-item" :class="{ active: $route.name === 'dashboard_commands' }" :to="{ name: 'dashboard_commands' }">
+						<router-link class="dropdown-item color-hover-800 color-text-hover-100 transition" :class="{ active: $route.name === 'dashboard_commands' }" :to="{ name: 'dashboard_commands' }">
 							<i class="fa fa-exclamation" aria-hidden="true"></i>
 							Commands
 						</router-link>
-						<router-link class="dropdown-item" :class="{ active: $route.name === 'dashboard_modlog' }" :to="{ name: 'dashboard_modlog' }">
+						<router-link class="dropdown-item color-hover-800 color-text-hover-100 transition" :class="{ active: $route.name === 'dashboard_modlog' }" :to="{ name: 'dashboard_modlog' }">
 							<i class="fa fa-table" aria-hidden="true"></i>
 							Mod-Log
 						</router-link>
-						<router-link class="dropdown-item" :class="{ active: $route.name === 'dashboard_music' }" :to="{ name: 'dashboard_music' }">
+						<router-link class="dropdown-item color-hover-800 color-text-hover-100 transition" :class="{ active: $route.name === 'dashboard_music' }" :to="{ name: 'dashboard_music' }">
 							<i class="fa fa-music" aria-hidden="true"></i>
 							Music
 						</router-link>
-						<router-link class="dropdown-item" :class="{ active: $route.name === 'dashboard_reddit' }" :to="{ name: 'dashboard_reddit' }">
+						<router-link class="dropdown-item color-hover-800 color-text-hover-100 transition" :class="{ active: $route.name === 'dashboard_reddit' }" :to="{ name: 'dashboard_reddit' }">
 							<i class="fa fa-reddit-alien" aria-hidden="true"></i>
 							Reddit
 						</router-link>
-						<router-link class="dropdown-item" :class="{ active: $route.name === 'dashboard_roblox' }" :to="{ name: 'dashboard_roblox' }">
+						<router-link class="dropdown-item color-hover-800 color-text-hover-100 transition" :class="{ active: $route.name === 'dashboard_roblox' }" :to="{ name: 'dashboard_roblox' }">
 							<i class="fa fa-id-card" aria-hidden="true"></i>
 							Roblox Verification
 						</router-link>
-						<router-link class="dropdown-item" :class="{ active: $route.name === 'dashboard_roles' }" :to="{ name: 'dashboard_roles' }">
+						<router-link class="dropdown-item color-hover-800 color-text-hover-100 transition" :class="{ active: $route.name === 'dashboard_roles' }" :to="{ name: 'dashboard_roles' }">
 							<i class="fa fa-plus-circle" aria-hidden="true"></i>
 							Roles
 						</router-link>
-						<router-link class="dropdown-item" :class="{ active: $route.name === 'dashboard_tags' }" :to="{ name: 'dashboard_tags' }">
+						<router-link class="dropdown-item color-hover-800 color-text-hover-100 transition" :class="{ active: $route.name === 'dashboard_tags' }" :to="{ name: 'dashboard_tags' }">
 							<i class="fa fa-tags" aria-hidden="true"></i>
 							Tags
 						</router-link>
-						<router-link class="dropdown-item" :class="{ active: $route.name === 'dashboard_twitch' }" :to="{ name: 'dashboard_twitch' }">
+						<router-link class="dropdown-item color-hover-800 color-text-hover-100 transition" :class="{ active: $route.name === 'dashboard_twitch' }" :to="{ name: 'dashboard_twitch' }">
 							<i class="fa fa-twitch" aria-hidden="true"></i>
 							Twitch
 						</router-link>
-						<router-link class="dropdown-item" :class="{ active: $route.name === 'dashboard_userlog' }" :to="{ name: 'dashboard_userlog' }">
+						<router-link class="dropdown-item color-hover-800 color-text-hover-100 transition" :class="{ active: $route.name === 'dashboard_userlog' }" :to="{ name: 'dashboard_userlog' }">
 							<i class="fa fa-users" aria-hidden="true"></i>
 							User Log
 						</router-link>

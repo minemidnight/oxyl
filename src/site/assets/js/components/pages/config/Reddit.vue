@@ -3,19 +3,27 @@
 		<div v-if="loaded">
 			<form id="add-sub" @submit.prevent="add()">
 				<h4>Add Subreddit</h4>
+				<p>Oxyl will post new posts, or top posts from a subreddit to a certain channel</p>
 				<p class="form-text text-danger" v-if="errors.add.alreadyExists">You already have the same subreddit posting to the same channel, please edit it instead.</p>
 				<div class="form-group">
-					<label for="subreddit">Subreddit</label>
+					<label for="subreddit">
+						Subreddit
+						<small class="form-text">The subreddit to pull posts from (/r/ is optional)</small>
+					</label>
 					<input id="subreddit" class="form-control" placeholder="Enter a subreddit" required pattern="^(?:\/?r\/)?[A-Za-z0-9_]{3,21}$" />
 					<small class="form-text text-danger" v-if="errors.add.invalidSubreddit">Please only enter valid subreddits.</small>
 				</div>
 				<div class="form-group">
-					<label for="channel">Channel</label>
+					<label for="channel">
+						Channel
+						<small class="form-text">What Discord channel to post to</small>
+					</label>
 					<select class="form-control" id="channel">
 						<option v-for="(channel, index) in channels.filter(({ canSend }) => canSend)" :key="index" :value="channel.id">#{{ channel.name }}</option>
 					</select>
 					<small class="form-text text-muted">Don't see your channel? Make sure Oxyl has permission to Send Messages and Read Messages in that channel.</small>
 				</div>
+				<small class="form-text">Type of content to post</small>
 				<div class="form-check">
 					<label class="form-check-label">
 						<input class="form-check-input" type="radio" name="type" id="new" value="new" checked>
