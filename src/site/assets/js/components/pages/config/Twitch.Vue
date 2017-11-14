@@ -21,10 +21,10 @@
 
 			<h4>Current Channels</h4>
 			<div class="card-group" v-for="(channels, i) in chunkify(currentChannels, [4, 3, 2].find(size => !(currentChannels.length % size)) || 4)" :key="i">
-				<div class="card color-600 color-hover-630" v-for="(channel, index) in subs" :key="index" data-toggle="modal" data-target="#edit-channel" @click="currentEdit = index">
+				<div class="card color-600 color-hover-630" v-for="(channel, index) in channels" :key="index" data-toggle="modal" data-target="#edit-channel" @click="currentEdit = index">
 					<div class="card-body">
 						<h5 class="card-title">{{ channel.id[1] }}</h5>
-						<p class="card-text">Posts to: #{{ textChannels.find(({ id }) => id === sub.id[2]).name }}</p>
+						<p class="card-text">Posts to: #{{ textChannels.find(({ id }) => id === channel.id[2]).name }}</p>
 					</div>
 				</div>
 			</div>
