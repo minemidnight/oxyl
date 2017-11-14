@@ -15,7 +15,7 @@ module.exports = {
 		return { loaded: false };
 	},
 	async created() {
-
+		this.loaded = true;
 	}
 };
 </script>

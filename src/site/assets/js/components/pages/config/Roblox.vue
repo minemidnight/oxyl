@@ -2,10 +2,8 @@
 	<div>
 		<div v-if="loaded">
 			<form id="add-sub" @submit.prevent>
-				<h4>
-					Account Verification
-					<i class="fa fa-info-circle" aria-hidden="true" data-toggle="popover" data-trigger="focus" data-content="Oxyl will give users a certain role after verifying their ROBLOX accounts"></i>	
-				</h4>
+				<h4>Account Verification</h4>
+				<p>Oxyl will give users a certain role after verifying their ROBLOX accounts</p>
 				<div class="form-check">
 					<label>
 						Enabled
@@ -48,7 +46,7 @@
 					</select>
 					<small class="form-text text-muted">Don't see your role? Make sure Oxyl has permission to Manage Roles and that his highest role is above the role you want to give.</small>
 				</div>
-				<button type="submit" class="btn btn-primary">Update Settings</button>
+				<button type="submit" class="btn btn-primary">Save</button>
 			</form>
 			<form id="group-sync" @submit.prevent>
 				<h4>Group Role Syncing</h4>
@@ -61,7 +59,8 @@
 					<input id="group-id" class="form-control" placeholder="Enter a group ID" required pattern="^[0-9]+$" />
 					<small class="form-text text-danger" v-if="errors.group.invalidGroup">Please enter a valid group ID.</small>
 				</div>
-				<button type="submit" class="btn btn-primary">Add Group</button>
+				<button type="submit" class="btn btn-primary">Set Group</button>
+				<button type="submit" class="btn btn-danger">Reset</button>
 			</form>
 		</div>
 		<div v-else class="d-flex justify-content-center mt-4">

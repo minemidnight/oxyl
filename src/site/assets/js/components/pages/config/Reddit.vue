@@ -3,7 +3,7 @@
 		<div v-if="loaded">
 			<form id="add-sub" @submit.prevent="add()">
 				<h4>Add Subreddit</h4>
-				<p>Oxyl will post new posts, or top posts from a subreddit to a certain channel</p>
+				<p>Oxyl will post new posts or top posts from a given subreddit to a certain channel</p>
 				<p class="form-text text-danger" v-if="errors.add.alreadyExists">You already have the same subreddit posting to the same channel, please edit it instead.</p>
 				<div class="form-group">
 					<label for="subreddit">

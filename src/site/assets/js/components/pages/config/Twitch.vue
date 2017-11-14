@@ -3,14 +3,21 @@
 		<div v-if="loaded">
 			<form id="add-channel" @submit.prevent="add()">
 				<h4>Add Channel</h4>
+				<p>Oxyl will post to a certain channel when a Twitch stream goes on or offline</p>
 				<p class="form-text text-danger" v-if="errors.add.alreadyExists">You already have the same twitch channel posting to the same discord channel, please edit it instead.</p>
 				<div class="form-group">
-					<label for="twitch-channel">Twitch Channel</label>
+					<label for="twitch-channel">
+						Twitch Channel
+						<small class="form-text">The Twitch channel to detect when streaming (not a full url)</small>
+					</label>
 					<input id="twitch-channel" class="form-control" placeholder="Enter a channel" required pattern="^[a-zA-Z0-9_]{4,25}$" />
 					<small class="form-text text-danger" v-if="errors.add.invalidChannel">Please enter a valid Twitch channel.</small>
 				</div>
 				<div class="form-group">
-					<label for="discord-channel">Discord Channel</label>
+					<label for="discord-channel">
+						Discord Channel
+						<small class="form-text">What Discord channel to post to</small>
+					</label>
 					<select class="form-control" id="discord-channel">
 						<option v-for="(textChannel, index) in textChannels.filter(({ canSend }) => canSend)" :key="index" :value="textChannel.id">#{{ textChannel.name }}</option>
 					</select>
