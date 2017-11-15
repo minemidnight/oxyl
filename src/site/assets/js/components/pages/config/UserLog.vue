@@ -20,6 +20,23 @@
 						</span>
 					</label>
 				</div>
+				<div class="form-group">
+					<label for="channel">
+						Channel
+						<small class="form-text">What Discord channel to userlog should post to</small>
+					</label>
+					<select class="form-control" id="channel">
+						<option v-for="(channel, index) in channels.filter(({ canSend }) => canSend)" :key="index" :value="channel.id">#{{ channel.name }}</option>
+					</select>
+					<small class="form-text text-muted">Don't see your channel? Make sure Oxyl has permission to Send Messages and Read Messages in that channel.</small>
+				</div>
+				<div class="form-group">
+					<label for="greeting">
+						Greeting Message
+						<small class="form-text" v-pre>The greeting message. Placeholders {{id}}, {{disrim}}, {{mention}} and {{username}} will be replaced accordingly.</small>
+					</label>
+					<input id="greeting" class="form-control" placeholder="Welcome {{mention}} to the server" v-pre />
+				</div>
 				<div class="form-check">
 					<label>
 						DM Greeting
@@ -36,6 +53,13 @@
 						</span>
 					</label>
 				</div>
+				<div class="form-group">
+					<label for="farewell">
+						Farewell
+						<small class="form-text" v-pre>The farewell message. Placeholders {{id}}, {{disrim}}, {{mention}} and {{username}} will be replaced accordingly.</small>
+					</label>
+					<input id="farewell" class="form-control" placeholder="Welcome {{mention}} to the server" v-pre />
+				</div>
 				<button type="submit" class="btn btn-primary">Save</button>
 			</form>
 		</div>
@@ -48,7 +72,10 @@
 <script>
 module.exports = {
 	data() {
-		return { loaded: false };
+		return {
+			loaded: false,
+			channels: []
+		};
 	},
 	async created() {
 		this.loaded = true;
