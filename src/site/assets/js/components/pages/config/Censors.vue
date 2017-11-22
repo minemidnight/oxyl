@@ -12,10 +12,13 @@
 <script>
 module.exports = {
 	data() {
-		return { loaded: false };
+		return {
+			loaded: false,
+			censors: []
+		};
 	},
 	async created() {
-
+		this.loaded = true;
 	}
 };
 </script>

@@ -64,10 +64,6 @@
 							<i class="fa fa-plus-circle" aria-hidden="true"></i>
 							Roles
 						</router-link>
-						<router-link class="dropdown-item color-hover-800 color-text-hover-100 transition" :class="{ active: $route.name === 'dashboard_tags' }" :to="{ name: 'dashboard_tags' }">
-							<i class="fa fa-tags" aria-hidden="true"></i>
-							Tags
-						</router-link>
 						<router-link class="dropdown-item color-hover-800 color-text-hover-100 transition" :class="{ active: $route.name === 'dashboard_twitch' }" :to="{ name: 'dashboard_twitch' }">
 							<i class="fa fa-twitch" aria-hidden="true"></i>
 							Twitch

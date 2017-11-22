@@ -62,12 +62,6 @@
 					</router-link>
 				</li>
 				<li class="nav-item">
-					<router-link class="nav-link" :class="{ active: $route.name === 'dashboard_tags' }" :to="{ name: 'dashboard_tags' }">
-						<i class="fa fa-tags" aria-hidden="true"></i>
-						Tags
-					</router-link>
-				</li>
-				<li class="nav-item">
 					<router-link class="nav-link" :class="{ active: $route.name === 'dashboard_twitch' }" :to="{ name: 'dashboard_twitch' }">
 						<i class="fa fa-twitch" aria-hidden="true"></i>
 						Twitch

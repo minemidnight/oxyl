@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div v-if="loaded">
-			<form id="add-sub" @submit.prevent>
+			<form id="account-verification" @submit.prevent>
 				<h4>Account Verification</h4>
 				<p>Oxyl will give users a certain role after verifying their ROBLOX accounts</p>
 				<div class="form-check">
@@ -39,14 +39,14 @@
 				<div class="form-group">
 					<label for="role">
 						Role
-						<small class="form-text">What role Oxyl should give to a user after verifying</small>
+						<small class="form-text">The Discord role to give the user after they verify their account</small>
 					</label>
 					<select class="form-control" id="role">
 						<option v-for="(role, index) in roles.filter(({ canGive }) => canGive)" :key="index" :value="role.id">#{{ role.name }}</option>
 					</select>
 					<small class="form-text text-muted">Don't see your role? Make sure Oxyl has permission to Manage Roles and that his highest role is above the role you want to give.</small>
 				</div>
-				<button type="submit" class="btn btn-primary">Save</button>
+				<button type="submit" class="btn btn-success">Save</button>
 			</form>
 			<form id="group-sync" @submit.prevent>
 				<h4>Group Role Syncing</h4>

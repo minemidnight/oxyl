@@ -64,10 +64,6 @@ const routes = [{
 		path: "roles",
 		component: require("./components/pages/config/Roles.vue")
 	}, {
-		name: "dashboard_tags",
-		path: "tags",
-		component: require("./components/pages/config/Tags.vue")
-	}, {
 		name: "dashboard_twitch",
 		path: "twitch",
 		component: require("./components/pages/config/Twitch.vue")
