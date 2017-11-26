@@ -79,7 +79,6 @@
 		"no-useless-call": "error",
 		"no-useless-concat": "error",
 		"no-useless-escape": "off",
-		"no-void": "error",
 		"no-warning-comments": "warn",
 		"wrap-iife": "error",
 		"yoda": "error",

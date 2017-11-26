@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div v-if="loaded">
-			<form id="add-channel" @submit.prevent="add()">
+			<form id="add-feed" @submit.prevent="add()">
 				<h4>Add Channel</h4>
 				<p>Oxyl will post to a certain channel when a Twitch stream goes on or offline</p>
 				<p class="form-text text-danger" v-if="errors.add.alreadyExists">You already have the same twitch channel posting to the same discord channel, please edit it instead.</p>
@@ -10,7 +10,7 @@
 						Twitch Channel
 						<small class="form-text">The Twitch channel to detect when streaming (not a full url)</small>
 					</label>
-					<input id="twitch-channel" class="form-control" placeholder="Enter a channel" required pattern="^[a-zA-Z0-9_]{4,25}$" />
+					<input id="twitch-channel" v-model.trim="insertModel.twitchChannel" class="form-control" placeholder="Enter a channel" required pattern="^[a-zA-Z0-9_]{4,25}$" />
 					<small class="form-text text-danger" v-if="errors.add.invalidChannel">Please enter a valid Twitch channel.</small>
 				</div>
 				<div class="form-group">
@@ -18,8 +18,8 @@
 						Discord Channel
 						<small class="form-text">What Discord channel to post to</small>
 					</label>
-					<select class="form-control" id="discord-channel">
-						<option v-for="(textChannel, index) in textChannels.filter(({ canSend }) => canSend)" :key="index" :value="textChannel.id">#{{ textChannel.name }}</option>
+					<select class="form-control" id="discord-channel" v-model="insertModel.discordChannel">
+						<option v-for="(discordChannel, index) in discordChannels.filter(({ canSend }) => canSend)" :key="index" :value="discordChannel.id">#{{ discordChannel.name }}</option>
 					</select>
 					<small class="form-text text-muted">Don't see your text channel? Make sure Oxyl has permission to Send Messages and Read Messages in that text channel.</small>
 				</div>
@@ -27,43 +27,15 @@
 			</form>
 
 			<h4>Current Channels</h4>
-			<div class="card-group" v-for="(channels, i) in chunkify(currentChannels, [4, 3, 2].find(size => !(currentChannels.length % size)) || 4)" :key="i">
-				<div class="card color-600 color-hover-630" v-for="(channel, index) in channels" :key="index" data-toggle="modal" data-target="#edit-channel" @click="currentEdit = index">
+			<div class="card-group" v-for="(feedChunk, i) in chunkify(twitchFeeds, [4, 3, 2].find(size => !(twitchFeeds.length % size)) || 4)" :key="i">
+				<div class="card color-600 color-hover-630" v-for="(feed, index) in feedChunk" :key="index" data-index="index">
 					<div class="card-body">
-						<h5 class="card-title">{{ channel.id[1] }}</h5>
-						<p class="card-text">Posts to: #{{ textChannels.find(({ id }) => id === channel.id[2]).name }}</p>
+						<button class="btn btn-danger float-right" @click="remove(index)">
+							<i class="fa fa-trash-o" aria-hidden="true"></i>
+						</button>
+						<h5 class="card-title">{{ feed.twitchChannel }}</h5>
+						<p class="card-text">Posts to: #{{ discordChannels.find(({ id }) => id === feed.discordChannel).name }}</p>
 					</div>
-				</div>
-			</div>
-
-			<div class="modal fade" tabindex="-1" role="dialog" id="edit-channel" aria-hidden="true">
-				<div class="modal-dialog" role="document">
-					<form class="modal-content color-700" @submit.prevent="edit()">
-						<div class="modal-header border-dark">
-							<h5 class="modal-title">Edit Channel</h5>
-							<button type="button" class="close text-danger" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="modal-body">
-							<div class="form-group">
-								<label for="twitch-channel-edit">Twitch Channel</label>
-								<input id="twitch-channel-edit" class="form-control" placeholder="Enter a channel" required pattern="^[a-zA-Z0-9_]{4,25}$" />
-								<small class="form-text text-danger" v-if="errors.edit.invalidChannel">Please enter a valid Twitch channel.</small>
-							</div>
-							<div class="form-group">
-								<label for="discord-channel-edit">Discord Channel</label>
-								<select class="form-control" id="discord-channel-edit">
-									<option v-for="(textChannel, index) in textChannels.filter(({ canSend }) => canSend)" :key="index" :value="textChannel.id">#{{ textChannel.name }}</option>
-								</select>
-								<small class="form-text text-muted">Don't see your text channel? Make sure Oxyl has permission to Send Messages and Read Messages in that text channel.</small>
-							</div>
-						</div>
-						<div class="modal-footer border-dark">
-							<button type="submit" class="btn btn-success">Save</button>
-							<button type="button" class="btn btn-danger" @click="remove()">Delete</button>
-						</div>
-					</form>
 				</div>
 			</div>
 		</div>
@@ -75,23 +47,23 @@
 
 <script>
 const defaultAdd = { alreadyExists: false, invalidChannel: false };
-const defaultEdit = { invalidChannel: false };
 module.exports = {
 	data() {
 		return {
 			loaded: false,
-			currentChannels: [],
-			currentEdit: null,
-			errors: { add: Object.assign({}, defaultAdd), edit: Object.assign({}, defaultEdit) },
-			textChannels: []
+			twitchFeeds: [],
+			discordChannels: [],
+			errors: { add: Object.assign({}, defaultAdd) },
+			insertModel: {}
 		};
 	},
 	async created() {
-		const { error, body: { channels, textChannels } } = await apiCall("get", `twitch/${this.$route.params.guild}`);
+		const { error, body: { twitchFeeds, discordChannels } } = await apiCall
+			.get(`twitch/${this.$route.params.guild}`);
 
 		if(error) return;
-		this.currentChannels = channels;
-		this.textChannels = textChannels;
+		this.twitchFeeds = twitchFeeds;
+		this.discordChannels = discordChannels;
 		this.loaded = true;
 	},
 	methods: {
@@ -101,17 +73,12 @@ module.exports = {
 			return chunkified;
 		},
 		async add() {
-			$("#add-channel button[type=submit]").addClass("disabled");
-			const channel = $("#twitch-channel").val();
-			const textChannel = $("#discord-channel").val();
-
 			this.errors.add = Object.assign({}, defaultAdd);
-			const { error, body } = await apiCall("put", `twitch/${this.$route.params.guild}`, {
-				send: {
-					channel,
-					textChannel
-				}
-			});
+
+			$("#add-channel button[type=submit]").addClass("disabled");
+			const { error, body } = await apiCall
+				.put(`twitch/${this.$route.params.guild}`)
+				.send(this.insertModel);
 
 			$("#add-channel button[type=submit]").removeClass("disabled");
 			if(error && body.redirect) {
@@ -120,68 +87,20 @@ module.exports = {
 				if(body.invalidChannel) this.errors.add.invalidChannel = true;
 				else if(body.alreadyExists) this.errors.add.alreadyExists = true;
 			} else {
-				this.currentChannels.push(body.added);
+				this.twitchChannels.push(body);
+				this.insertModel = {};
 				$("#add-channel").trigger("reset");
 			}
 		},
-		async edit() {
-			const data = this.currentChannels[this.currentEdit];
-
-			$("#edit-channel button[type=submit]").addClass("disabled");
-			const channel = $("#twitch-channel-edit").val();
-			const textChannel = $("#discord-channel-edit").val();
-
-			this.errors.edit = Object.assign({}, defaultEdit);
-			if(data.id[1].toLowerCase() === channel.toLowerCase() && data.id[2] === channel) {
-				$("#edit-channel").modal("hide");
-				$("#edit-channel button[type=submit]").removeClass("disabled");
-				return;
-			}
-
-			const { error, body } = await apiCall("patch", `twitch/${this.$route.params.guild}`, {
-				send: {
-					previous: {
-						channel: data.id[1],
-						textChannel: data.id[2]
-					},
-					edited: {
-						channel,
-						textChannel
-					}
-				}
-			});
-
-			$("#edit-channel button[type=submit]").removeClass("disabled");
-			if(error && body.redirect) {
-				return;
-			} else if(error) {
-				if(body.invalidChannel) this.errors.edit.invalidChannel = true;
-			} else {
-				Object.assign(this.currentChannels[this.currentEdit], body.edited);
-				$("#edit-channel").modal("hide");
-			}
-		},
 		async remove(index) {
-			const data = this.currentChannels[this.currentEdit];
-
-			const { error } = await apiCall("delete", `twitch/${this.$route.params.guild}`, {
-				send: {
-					channel: data.id[1],
-					textChannel: data.id[2]
-				}
+			$(`[data-index=${index}] button`).addClass("disabled");
+			const { error } = await apiCall.delete(`twitch/${this.$route.params.guild}`).send({
+				twitchChannel: this.twitchFeeds[index].twitchChannel,
+				discordChannel: this.twitchFeeds[index].discordChannel
 			});
 
 			if(error) return;
-			this.currentChannels.splice(this.currentEdit, 1);
-			$("#edit-channel").modal("hide");
-		}
-	},
-	watch: {
-		currentEdit(index) {
-			const data = this.currentChannels[index];
-
-			$("#twitch-channel-edit").val(data.id[1]);
-			$("#discord-channel-edit").val(data.id[2]);
+			this.twitchFeeds.splice(index, 1);
 		}
 	}
 };

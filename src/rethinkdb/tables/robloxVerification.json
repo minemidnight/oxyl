@@ -1,0 +1,11 @@
+{
+	"name": "robloxVerification",
+	"primary": "id",
+	"model": {
+		"id": "guild id",
+		"enabled": "true/false",
+		"setNickname": "true/false",
+		"roleID": "role id to give when verified",
+		"groupID": "group id or undefined for group role syncing"
+	}
+}

@@ -1,0 +1,10 @@
+{
+	"name": "roleSettings",
+	"primary": "id",
+	"indexes": ["guildID"],
+	"model": {
+		"guildID": "guild id",
+		"id": ["guild id", "type (autoRole/roleMe/rolePersist)"],
+		"roles": ["role ids"]
+	}
+}

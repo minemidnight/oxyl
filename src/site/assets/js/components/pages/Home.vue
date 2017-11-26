@@ -10,11 +10,10 @@ module.exports = {
 		if(this.$route.query.code) {
 			const accounts = localStorage.accounts ? JSON.parse(localStorage.accounts) : [];
 			const { code } = this.$route.query;
-			const { error, body: token } = await apiCall("post", "oauth/callback", { send: { code } });
+			const { error, body: token } = await apiCall.post("oauth/callback").send({ code });
 			if(error) return;
 
-			accounts.push(token);
-			localStorage.accounts = JSON.stringify(accounts);
+			localStorage.accounts = JSON.stringify(accounts.concat(token));
 			this.$router.replace({ name: "accounts" });
 		}
 	}

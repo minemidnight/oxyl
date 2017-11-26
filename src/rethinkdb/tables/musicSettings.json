@@ -1,0 +1,10 @@
+{
+	"name": "musicSettings",
+	"primary": "id",
+	"model": {
+		"id": "guild id",
+		"nowPlaying": "true/false",
+		"voteSkip": "true/false",
+		"songLength": "song length in seconds"
+	}
+}

@@ -26,7 +26,7 @@ module.exports = {
 		};
 	},
 	async created() {
-		const { error, body: guilds } = await apiCall("get", "oauth/info", { query: { path: "/users/@me/guilds" } });
+		const { error, body: guilds } = await apiCall.get("oauth/info").query({ path: "/users/@me/guilds" });
 		if(error) return;
 
 		this.guilds = guilds.filter(({ owner, permissions }) => owner || permissions & 32);

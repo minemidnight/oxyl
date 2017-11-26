@@ -9,7 +9,7 @@
 					<small class="form-text">Whether or not to enable the mod log</small>
 				</label>
 				<label class="tgl">
-					<input type="checkbox" />
+					<input type="checkbox" :checked="data.enabled" v-model="updateModel.enabled" />
 					<span class="tgl_body">
 						<span class="tgl_switch"></span>
 						<span class="tgl_track">
@@ -24,8 +24,8 @@
 					Channel
 					<small class="form-text">What Discord channel the modlog should be in</small>
 				</label>
-				<select class="form-control" id="channel">
-					<option v-for="(channel, index) in channels.filter(({ canSend }) => canSend)" :key="index" :value="channel.id">#{{ channel.name }}</option>
+				<select class="form-control" id="channel" v-model="updateModel.channelID">
+					<option v-for="(channel, index) in channels.filter(({ canSend }) => canSend)" :key="index" :value="channel.id" :selected="channel.id === data.channelID">#{{ channel.name }}</option>
 				</select>
 				<small class="form-text text-muted">Don't see your channel? Make sure Oxyl has permission to Send Messages and Read Messages in that channel.</small>
 			</div>
@@ -35,7 +35,7 @@
 				<div class="row" id="roleme">
 					<div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3" v-for="(role, index) in roles" :key="index">
 						<label class="form-check-label">
-							<input type="checkbox" class="form-check-input" :value="role.id" :checked="~tracked.indexOf(role.id)">
+							<input type="checkbox" class="form-check-input" :value="role.id" v-model="updateModel.tracked" :checked="~data.tracked.indexOf(role.id)">
 							{{ role.name }}
 						</label>
 					</div>
@@ -55,12 +55,32 @@ module.exports = {
 		return {
 			loaded: false,
 			channels: [],
-			tracked: [],
-			roles: []
+			roles: [],
+			data: {},
+			updateModel: {}
 		};
 	},
 	async created() {
+		const { error, body } = await apiCall.get(`modlog/${this.$route.params.guild}`);
+
+		if(error) return;
+		this.channels = body.channels;
+		this.roles = body.roles;
+		this.data = { enabled: body.enabled, channelID: body.channelID, tracked: body.tracked };
+		this.updateModel = Object.assign({}, this.data);
 		this.loaded = true;
+	},
+	methods: {
+		async update() {
+			$("form button[type=submit]").addClass("disabled");
+
+			const { error } = await apiCall
+				.put(`modlog/${this.$route.params.guild}`)
+				.send(this.updateModel);
+
+			if(error) return;
+			$("form button[type=submit]").removeClass("disabled");
+		}
 	}
 };
 </script>

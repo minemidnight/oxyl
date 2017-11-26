@@ -23,7 +23,7 @@
     "eris": "^0.8.1",
     "eris-additions": "^1.2.5",
     "eris-lavalink": "git+https://github.com/briantanner/eris-lavalink.git",
-    "eris-wiggle": "git+https://github.com/minemidnight/eris-wiggle.git",
+    "eris-wiggle": "^0.1.9",
     "erlpack": "^0.1.2",
     "express": "^4.16.2",
     "ioredis": "^3.2.1",

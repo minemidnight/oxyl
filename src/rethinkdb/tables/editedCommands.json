@@ -1,0 +1,11 @@
+{
+	"name": "editedCommands",
+	"primary": "id",
+	"indexes": ["guildID"],
+	"model": {
+		"guildID": "server id",
+		"id": ["guild id", "command/category", "actual command or category", "role/permission"],
+		"enabled": "boolean to say if the commands within are enabled",
+		"restriction": "permission number or role id based off id[3]"
+	}
+}

@@ -4,20 +4,22 @@ const middleware = require("./middleware");
 router.param("guild", middleware.hasGuild());
 router.param("guild", middleware.canManage());
 
+const getChannels = require("./getChannels");
 const getRoles = require("./getRoles");
 
 router.get("/:guild(\\d{17,21})", async (req, res) => {
 	const { r } = req.app.locals;
 
+	const channels = await getChannels(req.params.guild);
 	const roles = await getRoles(req.params.guild);
 
-	const data = await r.table("robloxVerification")
+	const data = await r.table("modlogSettings")
 		.get(req.params.guild)
-		.default({ enabled: false, setNickname: true })
+		.default({ enabled: false, tracked: [] })
 		.without("id")
 		.run();
 
-	res.status(200).json(Object.assign(data, { roles }));
+	res.status(200).json(Object.assign(data, { channels, roles }));
 });
 
 router.put("/:guild(\\d{17,21})", async (req, res) => {
@@ -26,24 +28,20 @@ router.put("/:guild(\\d{17,21})", async (req, res) => {
 	if(typeof req.body.enabled !== "boolean") {
 		res.status(400).json({ error: "No enabled or invalid enabled data" });
 		return;
-	} else if(typeof req.body.setNickname !== "boolean") {
-		res.status(400).json({ error: "No set nickname or invalid set nickname data" });
+	} else if(typeof req.body.channelID !== "string") {
+		res.status(400).json({ error: "No channel id or invalid channel id data" });
 		return;
-	} else if(req.body.enabled && typeof req.body.roleID !== "string") {
-		res.status(400).json({ error: "No role id or invalid role id data" });
-		return;
-	} else if(req.body.groupID !== undefined && typeof req.body.groupID !== "string") {
-		res.status(400).json({ error: "Invalid group id data" });
+	} else if(!Array.isArray(req.body.tracked) || req.body.tracked.some(roleID => typeof roleID !== "string")) {
+		res.status(400).json({ error: "No tracked or invalid tracked data" });
 		return;
 	}
 
-	await r.table("robloxVerification")
+	await r.table("modlogSettings")
 		.insert({
 			id: req.params.guild,
 			enabled: req.body.enabled,
-			setNickname: req.body.setNickname,
-			roleID: req.body.roleID,
-			groupID: req.body.groupID
+			channelID: req.body.channelID,
+			tracked: req.body.tracked
 		}, { conflict: "replace" })
 		.run();
 

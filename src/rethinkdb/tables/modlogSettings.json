@@ -1,0 +1,10 @@
+{
+	"name": "modlogSettings",
+	"primary": "id",
+	"model": {
+		"id": "guild id",
+		"enabled": "true/false",
+		"channelID": "channel id here",
+		"trackedRoles": ["role ids"]
+	}
+}

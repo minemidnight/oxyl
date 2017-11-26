@@ -12,11 +12,11 @@ module.exports = async r => {
 	const tablesExpected = (await readdirAsync(path.resolve(__dirname, "tables")))
 		.map(file => require(path.resolve(__dirname, "tables", file)));
 
-	for(let table of tablesExpected) {
+	for(const table of tablesExpected) {
 		if(!~tableList.indexOf(table.name)) await r.tableCreate(table.name, { primaryKey: table.primary }).run();
 
 		const indexList = await r.table(table.name).indexList().run();
-		for(let index of table.indexes.filter(ind => !~indexList.indexOf(ind))) {
+		for(const index of (table.indexes || []).filter(ind => !~indexList.indexOf(ind))) {
 			await r.table(table.name).indexCreate(index).run();
 		}
 

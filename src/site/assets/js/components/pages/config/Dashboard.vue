@@ -75,7 +75,7 @@
 				</li>
 			</ul>
 		</nav>
-		<div class="col-lg-10 col-12 container ml-0">
+		<div class="col-lg-10 col-12 container ml-0 mb-4">
 			<router-view></router-view>
 		</div>
 	</div>
@@ -86,7 +86,7 @@
 @import "node_modules/bootstrap/scss/variables";
 nav {
 	margin-top: $spacer * -1.5;
-	height: calc(100% - 56px);
+	min-height: calc(100% - 56px);
 }
 
 .bottom-nav {
