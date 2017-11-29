@@ -2,5 +2,6 @@
 	"prefix": "description.",
 	"eval": "Evaluate code",
 	"help": "List commands, or get info on a certain one",
-	"ping": "Test Oxyl's responsiveness"
+	"ping": "Test Oxyl's responsiveness",
+	"xkcd": "Get an xkcd from <https://xkcd.com>"
 }

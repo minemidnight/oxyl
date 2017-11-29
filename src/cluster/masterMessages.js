@@ -64,7 +64,7 @@ module.exports = async (message, sentFrom, workerData, spawnWorker) => {
 					const targetWorker = Object.values(cluster.workers)
 						.find(work => work.isConnected() &&
 							workerData.get(work.id).type === "bot" &&
-							message.targetValue >= workerData.get(work.id).shardShard &&
+							message.targetValue >= workerData.get(work.id).shardStart &&
 							message.targetValue <= workerData.get(work.id).shardEnd);
 
 					if(!targetWorker) reply({ op: "result", error: true, message: "No worker found with shard" });
@@ -151,7 +151,7 @@ module.exports = async (message, sentFrom, workerData, spawnWorker) => {
 			const botWorkers = Object.values(cluster.workers)
 				.filter(work => work.isConnected() && workerData.get(work.id).type === "bot");
 
-			for(let worker of botWorkers) {
+			for(const worker of botWorkers) {
 				await process.output({
 					op: "eval",
 					target: "worker",
@@ -167,7 +167,7 @@ module.exports = async (message, sentFrom, workerData, spawnWorker) => {
 			const botWorkers = Object.values(cluster.workers)
 				.filter(work => work.isConnected() && workerData.get(work.id).type === "bot");
 
-			for(let worker of botWorkers) {
+			for(const worker of botWorkers) {
 				await process.output({
 					op: "eval",
 					target: "worker",
