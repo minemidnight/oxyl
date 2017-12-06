@@ -34,23 +34,26 @@ async function checkChannels(redis) {
 		}), 1814400);
 	}
 
-	const offlineData = onlineData
+	const offlineData = await Promise.all(onlineData
 		.map(key => key.substring(key.lastIndexOf(":") + 1))
 		.map(key => [
 			superagent.get(`https://api.twitch.tv/kraken/channels/${key}`).set("Client-ID", clientID),
-			JSON.parse(redis.get(`feeds:twitchData:${key}`))
+			redis.get(`feeds:twitchData:${key}`)
 		])
-		.map(promises => Promise.all(promises));
+		.map(Promise.all.bind(Promise)));
 
-	for(const [channelData, redisData] of await Promise.all(offlineData)) {
+	for(const [{ body: channelData }, redisData] of offlineData) {
+		const parsedData = JSON.parse(redisData);
 		sendOffline(redis, {
 			channel: channelData.name,
 			display: channelData.display_name,
-			followersGained: channelData.followers - redisData.followers,
-			viewsGained: channelData.views - redisData.views,
-			timeStreamed: Date.now() - redisData.time,
+			followersGained: channelData.followers - parsedData.followers,
+			viewsGained: channelData.views - parsedData.views,
+			timeStreamed: Date.now() - parsedData.time,
 			url: channelData.url
 		});
+
+		redis.del(`feeds:twitchData:${channelData.name}`);
 	}
 }
 
@@ -70,7 +73,7 @@ async function sendOffline(redis, data) {
 			inline: true
 		}, {
 			name: "Time streamed",
-			value: `${Math.floor(data.timedStreamed / 3600000)}h ${Math.floor(data.timedStreamed % 3600000 / 60000)}m`,
+			value: `${Math.floor(data.timeStreamed / 3600000)}h ${Math.floor(data.timeStreamed % 3600000 / 60000)}m`,
 			inline: true
 		}]
 	};

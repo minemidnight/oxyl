@@ -5,5 +5,7 @@
 	"help.noCommandFound": "No command found",
 	"help.command": "__Command__: {{name}}\nCategory: {{category}}\nDescription: {{description}}\nUsage: {{usage}}",
 	"ping": "Pong! `{{latency}}ms`",
-	"ping.pinging": "pinging..."
+	"ping.pinging": "pinging...",
+	"paladins.player.invalidPlayer": "No player was found",
+	"paladins.player.invalidChampion": "No champion was found"
 }

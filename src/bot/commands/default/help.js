@@ -14,7 +14,7 @@ module.exports = {
 			const helpMessage = [...wiggle.categories.values()].reduce((msg, { name, commands, subcommands }) => {
 				if(name === "creator") return msg;
 				msg += `__**${name.charAt(0).toUpperCase() + name.substring(1)}** `;
-				msg += `(${commands.size} ${t("words.commands")})__\n`;
+				msg += `(${commands.size + subcommands.size} ${t("words.commands")})__\n`;
 				msg += [...commands.values()].concat(...subcommands.values())
 					.map(({ name: commandName }) => commandName).join(", ");
 				msg += "\n\n";
