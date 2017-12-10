@@ -1,8 +1,9 @@
-const { createCanvas, loadImage, registerFont } = require("canvas");
+const { createCanvas, Image, loadImage, registerFont } = require("canvas");
 const path = require("path");
 const { request } = require("../../../modules/PaladinsAPI");
+const superagent = require("superagent");
 
-registerFont(path.resolve("src", "bot", "assets", "Roboto.ttf"), { family: "Roboto" });
+registerFont(path.resolve("src", "bot", "modules", "images", "assets", "Roboto.ttf"), { family: "Roboto" });
 
 module.exports = {
 	async run({ args: [page], t, wiggle }) {
@@ -39,9 +40,9 @@ module.exports = {
 			} while(ctx.measureText(champion.Name).width > canvas.width - 72);
 			ctx.fillText(champion.Name, canvas.width / 2, yBase + fontSize + 4);
 
-			const championIcon = await loadImage(
-				path.resolve("src", "bot", "assets", "champions", `${champion.Name.toLowerCase()}.png`)
-			);
+			const { body: championBuffer } = await superagent.get(champion.ChampionIcon_URL);
+			const championIcon = new Image();
+			championIcon.src = championBuffer;
 
 			ctx.drawImage(championIcon,
 				(canvas.width / 2) - ((140 + (36 - fontSize)) / 2),
@@ -51,7 +52,7 @@ module.exports = {
 			);
 
 			const classIcon = await loadImage(
-				path.resolve("src", "bot", "assets", "classes",
+				path.resolve("src", "bot", "modules", "images", "assets", "classes",
 					`${champion.Roles.substring(10).toLowerCase().replace(" ", "")}.png`)
 			);
 			ctx.drawImage(classIcon, canvas.width - 4 - fontSize, yBase + 4, fontSize, fontSize);
@@ -66,7 +67,7 @@ module.exports = {
 				if(err) reject(err);
 				else resolve(buffer);
 			})),
-			name: "player.png"
+			name: "champions.png"
 		}];
 	},
 	args: [{

@@ -2,7 +2,7 @@ const { createCanvas, loadImage, registerFont } = require("canvas");
 const path = require("path");
 const { request } = require("../../../modules/PaladinsAPI");
 
-registerFont(path.resolve("src", "bot", "assets", "Roboto.ttf"), { family: "Roboto" });
+registerFont(path.resolve("src", "bot", "modules", "images", "assets", "Roboto.ttf"), { family: "Roboto" });
 const ranks = ["Unranked",
 	"Bronze V", "Bronze IV", "Bronze III", "Bronze II", "Bronze I",
 	"Silver V", "Silver IV", "Silver III", "Silver II", "Silver I",
@@ -77,7 +77,9 @@ module.exports = {
 		ctx.font = "16px Roboto";
 		ctx.fillText(`${data.RankedConquest.Wins} - ${data.RankedConquest.Losses}`, 260, 120);
 
-		const image = await loadImage(path.resolve("src", "bot", "assets", "ranks", `${data.RankedConquest.Tier}.png`));
+		const image = await loadImage(
+			path.resolve("src", "bot", "modules", "images", "assets", "ranks", `${data.RankedConquest.Tier}.png`)
+		);
 		ctx.drawImage(image, 165, 65);
 
 		ctx.textAlign = "center";
@@ -88,7 +90,7 @@ module.exports = {
 			const champion = championRanks[i];
 
 			const championIcon = await loadImage(
-				path.resolve("src", "bot", "assets", "champions", `${champion.champion.toLowerCase()}.png`)
+				path.resolve("src", "bot", "modules", "images", "assets", "champions", `${champion.champion.toLowerCase()}.png`)
 			);
 
 			let yCoord = 65;

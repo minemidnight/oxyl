@@ -7,5 +7,5 @@
 	"ping": "Pong! `{{latency}}ms`",
 	"ping.pinging": "pinging...",
 	"paladins.player.invalidPlayer": "No player was found",
-	"paladins.player.invalidChampion": "No champion was found"
+	"paladins.champion.invalidChampion": "No champion was found"
 }
