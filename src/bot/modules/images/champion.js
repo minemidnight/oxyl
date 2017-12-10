@@ -75,7 +75,8 @@ async function generate(champion, legendaries) {
 
 		let description = legendary.Description.split(" "), lineNumber = 0;
 		ctx.font = `10px Roboto`;
-		ctx.fillText(description.splice(0, 1)[0].slice(1, -1), 100 + (i * 200), 527.5);
+		const closingIndex = description.findIndex(ele => ~ele.indexOf("]"));
+		ctx.fillText(description.splice(0, closingIndex + 1).join(" ").slice(1, -1), 100 + (i * 200), 527.5);
 
 		ctx.font = `9px Roboto`;
 		while(description.length) {

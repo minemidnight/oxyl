@@ -1,19 +1,12 @@
-const { request } = require("../../../modules/PaladinsAPI");
 const { champion: createChampionImage } = require("../../../modules/images");
-
-const images = {};
+const fs = require("fs");
+const path = require("path");
+const { request } = require("../../../modules/PaladinsAPI");
 
 let champions, items;
 async function updateChampions() {
 	champions = await request().setEndpoint("getchampions").data(1);
 	items = await request().setEndpoint("getitems").data(1);
-
-	champions.forEach(async (champion, i) => {
-		const legendaries = items.filter(item => item.item_type.endsWith("Legendary") &&
-			item.champion_id === champion.id);
-
-		images[champion.Name.toLowerCase()] = await createChampionImage({ champion, legendaries });
-	});
 }
 
 setTimeout(updateChampions, 2000);
@@ -23,10 +16,28 @@ module.exports = {
 		const champion = champions.find(champ => champ.Name.toLowerCase().startsWith(search));
 		if(!champion) return t("commands.paladins.champion.invalidChampion");
 
-		const { buffer, ext } = images[champion.Name.toLowerCase()];
+		let buffer;
+		const fileName = `${champion.Name.toLowerCase()}.png`;
+		const savedPath = path.resolve("src", "bot", "modules", "images", "saved", fileName);
+		if(fs.existsSync(savedPath)) {
+			buffer = await new Promise((resolve, reject) => fs.readFile(savedPath, (err, data) => {
+				if(err) reject(err);
+				else resolve(data);
+			}));
+		} else {
+			const legendaries = items.filter(item => item.item_type.endsWith("Legendary") &&
+				item.champion_id === champion.id);
+			({ buffer } = await createChampionImage({ champion, legendaries }));
+
+			await new Promise((resolve, reject) => fs.writeFile(savedPath, buffer, (err) => {
+				if(err) reject(err);
+				else resolve();
+			}));
+		}
+
 		return ["", {
 			file: buffer,
-			name: `${champion.Name.toLowerCase()}.${ext}`
+			name: fileName
 		}];
 	},
 	args: [{
