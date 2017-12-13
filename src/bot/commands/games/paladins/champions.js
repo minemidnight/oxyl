@@ -1,73 +1,45 @@
-const { createCanvas, Image, loadImage, registerFont } = require("canvas");
+const { champions: createChampionsImage } = require("../../../modules/images");
+const fs = require("fs");
 const path = require("path");
 const { request } = require("../../../modules/PaladinsAPI");
-const superagent = require("superagent");
 
-registerFont(path.resolve("src", "bot", "modules", "images", "assets", "Roboto.ttf"), { family: "Roboto" });
+let champions;
+async function updateChampions() {
+	champions = await request().setEndpoint("getchampions").data(1);
+}
+
+setTimeout(updateChampions, 2000);
 
 module.exports = {
 	async run({ args: [page], t, wiggle }) {
-		const canvas = createCanvas(200, 625);
-		const ctx = canvas.getContext("2d");
+		page = page || 1;
 
-		ctx.fillStyle = "#F2F3F4";
-		ctx.fillRect(0, 0, canvas.width, canvas.height);
+		let buffer;
+		const fileName = `champions-page-${page}.png`;
+		const savedPath = path.resolve("src", "bot", "modules", "images", "saved", fileName);
+		if(fs.existsSync(savedPath)) {
+			buffer = await new Promise((resolve, reject) => fs.readFile(savedPath, (err, data) => {
+				if(err) reject(err);
+				else resolve(data);
+			}));
+		} else {
+			({ buffer } = await createChampionsImage({
+				pageData: {
+					page,
+					totalPages: Math.ceil(champions.length / 3)
+				},
+				champions: champions.slice((page - 1) * 3, page * 3)
+			}));
 
-		for(let i = ((page || 1) - 1) * 3; i < (page || 1) * 3; i++) {
-			const champion = champions[i];
-			const yBase = (i - (((page || 1) - 1) * 3)) * 200;
-
-			ctx.strokeStyle = "#5F6A6A";
-			ctx.beginPath();
-			ctx.moveTo(0, yBase);
-			ctx.lineTo(canvas.width, yBase);
-			ctx.stroke();
-			ctx.closePath();
-
-			ctx.beginPath();
-			ctx.moveTo(0, yBase + 200);
-			ctx.lineTo(canvas.width, yBase + 200);
-			ctx.stroke();
-			ctx.closePath();
-
-			ctx.fillStyle = "#34495E";
-			ctx.textAlign = "center";
-
-			let fontSize = 36;
-			do {
-				ctx.font = `${fontSize}px Roboto`;
-				fontSize--;
-			} while(ctx.measureText(champion.Name).width > canvas.width - 72);
-			ctx.fillText(champion.Name, canvas.width / 2, yBase + fontSize + 4);
-
-			const { body: championBuffer } = await superagent.get(champion.ChampionIcon_URL);
-			const championIcon = new Image();
-			championIcon.src = championBuffer;
-
-			ctx.drawImage(championIcon,
-				(canvas.width / 2) - ((140 + (36 - fontSize)) / 2),
-				yBase + fontSize + 16,
-				140 + (36 - fontSize),
-				140 + (36 - fontSize)
-			);
-
-			const classIcon = await loadImage(
-				path.resolve("src", "bot", "modules", "images", "assets", "classes",
-					`${champion.Roles.substring(10).toLowerCase().replace(" ", "")}.png`)
-			);
-			ctx.drawImage(classIcon, canvas.width - 4 - fontSize, yBase + 4, fontSize, fontSize);
+			await new Promise((resolve, reject) => fs.writeFile(savedPath, buffer, (err) => {
+				if(err) reject(err);
+				else resolve();
+			}));
 		}
 
-		ctx.fillStyle = "#34495E";
-		ctx.font = `16px Roboto`;
-		ctx.fillText(`Page ${page || 1} of ${Math.ceil(champions.length / 3)}`, canvas.width / 2, canvas.height - 7);
-
 		return ["", {
-			file: await new Promise((resolve, reject) => canvas.toBuffer((err, buffer) => {
-				if(err) reject(err);
-				else resolve(buffer);
-			})),
-			name: "champions.png"
+			file: buffer,
+			name: fileName
 		}];
 	},
 	args: [{
@@ -78,10 +50,4 @@ module.exports = {
 		get max() { return Math.ceil(champions.length / 3); }
 	}]
 };
-
-let champions;
-async function updateChampions() {
-	champions = await request().setEndpoint("getchampions").data(1);
-}
-
-setTimeout(updateChampions, 5000);
+process.on("unhandledRejection", err => console.error(err.stack));

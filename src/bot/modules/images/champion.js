@@ -3,6 +3,7 @@ const path = require("path");
 const superagent = require("superagent");
 
 registerFont(path.resolve(__dirname, "assets", "Roboto.ttf"), { family: "Roboto" });
+registerFont(path.resolve(__dirname, "assets", "Roboto-Bold.ttf"), { family: "Roboto", weight: "bold" });
 
 const abilityMap = {
 	1: "Primary",
@@ -26,17 +27,25 @@ async function generate(champion, legendaries) {
 	ctx.drawImage(championIcon, 5, 5, 150, 150);
 
 	ctx.fillStyle = "#34495E";
-	ctx.font = "16px Roboto";
 	ctx.textAlign = "center";
-	ctx.fillText(`Health: ${champion.Health}`, 77.5, 175);
-	ctx.fillText(`Speed: ${champion.Speed}`, 77.5, 200);
+	ctx.textBaseline = "top";
+
+	let fontSize = 30;
+	do {
+		ctx.font = `bold ${fontSize}px Roboto`;
+		fontSize--;
+	} while(ctx.measureText(champion.Title).width > 150);
+	ctx.fillText(champion.Title, 77.5, 160);
+
+	ctx.font = "16px Roboto";
+	ctx.fillText(`Health: ${champion.Health}`, 77.5, 170 + fontSize);
+	ctx.fillText(`Speed: ${champion.Speed}`, 77.5, 190 + fontSize);
 
 	const classIcon = await loadImage(path.resolve(__dirname, "assets", "classes",
 		`${champion.Roles.substring(10).toLowerCase().replace(" ", "")}.png`)
 	);
-	ctx.drawImage(classIcon, 52.5, 210, 50, 50);
+	ctx.drawImage(classIcon, 40, 250 + fontSize, 75, 75);
 
-	ctx.textBaseline = "top";
 	ctx.textAlign = "left";
 	for(let i = 0; i < 5; i++) {
 		const ability = champion[`Ability_${i + 1}`];
@@ -47,7 +56,6 @@ async function generate(champion, legendaries) {
 		ctx.drawImage(abilityIcon, 160, (i * 80) + 5, 75, 75);
 		ctx.font = "16px Roboto";
 		ctx.fillText(`${ability.Summary} (${abilityMap[i + 1]})`, 240, (i * 80) + 2.5);
-
 
 		ctx.font = `12px Roboto`;
 		let description = ability.Description.replace(/\r/g, " ").split(/\n| /), lineNumber = 0;
@@ -69,9 +77,9 @@ async function generate(champion, legendaries) {
 		const legendaryIcon = new Image();
 		legendaryIcon.src = legendaryBuffer;
 
-		ctx.font = `12px Roboto`;
+		ctx.font = `bold 11px Roboto`;
 		ctx.drawImage(legendaryIcon, 25 + (i * 200), 400, 150, 513 / (319 / 150));
-		ctx.fillText(legendary.DeviceName, 100 + (i * 200), 511.5);
+		ctx.fillText(legendary.DeviceName, 100 + (i * 200), 513);
 
 		let description = legendary.Description.split(" "), lineNumber = 0;
 		ctx.font = `10px Roboto`;

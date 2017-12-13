@@ -17,7 +17,7 @@ module.exports = {
 		if(!champion) return t("commands.paladins.champion.invalidChampion");
 
 		let buffer;
-		const fileName = `${champion.Name.toLowerCase()}.png`;
+		const fileName = `${champion.Name.toLowerCase().replace("'", "").replace(" ", "-")}.png`;
 		const savedPath = path.resolve("src", "bot", "modules", "images", "saved", fileName);
 		if(fs.existsSync(savedPath)) {
 			buffer = await new Promise((resolve, reject) => fs.readFile(savedPath, (err, data) => {

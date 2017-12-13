@@ -1,7 +1,10 @@
-const { createCanvas, loadImage, registerFont } = require("canvas");
+const { createCanvas, Image, loadImage, registerFont } = require("canvas");
 const path = require("path");
+const superagent = require("superagent");
 
 registerFont(path.resolve(__dirname, "assets", "Roboto.ttf"), { family: "Roboto" });
+registerFont(path.resolve(__dirname, "assets", "Roboto-Bold.ttf"), { family: "Roboto", weight: "bold" });
+
 const ranks = ["Unranked",
 	"Bronze V", "Bronze IV", "Bronze III", "Bronze II", "Bronze I",
 	"Silver V", "Silver IV", "Silver III", "Silver II", "Silver I",
@@ -70,9 +73,7 @@ async function generate(player, championRanks) {
 	ctx.font = "16px Roboto";
 	ctx.fillText(`${player.RankedConquest.Wins} - ${player.RankedConquest.Losses}`, 260, 120);
 
-	const image = await loadImage(
-		path.resolve("src", "bot", "modules", "images", "assets", "ranks", `${player.RankedConquest.Tier}.png`)
-	);
+	const image = await loadImage(path.resolve(__dirname, "assets", "ranks", `${player.RankedConquest.Tier}.png`));
 	ctx.drawImage(image, 165, 65);
 
 	ctx.textAlign = "center";
@@ -80,11 +81,11 @@ async function generate(player, championRanks) {
 	ctx.fillText(`Most Played\nChampions`, 509, 44);
 
 	for(let i = 0; i < 4; i++) {
-		const champion = championRanks[i];
-
-		const championIcon = await loadImage(
-			path.resolve("src", "bot", "modules", "images", "assets", "champions", `${champion.champion.toLowerCase()}.png`)
-		);
+		const { champion } = championRanks[i];
+		const { body: championBuffer } = await superagent.get(`https://web2.hirez.com/paladins/champion-icons/` +
+			`${champion.toLowerCase().replace("'", "").replace(" ", "-")}.jpg`);
+		const championIcon = new Image();
+		championIcon.src = championBuffer;
 
 		let yCoord = 65;
 		if(i >= 2) yCoord = 120;
