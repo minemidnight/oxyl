@@ -112,7 +112,7 @@ module.exports = {
 let settings = module.exports.settings = {
 	channels: {
 		arg: "boolean",
-		description: "Toggle whether or not the `channel` comamnd is usable"
+		description: "Toggle whether or not the `channel` command is usable"
 	},
 	farewell: {
 		arg: "text",
