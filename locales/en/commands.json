@@ -1,5 +1,9 @@
 {
 	"prefix": "commands.",
+	"ban": "Successfully banned {{user}}",
+	"ban.noBotPerms": "I am missing the `Ban Members` permission",
+	"ban.botCantBan": "I cannot ban this user, they have higher permission than me",
+	"ban.youCantBan": "You cannot ban this user, they have higher permission than you",
 	"help": "{{message}}\n\nRun `help <command>` to get more info on a command",
 	"help.sentDM": "📨 Help has been sent to your DMs!",
 	"help.noCommandFound": "No command found",

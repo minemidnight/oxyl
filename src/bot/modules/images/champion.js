@@ -42,7 +42,7 @@ async function generate(champion, legendaries) {
 	ctx.fillText(`Speed: ${champion.Speed}`, 77.5, 190 + fontSize);
 
 	const classIcon = await loadImage(path.resolve(__dirname, "assets", "classes",
-		`${champion.Roles.substring(10).toLowerCase().replace(" ", "")}.png`)
+		`${champion.Roles.substring(9).toLowerCase().replace(" ", "")}.png`)
 	);
 	ctx.drawImage(classIcon, 40, 250 + fontSize, 75, 75);
 
@@ -99,5 +99,6 @@ async function generate(champion, legendaries) {
 
 	process.stdout.write(canvas.toDataURL());
 }
+process.on("unhandledRejection", err => console.error(err.stack));
 
 generate(JSON.parse(process.env.CHAMPION), JSON.parse(process.env.LEGENDARIES));

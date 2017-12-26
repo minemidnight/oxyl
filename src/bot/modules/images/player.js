@@ -18,15 +18,15 @@ async function generate(player, championRanks) {
 	const ctx = canvas.getContext("2d");
 
 	ctx.fillStyle = "#F2F3F4";
-	ctx.fillRect(0, 20, 600, 170);
+	ctx.fillRect(0, 20, canvas.width, canvas.height);
 
 	ctx.fillStyle = "#1C2833";
-	ctx.fillRect(0, 0, 600, 20);
+	ctx.fillRect(0, 0, canvas.width, 20);
 
 	ctx.textAlign = "center";
 	ctx.fillStyle = "#EBF5FB";
 	ctx.font = "16px Roboto";
-	ctx.fillText(`Overview: ${player.Name}`, 300, 15);
+	ctx.fillText(`Overview: ${player.Name}`, canvas.width / 2, 15);
 
 	ctx.beginPath();
 	ctx.arc(80, 100, 60, Math.PI / 180 * 118, Math.PI / 180 * 420);

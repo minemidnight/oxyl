@@ -44,7 +44,7 @@ async function generate(champions, { page, totalPages }) {
 		);
 
 		const classIcon = await loadImage(
-			path.resolve(__dirname, "assets", "classes", `${champion.Roles.substring(10).toLowerCase().replace(" ", "")}.png`)
+			path.resolve(__dirname, "assets", "classes", `${champion.Roles.substring(9).toLowerCase().replace(" ", "")}.png`)
 		);
 		ctx.drawImage(classIcon, canvas.width - 4 - fontSize, yBase + 4, fontSize, fontSize);
 	}
