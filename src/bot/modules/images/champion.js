@@ -14,7 +14,7 @@ const abilityMap = {
 };
 
 async function generate(champion, legendaries) {
-	const canvas = createCanvas(600, 650);
+	const canvas = createCanvas(700, 650);
 	const ctx = canvas.getContext("2d");
 
 	ctx.fillStyle = "#F2F3F4";
@@ -54,16 +54,16 @@ async function generate(champion, legendaries) {
 		abilityIcon.src = abilityBuffer;
 
 		ctx.drawImage(abilityIcon, 160, (i * 80) + 5, 75, 75);
-		ctx.font = "16px Roboto";
+		ctx.font = "18px Roboto";
 		ctx.fillText(`${ability.Summary} (${abilityMap[i + 1]})`, 240, (i * 80) + 2.5);
 
-		ctx.font = `12px Roboto`;
+		ctx.font = "14px Roboto";
 		let description = ability.Description.replace(/\r/g, " ").split(/\n| /), lineNumber = 0;
 		while(description.length) {
 			const line = description.slice();
 			while(ctx.measureText(line.join(" ")).width > canvas.width - 245) line.splice(-1);
 
-			ctx.fillText(line.join(" "), 240, (i * 80) + (lineNumber * 14) + 20);
+			ctx.fillText(line.join(" "), 240, (i * 80) + (lineNumber * 14) + 24);
 			lineNumber++;
 			description = description.slice(line.length);
 		}
@@ -77,21 +77,27 @@ async function generate(champion, legendaries) {
 		const legendaryIcon = new Image();
 		legendaryIcon.src = legendaryBuffer;
 
-		ctx.font = `bold 11px Roboto`;
-		ctx.drawImage(legendaryIcon, 25 + (i * 200), 400, 150, 513 / (319 / 150));
-		ctx.fillText(legendary.DeviceName, 100 + (i * 200), 513);
+		ctx.font = "bold 11px Roboto";
+		ctx.drawImage(legendaryIcon, 12.5 + (i * 175), 400, 150, 513 / (319 / 150));
+		ctx.fillText(legendary.DeviceName.slice(0, -2), 95 + (i * 175), 513);
 
-		let description = legendary.Description.split(" "), lineNumber = 0;
-		ctx.font = `10px Roboto`;
+		ctx.font = "bold 18px Roboto";
+		ctx.fillText("4", 30 + (i * 175), 515);
+
+		let description = legendary.Description
+				.replace(/\{scale=([0-9\.]+)\|([0-9\.]+)\}/, (match, base, inc) => parseFloat(base) + parseFloat(inc * 3))
+				.split(" "),
+			lineNumber = 0;
+		ctx.font = "10px Roboto";
 		const closingIndex = description.findIndex(ele => ~ele.indexOf("]"));
-		ctx.fillText(description.splice(0, closingIndex + 1).join(" ").slice(1, -1), 100 + (i * 200), 527.5);
+		ctx.fillText(description.splice(0, closingIndex + 1).join(" ").slice(1, -1), 95 + (i * 175), 527.5);
 
-		ctx.font = `9px Roboto`;
+		ctx.font = "9px Roboto";
 		while(description.length) {
 			const line = description.slice();
-			while(ctx.measureText(line.join(" ")).width > 105) line.splice(-1);
+			while(ctx.measureText(line.join(" ")).width > 102.5) line.splice(-1);
 
-			ctx.fillText(line.join(" "), 100 + (i * 200), 542.5 + (lineNumber * 10));
+			ctx.fillText(line.join(" "), 87.5 + (i * 175), 540 + (lineNumber * 10));
 			lineNumber++;
 			description = description.slice(line.length);
 		}

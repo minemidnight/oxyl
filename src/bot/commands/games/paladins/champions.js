@@ -11,9 +11,7 @@ async function updateChampions() {
 setTimeout(updateChampions, 2000);
 
 module.exports = {
-	async run({ args: [page], t, wiggle }) {
-		page = page || 1;
-
+	async run({ args: [page = 1], t, wiggle }) {
 		let buffer;
 		const fileName = `champions-page-${page}.png`;
 		const savedPath = path.resolve("src", "bot", "modules", "images", "saved", fileName);
@@ -24,10 +22,7 @@ module.exports = {
 			}));
 		} else {
 			({ buffer } = await createChampionsImage({
-				pageData: {
-					page,
-					totalPages: Math.ceil(champions.length / 3)
-				},
+				pageData: { page, totalPages: Math.ceil(champions.length / 3) },
 				champions: champions.slice((page - 1) * 3, page * 3)
 			}));
 

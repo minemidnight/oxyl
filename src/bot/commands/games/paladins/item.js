@@ -21,7 +21,7 @@ module.exports = {
 		let buffer;
 		const fileName = `item-${item.DeviceName.toLowerCase().replace(" ", "-")}.png`;
 		const savedPath = path.resolve("src", "bot", "modules", "images", "saved", fileName);
-		if(fs.existsSync(savedPath) {
+		if(fs.existsSync(savedPath)) {
 			buffer = await new Promise((resolve, reject) => fs.readFile(savedPath, (err, data) => {
 				if(err) reject(err);
 				else resolve(data);
