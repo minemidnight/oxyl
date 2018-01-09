@@ -4,14 +4,14 @@ const path = require("path");
 const { request } = require("../../../modules/PaladinsAPI");
 
 let items;
-async function updateChampions() {
+async function updateItems() {
 	items = await request().setEndpoint("getitems").data(1);
 	items.filter(item => item.item_type === "Card Vendor Legendary Default").forEach(item => {
 		item.itemIcon_URL = item.itemIcon_URL.replace("-i", ""); // eslint-disable-line camelcase
 	});
 }
 
-setTimeout(updateChampions, 2000);
+setTimeout(updateItems, 2000);
 
 module.exports = {
 	async run({ args: [search], t, wiggle }) {

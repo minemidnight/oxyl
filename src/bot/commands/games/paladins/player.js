@@ -7,7 +7,13 @@ module.exports = {
 		if(!player) return t("commands.paladins.player.invalidPlayer");
 
 		const championRanks = await request().setEndpoint("getchampionranks").data(player.Name);
-		const { buffer } = await createPlayerImage({ player, championRanks });
+		const { buffer } = await createPlayerImage({
+			player,
+			mostUsed: championRanks
+				.slice(0, 4)
+				.map(({ champion }) => `https://web2.hirez.com/paladins/champion-icons/` +
+					`${champion.toLowerCase().replace("'", "").replace(" ", "-")}.jpg`)
+		});
 
 		return ["", {
 			file: buffer,

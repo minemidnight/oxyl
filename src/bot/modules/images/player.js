@@ -13,7 +13,7 @@ const ranks = ["Unranked",
 	"Diamond V", "Diamond IV", "Diamond III", "Diamond II", "Diamond I",
 	"Master", "Grandmaster"];
 
-async function generate(player, championRanks) {
+async function generate(player, mostUsedChampionsImages) {
 	const canvas = createCanvas(600, 170);
 	const ctx = canvas.getContext("2d");
 
@@ -81,18 +81,14 @@ async function generate(player, championRanks) {
 	ctx.fillText(`Most Played\nChampions`, 509, 44);
 
 	for(let i = 0; i < 4; i++) {
-		const { champion } = championRanks[i];
-		const { body: championBuffer } = await superagent.get(`https://web2.hirez.com/paladins/champion-icons/` +
-			`${champion.toLowerCase().replace("'", "").replace(" ", "-")}.jpg`);
+		const { body: championBuffer } = await superagent.get(mostUsedChampionsImages[i]);
 		const championIcon = new Image();
 		championIcon.src = championBuffer;
 
-		let yCoord = 65;
-		if(i >= 2) yCoord = 120;
-		ctx.drawImage(championIcon, 456 + (i % 2 * 53), yCoord, 48, 48);
+		ctx.drawImage(championIcon, 456 + (i % 2 * 53), i >= 2 ? 120 : 65, 48, 48);
 	}
 
 	process.stdout.write(canvas.toDataURL());
 }
 
-generate(JSON.parse(process.env.PLAYER), JSON.parse(process.env.CHAMPIONRANKS));
+generate(JSON.parse(process.env.PLAYER), JSON.parse(process.env.MOSTUSED));

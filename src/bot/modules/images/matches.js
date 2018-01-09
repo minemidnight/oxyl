@@ -1,12 +1,23 @@
-const { createCanvas, Image, registerFont } = require("canvas");
+const { createCanvas, Image, loadImage, registerFont } = require("canvas");
 const path = require("path");
 const superagent = require("superagent");
 
 registerFont(path.resolve(__dirname, "assets", "Roboto.ttf"), { family: "Roboto" });
 registerFont(path.resolve(__dirname, "assets", "Roboto-Bold.ttf"), { family: "Roboto", weight: "bold" });
 
-async function generate(pageData, matchHistory) {
-	const canvas = createCanvas(900, matchHistory.length * 200);
+const regionMap = {
+	Brazil: "BR",
+	Europe: "EU",
+	"Latin America North": "LAN",
+	"North America": "NA",
+	Oceania: "OCE",
+	"Southeast Asia": "SEA",
+	"South America": "SA"
+};
+
+const loadedChampions = new Map();
+async function generate({ page, totalPages }, matchHistory, loadoutImages) {
+	const canvas = createCanvas(900, (matchHistory.length * 200) + 25);
 	const ctx = canvas.getContext("2d");
 
 	ctx.fillStyle = "#F2F3F4";
@@ -23,10 +34,15 @@ async function generate(pageData, matchHistory) {
 		ctx.lineTo(canvas.width, yBase + 200);
 		ctx.stroke();
 
-		const { body: championBuffer } = await superagent.get(`https://web2.hirez.com/paladins/champion-icons/` +
-			`${match.Champion.toLowerCase().replace(" ", "-")}.jpg`);
+		const champion = match.Champion.replace(/(^.+?)([A-Z][a-z]+)/g, `$1-$2`).toLowerCase();
 		const championIcon = new Image();
-		championIcon.src = championBuffer;
+		if(loadedChampions.has(champion)) {
+			championIcon.src = loadedChampions.get(champion);
+		} else {
+			const { body: buffer } = await superagent.get(`https://web2.hirez.com/paladins/champion-icons/${champion}.jpg`);
+			championIcon.src = buffer;
+			loadedChampions.set(champion, buffer);
+		}
 		ctx.drawImage(championIcon, 12.5, yBase + 12.5, 175, 175);
 
 		ctx.textAlign = "left";
@@ -37,6 +53,12 @@ async function generate(pageData, matchHistory) {
 		ctx.textAlign = "right";
 		ctx.font = "20px Roboto";
 		ctx.fillText(`ID: ${match.Match}`, 895, yBase + 187.5);
+
+		let { width: removeX } = ctx.measureText(`ID: ${match.Match}`);
+		const date = new Date(match.Match_Time);
+		ctx.fillText(`Date: ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`, 885 - removeX, yBase + 187.75);
+		removeX += ctx.measureText(`Date: ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`).width;
+		ctx.fillText(`Queue: ${match.Queue}`, 875 - removeX, yBase + 187.75);
 
 		ctx.beginPath();
 		ctx.strokeStyle = match.Win_Status === "Win" ? "#3c763d" : "#a94442";
@@ -55,8 +77,24 @@ async function generate(pageData, matchHistory) {
 		ctx.fillText("DMG DELT", 550, yBase + 26.5);
 		ctx.fillText("WPN DMG", 550, yBase + 76.5);
 		ctx.fillText("DMG TAKEN", 650, yBase + 26.5);
+		ctx.fillText("REGION", 650, yBase + 76.5);
 		ctx.fillText("OBJ TIME", 750, yBase + 26.5);
 		ctx.fillText("SHEILDING", 850, yBase + 26.5);
+
+		ctx.font = "18px Roboto";
+		ctx.fillText("SCORE", 350, yBase + 128);
+		ctx.fillText("TIME", 550, yBase + 128);
+
+		ctx.font = "26px Roboto";
+		match[`Team${match.Winning_TaskForce}Score`] = 4;
+		if(match.TaskForce === 2) {
+			match.Team1Score = match.Team2Score;
+			match.Team2Score = 4;
+		}
+
+		ctx.fillText(`${match.Team1Score} - ${match.Team2Score}`, 350, yBase + 154);
+		const time = match.Time_In_Match_Seconds;
+		ctx.fillText(`${Math.floor(time / 60)}:${(time % 60).toString().padStart(2, "0")}`, 550, yBase + 154);
 
 		ctx.font = "24px Roboto";
 		ctx.fillStyle = "#a94442";
@@ -85,9 +123,17 @@ async function generate(pageData, matchHistory) {
 		ctx.fillText(match.Damage.toLocaleString(), 550, yBase + 50);
 		ctx.fillText(match.Damage_Done_In_Hand.toLocaleString(), 550, yBase + 100);
 		ctx.fillText(match.Damage_Taken.toLocaleString(), 650, yBase + 50);
+		ctx.fillText(regionMap[match.Region] || match.Region, 650, yBase + 100);
 		ctx.fillText(match.Objective_Assists.toLocaleString(), 750, yBase + 50);
 		ctx.fillText(match.Damage_Mitigated.toLocaleString(), 850, yBase + 50);
+
+		const mapIcon = await loadImage(path.resolve(__dirname, "assets", "map.png"));
+		ctx.drawImage(mapIcon, 710, yBase + 62.5, 180, 101.25);
 	}
+
+	ctx.fillStyle = "#34495E";
+	ctx.font = `16px Roboto`;
+	ctx.fillText(`Page ${page || 1} of ${totalPages}`, canvas.width / 2, canvas.height - 7);
 
 	process.stdout.write(canvas.toDataURL());
 }
