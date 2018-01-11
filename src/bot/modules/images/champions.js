@@ -3,7 +3,6 @@ const path = require("path");
 const superagent = require("superagent");
 
 registerFont(path.resolve(__dirname, "assets", "Roboto.ttf"), { family: "Roboto" });
-registerFont(path.resolve(__dirname, "assets", "Roboto-Bold.ttf"), { family: "Roboto", weight: "bold" });
 
 async function generate(champions, { page, totalPages }) {
 	const canvas = createCanvas(200, (champions.length * 200) + 25);

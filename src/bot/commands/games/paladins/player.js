@@ -4,7 +4,7 @@ const { request } = require("../../../modules/PaladinsAPI");
 module.exports = {
 	async run({ args: [player], t }) {
 		[player] = await request().setEndpoint("getplayer").data(player);
-		if(!player) return t("commands.paladins.player.invalidPlayer");
+		if(!player) return t("commands.paladins.invalidPlayer");
 
 		const championRanks = await request().setEndpoint("getchampionranks").data(player.Name);
 		const { buffer } = await createPlayerImage({

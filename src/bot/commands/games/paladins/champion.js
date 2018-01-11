@@ -14,7 +14,7 @@ setTimeout(updateChampions, 2000);
 module.exports = {
 	async run({ args: [search], t, wiggle }) {
 		const champion = champions.find(champ => champ.Name.toLowerCase().startsWith(search));
-		if(!champion) return t("commands.paladins.champion.invalidChampion");
+		if(!champion) return t("commands.paladins.invalidChampion");
 
 		let buffer;
 		const fileName = `${champion.Name.toLowerCase().replace("'", "").replace(" ", "-")}.png`;

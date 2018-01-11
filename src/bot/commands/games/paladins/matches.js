@@ -12,7 +12,7 @@ module.exports = {
 	async run({ args: [player, page = 1], flags: { champion }, t }) {
 		let matchHistory = await request().setEndpoint("getmatchhistory").data(player);
 		if(!matchHistory[0].playerName) {
-			return t("commands.paladins.matches.invalidPlayer");
+			return t("commands.paladins.invalidPlayer");
 		} else if(matchHistory[0].ret_msg && matchHistory[0].ret_msg.startsWith("No Match History")) {
 			return t("commands.paladins.matches.noMatchHistory");
 		}

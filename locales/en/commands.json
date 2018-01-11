@@ -10,6 +10,13 @@
 	"help.command": "__Command__: {{name}}\nCategory: {{category}}\nDescription: {{description}}\nUsage: {{usage}}",
 	"ping": "Pong! `{{latency}}ms`",
 	"ping.pinging": "pinging...",
-	"paladins.player.invalidPlayer": "No player was found",
-	"paladins.champion.invalidChampion": "No champion was found"
+	"paladins.invalidPlayer": "No player was found",
+	"paladins.invalidChampion": "No champion was found",
+	"paladins.items.invalidItem": "No item was found",
+	"paladins.loadout.noLoadouts": "This player has no loadouts",
+	"paladins.loadout.noLoadoutsChampion": "This player has no loadouts for this champion",
+	"paladins.loadout.listChampions": "Please specify a champion to list the loadouts the player has for them. This player has loadouts for the following: {{validChampions}}",
+	"paladins.loadout.listLoadouts": "Please specify a loadout to view:\n{{validLoadouts}}",
+	"paladins.matches.noMatchHistory": "This player has no match history",
+	"paladins.matches.notEnoughMatches": "The page number you entered was too large. This player has not completed that many matches"
 }
