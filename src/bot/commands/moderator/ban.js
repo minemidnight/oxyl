@@ -4,9 +4,9 @@ module.exports = {
 	async run({
 		args: [user, reason], author, flags: { time, deleteDays },
 		guild, message: { member: authorMember }, t,
-		wiggle: { erisClient: client }
+		wiggle: { erisClient: client }, wiggle
 	}) {
-		if(!guild.members.get(client.id).permission.has("banMembers")) return t("commands.ban.botNoPerms");
+		if(!guild.members.get(client.user.id).permission.has("banMembers")) return t("commands.ban.botNoPerms");
 
 		const member = guild.members.get(user.id);
 		if(member) {
@@ -16,13 +16,13 @@ module.exports = {
 
 
 		modLog.ban({
-			banned: user,
+			punished: user,
 			command: true,
 			guild,
 			responsible: author,
 			reason,
 			time
-		});
+		}, wiggle);
 
 		await client.banGuildMember(guild.id, user.id, deleteDays, reason);
 		return t("commands.ban", { user: `${user.username}#${user.discriminator}` });

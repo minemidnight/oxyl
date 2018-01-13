@@ -1,0 +1,17 @@
+{
+	"name": "modLog",
+	"primary": "id",
+	"indexes": ["action", "guildID", "modID", "userID", "roleID"],
+	"model": {
+		"action": "action taken (mute/ban/kick)",
+		"caseID": 1,
+		"guildID": "guild id",
+		"id": ["caseID", "guildID"],
+		"modID": "mod who took action",
+		"userID": "user who was punished",
+		"roleID": "id of special role if applicable",
+		"messageID": "message id created for entry",
+		"reason": "reason, if any",
+		"time": "Time in ms that the action lasted"
+	}
+}

@@ -24,17 +24,15 @@ module.exports = {
 		if(!matchHistory.length) return t("commands.paladins.matches.noMatchHistory");
 		else if(matchHistory.length < (page - 1) * 5) return t("commands.paladins.matches.notEnoughMatches");
 
-
 		const matches = matchHistory.slice((page - 1) * 5, page * 5);
 		const { buffer } = await createMatchesImage({
 			pageData: { page, totalPages: Math.ceil(matchHistory.length / 5) },
 			matchHistory: matches
 		});
 
-
 		return ["", {
 			file: buffer,
-			name: `${player.Name}-matches.png`
+			name: `${player}-matches.png`
 		}];
 	},
 	args: [{

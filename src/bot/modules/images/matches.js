@@ -33,7 +33,7 @@ async function generate({ page, totalPages }, matchHistory, loadoutImages) {
 		ctx.lineTo(canvas.width, yBase + 200);
 		ctx.stroke();
 
-		const champion = match.Champion.replace(/(^.+?)([A-Z][a-z]+)/g, `$1-$2`).toLowerCase();
+		const champion = match.Champion.toLowerCase().replace("'", "").replace(" ", "-");
 		const championIcon = new Image();
 		if(loadedChampions.has(champion)) {
 			championIcon.src = loadedChampions.get(champion);
@@ -85,10 +85,10 @@ async function generate({ page, totalPages }, matchHistory, loadoutImages) {
 		ctx.fillText("TIME", 550, yBase + 128);
 
 		ctx.font = "26px Roboto";
-		match[`Team${match.Winning_TaskForce}Score`] = 4;
 		if(match.TaskForce === 2) {
+			const Team1Score = match.Team1Score;
 			match.Team1Score = match.Team2Score;
-			match.Team2Score = 4;
+			match.Team2Score = Team1Score;
 		}
 
 		ctx.fillText(`${match.Team1Score} - ${match.Team2Score}`, 350, yBase + 154);

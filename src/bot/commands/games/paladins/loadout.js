@@ -14,7 +14,6 @@ module.exports = {
 		let loadouts = await request().setEndpoint("getplayerloadouts").data(player, 1);
 		if(!loadouts[0].playerName) return t("commands.paladins.invalidPlayer");
 		else if(!loadouts[0].DeckId) return t("commands.paladins.loadout.noLoadouts");
-		loadouts.forEach(deck => deck.ChampionName = champions.find(({ id }) => id === deck.ChampionId).Name);
 
 		if(!champion) {
 			return t("commands.paladins.loadout.listChampions", {

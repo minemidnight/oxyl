@@ -13,7 +13,7 @@ router.get("/:guild(\\d{17,21})", async (req, res) => {
 	const channels = await getChannels(req.params.guild);
 	const roles = await getRoles(req.params.guild);
 
-	const data = await r.table("modlogSettings")
+	const data = await r.table("modLogSettings")
 		.get(req.params.guild)
 		.default({ enabled: false, tracked: [] })
 		.without("id")
@@ -36,7 +36,7 @@ router.put("/:guild(\\d{17,21})", async (req, res) => {
 		return;
 	}
 
-	await r.table("modlogSettings")
+	await r.table("modLogSettings")
 		.insert({
 			id: req.params.guild,
 			enabled: req.body.enabled,
