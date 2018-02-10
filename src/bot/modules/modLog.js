@@ -1,7 +1,4 @@
-const recentActions = ["bans"].reduce((a, b) => {
-	a[b] = new Set();
-	return a;
-}, []);
+const recentBans = new Map();
 
 const createTimedEvent = async (data, r) => r.table("timedEvents").insert(data).run();
 const createEntry = async (data, wiggle) => {
@@ -22,7 +19,22 @@ const createEntry = async (data, wiggle) => {
 	};
 
 	entry.messageID = await entryMessage(data, wiggle);
-	return await wiggle.locals.r.table("modLog").insert(entry).run();
+	await wiggle.locals.r.table("modLog").insert(entry).run();
+	return entry.caseID;
+};
+
+const updateEntry = async (caseID, data, wiggle) => {
+	const messageID = await wiggle.locals.r.table("modLog")
+		.get([caseID, data.guild.id])
+		.getField("messageID")
+		.default(null)
+		.run();
+	if(!messageID) return;
+
+	const channelID = await getChannel(data.guild.id, wiggle.locals.r);
+	if(!channelID) return;
+
+	await wiggle.erisClient.editMessage(channelID, messageID, buildMessage(data));
 };
 
 const getChannel = async (guildID, r) => {
@@ -74,8 +86,7 @@ const entryMessage = async (data, wiggle) => {
 };
 
 const ban = async ({ punished, command, guild, responsible, reason, time }, wiggle) => {
-	if(recentActions.bans.has(`${guild.id}-${punished.id}`)) return;
-	else recentActions.bans.add(`${guild.id}-${punished.id}`);
+	if(recentBans.has(`${guild.id}-${punished.id}`)) return;
 
 	if(time) {
 		await createTimedEvent({
@@ -86,7 +97,7 @@ const ban = async ({ punished, command, guild, responsible, reason, time }, wigg
 		}, wiggle.locals.r);
 	}
 
-	await createEntry({
+	const caseID = await createEntry({
 		action: time ? "tempban" : "ban",
 		guild,
 		punished,
@@ -95,7 +106,40 @@ const ban = async ({ punished, command, guild, responsible, reason, time }, wigg
 		time
 	}, wiggle);
 
-	setTimeout(() => recentActions.bans.delete(`${guild.id}-${punished.id}`), 2500);
+	recentBans.set(`${guild.id}-${punished.id}`, caseID);
+	setTimeout(() => recentBans.delete(`${guild.id}-${punished.id}`), 30000);
 };
 
-module.exports = { ban };
+const kick = async ({ punished, command, guild, responsible, reason }, wiggle) => {
+	await createEntry({
+		action: "kick",
+		guild,
+		punished,
+		responsible,
+		reason
+	}, wiggle);
+};
+
+const unban = async ({ punished, command, guild, responsible, reason }, wiggle) => {
+	if(recentBans.has(`${guild.id}-${punished.id}`)) {
+		updateEntry(recentBans.get(`${guild.id}-${punished.id}`), {
+			action: "softban",
+			guild,
+			punished,
+			responsible,
+			reason
+		}, wiggle);
+
+		recentBans.delete(`${guild.id}-${punished.id}`);
+	} else {
+		await createEntry({
+			action: "unban",
+			guild,
+			punished,
+			responsible,
+			reason
+		}, wiggle);
+	}
+};
+
+module.exports = { ban, kick, unban };

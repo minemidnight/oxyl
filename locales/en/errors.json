@@ -1,4 +1,5 @@
 {
 	"prefix": "errors.",
-	"notCreator": "You can't run this command (creators only)"
+	"notCreator": "You can't run this command (creators only)",
+	"noCommandPermission": "You do not have permission to run this command! It requires the {{permission}} permission."
 }

@@ -1,9 +1,16 @@
 {
 	"prefix": "commands.",
 	"ban": "Successfully banned {{user}}",
+	"ban.softban": "Sucessfully softbanned {{user}}",
+	"ban.tempban": "Sucessfully tempbanned {{user}}",
 	"ban.noBotPerms": "I am missing the `Ban Members` permission",
 	"ban.botCantBan": "I cannot ban this user, they have higher permission than me",
 	"ban.youCantBan": "You cannot ban this user, they have higher permission than you",
+	"kick": "Successfully kicked {{user}}",
+	"kick.botNoPerms": "I am missing the `Kick Members` permission",
+	"kick.notInGuild": "That user is not in the guild",
+	"kick.botCantKick": "I cannot kick this user, they have higher permission than me",
+	"kick.youCantKick": "You cannot kick this user, they have higher permission than you",
 	"help": "{{message}}\n\nRun `help <command>` to get more info on a command",
 	"help.sentDM": "📨 Help has been sent to your DMs!",
 	"help.noCommandFound": "No command found",
@@ -18,5 +25,7 @@
 	"paladins.loadout.listChampions": "Please specify a champion to list the loadouts the player has for them. This player has loadouts for the following: {{validChampions}}",
 	"paladins.loadout.listLoadouts": "Please specify a loadout to view:\n{{validLoadouts}}",
 	"paladins.matches.noMatchHistory": "This player has no match history",
-	"paladins.matches.notEnoughMatches": "The page number you entered was too large. This player has not completed that many matches"
+	"paladins.matches.notEnoughMatches": "The page number you entered was too large. This player has not completed that many matches",
+	"purge.botNoPerms": "I am missing the `Manage Messages` permission.",
+	"purge": "Deleted {{deleted}} messages"
 }

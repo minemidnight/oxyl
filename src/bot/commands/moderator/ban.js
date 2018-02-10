@@ -2,7 +2,7 @@ const modLog = require("../../modules/modLog");
 
 module.exports = {
 	async run({
-		args: [user, reason], author, flags: { time, deleteDays },
+		args: [user, reason], author, flags: { time, deleteDays, softban },
 		guild, message: { member: authorMember }, t,
 		wiggle: { erisClient: client }, wiggle
 	}) {
@@ -14,7 +14,6 @@ module.exports = {
 			else if(!member.punishable(authorMember)) return t("commands.ban.youCantBan");
 		}
 
-
 		modLog.ban({
 			punished: user,
 			command: true,
@@ -25,7 +24,14 @@ module.exports = {
 		}, wiggle);
 
 		await client.banGuildMember(guild.id, user.id, deleteDays, reason);
-		return t("commands.ban", { user: `${user.username}#${user.discriminator}` });
+		if(softban) {
+			await client.unbanGuildMember(guild.id, user.id, reason);
+			return t("commands.ban.softban", { user: `${user.username}#${user.discriminator}` });
+		} else if(time) {
+			return t("commands.tempban", { user: `${user.username}#${user.discriminator}` });
+		} else {
+			return t("commands.ban", { user: `${user.username}#${user.discriminator}` });
+		}
 	},
 	guildOnly: true,
 	perm: "banMembers",
@@ -45,5 +51,11 @@ module.exports = {
 		min: 0,
 		max: 7,
 		default: 7
+	}, {
+		name: "softban",
+		short: "s",
+		aliases: ["soft"],
+		type: "boolean",
+		default: false
 	}]
 };

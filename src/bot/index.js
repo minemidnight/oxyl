@@ -21,7 +21,11 @@ const client = wiggle({
 	locales: "locales",
 	listeners: "src/bot/listeners",
 	commands: "src/bot/commands"
-}).use("message", wiggle.middleware.commandParser(), wiggle.middleware.argHandler());
+}).use("message",
+	wiggle.middleware.commandParser(),
+	wiggle.middleware.argHandler(),
+	require("./middleware/permissionHandler")
+);
 
 module.exports = async ({ shardStart, shardEnd, shardCount, shards }) => {
 	client.set("clientOptions", {
