@@ -42,7 +42,10 @@ function getPostEmbed(post) {
 		embed.description = post.selftext;
 		embed.thumbnail = { url: "https://www.redditstatic.com/icon.png" };
 	}
-	if(post.post_hint && post.preview.images) embed.image = { url: post.preview.images[0].source.url };
+
+	if(post.post_hint && post.preview.images) {
+		embed.image = { url: post.preview.images[0].source.url.replace(/&amp;/g, "&") };
+	}
 
 	return embed;
 }
