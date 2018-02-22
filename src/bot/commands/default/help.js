@@ -1,5 +1,5 @@
 module.exports = {
-	async run({ args, author, flags, t, wiggle }) {
+	async run({ args, author, flags: { dm }, t, wiggle }) {
 		if(args[0]) {
 			const command = wiggle.categories.map(category => category.commands.get(args[0])).find(cmd => cmd);
 			if(!command) return t("commands.help.noCommandFound");
@@ -22,7 +22,7 @@ module.exports = {
 				return msg;
 			}, "").trim();
 
-			if(flags.dm) {
+			if(dm) {
 				await author.createMessage(t("commands.help", { message: helpMessage }));
 				return t("commands.help.sentDM");
 			} else {

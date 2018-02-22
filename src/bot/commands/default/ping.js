@@ -1,6 +1,6 @@
 module.exports = {
-	async run({ channel, flags, guild, reply, t }) {
-		if(flags.https) {
+	async run({ channel, flags: { https }, guild, reply, t }) {
+		if(https) {
 			const now = Date.now();
 			const msg = await reply(t("commands.ping", { latency: t("commands.ping.pinging") }));
 			msg.edit(t("commands.ping", { latency: Date.now() - now }));

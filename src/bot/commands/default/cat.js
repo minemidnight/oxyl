@@ -2,7 +2,7 @@ const path = require("path");
 const superagent = require("superagent");
 
 module.exports = {
-	async run({ channel, flags, guild, reply, t }) {
+	async run() {
 		const { body: [file] } = await superagent.get("http://shibe.online/api/cats?count=1");
 		const { body: buffer } = await superagent.get(file);
 
