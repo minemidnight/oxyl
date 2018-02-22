@@ -27,5 +27,11 @@
 	"paladins.matches.noMatchHistory": "This player has no match history",
 	"paladins.matches.notEnoughMatches": "The page number you entered was too large. This player has not completed that many matches",
 	"purge.botNoPerms": "I am missing the `Manage Messages` permission.",
-	"purge": "Deleted {{deleted}} messages"
+	"purge": "Deleted {{deleted}} messages",
+	"clean": "Cleaned {{cleaned}} messages",
+	"hugemoji.error": "Invalid emoji! Please only provide one emoji at a time",
+	"roleme.list": "Available roles you can get: {{roles}}",
+	"roleme.notAvailable": "You are not able to get that role, please run `roleme` without arguments to see a list of roles you can get",
+	"roleme.added": "Gave you {{role}}",
+	"roleme.removed": "Removed {{role}} from you"
 }
