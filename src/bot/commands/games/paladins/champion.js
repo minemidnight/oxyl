@@ -9,7 +9,7 @@ async function updateChampions() {
 	items = await request().setEndpoint("getitems").data(1);
 }
 
-setTimeout(updateChampions, 2000);
+setTimeout(updateChampions, 3000);
 
 module.exports = {
 	async run({ args: [search], t, wiggle }) {

@@ -6,10 +6,10 @@ async function updateChampions() {
 	champions = await request().setEndpoint("getchampions").data(1);
 }
 
-setTimeout(updateChampions, 2000);
+setTimeout(updateChampions, 3000);
 
 module.exports = {
-	async run({ args: [player, page = 1], flags: { champion }, t }) {
+	async run({ args: [player, page = 1], flags: { champion, competitive }, t }) {
 		let matchHistory = await request().setEndpoint("getmatchhistory").data(player);
 		if(!matchHistory[0].playerName) {
 			return t("commands.paladins.invalidPlayer");
@@ -17,10 +17,13 @@ module.exports = {
 			return t("commands.paladins.matches.noMatchHistory");
 		}
 
+		if(competitive) matchHistory = matchHistory.filter(match => match.Queue === "Competitive");
 		if(champion) {
 			champion = champions.find(champ => champ.Name.toLowerCase().startsWith(champion));
 			if(champion) matchHistory = matchHistory.filter(match => match.ChampionId === champion.id);
 		}
+
+
 		if(!matchHistory.length) return t("commands.paladins.matches.noMatchHistory");
 		else if(matchHistory.length < (page - 1) * 5) return t("commands.paladins.matches.notEnoughMatches");
 
@@ -50,5 +53,11 @@ module.exports = {
 		short: "c",
 		aliases: ["champ"],
 		type: "text"
+	}, {
+		name: "competitive",
+		short: "r",
+		aliases: ["ranked", "comp"],
+		type: "boolean",
+		default: false
 	}]
 };

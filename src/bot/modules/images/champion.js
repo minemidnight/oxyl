@@ -79,7 +79,7 @@ async function generate(champion, legendaries) {
 
 		ctx.font = "bold 11px Roboto";
 		ctx.drawImage(legendaryIcon, 12.5 + (i * 175), 400, 150, 513 / (319 / 150));
-		ctx.fillText(legendary.DeviceName.slice(0, -2), 95 + (i * 175), 513);
+		ctx.fillText(legendary.DeviceName, 95 + (i * 175), 513);
 
 		ctx.font = "bold 18px Roboto";
 		ctx.fillText("4", 30 + (i * 175), 515);

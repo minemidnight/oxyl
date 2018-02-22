@@ -11,7 +11,7 @@ async function updateItems() {
 	});
 }
 
-setTimeout(updateItems, 2000);
+setTimeout(updateItems, 3000);
 
 module.exports = {
 	async run({ args: [search], t, wiggle }) {

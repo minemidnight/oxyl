@@ -38,7 +38,7 @@ async function generate(loadout, items) {
 		itemImage.src = buffer;
 		ctx.drawImage(itemImage, 5 + (i * 120), 130, 110, 110);
 
-		const itemName = items[i].DeviceName.slice(0, -2);
+		const itemName = items[i].DeviceName;
 		let fontSize = 16;
 		do {
 			ctx.font = `${fontSize}px Roboto`;

@@ -7,7 +7,7 @@ async function updateData() {
 	items = await request().setEndpoint("getitems").data(1);
 }
 
-setTimeout(updateData, 2000);
+setTimeout(updateData, 3000);
 
 module.exports = {
 	async run({ args: [player, champion, loadout], t }) {

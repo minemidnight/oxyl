@@ -46,7 +46,7 @@ async function generate({ page, totalPages }, matchHistory, loadoutImages) {
 
 		ctx.textAlign = "left";
 		ctx.fillStyle = "#34495E";
-		ctx.font = "36px Roboto";
+		ctx.font = "39px Roboto";
 		ctx.fillText(`as ${match.Champion}`, 200, yBase + 187.5);
 
 		ctx.textAlign = "right";
@@ -86,9 +86,9 @@ async function generate({ page, totalPages }, matchHistory, loadoutImages) {
 
 		ctx.font = "26px Roboto";
 		if(match.TaskForce === 2) {
-			const Team1Score = match.Team1Score;
+			const teamOneScore = match.Team1Score;
 			match.Team1Score = match.Team2Score;
-			match.Team2Score = Team1Score;
+			match.Team2Score = teamOneScore;
 		}
 
 		ctx.fillText(`${match.Team1Score} - ${match.Team2Score}`, 350, yBase + 154);
