@@ -9,6 +9,7 @@ require("eris-additions")(require("eris"), {
 	]
 });
 
+const cachedPrefixes = new Map();
 const config = require("../../config");
 const wiggle = require("eris-wiggle");
 const client = wiggle({
@@ -20,7 +21,22 @@ const client = wiggle({
 	},
 	locales: "locales",
 	listeners: "src/bot/listeners",
-	commands: "src/bot/commands"
+	commands: "src/bot/commands",
+	getPrefixes: async ({ channel: { guild } }) => {
+		if(!guild) return config.prefixes;
+		else if(cachedPrefixes.has(guild.id)) return cachedPrefixes.get(guild.id);
+
+		const prefixData = await client.locals.r.table("prefixes").get(guild.id).run();
+		if(prefixData) {
+			const prefix = [prefixData.value];
+			cachedPrefixes.set(guild.id, prefixData.overwrite ? prefix : prefix.concat(config.prefixes));
+		} else {
+			cachedPrefixes.set(guild.id, config.prefixes);
+		}
+
+		setTimeout(() => cachedPrefixes.delete(guild.id), 600000);
+		return cachedPrefixes.get(guild.id);
+	}
 }).use("message",
 	wiggle.middleware.commandParser(),
 	wiggle.middleware.argHandler(),
