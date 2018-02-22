@@ -1,3 +1,0 @@
-{
-	"imports": ["commands", "descriptions", "errors", "words"]
-}
