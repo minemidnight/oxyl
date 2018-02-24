@@ -25,6 +25,34 @@
 					</span>
 				</label>
 			</div>
+			<h4>Suggestions</h4>
+			<p>Option to have a suggestions channel, where members can suggest something and other members can vote on it</p>
+			<div class="form-check">
+				<label>
+					Enabled
+					<small class="form-text">Whether or not to enable the suggestions</small>
+				</label>
+				<label class="tgl">
+					<input type="checkbox" :checked="data.suggestions.enabled" v-model="updateModel.suggestions.enabled" />
+					<span class="tgl_body">
+						<span class="tgl_switch"></span>
+						<span class="tgl_track">
+							<span class="tgl_bgd"></span>
+							<span class="tgl_bgd tgl_bgd-negative"></span>
+						</span>
+					</span>
+				</label>
+			</div>
+			<div class="form-group">
+				<label for="channel">
+					Channel
+					<small class="form-text">What Discord channel the suggestions should be sent in</small>
+				</label>
+				<select class="form-control" id="channel" v-model="updateModel.suggestions.channelID">
+					<option v-for="(channel, index) in channels.filter(({ canSend }) => canSend)" :key="index" :value="channel.id" :selected="channel.id === data.channelID">#{{ channel.name }}</option>
+				</select>
+				<small class="form-text text-muted">Don't see your channel? Make sure Oxyl has permission to Send Messages and Read Messages in that channel.</small>
+			</div>
 			<button type="submit" class="btn btn-success">Save</button>
 		</form>
 		<div v-else class="d-flex justify-content-center mt-4">
@@ -38,14 +66,17 @@ module.exports = {
 	data() {
 		return {
 			loaded: false,
-			data: { prefix: null },
-			updateModel: { prefix: null }
+			channels: [],
+			data: { prefix: null, suggestions: null },
+			updateModel: { prefix: null, suggestions: null }
 		};
 	},
 	async created() {
 		const { error, body } = await apiCall.get(`general/${this.$route.params.guild}`);
 
 		if(error) return;
+		this.channels = body.channels;
+		delete body.channels;
 		this.data = body;
 		this.updateModel = Object.assign({}, this.data);
 		this.loaded = true;
@@ -54,12 +85,9 @@ module.exports = {
 		async update() {
 			$("form button[type=submit]").addClass("disabled");
 
-			const { error } = await apiCall.put(`general/${this.$route.params.guild}`).send({
-				prefix: {
-					value: this.updateModel.prefix.value,
-					overwrite: this.updateModel.prefix.overwrite
-				}
-			});
+			const { error } = await apiCall
+				.put(`general/${this.$route.params.guild}`)
+				.send(this.updateModel);
 
 			if(error) return;
 			$("form button[type=submit]").removeClass("disabled");

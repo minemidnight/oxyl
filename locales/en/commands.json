@@ -33,5 +33,10 @@
 	"roleme.list": "Available roles you can get: {{roles}}",
 	"roleme.notAvailable": "You are not able to get that role, please run `roleme` without arguments to see a list of roles you can get",
 	"roleme.added": "Gave you {{role}}",
-	"roleme.removed": "Removed {{role}} from you"
+	"roleme.removed": "Removed {{role}} from you",
+	"suggestions.notEnabled": "The suggestions feature is not enabled in this server",
+	"suggestions.prompt.title": "Please enter a title for this suggestion:",
+	"suggestions.prompt.description": "Please enter a description for this suggestion:",
+	"suggestions.prompt.timedOut": "Prompt timed out. Run `suggest` to create a new suggestion",
+	"suggestions": "Successfully sent your suggestion!"
 }
