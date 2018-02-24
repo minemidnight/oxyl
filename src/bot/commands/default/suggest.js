@@ -10,14 +10,14 @@ module.exports = {
 			channel.createMessage(t("commands.suggestions.prompt.title"));
 			[title] = await channel.awaitMessages(msg => msg.author.id === author.id, { time: 45000, maxMatches: 1 });
 			if(!title) return t("commands.suggestions.prompt.timedOut");
-			else title = title.cotent;
+			else title = title.content;
 		}
 
 		if(!description) {
 			channel.createMessage(t("commands.suggestions.prompt.description"));
 			[description] = await channel.awaitMessages(msg => msg.author.id === author.id, { time: 45000, maxMatches: 1 });
 			if(!description) return t("commands.suggestions.prompt.timedOut");
-			else description = description.cotent;
+			else description = description.content;
 		}
 
 		try {
