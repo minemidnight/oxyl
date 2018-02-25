@@ -1,4 +1,4 @@
-module.exports = async (next, guild, member, { locals: { r } }) => {
+module.exports = async (guild, member, next, { locals: { r } }) => {
 	const { roles } = await r.table("roleSettings").get([guild.id, "autoRole"]).default({ roles: [] }).run();
 	if(!roles.length) return next();
 

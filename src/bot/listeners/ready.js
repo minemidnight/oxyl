@@ -1,6 +1,6 @@
-module.exports = (next, client) => {
+module.exports = (next, wiggle) => {
 	process.send({ op: "ready" });
 
-	client.erisClient.editStatus("online", { name: `${client.get("prefixes")[0]}help | ${client.locals.shardDisplay}` });
+	wiggle.erisClient.editStatus("online", { name: `${wiggle.get("prefixes")[0]}help | ${wiggle.locals.shardDisplay}` });
 	return next();
 };

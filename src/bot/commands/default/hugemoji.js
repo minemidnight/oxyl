@@ -10,8 +10,8 @@ module.exports = {
 			file = url;
 		} catch(err) {
 			const codepoint = toCodePoint(emoji);
-			if(svg) file = `https://raw.githubusercontent.com/twitter/twemoji/gh-pages/svg/${codepoint}.svg`;
-			else file = `https://raw.githubusercontent.com/twitter/twemoji/gh-pages/72x72/${codepoint}.png`;
+			if(svg) file = `https://raw.githubusercontent.com/twitter/twemoji/gh-pages/2/svg/${codepoint}.svg`;
+			else file = `https://raw.githubusercontent.com/twitter/twemoji/gh-pages/2/72x72/${codepoint}.png`;
 		}
 
 		try {
