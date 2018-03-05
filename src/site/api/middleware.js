@@ -35,7 +35,7 @@ module.exports = {
 			guild = guilds.find(({ id }) => id === guild);
 			if(!guild) {
 				return res.status(400).json({ error: "User not in server", redirect: { name: "selector" } });
-			} else if(!guild.owner || !(guild.permissions & 32)) {
+			} else if(!guild.owner && !(guild.permissions & 32)) {
 				return res.status(400).json({
 					error: "User does not have permission to Manage Guild",
 					redirect: { name: "selector" }
