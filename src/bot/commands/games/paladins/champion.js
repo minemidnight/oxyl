@@ -12,7 +12,7 @@ async function updateChampions() {
 setTimeout(updateChampions, 3000);
 
 module.exports = {
-	async run({ args: [search], t, wiggle }) {
+	async run({ args: [search], t }) {
 		const champion = champions.find(champ => champ.Name.toLowerCase().startsWith(search));
 		if(!champion) return t("commands.paladins.invalidChampion");
 
@@ -25,7 +25,7 @@ module.exports = {
 				else resolve(data);
 			}));
 		} else {
-			const legendaries = items.filter(item => item.item_type.endsWith("Legendary Rank 1") &&
+			const legendaries = items.filter(item => item.item_type.endsWith("Card Vendor Legendary Rank 1") &&
 				item.champion_id === champion.id);
 			({ buffer } = await createChampionImage({ champion, legendaries }));
 

@@ -6,10 +6,14 @@ module.exports = {
 
 		if(!player || !player.currentSong) return t("commands.music.notPlaying");
 		else if(!player.isListening(member)) return t("commands.music.notListening");
-		else if(player.connection.paused) return t("commands.pause.alreadyPaused");
 
-		player.connection.setPause(true);
-		return t("commands.pause");
+
+		for(let i = player.queue.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[player.queue[i], player.queue[j]] = [player.queue[j], player.queue[i]];
+		}
+
+		return t("commands.shuffle");
 	},
 	guildOnly: true
 };

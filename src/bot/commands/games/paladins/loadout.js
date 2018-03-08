@@ -39,6 +39,7 @@ module.exports = {
 		} else {
 			loadout = loadouts.find((deck, i) => deck.DeckName.toLowerCase().startsWith(loadout) ||
 				~[deck.DeckId.toString(), (i + 1).toString()].indexOf(loadout));
+			if(!loadout) return t("commands.paladins.loadout.invalidLoadout");
 
 			const { buffer } = await createLoadoutImage({
 				loadout,
@@ -51,6 +52,7 @@ module.exports = {
 			}];
 		}
 	},
+	aliases: ["loadouts"],
 	args: [{
 		type: "text",
 		label: "player"

@@ -54,7 +54,7 @@ module.exports = {
 
 
 		if(typeof item === "string") {
-			if(item === "NO_VIDEO") return t("commands.play.notResolved");
+			if(item === "NOT_RESOLVED") return t("commands.play.notResolved");
 			else if(item === "QUEUE_LIMIT") return t("commands.play.queueLimit");
 			else if(item === "SONG_LENGTH") return t("commands.play.songLength", { minutes: player.maxSongLength / 60 });
 			else return item;
@@ -66,6 +66,8 @@ module.exports = {
 		if(Array.isArray(item)) return t("commands.play.playlist", { count: item.length });
 		else return t("commands.play.song", { title: item.title });
 	},
+	guildOnly: true,
+	caseSensitive: true,
 	args: [{
 		type: "text",
 		label: "search query|link"

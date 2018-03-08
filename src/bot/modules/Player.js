@@ -33,14 +33,16 @@ class Player {
 
 	async resolve(query, callback) {
 		if(!/^http|(sc|yt)search/.test(query)) query = `ytsearch:${query}`;
+		const isSearch = /^(sc|yt)search/.test(query);
+
 		const { body } = await superagent.get(`${config.lavalink.url}/loadtracks`)
 			.query({ identifier: query })
 			.set("Authorization", config.lavalink.restPassword);
 
 		if(!body || !body.length) {
 			return "NOT_RESOLVED";
-		} else if(body.length === 1 || /^http|(sc|yt)search/.test(query)) {
-			if(callback) {
+		} else if(body.length === 1 || isSearch) {
+			if(callback && isSearch) {
 				return await callback(body.slice(0, 5).map(track => Object.assign(track.info, { track: track.track })));
 			} else {
 				return Object.assign(body[0].info, { track: body[0].track });
@@ -87,12 +89,12 @@ class Player {
 		this.connection.play(song.track);
 
 		this.connection.once("end", () => {
+			if(this.repeat) this.queue.push(this.currentSong);
 			this.currentSong = null;
 			this.voteSkips = 0;
 			this.connection.removeAllListeners();
-			this.play();
 
-			if(this.repeat) this.queue.push(this.currentSong);
+			this.play();
 		});
 
 		this.connection.once("error", () => this.play());

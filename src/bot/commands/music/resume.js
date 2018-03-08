@@ -10,5 +10,6 @@ module.exports = {
 
 		player.connection.setPause(false);
 		return t("commands.resume");
-	}
+	},
+	guildOnly: true
 };

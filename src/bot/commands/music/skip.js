@@ -39,6 +39,7 @@ module.exports = {
 			}
 		}
 	},
+	guildOnly: true,
 	flags: [{
 		name: "force",
 		short: "f",

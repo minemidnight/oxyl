@@ -1,4 +1,4 @@
-const { createCanvas, Image, loadImage, registerFont } = require("canvas");
+const { createCanvas, Image, registerFont } = require("canvas");
 const path = require("path");
 const superagent = require("superagent");
 
@@ -14,7 +14,27 @@ const regionMap = {
 	"South America": "SA"
 };
 
+const mapNamesToIcons = {
+	"frozen-guard": "NRIgloo",
+	"frog-isle": "Isle",
+	"fish-market": "Village",
+	"jaguar-falls": "Temple",
+	"timber-mill": "Spiral",
+	"splitstone-quarry": "Quarry",
+	"ice-mines": "NRMines",
+	"stone-keep": "Castle",
+	"serpent-beach": "Beach",
+	brightmarsh: "Atrium",
+	"primal-court": "TropicalArena",
+	"trade-district": "TradeDistrict",
+	"foremans-rise": "Quarry_Onslaught",
+	"magistrates-archives": "Archives",
+	"snowfall-junction": "IceArena",
+	"wip-bg": "TestMaps"
+};
+
 const loadedChampions = new Map();
+const loadedMaps = new Map();
 async function generate({ page, totalPages }, matchHistory, loadoutImages) {
 	const canvas = createCanvas(900, (matchHistory.length * 200) + 25);
 	const ctx = canvas.getContext("2d");
@@ -126,7 +146,23 @@ async function generate({ page, totalPages }, matchHistory, loadoutImages) {
 		ctx.fillText(match.Objective_Assists.toLocaleString(), 750, yBase + 50);
 		ctx.fillText(match.Damage_Mitigated.toLocaleString(), 850, yBase + 50);
 
-		const mapIcon = await loadImage(path.resolve(__dirname, "assets", "map.png"));
+		const map = match.Map_Game
+			.toLowerCase()
+			.replace(/^(live|ranked|practice)|'|onslaught|tdm|team deathmatch|\(|\)/g, "")
+			.trim()
+			.replace(/\s+/g, "-");
+
+		const mapIcon = new Image();
+		if(loadedMaps.has(map)) {
+			mapIcon.src = loadedMaps.get(map);
+		} else {
+			const { body: buffer } = await superagent.get(`https://web2.hirez.com/paladins/community/Maps/` +
+				`Loading_${mapNamesToIcons[map]}.jpg`);
+			mapIcon.src = buffer;
+			loadedMaps.set(map, buffer);
+		}
+
+
 		ctx.drawImage(mapIcon, 710, yBase + 62.5, 180, 101.25);
 	}
 

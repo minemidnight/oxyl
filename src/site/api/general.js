@@ -49,7 +49,7 @@ router.put("/:guild(\\d{17,21})", async (req, res) => {
 		return;
 	}
 
-	if(req.body.prefix === "o!") {
+	if(req.body.prefix.value === "o!") {
 		await r.table("prefixes")
 			.get(req.params.guild)
 			.delete()

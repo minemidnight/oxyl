@@ -6,10 +6,10 @@ module.exports = {
 
 		if(!player || !player.currentSong) return t("commands.music.notPlaying");
 		else if(!player.isListening(member)) return t("commands.music.notListening");
-		else if(player.connection.paused) return t("commands.pause.alreadyPaused");
 
-		player.connection.setPause(true);
-		return t("commands.pause");
+		player.disconnect();
+		return t("commands.end");
 	},
-	guildOnly: true
+	guildOnly: true,
+	aliases: ["disconnect", "stop"]
 };

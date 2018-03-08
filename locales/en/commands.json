@@ -24,8 +24,10 @@
 	"paladins.loadout.noLoadoutsChampion": "This player has no loadouts for this champion",
 	"paladins.loadout.listChampions": "Please specify a champion to list the loadouts the player has for them. This player has loadouts for the following: {{validChampions}}",
 	"paladins.loadout.listLoadouts": "Please specify a loadout to view:\n{{validLoadouts}}",
+	"paladins.loadout.invalidLoadout": "Could not resolve a loadout from your input. Please put a loadout name, ID, or number",
 	"paladins.matches.noMatchHistory": "This player has no match history",
 	"paladins.matches.notEnoughMatches": "The page number you entered was too large. This player has not completed that many matches",
+	"paladins.match.invalidID": "Invalid match ID",
 	"purge.botNoPerms": "I am missing the `Manage Messages` permission.",
 	"purge": "Deleted {{deleted}} messages",
 	"clean": "Cleaned {{cleaned}} messages",
@@ -62,5 +64,15 @@
 	"resume.notPaused": "The music is not paused",
 	"resume": "Resumed your music",
 	"pause.alreadyPaused": "The music is already paused",
-	"pause": "Paused your music"
+	"pause": "Paused your music",
+	"end": "Music stopped",
+	"seek.cantSeek": "You cannot seek that far! (song is only {{max}} seconds long)",
+	"seek.isStream": "Cannot seek to a position on a livestream",
+	"seek": "Seeked {{seconds}} seconds into the song",
+	"repeat.enabled": "Turned on repeat",
+	"repeat.disabled": "Turned off repeat",
+	"shuffle": "Shuffled the queue",
+	"jump": "Jumped to queue position #{{position}}",
+	"jump.noQueue": "There is currently nothing in queue",
+	"jump.invalidPosition": "Invalid queue position"
 }

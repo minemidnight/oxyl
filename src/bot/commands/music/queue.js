@@ -31,6 +31,7 @@ module.exports = {
 
 		return queueMessage;
 	},
+	guildOnly: true,
 	args: [{
 		type: "int",
 		label: "page",
