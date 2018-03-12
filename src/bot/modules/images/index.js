@@ -15,8 +15,7 @@ module.exports = fs.readdirSync(__dirname).reduce((a, b) => {
 			env[key.toUpperCase()] = value;
 		});
 
-		const { stdout, stderr } = await exec(`node ${path.resolve(__dirname, b)}`, { env, maxBuffer: Infinity });
-		console.error("stderr:", stderr || "no error");
+		const { stdout } = await exec(`node ${path.resolve(__dirname, b)}`, { env, maxBuffer: Infinity });
 		const dataURI = stdout.match(/^data:image\/([A-Za-z-+\/]+);base64,(.+)$/);
 		dataURI[2] = Buffer.from(dataURI[2], "base64");
 

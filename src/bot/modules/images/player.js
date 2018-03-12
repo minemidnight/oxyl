@@ -13,7 +13,30 @@ const ranks = ["Unranked",
 	"Diamond V", "Diamond IV", "Diamond III", "Diamond II", "Diamond I",
 	"Master", "Grandmaster"];
 
-async function generate(player, mostUsedChampionsImages) {
+const statuses = {
+	0: ctx => {
+		ctx.fillStyle = "#515A5A";
+		return "Offline";
+	},
+	1: ctx => {
+		ctx.fillStyle = "#F4D03F";
+		return "In Lobby";
+	},
+	2: ctx => {
+		ctx.fillStyle = "#F1948A";
+		return "Champion Selection";
+	},
+	3: ctx => {
+		ctx.fillStyle = "#E74C3C";
+		return "In Game";
+	},
+	4: ctx => {
+		ctx.fillStyle = "#F4D03F";
+		return "Online";
+	}
+};
+
+async function generate(player, mostUsedChampionsImages, status) {
 	const canvas = createCanvas(600, 170);
 	const ctx = canvas.getContext("2d");
 
@@ -88,7 +111,15 @@ async function generate(player, mostUsedChampionsImages) {
 		ctx.drawImage(championIcon, 456 + (i % 2 * 53), i >= 2 ? 120 : 65, 48, 48);
 	}
 
+	ctx.fillStyle = "#212F3C";
+	ctx.fillRect(260, 140, 158, 20);
+
+	status = statuses[status](ctx);
+	ctx.fillRect(262, 142, 154, 16);
+	ctx.fillStyle = "black";
+	ctx.fillText(`Status: ${status}`, 339, 155);
+
 	process.stdout.write(canvas.toDataURL());
 }
 
-generate(JSON.parse(process.env.PLAYER), JSON.parse(process.env.MOSTUSED));
+generate(JSON.parse(process.env.PLAYER), JSON.parse(process.env.MOSTUSED), parseInt(process.env.STATUS));

@@ -78,7 +78,7 @@ async function generate(champion, legendaries) {
 
 		ctx.drawImage(legendaryIcon, 160, (i * 80) + 405, 75, 75);
 		ctx.font = "18px Roboto";
-		ctx.fillText(`${legendary.DeviceName}`, 240, (i * 80) + 402.5);
+		ctx.fillText(legendary.DeviceName, 240, (i * 80) + 402.5);
 
 		ctx.font = "14px Roboto";
 		let description = legendary.Description.split(" "), lineNumber = 0;
@@ -90,6 +90,13 @@ async function generate(champion, legendaries) {
 			lineNumber++;
 			description = description.slice(line.length);
 		}
+
+		ctx.textAlign = "right";
+		ctx.textBaseline = "middle";
+		ctx.font = "24px Roboto";
+		ctx.fillText(`Level ${legendary.talent_reward_level}`, 155, (i * 80) + 442.5);
+		ctx.textAlign = "left";
+		ctx.textBaseline = "top";
 	}
 
 	process.stdout.write(canvas.toDataURL());

@@ -25,8 +25,9 @@ module.exports = {
 				else resolve(data);
 			}));
 		} else {
-			const legendaries = items.filter(item => item.item_type.endsWith("Card Vendor Legendary Rank 1") &&
-				item.champion_id === champion.id);
+			const legendaries = items
+				.filter(item => item.item_type.endsWith("Card Vendor Legendary Rank 1") && item.champion_id === champion.id)
+				.sort((a, b) => a.talent_reward_level - b.talent_reward_level);
 			({ buffer } = await createChampionImage({ champion, legendaries }));
 
 			await new Promise((resolve, reject) => fs.writeFile(savedPath, buffer, (err) => {
