@@ -6,7 +6,7 @@ registerFont(path.resolve(__dirname, "assets", "Roboto.ttf"), { family: "Roboto"
 registerFont(path.resolve(__dirname, "assets", "Roboto-Bold.ttf"), { family: "Roboto", weight: "bold" });
 
 async function generate(loadout, items) {
-	const canvas = createCanvas(625, 265);
+	const canvas = createCanvas(525, 725);
 	const ctx = canvas.getContext("2d");
 
 	ctx.fillStyle = "#F2F3F4";
@@ -16,7 +16,7 @@ async function generate(loadout, items) {
 	ctx.textAlign = "center";
 	ctx.textBaseline = "middle";
 	ctx.font = "bold 48px Roboto";
-	ctx.fillText(loadout.DeckName, 372.5, 55);
+	ctx.fillText(loadout.DeckName, 322.5, 55);
 
 	const { body: championBuffer } = await superagent.get(`https://web2.hirez.com/paladins/champion-icons/` +
 		`${loadout.ChampionName.toLowerCase().replace("'", "").replace(" ", "-")}.jpg`);
@@ -34,10 +34,10 @@ async function generate(loadout, items) {
 		const { body: buffer } = await superagent.get(items[i].itemIcon_URL);
 		const itemImage = new Image();
 		itemImage.src = buffer;
-		ctx.drawImage(itemImage, 5 + (i * 125), 130, 110, 110);
+		ctx.drawImage(itemImage, 10, 130 + (i * 120), 100, 100);
 
 		ctx.beginPath();
-		ctx.arc(115 + (i * 125), 240, 10, 0, 2 * Math.PI, false);
+		ctx.arc(105, 230 + (i * 120), 12.5, 0, 2 * Math.PI, false);
 		ctx.fillStyle = "#39505E";
 		ctx.fill();
 		ctx.lineWidth = 2;
@@ -47,20 +47,31 @@ async function generate(loadout, items) {
 		ctx.textAlign = "center";
 		ctx.textBaseline = "middle";
 		ctx.fillStyle = "#EBF4FA";
-		ctx.font = "bold 12px Roboto";
-		ctx.fillText(loadout.LoadoutItems[i].Points, 115 + (i * 125), 240);
+		ctx.font = "bold 16px Roboto";
+		ctx.fillText(loadout.LoadoutItems[i].Points, 105, 230 + (i * 120));
 
-		const itemName = items[i].DeviceName;
-		let fontSize = 16;
-		do {
-			ctx.font = `${fontSize}px Roboto`;
-			fontSize--;
-		} while(ctx.measureText(itemName).width > 102.5);
-
+		ctx.font = "30px Roboto";
 		ctx.textAlign = "left";
 		ctx.textBaseline = "top";
 		ctx.fillStyle = "#34495E";
-		ctx.fillText(itemName, 5 + (i * 125), 240);
+		ctx.fillText(items[i].DeviceName, 120, 130 + (i * 120));
+
+		ctx.font = "16px Roboto";
+		let description = items[i].Description.substring(items[i].Description.indexOf("]") + 1)
+				.trim()
+				.replace(/\{scale=(.+?)\|(.+?)\}/, (match, start, scaleBy) =>
+					parseFloat(start) + (parseFloat(scaleBy) * (loadout.LoadoutItems[i].Points - 1))
+				)
+				.split(" "), lineNumber = 0;
+
+		while(description.length) {
+			const line = description.slice();
+			while(ctx.measureText(line.join(" ")).width > canvas.width - 130) line.splice(-1);
+
+			ctx.fillText(line.join(" "), 120, (i * 120) + (lineNumber * 18) + 165);
+			lineNumber++;
+			description = description.slice(line.length);
+		}
 	}
 
 	process.stdout.write(canvas.toDataURL());
