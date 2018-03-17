@@ -1,4 +1,4 @@
-module.exports = async ({ author, channel, command, guild, member, t }, next, wiggle) => {
+module.exports = async ({ author, channel, channel: { guild }, command, member, t }, next, wiggle) => {
 	if(!command || !guild) return next();
 
 	if(command.perm && !member.permission.has(command.perm)) {
