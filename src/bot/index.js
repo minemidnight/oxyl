@@ -40,6 +40,7 @@ const client = wiggle({
 }).use("message",
 	wiggle.middleware.commandParser(),
 	wiggle.middleware.argHandler(),
+	require("./middleware/censors"),
 	require("./middleware/permissionHandler")
 );
 
