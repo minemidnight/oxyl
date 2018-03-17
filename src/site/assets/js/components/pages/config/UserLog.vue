@@ -57,7 +57,7 @@
 					Farewell
 					<small class="form-text" v-pre>The farewell message. Placeholders {{id}}, {{discrim}}, {{mention}} and {{username}} will be replaced accordingly.</small>
 				</label>
-				<input id="farewell" class="form-control" :placeholder="'Welcome {{mention}} to the server'" v-model.trim="updateModel.farewell" :value="data.farewell" />
+				<input id="farewell" class="form-control" :placeholder="'{{username}}#{{discrim}} has left the server :('" v-model.trim="updateModel.farewell" :value="data.farewell" />
 			</div>
 			<button type="submit" class="btn btn-success">Save</button>
 		</form>
