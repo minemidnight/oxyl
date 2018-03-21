@@ -43,7 +43,7 @@ router.put("/:guild(\\d{17,21})", async (req, res) => {
 			enabled: req.body.enabled,
 			setNickname: req.body.setNickname,
 			roleID: req.body.roleID,
-			groupID: req.body.groupID
+			groupID: req.body.groupID === "" ? undefined : req.body.groupID
 		}, { conflict: "replace" })
 		.run();
 

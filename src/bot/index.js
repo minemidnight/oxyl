@@ -44,6 +44,7 @@ const client = wiggle({
 	require("./middleware/permissionHandler")
 );
 
+const { updateGroupRoles } = require("./modules/syncGroupRole");
 module.exports = async ({ shardStart, shardEnd, shardCount, shards }) => {
 	client.set("clientOptions", {
 		firstShardID: shardStart,
@@ -66,5 +67,8 @@ module.exports = async ({ shardStart, shardEnd, shardCount, shards }) => {
 	client.locals.r = require("../rethinkdb/index");
 	client.locals.config = config;
 	client.locals.shardDisplay = shards;
+
+	setTimeout(() => updateGroupRoles(client), 900000);
+
 	return { client };
 };

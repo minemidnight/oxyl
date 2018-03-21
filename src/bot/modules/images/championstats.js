@@ -29,21 +29,27 @@ async function generate(stats) {
 	} while(ctx.measureText(stats.champion).width > 100);
 	ctx.fillText(stats.champion, 55, 105);
 
-	const winRate = (stats.Wins / (stats.Wins + stats.Losses) * 100).toFixed(2);
+	const days = Math.floor(stats.Minutes / 1440);
+	const hours = Math.floor(stats.Minutes % 1440 / 60);
+
+	const texts = [
+		`${stats.Kills} / ${stats.Deaths} / ${stats.Assists}`,
+		`${stats.Wins} - ${stats.Losses} (${(stats.Wins / stats.Matches * 100).toFixed(2)}%)`,
+		`${(days ? `${days}D ` : "") + (hours ? `${hours}H ` : "")}${stats.Minutes % 1440 % 60}M`
+	];
 
 	ctx.font = "18px Roboto";
 	ctx.textBaseline = "center";
-	const width = Math.max(
-		...[`${stats.Kills} / ${stats.Deaths} / ${stats.Assists}`, `${stats.Wins} - ${stats.Losses} (${winRate}%)`]
-			.map(text => ctx.measureText(text).width)
-	);
+	const width = Math.max(...texts.map(text => ctx.measureText(text).width));
 
-	ctx.fillText(`${stats.Kills} / ${stats.Deaths} / ${stats.Assists}`, 110 + (width / 2), 5);
-	ctx.fillText(`${stats.Wins} - ${stats.Losses} (${winRate}%)`, 110 + (width / 2), 50);
+	ctx.fillText(texts[0], 110 + (width / 2), 5);
+	ctx.fillText(texts[1], 110 + (width / 2), 45);
+	ctx.fillText(texts[2], 110 + (width / 2), 85);
 
-	ctx.font = "bold 14px Roboto";
-	ctx.fillText("K / D / A", 110 + (width / 2), 30);
-	ctx.fillText("Wins - Losses", 110 + (width / 2), 75);
+	ctx.font = "bold 12px Roboto";
+	ctx.fillText("K / D / A", 110 + (width / 2), 25);
+	ctx.fillText("WINS - LOSSES", 110 + (width / 2), 65);
+	ctx.fillText("PLAY TIME", 110 + (width / 2), 105);
 
 	ctx.beginPath();
 	ctx.arc(canvas.width - 65, 65, 50, Math.PI / 180 * 118, Math.PI / 180 * 420);
@@ -65,7 +71,12 @@ async function generate(stats) {
 	ctx.font = "48px Roboto";
 	ctx.fillText(stats.Rank, canvas.width - 65, 40);
 
+	ctx.font = "10px Roboto";
+	ctx.textAlign = "right";
+	ctx.textBaseline = "bottom";
+	ctx.fillText("Data from Competitive Matches", canvas.width - 5, canvas.height);
+
 	process.stdout.write(canvas.toDataURL());
 }
 
-generate(JSON.parse(process.env.CHAMPIONINFO));
+generate(JSON.parse(process.env.CHAMPIONSTATS));

@@ -1,3 +1,5 @@
+const syncGroupRole = require("../modules/syncGroupRole");
+
 module.exports = async (guild, member, next, { erisClient, locals: { r } }) => {
 	const autoRoles = await r.table("roleSettings")
 		.get([guild.id, "autoRole"])
@@ -50,6 +52,27 @@ module.exports = async (guild, member, next, { erisClient, locals: { r } }) => {
 			.get([guild.id, member.id])
 			.delete()
 			.run();
+	}
+
+	const robloxVerification = await r.table("robloxVerification")
+		.get(guild.id)
+		.default({ enabled: false })
+		.without("id")
+		.run();
+
+	if(robloxVerification.enabled) {
+		const { username, userID } = await r.table("robloxVerified")
+			.get([guild.id, member.id])
+			.default({})
+			.pluck("username", "userID")
+			.run();
+
+		if(username) {
+			if(robloxVerification.setNickname) member.edit({ nick: username }).catch(err => { }); // eslint-disable-line handle-callback-err, no-empty-function, max-len
+			member.addRole(robloxVerification.roleID, "Already verified ROBLOX account - rejoined").catch(err => { }); // eslint-disable-line handle-callback-err, no-empty-function, max-len
+
+			syncGroupRole(member, userID, robloxVerification.groupID);
+		}
 	}
 
 	return next();

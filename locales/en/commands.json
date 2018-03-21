@@ -74,5 +74,10 @@
 	"shuffle": "Shuffled the queue",
 	"jump": "Jumped to queue position #{{position}}",
 	"jump.noQueue": "There is currently nothing in queue",
-	"jump.invalidPosition": "Invalid queue position"
+	"jump.invalidPosition": "Invalid queue position",
+	"verify.disabled": "ROBLOX verification is disabled in this guild",
+	"verify.verified": "You have successfully verified your ROBLOX account {{name}} to your Discord account",
+	"verify.noHash": "To verify your ROBLOX account, put this code in your about section or in your status: `{{hash}}`, then run the command again",
+	"verify.alreadyVerified": "That ROBLOX account is already verified in this guild",
+	"verify.invalidAccount": "The ROBLOX account you entered is not valid"
 }

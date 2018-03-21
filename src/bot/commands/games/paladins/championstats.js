@@ -6,10 +6,16 @@ module.exports = {
 		const ranks = await request().setEndpoint("getchampionranks").data(player);
 		if(!ranks.length) return t("commands.paladins.invalidPlayer");
 
-		champion = ranks.find(({ champion: name }) => name.toLowerCase().startsWith(champion));
-		if(!champion) return t("commands.paladins.invalidChampion");
+		const championStats = ranks.find(({ champion: name }) => name.toLowerCase().startsWith(champion));
+		if(!championStats) return t("commands.paladins.invalidChampion");
 
-		const { buffer } = await createStatsImage({ championInfo: champion });
+		const rankedStats = await request().setEndpoint("getqueuestats").data(player, 428);
+		const rankedChampionStats = rankedStats.find(stats => stats.Champion.toLowerCase().startsWith(champion));
+
+		["Wins", "Losses", "Matches", "Minutes", "Kills", "Deaths", "Assists"]
+			.forEach(field => championStats[field] = rankedChampionStats[field]);
+
+		const { buffer } = await createStatsImage({ championStats });
 
 		return ["", {
 			file: buffer,
