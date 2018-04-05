@@ -36,7 +36,7 @@ const statuses = {
 	}
 };
 
-async function generate(player, mostUsedChampionsImages, status) {
+async function generate({ player, mostUsed, status }) {
 	const canvas = createCanvas(600, 170);
 	const ctx = canvas.getContext("2d");
 
@@ -104,7 +104,7 @@ async function generate(player, mostUsedChampionsImages, status) {
 	ctx.fillText(`Most Played\nChampions`, 509, 44);
 
 	for(let i = 0; i < 4; i++) {
-		const { body: championBuffer } = await superagent.get(mostUsedChampionsImages[i]);
+		const { body: championBuffer } = await superagent.get(mostUsed[i]);
 		const championIcon = new Image();
 		championIcon.src = championBuffer;
 
@@ -122,4 +122,11 @@ async function generate(player, mostUsedChampionsImages, status) {
 	process.stdout.write(canvas.toDataURL());
 }
 
-generate(JSON.parse(process.env.PLAYER), JSON.parse(process.env.MOSTUSED), parseInt(process.env.STATUS));
+process.stdin.setEncoding("utf8");
+process.stdin.on("readable", () => {
+	const chunk = process.stdin.read();
+	if(!chunk) return;
+
+	generate(JSON.parse(chunk.trim()));
+	process.stdin.destroy();
+});

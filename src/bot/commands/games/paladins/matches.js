@@ -1,12 +1,5 @@
 const { matches: createMatchesImage } = require("../../../modules/images");
-const { request } = require("../../../modules/PaladinsAPI");
-
-let champions;
-async function updateChampions() {
-	champions = await request().setEndpoint("getchampions").data(1);
-}
-
-setTimeout(updateChampions, 3000);
+const { champions, request } = require("../../../modules/PaladinsAPI");
 
 module.exports = {
 	async run({ args: [player, page = 1], flags: { champion, competitive }, t }) {
@@ -19,7 +12,7 @@ module.exports = {
 
 		if(competitive) matchHistory = matchHistory.filter(match => match.Queue === "Competitive");
 		if(champion) {
-			champion = champions.find(champ => champ.Name.toLowerCase().startsWith(champion));
+			champion = champions().find(champ => champ.Name.toLowerCase().startsWith(champion));
 			if(champion) matchHistory = matchHistory.filter(match => match.ChampionId === champion.id);
 		}
 
@@ -29,7 +22,8 @@ module.exports = {
 
 		const matches = matchHistory.slice((page - 1) * 5, page * 5);
 		const { buffer } = await createMatchesImage({
-			pageData: { page, totalPages: Math.ceil(matchHistory.length / 5) },
+			page,
+			totalPages: Math.ceil(matchHistory.length / 5),
 			matchHistory: matches
 		});
 

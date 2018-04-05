@@ -1,19 +1,11 @@
 const { champion: createChampionImage } = require("../../../modules/images");
 const fs = require("fs");
 const path = require("path");
-const { request } = require("../../../modules/PaladinsAPI");
-
-let champions, items;
-async function updateChampions() {
-	champions = await request().setEndpoint("getchampions").data(1);
-	items = await request().setEndpoint("getitems").data(1);
-}
-
-setTimeout(updateChampions, 3000);
+const { champions, items } = require("../../../modules/PaladinsAPI");
 
 module.exports = {
 	async run({ args: [search], t }) {
-		const champion = champions.find(champ => champ.Name.toLowerCase().startsWith(search));
+		const champion = champions().find(champ => champ.Name.toLowerCase().startsWith(search));
 		if(!champion) return t("commands.paladins.invalidChampion");
 
 		let buffer;
@@ -25,7 +17,7 @@ module.exports = {
 				else resolve(data);
 			}));
 		} else {
-			const legendaries = items
+			const legendaries = items()
 				.filter(item => item.item_type.endsWith("Card Vendor Legendary Rank 1") && item.champion_id === champion.id)
 				.sort((a, b) => a.talent_reward_level - b.talent_reward_level);
 			({ buffer } = await createChampionImage({ champion, legendaries }));

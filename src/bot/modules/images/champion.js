@@ -13,7 +13,7 @@ const abilityMap = {
 	5: "E"
 };
 
-async function generate(champion, legendaries) {
+async function generate({ champion, legendaries }) {
 	const canvas = createCanvas(700, 410 + (legendaries.length * 80));
 	const ctx = canvas.getContext("2d");
 
@@ -101,6 +101,12 @@ async function generate(champion, legendaries) {
 
 	process.stdout.write(canvas.toDataURL());
 }
-process.on("unhandledRejection", err => console.error(err.stack));
 
-generate(JSON.parse(process.env.CHAMPION), JSON.parse(process.env.LEGENDARIES));
+process.stdin.setEncoding("utf8");
+process.stdin.on("readable", () => {
+	const chunk = process.stdin.read();
+	if(!chunk) return;
+
+	generate(JSON.parse(chunk.trim()));
+	process.stdin.destroy();
+});

@@ -24,12 +24,11 @@ module.exports.updateGroupRoles = async ({ erisClient: client, locals: { r } }) 
 		.map(doc => doc.pluck("id", "groupID")
 			.merge({
 				verifiedUsers: r.table("robloxVerified")
-					.getAll(doc.id, { index: "guildID" })
+					.getAll(doc("id"), { index: "guildID" })
 					.map(doc2 => ({
 						discordID: doc2("id")(1),
 						robloxID: doc2("userID")
-					}))
-					.run()
+					})).coerceTo("array")
 			})
 		)
 		.run();

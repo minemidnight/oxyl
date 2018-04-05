@@ -81,5 +81,13 @@ class PaladinsAPI {
 const api = new PaladinsAPI(config.paladinsDevId, config.paladinsAuthKey);
 module.exports = {
 	api,
-	request: () => new APIRequest(api)
+	request: () => new APIRequest(api),
+	champions() { return champions; },
+	items() { return items; }
 };
+
+let champions, items;
+setTimeout(async () => {
+	champions = await module.exports.request().setEndpoint("getchampions").data(1);
+	items = await module.exports.request().setEndpoint("getitems").data(1);
+}, 4000);

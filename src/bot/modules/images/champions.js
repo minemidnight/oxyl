@@ -4,7 +4,7 @@ const superagent = require("superagent");
 
 registerFont(path.resolve(__dirname, "assets", "Roboto.ttf"), { family: "Roboto" });
 
-async function generate(champions, { page, totalPages }) {
+async function generate({ champions, page, totalPages }) {
 	const canvas = createCanvas(200, (champions.length * 200) + 25);
 	const ctx = canvas.getContext("2d");
 
@@ -55,4 +55,11 @@ async function generate(champions, { page, totalPages }) {
 	process.stdout.write(canvas.toDataURL());
 }
 
-generate(JSON.parse(process.env.CHAMPIONS), JSON.parse(process.env.PAGEDATA));
+process.stdin.setEncoding("utf8");
+process.stdin.on("readable", () => {
+	const chunk = process.stdin.read();
+	if(!chunk) return;
+
+	generate(JSON.parse(chunk.trim()));
+	process.stdin.destroy();
+});

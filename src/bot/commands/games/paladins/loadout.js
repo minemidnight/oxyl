@@ -1,13 +1,5 @@
 const { loadout: createLoadoutImage } = require("../../../modules/images");
-const { request } = require("../../../modules/PaladinsAPI");
-
-let champions, items;
-async function updateData() {
-	champions = await request().setEndpoint("getchampions").data(1);
-	items = await request().setEndpoint("getitems").data(1);
-}
-
-setTimeout(updateData, 3000);
+const { champions, items, request } = require("../../../modules/PaladinsAPI");
 
 module.exports = {
 	async run({ args: [player, champion, loadout], t }) {
@@ -23,7 +15,7 @@ module.exports = {
 					.join(", ")
 			});
 		} else {
-			champion = champions.find(({ Name }) => Name.toLowerCase().startsWith(champion));
+			champion = champions().find(({ Name }) => Name.toLowerCase().startsWith(champion));
 			if(!champion) return t("commands.paladins.invalidChampion");
 
 			loadouts = loadouts.filter(({ ChampionId }) => ChampionId === champion.id);
@@ -43,7 +35,7 @@ module.exports = {
 
 			const { buffer } = await createLoadoutImage({
 				loadout,
-				items: loadout.LoadoutItems.map(({ ItemId }) => items.find(item => item.ItemId === ItemId))
+				items: loadout.LoadoutItems.map(({ ItemId }) => items().find(item => item.ItemId === ItemId))
 			});
 
 			return ["", {

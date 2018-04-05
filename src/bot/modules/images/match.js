@@ -24,14 +24,17 @@ const regionMap = {
 };
 
 const loadedChampions = new Map();
-async function generate(matchDetails) {
-	const canvas = createCanvas(1025, 650);
+async function generate({ bans, matchDetails, player: specificPlayer }) {
+	if(specificPlayer) {
+		specificPlayer = matchDetails.find(({ playerName }) => playerName.toLowerCase() === specificPlayer) ||
+			matchDetails.find(({ playerName }) => playerName.toLowerCase().startsWith(specificPlayer));
+	}
+
+	const canvas = createCanvas(1025, 650 + (specificPlayer ? 115 : 0) + (bans ? 100 : 0));
 	const ctx = canvas.getContext("2d");
 
 	ctx.fillStyle = "#F2F3F4";
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-	if(matchDetails[0].Winning_TaskForce === 2) matchDetails = matchDetails.concat(matchDetails.splice(0, 5));
 
 	ctx.fillStyle = "#34495E";
 	ctx.font = "16px Roboto";
@@ -52,12 +55,12 @@ async function generate(matchDetails) {
 
 	ctx.textAlign = "right";
 	const map = `Map: ${matchDetails[0].Map_Game
-		.replace(/live|ranked|practice|onslaught|tdm|team deathmatch|\(|\)/gi, "")
+		.replace(/live|ranked|practice|onslaught|tdm|team deathmatch|\(|\)|ascended assault/gi, "")
 		.trim()}`;
 	ctx.fillText(map, canvas.width - 5, 5);
 	width = ctx.measureText(map).width;
 
-	const score = `Score: 4 - ${matchDetails[5][`Team${matchDetails[5].TaskForce}Score`]}`;
+	const score = `Score: ${matchDetails[0].Team1Score} - ${matchDetails[0].Team2Score}`;
 	ctx.fillText(score, canvas.width - width - 15, 5);
 	width += ctx.measureText(score).width;
 
@@ -65,16 +68,20 @@ async function generate(matchDetails) {
 	time = `Duration: ${Math.floor(time / 60)}:${(time % 60).toString().padStart(2, "0")}`;
 	ctx.fillText(time, canvas.width - width - 30, 5);
 
+	const sectionHeight = (canvas.height - 50 - (specificPlayer ? 115 : 0) - (bans ? 100 : 0)) / 10;
+	const midLine = ((canvas.height - 50) / 2) +
+		(specificPlayer && specificPlayer.Win_Status === "Winner" ? 115 : 0) - sectionHeight;
+
 	ctx.lineWidth = 15;
 	ctx.beginPath();
 	ctx.moveTo(0, 50);
-	ctx.lineTo(0, 50 + ((canvas.height - 50) / 2));
+	ctx.lineTo(0, midLine);
 	ctx.strokeStyle = "#3c763d";
 	ctx.stroke();
 
 	ctx.beginPath();
-	ctx.moveTo(0, 50 + ((canvas.height - 50) / 2));
-	ctx.lineTo(0, canvas.height);
+	ctx.moveTo(0, midLine);
+	ctx.lineTo(0, canvas.height - (bans ? 100 : 0));
 	ctx.strokeStyle = "#a94442";
 	ctx.stroke();
 
@@ -98,8 +105,8 @@ async function generate(matchDetails) {
 	ctx.fillText("SHIELDING", 875, 50);
 	ctx.fillText("HEALING", 975, 50);
 
-	const sectionHeight = (canvas.height - 50) / 10;
 	const parties = {};
+	let toAdd = 0;
 	for(let i = 0; i < 10; i++) {
 		const player = matchDetails[i];
 
@@ -112,11 +119,11 @@ async function generate(matchDetails) {
 			championIcon.src = buffer;
 			loadedChampions.set(champion, buffer);
 		}
-		ctx.drawImage(championIcon, 12.5, 55 + (sectionHeight * i), sectionHeight - 10, sectionHeight - 10);
+		ctx.drawImage(championIcon, 12.5, 55 + (sectionHeight * i) + toAdd, sectionHeight - 10, sectionHeight - 10);
 
 		ctx.beginPath();
-		ctx.moveTo(7.5, 50 + (sectionHeight * i));
-		ctx.lineTo(canvas.width, 50 + (sectionHeight * i));
+		ctx.moveTo(7.5, 50 + (sectionHeight * i) + toAdd);
+		ctx.lineTo(canvas.width, 50 + (sectionHeight * i) + toAdd);
 		ctx.stroke();
 
 		if(player.PartyId) {
@@ -126,22 +133,22 @@ async function generate(matchDetails) {
 			ctx.textBaseline = "bottom";
 
 			if(!parties[player.PartyId]) parties[player.PartyId] = Object.keys(parties).length + 1;
-			ctx.fillText(`P${parties[player.PartyId]}`, 225, 50 + (sectionHeight * (i + 1)), 225);
+			ctx.fillText(`P${parties[player.PartyId]}`, 225, 50 + (sectionHeight * (i + 1)) + toAdd, 225);
 		}
 
 		ctx.fillStyle = "#34495E";
 		ctx.textAlign = "left";
 		ctx.textBaseline = "top";
 		ctx.font = "24px Roboto";
-		ctx.fillText(player.playerName, sectionHeight + 5, 50 + (sectionHeight * i), 225);
+		ctx.fillText(player.playerName, sectionHeight + 5, 50 + (sectionHeight * i) + toAdd, 225);
 
 		ctx.textBaseline = "bottom";
 		ctx.font = "20px Roboto";
-		ctx.fillText(ranks[player.League_Tier], sectionHeight + 5, 50 + (sectionHeight * (i + 1)), 225);
+		ctx.fillText(ranks[player.League_Tier], sectionHeight + 5, 50 + (sectionHeight * (i + 1)) + toAdd, 225);
 
 		ctx.textAlign = "center";
 		ctx.textBaseline = "middle";
-		const yCoord = 50 + (sectionHeight * i) + (sectionHeight / 2);
+		const yCoord = 50 + (sectionHeight * i) + (sectionHeight / 2) + toAdd;
 		ctx.fillText(player.Gold_Earned.toLocaleString(), 275, yCoord);
 		ctx.fillText(`${player.Kills_Player} / ${player.Deaths} / ${player.Assists}`, 375, yCoord);
 		ctx.fillText(player.Killing_Spree, 475, yCoord);
@@ -150,9 +157,65 @@ async function generate(matchDetails) {
 		ctx.fillText(player.Objective_Assists, 775, yCoord);
 		ctx.fillText(player.Damage_Mitigated.toLocaleString(), 875, yCoord);
 		ctx.fillText(player.Healing.toLocaleString(), 975, yCoord);
+
+		if(!toAdd && specificPlayer && player.playerName === specificPlayer.playerName) {
+			ctx.textBaseline = "top";
+
+			ctx.fillText(player.talent.DeviceName, 300, (sectionHeight * i) + 110);
+			const talentIcon = new Image();
+			const { body: buffer } = await superagent
+				.get(`http://web2.hirez.com/paladins/community/Legendary-Card-PNGs/${player.talent.ItemId}.png`);
+			talentIcon.src = buffer;
+			ctx.drawImage(talentIcon, 250, (sectionHeight * i) + 125, 100, 100);
+
+			for(let itemCount = 0; itemCount < player.items.length; itemCount++) {
+				const item = player.items[itemCount];
+
+				const itemIcon = new Image();
+				const { body: itemBuffer } = await superagent.get(item.itemIcon_URL);
+				itemIcon.src = itemBuffer;
+				ctx.drawImage(itemIcon, 15 + (itemCount * 55), (sectionHeight * i) + 125, 50, 50);
+
+				ctx.fillStyle = "black";
+				for(let level = 0; level < item.level; level++) {
+					ctx.fillRect(15 + (itemCount * 55) + (level * (50 / 3)), (sectionHeight * i) + 177.5, 15, 5);
+				}
+				ctx.fillStyle = "#F2F3F4";
+			}
+
+			toAdd = 115;
+		}
+	}
+
+	if(bans) {
+		ctx.textAlign = "center";
+		ctx.textBaseline = "middle";
+		ctx.font = "bold 48px Roboto";
+		ctx.fillText("BANS", canvas.width / 2, canvas.height - 80 + 37.5);
+
+		for(let i = 0; i < bans.length; i++) {
+			const banImage = bans[i];
+
+			let xCoord;
+			if(i <= 1) xCoord = canvas.width * 0.3;
+			else xCoord = canvas.width * 0.7;
+			xCoord -= 37.5;
+
+			const championIcon = new Image();
+			const { body: championBuffer } = await superagent.get(banImage);
+			championIcon.src = championBuffer;
+			ctx.drawImage(championIcon, xCoord + (i % 2 ? 40 : -40), canvas.height - 80, 75, 75);
+		}
 	}
 
 	process.stdout.write(canvas.toDataURL());
 }
 
-generate(JSON.parse(process.env.MATCHDETAILS));
+process.stdin.setEncoding("utf8");
+process.stdin.on("readable", () => {
+	const chunk = process.stdin.read();
+	if(!chunk) return;
+
+	generate(JSON.parse(chunk.trim()));
+	process.stdin.destroy();
+});

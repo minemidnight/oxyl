@@ -15,7 +15,7 @@ module.exports = {
 		["Wins", "Losses", "Matches", "Minutes", "Kills", "Deaths", "Assists"]
 			.forEach(field => championStats[field] = rankedChampionStats[field]);
 
-		const { buffer } = await createStatsImage({ championStats });
+		const { buffer } = await createStatsImage(championStats);
 
 		return ["", {
 			file: buffer,

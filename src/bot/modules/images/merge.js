@@ -1,7 +1,7 @@
 const { createCanvas, Image } = require("canvas");
 const superagent = require("superagent");
 
-async function generate(images, overlap) {
+async function generate({ images, overlap }) {
 	const imageBuffers = await Promise.all(images.map(async image => (await superagent.get(image)).body));
 	images = imageBuffers.map(buffer => {
 		const image = new Image();
@@ -29,4 +29,11 @@ async function generate(images, overlap) {
 	process.stdout.write(canvas.toDataURL());
 }
 
-generate(JSON.parse(process.env.IMAGES), process.env.OVERLAP === "true");
+process.stdin.setEncoding("utf8");
+process.stdin.on("readable", () => {
+	const chunk = process.stdin.read();
+	if(!chunk) return;
+
+	generate(JSON.parse(chunk.trim()));
+	process.stdin.destroy();
+});

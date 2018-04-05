@@ -15,6 +15,8 @@ const regionMap = {
 };
 
 const mapNamesToIcons = {
+	"ascension-peak": "AscensionPeak",
+	"asiatic-map": "AscensionPeak",
 	"frozen-guard": "NRIgloo",
 	"frog-isle": "Isle",
 	"fish-market": "Village",
@@ -35,7 +37,7 @@ const mapNamesToIcons = {
 
 const loadedChampions = new Map();
 const loadedMaps = new Map();
-async function generate({ page, totalPages }, matchHistory, loadoutImages) {
+async function generate({ page, totalPages, matchHistory }) {
 	const canvas = createCanvas(900, (matchHistory.length * 200) + 25);
 	const ctx = canvas.getContext("2d");
 
@@ -148,7 +150,7 @@ async function generate({ page, totalPages }, matchHistory, loadoutImages) {
 
 		const map = match.Map_Game
 			.toLowerCase()
-			.replace(/^(live|ranked|practice)|'|onslaught|tdm|team deathmatch|\(|\)/g, "")
+			.replace(/^(live|ranked|practice)|'|onslaught|tdm|team deathmatch|\(|\)|ascended assault/g, "")
 			.trim()
 			.replace(/\s+/g, "-");
 
@@ -173,4 +175,11 @@ async function generate({ page, totalPages }, matchHistory, loadoutImages) {
 	process.stdout.write(canvas.toDataURL());
 }
 
-generate(JSON.parse(process.env.PAGEDATA), JSON.parse(process.env.MATCHHISTORY));
+process.stdin.setEncoding("utf8");
+process.stdin.on("readable", () => {
+	const chunk = process.stdin.read();
+	if(!chunk) return;
+
+	generate(JSON.parse(chunk.trim()));
+	process.stdin.destroy();
+});

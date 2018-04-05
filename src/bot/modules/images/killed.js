@@ -29,7 +29,7 @@ function getLines(ctx, unsplitText, initialLine) {
 	return getLines(ctx, unsplitText, Math.abs(2 - lines.length));
 }
 
-async function generate(text, avatar) {
+async function generate({ text, avatar }) {
 	const image = await loadImage(path.resolve(__dirname, "assets", "killed.png"));
 
 	const canvas = createCanvas(image.width, image.height);
@@ -55,4 +55,11 @@ async function generate(text, avatar) {
 	process.stdout.write(canvas.toDataURL());
 }
 
-generate(process.env.TEXT, process.env.AVATAR);
+process.stdin.setEncoding("utf8");
+process.stdin.on("readable", () => {
+	const chunk = process.stdin.read();
+	if(!chunk) return;
+
+	generate(JSON.parse(chunk.trim()));
+	process.stdin.destroy();
+});

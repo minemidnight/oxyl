@@ -13,4 +13,11 @@ async function generate(image, width, height) {
 	process.stdout.write(canvas.toDataURL());
 }
 
-generate(process.env.IMAGE, parseInt(process.env.WIDTH), parseInt(process.env.HEIGHT));
+process.stdin.setEncoding("utf8");
+process.stdin.on("readable", () => {
+	const chunk = process.stdin.read();
+	if(!chunk) return;
+
+	generate(JSON.parse(chunk.trim()));
+	process.stdin.destroy();
+});

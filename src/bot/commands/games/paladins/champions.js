@@ -1,14 +1,7 @@
 const { champions: createChampionsImage } = require("../../../modules/images");
 const fs = require("fs");
 const path = require("path");
-const { request } = require("../../../modules/PaladinsAPI");
-
-let champions;
-async function updateChampions() {
-	champions = await request().setEndpoint("getchampions").data(1);
-}
-
-setTimeout(updateChampions, 3000);
+const { champions } = require("../../../modules/PaladinsAPI");
 
 module.exports = {
 	async run({ args: [page = 1], t, wiggle }) {
@@ -22,8 +15,9 @@ module.exports = {
 			}));
 		} else {
 			({ buffer } = await createChampionsImage({
-				pageData: { page, totalPages: Math.ceil(champions.length / 3) },
-				champions: champions.slice((page - 1) * 3, page * 3)
+				page,
+				totalPages: Math.ceil(champions().length / 3),
+				champions: champions().slice((page - 1) * 3, page * 3)
 			}));
 
 			await new Promise((resolve, reject) => fs.writeFile(savedPath, buffer, (err) => {
@@ -42,7 +36,6 @@ module.exports = {
 		label: "page",
 		optional: true,
 		min: 1,
-		get max() { return Math.ceil(champions.length / 3); }
+		get max() { return Math.ceil(champions().length / 3); }
 	}]
 };
-process.on("unhandledRejection", err => console.error(err.stack));

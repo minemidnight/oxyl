@@ -1,5 +1,4 @@
-const { promisify } = require("util");
-const exec = promisify(require("child_process").exec);
+const { exec } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 
@@ -8,19 +7,17 @@ module.exports = fs.readdirSync(__dirname).reduce((a, b) => {
 	const base = path.basename(b, path.extname(b));
 	if(path.extname(b) !== ".js" || base === "index") return a;
 
-	a[base] = async data => {
-		const env = {};
-		Object.entries(data).forEach(([key, value]) => {
-			if(typeof value === "object") value = JSON.stringify(value);
-			env[key.toUpperCase()] = value;
+	a[base] = stdin => new Promise((resolve, reject) => {
+		const process = exec(`node ${path.resolve(__dirname, b)}`, { maxBuffer: Infinity }, (err, stdout, stderr) => {
+			if(stderr || err) reject(stderr || err);
+
+			const dataURI = stdout.match(/^data:image\/([A-Za-z-+\/]+);base64,(.+)$/);
+			dataURI[2] = Buffer.from(dataURI[2], "base64");
+			resolve({ buffer: dataURI[2], ext: dataURI[1] });
 		});
 
-		const { stdout } = await exec(`node ${path.resolve(__dirname, b)}`, { env, maxBuffer: Infinity });
-		const dataURI = stdout.match(/^data:image\/([A-Za-z-+\/]+);base64,(.+)$/);
-		dataURI[2] = Buffer.from(dataURI[2], "base64");
-
-		return { buffer: dataURI[2], ext: dataURI[1] };
-	};
+		process.stdin.write(JSON.stringify(stdin));
+	});
 
 	return a;
 }, {});
