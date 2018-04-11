@@ -5,9 +5,7 @@ module.exports = {
 		const player = Player.getPlayer(guild.id);
 
 		if(!player || (!player.currentSong && !player.queue.length)) return t("commands.music.notPlaying");
-		else if(!player.isListening(member)) return t("commands.music.notListening");
-
-		if(page > Math.ceil(player.queue.length / 15)) page = Math.ceil(player.queue.length / 15);
+		else if(page > Math.ceil(player.queue.length / 15)) page = Math.ceil(player.queue.length / 15);
 
 		let queueMessage = t("commands.queue.inQueue", { count: player.queue.length });
 		queueMessage += "\n";

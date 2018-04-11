@@ -66,15 +66,13 @@ class PaladinsAPI {
 		setTimeout(() => this.createSession(), 885000);
 	}
 
-	timestamp(time = Date.now()) {
-		time = new Date(time + (new Date().getTimezoneOffset() * 60000));
-
-		return time.getFullYear() +
-			(time.getMonth() + 1).toString().padStart(2, "0") +
-			time.getDate().toString().padStart(2, "0") +
-			time.getHours().toString().padStart(2, "0") +
-			time.getMinutes().toString().padStart(2, "0") +
-			time.getSeconds().toString().padStart(2, "0");
+	timestamp(time = new Date()) {
+		return time.getUTCFullYear() +
+			(time.getUTCMonth() + 1).toString().padStart(2, "0") +
+			time.getUTCDate().toString().padStart(2, "0") +
+			time.getUTCHours().toString().padStart(2, "0") +
+			time.getUTCMinutes().toString().padStart(2, "0") +
+			time.getUTCSeconds().toString().padStart(2, "0");
 	}
 }
 
