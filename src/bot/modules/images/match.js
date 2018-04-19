@@ -70,7 +70,7 @@ async function generate({ bans, matchDetails, player: specificPlayer }) {
 
 	const sectionHeight = (canvas.height - 50 - (specificPlayer ? 115 : 0) - (bans ? 100 : 0)) / 10;
 	const midLine = ((canvas.height - 50) / 2) +
-		(specificPlayer && specificPlayer.Win_Status === "Winner" ? 115 : 0) - sectionHeight;
+		(specificPlayer && specificPlayer.Win_Status === "Winner" ? 115 - sectionHeight : -sectionHeight);
 
 	ctx.lineWidth = 15;
 	ctx.beginPath();
@@ -110,7 +110,11 @@ async function generate({ bans, matchDetails, player: specificPlayer }) {
 	for(let i = 0; i < 10; i++) {
 		const player = matchDetails[i];
 
-		const champion = player.Reference_Name.toLowerCase().replace("'", "").replace(" ", "-");
+		const champion = player.Reference_Name.replace(/([A-Za-z]+)([A-Z][^a])/, "$1 $2")
+			.toLowerCase()
+			.replace("'", "")
+			.replace(" ", "-");
+
 		const championIcon = new Image();
 		if(loadedChampions.has(champion)) {
 			championIcon.src = loadedChampions.get(champion);
