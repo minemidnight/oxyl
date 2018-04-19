@@ -3,7 +3,7 @@
 		<form v-if="loaded" @submit.prevent="update()">
 			<h4>Autorole</h4>
 			<p>Roles automatically added to a user when they join the server</p>
-			<div class="form-group">
+			<div class="form-check form-group">
 				<div class="row" id="autorole">
 					<div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3" v-for="(role, index) in roles.filter(({ canGive }) => canGive)" :key="index">
 						<label class="form-check-label">
@@ -15,7 +15,7 @@
 			</div>
 			<h4>Roleme</h4>
 			<p>Roles that a user can recieve by using the roleme command</p>
-			<div class="form-group">
+			<div class="form-check form-group">
 				<div class="row" id="roleme">
 					<div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3" v-for="(role, index) in roles.filter(({ canGive }) => canGive)" :key="index">
 						<label class="form-check-label">
@@ -27,7 +27,7 @@
 			</div>
 			<h4>Role Persist</h4>
 			<p>Roles that are persisted; if a user leaves the server with an enabled role and joins back, they will get the role again</p>
-			<div class="form-group">
+			<div class="form-check form-group">
 				<div class="row" id="persist">
 					<div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3" v-for="(role, index) in roles.filter(({ canGive }) => canGive)" :key="index">
 						<label class="form-check-label">

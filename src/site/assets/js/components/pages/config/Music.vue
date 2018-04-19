@@ -3,13 +3,13 @@
 		<form v-if="loaded" @submit.prevent="update()">
 			<h4>Music Options</h4>
 			<p>Options to configure Oxyl's music</p>
-			<div class="form-check">
+			<div>
 				<label>
 					Now Playing messages
 					<small class="form-text">Whether or not to enable messages that say "now playing &lt;song&gt;"</small>
 				</label>
 				<label class="tgl">
-					<input type="checkbox" :checked="data.musicMessages"v-model="updateModel.musicMessages" />
+					<input type="checkbox" :checked="data.musicMessages" v-model="updateModel.musicMessages" />
 					<span class="tgl_body">
 						<span class="tgl_switch"></span>
 						<span class="tgl_track">
@@ -19,7 +19,7 @@
 					</span>
 				</label>
 			</div>
-			<div class="form-check">
+			<div>
 				<label>
 					Vote Skip
 					<small class="form-text">Whether or not to enable vote-skip functionality for the skip command (there is a flag that force skips for those with Manage Messages)</small>
@@ -40,7 +40,7 @@
 					Maximum Song Length
 					<small class="form-text">The maximum length a song can be (in minutes) in order to be queued (0 = no limit), livestreams not included</small>
 				</label>
-				<input id="song-length" class="form-control" type="number" min="0" max="1440" v-model.number="updateModel.songLength" :value="data.songLength" required />
+				<input id="song-length" class="form-control" type="number" min="0" max="1440" v-model.number="updateModel.songLength" required />
 			</div>
 			<button type="submit" class="btn btn-success">Save</button>
 		</form>

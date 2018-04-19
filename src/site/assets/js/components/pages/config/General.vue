@@ -7,9 +7,9 @@
 					Prefix
 					<small class="form-text">The prefix for Oxyl to use. Set to o! to reset</small>
 				</label>
-				<input id="prefix" class="form-control" v-model="updateModel.prefix.value" :value="data.prefix.value" required />
+				<input id="prefix" class="form-control" v-model="updateModel.prefix.value" required />
 			</div>
-			<div class="form-check">
+			<div>
 				<label>
 					Overwrite Prefix
 					<small class="form-text">Whether or not to overwrite the current prefix. If checked, only the set prefix will work, otherwise the default prefix plus the set prefix both will work.</small>
@@ -27,7 +27,7 @@
 			</div>
 			<h4>Suggestions</h4>
 			<p>Option to have a suggestions channel, where members can suggest something and other members can vote on it</p>
-			<div class="form-check">
+			<div>
 				<label>
 					Enabled
 					<small class="form-text">Whether or not to enable the suggestions</small>

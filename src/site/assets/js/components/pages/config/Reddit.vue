@@ -24,24 +24,26 @@
 					<small class="form-text text-muted">Don't see your channel? Make sure Oxyl has permission to Send Messages and Read Messages in that channel.</small>
 				</div>
 				<small class="form-text">Type of content to post</small>
-				<div class="form-check">
-					<label class="form-check-label">
-						<input class="form-check-input" v-model="insertModel.type" type="radio" name="type" value="new" checked />
-						Post all new posts to the subreddit
-					</label>
-				</div>
-				<div class="form-check">
-					<label class="form-check-label">
-						<input class="form-check-input" v-model="insertModel.type" type="radio" name="type" value="top" />
-						Post all top content
-					</label>
+				<div class="form-group">
+					<div class="form-check">
+						<label class="form-check-label">
+							<input class="form-check-input" v-model="insertModel.type" type="radio" name="type" value="new" checked />
+							Post all new posts to the subreddit
+						</label>
+					</div>
+					<div class="form-check">
+						<label class="form-check-label">
+							<input class="form-check-input" v-model="insertModel.type" type="radio" name="type" value="top" />
+							Post all top content
+						</label>
+					</div>
 				</div>
 				<button type="submit" class="btn btn-primary">Add Subreddit</button>
 			</form>
 
 			<h4>Current Subreddits</h4>
 			<div class="card-group" v-for="(subs, i) in chunkify(subs, [4, 3, 2].find(size => !(subs.length % size)) || 4)" :key="i">
-				<div class="card color-600 color-hover-630" v-for="(sub, index) in subs" :key="index" data-index="index">
+				<div class="card color-600 color-hover-630" v-for="(sub, index) in subs" :key="index" :data-index="index">
 					<div class="card-body">
 						<button class="btn btn-danger float-right" @click="remove(index)">
 							<i class="fa fa-trash-o" aria-hidden="true"></i>

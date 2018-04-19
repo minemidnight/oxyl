@@ -15,7 +15,7 @@
 				</li>
 				<li class="nav-item">
 					<router-link class="nav-link" :class="{ active: $route.name === 'commands' }" :to="{ name: 'commands' }">
-						<i class="fa fa-home" aria-hidden="true"></i>
+						<i class="fa fa-keyboard-o" aria-hidden="true"></i>
 						Commands
 					</router-link>
 				</li>

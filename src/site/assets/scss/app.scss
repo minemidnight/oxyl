@@ -14,6 +14,14 @@ body {
 	text-decoration: none !important;
 }
 
+img {
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-drag: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+}
+
 .color {
 	&-100, &-hover-100:hover { background: $color-100 !important; }
 	&-200, &-hover-200:hover { background: $color-200 !important; }
@@ -50,4 +58,19 @@ body {
 
 .transition {
 	transition: 0.3s;
+}
+
+input, select {
+	max-width: 576px;
+	transition: 0.4s ease-in-out !important;
+	border: none !important;
+	background: $color-600 !important;
+	color: rgba(255, 255, 255, 0.8) !important;
+	outline: none !important;
+
+	&:focus, &:hover {
+		max-width: 720px;
+		color: white !important;
+		background: $color-630 !important;
+	}
 }

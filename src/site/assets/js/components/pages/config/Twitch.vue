@@ -28,7 +28,7 @@
 
 			<h4>Current Channels</h4>
 			<div class="card-group" v-for="(feedChunk, i) in chunkify(twitchFeeds, [4, 3, 2].find(size => !(twitchFeeds.length % size)) || 4)" :key="i">
-				<div class="card color-600 color-hover-630" v-for="(feed, index) in feedChunk" :key="index" data-index="index">
+				<div class="card color-600 color-hover-630" v-for="(feed, index) in feedChunk" :key="index" :data-index="index">
 					<div class="card-body">
 						<button class="btn btn-danger float-right" @click="remove(index)">
 							<i class="fa fa-trash-o" aria-hidden="true"></i>

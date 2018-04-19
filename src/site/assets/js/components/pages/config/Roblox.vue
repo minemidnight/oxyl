@@ -3,7 +3,7 @@
 		<form v-if="loaded" id="account-verification" @submit.prevent="update()">
 			<h4>Account Verification</h4>
 			<p>Oxyl will give users a certain role after verifying their ROBLOX accounts</p>
-			<div class="form-check">
+			<div>
 				<label>
 					Enabled
 					<small class="form-text">Whether or not to enable this</small>
@@ -19,7 +19,7 @@
 					</span>
 				</label>
 			</div>
-			<div class="form-check">
+			<div>
 				<label>
 					Set Nickname
 					<small class="form-text">Whether or not Oxyl should set the user's nickname to their roblox name</small>
@@ -52,7 +52,7 @@
 					Group ID
 					<small class="form-text">The ID of the group to sync roles with. Leave blank to reset</small>
 				</label>
-				<input id="group-id" class="form-control" placeholder="Enter a group ID" pattern="^[0-9]+$" v-model="updateModel.groupID" :value="data.groupID" />
+				<input id="group-id" class="form-control" placeholder="Enter a group ID" pattern="^[0-9]+$" v-model="updateModel.groupID"/>
 			</div>
 			<button type="submit" class="btn btn-success">Save</button>
 		</form>

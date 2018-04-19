@@ -40,6 +40,9 @@ router.put("/:guild(\\d{17,21})", async (req, res) => {
 	} else if(req.body.action === "role" && typeof req.body.roleID !== "string") {
 		res.status(400).json({ error: "No role id or invalid role id data" });
 		return;
+	} else if(req.body.time && (!~["role", "ban"].indexOf(req.body.action) || typeof req.body.time !== "number")) {
+		res.status(400).json({ error: "Invalid time or time for invalid action" });
+		return;
 	} else if(typeof req.body.message !== "string") {
 		res.status(400).json({ error: "No message or invalid message data" });
 		return;
@@ -51,13 +54,14 @@ router.put("/:guild(\\d{17,21})", async (req, res) => {
 			regex: [req.body.regex, req.body.flags],
 			action: req.body.action,
 			roleID: req.body.roleID,
-			message: req.body.message
+			message: req.body.message,
+			time: req.body.time
 		}, { returnChanges: true })
 		.run();
 
 	res.status(201).json({
 		regex: censor.regex[0],
-		flags: censor.flags[1],
+		flags: censor.regex[1],
 		action: censor.action,
 		roleID: censor.roleID,
 		message: censor.message,

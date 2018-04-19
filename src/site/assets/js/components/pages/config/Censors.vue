@@ -31,12 +31,19 @@
 					</select>
 					<small class="form-text text-muted">Don't see your role? Make sure Oxyl has permission to Manage Roles and that his highest role is above the role you want to give.</small>
 				</div>
+				<div class="form-group" v-if="~['ban', 'role'].indexOf(insertModel.action)">
+					<label for="time">
+						Time
+						<small class="form-text">The amount of time in seconds, until the ban/role is removed (0 = no removal)</small>
+					</label>
+					<input id="song-length" class="form-control" type="number" min="0" max="63113904" v-model.number="insertModel.time" required />
+				</div>
 				<div class="form-group">
 					<label for="message">
 						Message
 						<small class="form-text" v-pre>The message to send if this regex is triggered. Placeholders {{id}}, {{discrim}}, {{mention}} and {{username}} will be replaced accordingly.</small>
 					</label>
-					<input id="message" class="form-control" :value="insertModel.message" v-model.trim="insertModel.message" required  />
+					<input id="message" class="form-control" v-model.trim="insertModel.message" required />
 				</div>
 				<button type="submit" class="btn btn-primary">Add Censor</button>
 			</form>
@@ -71,7 +78,7 @@
 									Censor Regex
 									<small class="form-text">The regex for the censor to use</small>
 								</label>
-								<input id="regex-edit" class="form-control" placeholder="/test/i" v-model="editModel.regex" :value="editModel.regex" required />
+								<input id="regex-edit" class="form-control" placeholder="/test/i" v-model="editModel.regex" required />
 								<small class="form-text text-danger" v-if="errors.edit.invalidRegex">Invalid regex: {{ errors.add.invalidRegex }}. Please contact support if you need help with regular expressions.</small>
 							</div>
 							<div class="form-group">
@@ -79,7 +86,7 @@
 									Action
 									<small class="form-text">The action to take when someone says a censored phrase. This is added to the message being deleted</small>
 								</label>
-								<select class="form-control" id="action-edit" v-model="editModel.action">
+								<select class="form-control" id="action-edit" v-model="editModel.action" required>
 									<option v-for="(action, index) in actions" :key="index" :value="action.value" :selected="action.value === editModel.action">{{ action.display }}</option>
 								</select>
 							</div>
@@ -93,12 +100,19 @@
 								</select>
 								<small class="form-text text-muted">Don't see your role? Make sure Oxyl has permission to Manage Roles and that his highest role is above the role you want to give.</small>
 							</div>
+							<div class="form-group" v-if="~['ban', 'role'].indexOf(editModel.action)">
+								<label for="time">
+									Time
+									<small class="form-text">The amount of time in seconds, until the ban/role is removed (0 = no removal)</small>
+								</label>
+								<input id="song-length" class="form-control" type="number" min="0" max="63113904" v-model.number="editModel.time" required />
+							</div>
 							<div class="form-group">
 								<label for="message-edit">
 									Message
 									<small class="form-text" v-pre>The message to send if this regex is triggered. Placeholders {{id}}, {{disrim}}, {{mention}} and {{username}} will be replaced accordingly.</small>
 								</label>
-								<input id="message-edit" class="form-control" :value="editModel.message" v-model.trim="editModel.message" required  />
+								<input id="message-edit" class="form-control" v-model.trim="editModel.message" required  />
 							</div>
 						</div>
 						<div class="modal-footer border-dark">
@@ -171,7 +185,10 @@ module.exports = {
 				flags: match[2] ? match[2].split("") : [],
 				action: this.insertModel.action,
 				roleID: this.insertModel.action === "role" ? this.insertModel.roleID : undefined,
-				message: this.insertModel.message
+				message: this.insertModel.message,
+				time: this.insertModel.time && ~["role", "ban"].indexOf(this.insertModel.action) ?
+					this.insertModel.time :
+					undefined
 			});
 
 			if(error) return;

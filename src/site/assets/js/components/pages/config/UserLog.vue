@@ -3,7 +3,7 @@
 		<form v-if="loaded" @submit.prevent="update()">
 			<h4>Userlog</h4>
 			<p>Oxyl will create welcome or farewell messages in a certain channel</p>
-			<div class="form-check">
+			<div>
 				<label>
 					Enabled
 					<small class="form-text">Whether or not to enable this</small>
@@ -34,9 +34,9 @@
 					Greeting Message
 					<small class="form-text" v-pre>The greeting message. Placeholders {{id}}, {{discrim}}, {{mention}} and {{username}} will be replaced accordingly.</small>
 				</label>
-				<input id="greeting" class="form-control" :placeholder="'Welcome {{mention}} to the server'" v-model.trim="updateModel.greeting" :value="data.greeting" />
+				<input id="greeting" class="form-control" :placeholder="'Welcome {{mention}} to the server'" v-model.trim="updateModel.greeting" />
 			</div>
-			<div class="form-check">
+			<div>
 				<label>
 					DM Greeting
 					<small class="form-text">Whether or not Oxyl should DM the user the greeting message</small>
@@ -57,7 +57,7 @@
 					Farewell
 					<small class="form-text" v-pre>The farewell message. Placeholders {{id}}, {{discrim}}, {{mention}} and {{username}} will be replaced accordingly.</small>
 				</label>
-				<input id="farewell" class="form-control" :placeholder="'{{username}}#{{discrim}} has left the server :('" v-model.trim="updateModel.farewell" :value="data.farewell" />
+				<input id="farewell" class="form-control" :placeholder="'{{username}}#{{discrim}} has left the server :('" v-model.trim="updateModel.farewell" />
 			</div>
 			<button type="submit" class="btn btn-success">Save</button>
 		</form>
