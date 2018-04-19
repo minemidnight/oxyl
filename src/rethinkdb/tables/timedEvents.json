@@ -5,6 +5,7 @@
 	"model": {
 		"date": "time in ms that it should execute",
 		"type": "type of event to run",
+		"uuid": "generated uuid",
 		"...continued": "extra data is continued here"
 	}
 }
