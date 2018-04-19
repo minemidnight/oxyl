@@ -1,0 +1,11 @@
+{
+	"name": "warnings",
+	"primary": "id",
+	"indexes": ["guildAndUserID"],
+	"model": {
+		"id": "warn short id",
+		"reason": "",
+		"guildAndUserID": ["guildID", "userID"],
+		"warnerID": "id of member who warned"
+	}
+}

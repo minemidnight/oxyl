@@ -1,4 +1,4 @@
-const recentBans = new Map();
+const recentActions = new Map();
 
 const createTimedEvent = async (data, r) => r.table("timedEvents").insert(data).run();
 const createEntry = async (data, wiggle) => {
@@ -49,7 +49,7 @@ const buildMessage = ({ action, caseID, guild, punished, responsible, reason, ro
 	message += `**USER**: ${punished.username}#${punished.discriminator} (${punished.id})\n`;
 
 	if(warnCount) message += `**TOTAL WARNINGS**: ${warnCount}\n`;
-	if(role) message += `**ROLE**: ${role.name}\n`;
+	if(role) message += `**ROLE**: ${role.name ? role.name : guild.roles.has(role.id).name} (${role.id})\n`;
 	if(time) {
 		const timespanString = Object.entries({
 			months: Math.floor(time / 2592000000),
@@ -85,8 +85,8 @@ const entryMessage = async (data, wiggle) => {
 		.catch(err => undefined); // eslint-disable-line handle-callback-err
 };
 
-const ban = async ({ punished, command, guild, responsible, reason, time }, wiggle) => {
-	if(recentBans.has(`${guild.id}-${punished.id}`)) return;
+const ban = async ({ punished, guild, responsible, reason, time }, wiggle) => {
+	if(recentActions.has(`bans-${guild.id}-${punished.id}`)) return;
 
 	if(time) {
 		await createTimedEvent({
@@ -106,11 +106,11 @@ const ban = async ({ punished, command, guild, responsible, reason, time }, wigg
 		time
 	}, wiggle);
 
-	recentBans.set(`${guild.id}-${punished.id}`, caseID);
-	setTimeout(() => recentBans.delete(`${guild.id}-${punished.id}`), 30000);
+	recentActions.set(`bans-${guild.id}-${punished.id}`, caseID);
+	setTimeout(() => recentActions.delete(`bans-${guild.id}-${punished.id}`), 30000);
 };
 
-const kick = async ({ punished, command, guild, responsible, reason }, wiggle) => {
+const kick = async ({ punished, guild, responsible, reason }, wiggle) => {
 	await createEntry({
 		action: "kick",
 		guild,
@@ -120,9 +120,9 @@ const kick = async ({ punished, command, guild, responsible, reason }, wiggle) =
 	}, wiggle);
 };
 
-const unban = async ({ punished, command, guild, responsible, reason }, wiggle) => {
-	if(recentBans.has(`${guild.id}-${punished.id}`)) {
-		updateEntry(recentBans.get(`${guild.id}-${punished.id}`), {
+const unban = async ({ punished, guild, responsible, reason }, wiggle) => {
+	if(recentActions.has(`bans-${guild.id}-${punished.id}`)) {
+		updateEntry(recentActions.get(`bans-${guild.id}-${punished.id}`), {
 			action: "softban",
 			guild,
 			punished,
@@ -130,7 +130,7 @@ const unban = async ({ punished, command, guild, responsible, reason }, wiggle) 
 			reason
 		}, wiggle);
 
-		recentBans.delete(`${guild.id}-${punished.id}`);
+		recentActions.delete(`bans-${guild.id}-${punished.id}`);
 	} else {
 		await createEntry({
 			action: "unban",
@@ -142,4 +142,73 @@ const unban = async ({ punished, command, guild, responsible, reason }, wiggle) 
 	}
 };
 
-module.exports = { ban, kick, unban };
+const addRole = async ({ punished, guild, responsible, reason, time, role }, wiggle) => {
+	if(recentActions.has(`addRole-${guild.id}-${punished.id}`)) return;
+
+	if(time) {
+		await createTimedEvent({
+			date: Date.now() + time,
+			type: "temprole",
+			userID: punished.id,
+			guildID: guild.id,
+			roleID: role.id
+		}, wiggle.locals.r);
+	}
+
+	const caseID = await createEntry({
+		action: time ? "temprole" : "add role",
+		guild,
+		punished,
+		responsible,
+		reason,
+		time,
+		role
+	}, wiggle);
+
+	recentActions.set(`addRole-${guild.id}-${punished.id}`, caseID);
+	setTimeout(() => recentActions.delete(`addRole-${guild.id}-${punished.id}`), 10000);
+};
+
+const removeRole = async ({ punished, guild, responsible, reason, role }, wiggle) => {
+	if(recentActions.has(`removeRole-${guild.id}-${punished.id}`)) return;
+
+	const caseID = await createEntry({
+		action: "remove role",
+		guild,
+		punished,
+		responsible,
+		reason,
+		role
+	}, wiggle);
+
+	recentActions.set(`removeRole-${guild.id}-${punished.id}`, caseID);
+	setTimeout(() => recentActions.delete(`removeRole-${guild.id}-${punished.id}`), 10000);
+};
+
+const warn = async ({ punished, guild, responsible, reason }, wiggle) => await createEntry({
+	action: "warn",
+	guild,
+	punished,
+	responsible,
+	reason,
+	warnCount: await wiggle.locals.r
+		.table("warnings")
+		.getAll([guild.id, punished.id], { index: "guildAndUserID" })
+		.count()
+		.run()
+}, wiggle);
+
+const pardon = async ({ punished, guild, responsible, reason }, wiggle) => await createEntry({
+	action: "pardon",
+	guild,
+	punished,
+	responsible,
+	reason,
+	warnCount: await wiggle.locals.r
+		.table("warnings")
+		.getAll([guild.id, punished.id], { index: "guildAndUserID" })
+		.count()
+		.run()
+}, wiggle);
+
+module.exports = { addRole, removeRole, ban, kick, unban, warn, pardon };

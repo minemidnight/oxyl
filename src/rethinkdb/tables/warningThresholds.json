@@ -1,0 +1,12 @@
+{
+	"name": "warningThresholds",
+	"primary": "id",
+	"indexes": ["guildID"],
+	"model": {
+		"id": ["guild id", "warn count"],
+		"guildID": "guild id",
+		"action": "kick/mute/ban",
+		"time": "time in seconds (for tempbans/temproles, not a string)",
+		"roleID": "role id to add, for adding roles"
+	}
+}

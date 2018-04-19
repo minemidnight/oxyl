@@ -1,0 +1,15 @@
+{
+	"name": "pardons",
+	"primary": "id",
+	"indexes": ["guildAndUserID"],
+	"model": {
+		"id": "warn short id",
+		"reason": "",
+		"guildAndUserID": ["guildID", "userID"],
+		"pardonerID": "id of member who pardoned",
+		"warning": {
+			"reason": "original reason",
+			"warnerID": "id of member who warned"
+		}
+	}
+}
