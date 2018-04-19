@@ -12,8 +12,6 @@ module.exports = {
 		if(member) {
 			if(!member.bannable) return t("commands.ban.botCantBan");
 			else if(!member.punishable(authorMember)) return t("commands.ban.youCantBan");
-		} else {
-			return t("errors.userNotInGuild");
 		}
 
 		modLog.ban({
