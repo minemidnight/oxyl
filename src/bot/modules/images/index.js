@@ -9,7 +9,10 @@ module.exports = fs.readdirSync(__dirname).reduce((a, b) => {
 
 	a[base] = stdin => new Promise((resolve, reject) => {
 		const process = exec(`node ${path.resolve(__dirname, b)}`, { maxBuffer: Infinity }, (err, stdout, stderr) => {
-			if(stderr || err) reject(stderr || err);
+			if(stderr || (err && err.message)) {
+				reject(new Error(stderr || (err && err.message)));
+				return;
+			}
 
 			const dataURI = stdout.match(/^data:image\/([A-Za-z-+\/]+);base64,(.+)$/);
 			dataURI[2] = Buffer.from(dataURI[2], "base64");
