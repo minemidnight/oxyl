@@ -44,7 +44,8 @@ const client = wiggle({
 	require("./middleware/permissionHandler")
 );
 
-const { updateGroupRoles } = require("./modules/syncGroupRole");
+const { update: updateGroupRoles } = require("./modules/syncGroupRole");
+const { update: updateTimedEvents } = require("./modules/timedEvents");
 module.exports = async ({ shardStart, shardEnd, shardCount, shards }) => {
 	client.set("clientOptions", {
 		firstShardID: shardStart,
@@ -68,7 +69,8 @@ module.exports = async ({ shardStart, shardEnd, shardCount, shards }) => {
 	client.locals.config = config;
 	client.locals.shardDisplay = shards;
 
-	setTimeout(() => updateGroupRoles(client), 900000);
+	setInterval(() => updateGroupRoles(client), 900000);
+	setInterval(() => updateTimedEvents(client), 30000);
 
 	return { client };
 };
