@@ -2,7 +2,7 @@ const modLog = require("../../modules/modLog");
 
 module.exports = {
 	async run({
-		args: [user, reason], author, flags: { time, deleteDays, softban },
+		args: [user, reason = "Unspecified"], author, flags: { time, deleteDays, softban },
 		guild, message: { member: authorMember }, t,
 		wiggle: { erisClient: client }, wiggle
 	}) {
@@ -12,11 +12,12 @@ module.exports = {
 		if(member) {
 			if(!member.bannable) return t("commands.ban.botCantBan");
 			else if(!member.punishable(authorMember)) return t("commands.ban.youCantBan");
+		} else {
+			return t("errors.userNotInGuild");
 		}
 
 		modLog.ban({
 			punished: user,
-			command: true,
 			guild,
 			responsible: author,
 			reason,

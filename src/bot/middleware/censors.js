@@ -1,3 +1,5 @@
+const modLog = require("../modules/modLog");
+const { warn } = require("../modules/warnings");
 const cachedCensors = new Map();
 
 async function getCensors(guildID, r) {
@@ -34,21 +36,39 @@ module.exports = async (message, next, wiggle) => {
 			.catch(err => { }); // eslint-disable-line handle-callback-err, no-empty-function
 
 		if(censor.action === "role") {
-			await message.member.addRole(censor.roleID)
+			modLog.addRole({
+				punished: message.member.user,
+				guild: message.member.guild,
+				responsible: wiggle.erisClient.user,
+				reason: "Said censored phrase",
+				time: censor.time && censor.time * 1000,
+				role: { id: censor.roleID }
+			}, wiggle);
+
+			await message.member.addRole(censor.roleID, "Said censored phrase")
 				.catch(err => { }); // eslint-disable-line handle-callback-err, no-empty-function
 		} else if(censor.action === "warn") {
-			// warn stuff
+			await warn(message.member, "Said censored phrase", wiggle.erisClient.user, wiggle)
+				.catch(err => { }); // eslint-disable-line handle-callback-err, no-empty-function
 		} else if(censor.action === "kick") {
-			await message.member.kick()
+			await message.member.kick("Said censored phrase")
 				.catch(err => { }); // eslint-disable-line handle-callback-err, no-empty-function
 		} else if(censor.action === "softban") {
-			await message.member.ban(7)
+			await message.member.ban(7, "Said censored phrase")
 				.catch(err => { }); // eslint-disable-line handle-callback-err, no-empty-function
 
-			await message.member.unban()
+			await message.member.unban("Said censored phrase")
 				.catch(err => { }); // eslint-disable-line handle-callback-err, no-empty-function
 		} else if(censor.action === "ban") {
-			await message.member.ban(7)
+			modLog.ban({
+				punished: message.member.user,
+				guild: message.member.guild,
+				responsible: wiggle.erisClient.user,
+				reason: "Said censored phrase",
+				time: censor.time && censor.time * 1000
+			}, wiggle);
+
+			await message.member.ban(7, "Said censored phrase")
 				.catch(err => { }); // eslint-disable-line handle-callback-err, no-empty-function
 		}
 

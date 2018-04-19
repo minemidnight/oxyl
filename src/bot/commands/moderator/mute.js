@@ -36,7 +36,7 @@ async function getMutedRole(message) {
 
 module.exports = {
 	async run({
-		args: [user, reason], author, flags: { time }, guild,
+		args: [user, reason = "Unspecified"], author, flags: { time }, guild,
 		message, message: { member: authorMember }, t,
 		wiggle: { erisClient: client }, wiggle
 	}) {
@@ -44,22 +44,32 @@ module.exports = {
 		if(typeof mutedRole === "string") return mutedRole;
 
 		const member = guild.members.get(user.id);
-		if(!member) return t("commands.mute.notInGuild");
+		if(!member) return t("errors.userNotInGuild");
 		else if(!member.punishable(authorMember)) return t("commands.mute.cantPunish");
 
-		modLog.mute({
+		if(~member.roles.indexOf(mutedRole.id)) {
+			modLog.removeRole({
+				punished: user,
+				guild,
+				responsible: author,
+				reason,
+				role: mutedRole
+			}, wiggle);
+
+			await member.removeRole(mutedRole.id, message.args[1]);
+			return t("commands.mute.unmuted", { user: `${user.username}#${user.discriminator}` });
+		}
+
+		modLog.addRole({
 			punished: user,
-			command: true,
 			guild,
 			responsible: author,
 			reason,
-			time
+			time,
+			role: mutedRole
 		}, wiggle);
 
-		if(~member.roles.indexOf(mutedRole.id)) {
-			await member.removeRole(mutedRole.id, message.args[1]);
-			return t("commands.mute.unmuted", { user: `${user.username}#${user.discriminator}` });
-		} else if(time) {
+		if(time) {
 			return t("commands.mute.tempmute", { user: `${user.username}#${user.discriminator}` });
 		} else {
 			await member.addRole(mutedRole.id, message.args[1]);
