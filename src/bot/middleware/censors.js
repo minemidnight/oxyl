@@ -16,8 +16,9 @@ async function getCensors(guildID, r) {
 }
 
 module.exports = async (message, next, wiggle) => {
+	if(!message.channel.guild) return next();
 	const censors = await getCensors(message.channel.guild.id, wiggle.locals.r);
-	if(!censors.length /* || message.member.permission.has("manageMessages")*/) return next();
+	if(!censors.length || message.member.permission.has("manageMessages")) return next();
 
 	for(const censor of censors) {
 		const regex = new RegExp(censor.regex[0], censor.regex[1].join(""));
