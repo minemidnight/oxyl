@@ -73,6 +73,10 @@ const routes = [{
 		name: "dashboard_userlog",
 		path: "userlog",
 		component: require("./components/pages/config/UserLog.vue")
+	}, {
+		name: "dashboard_premium",
+		path: "premium",
+		component: require("./components/pages/config/Premium.vue")
 	}],
 	beforeEnter: configEnter
 }, {
@@ -83,10 +87,6 @@ const routes = [{
 	name: "invite",
 	path: "/invite",
 	component: require("./components/pages/Invite.vue")
-}, {
-	name: "oauth",
-	path: "/oauth",
-	component: require("./components/pages/OAuth.vue")
 }, {
 	name: "patreon",
 	path: "/patreon",

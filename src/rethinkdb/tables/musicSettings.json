@@ -3,7 +3,7 @@
 	"primary": "id",
 	"model": {
 		"id": "guild id",
-		"nowPlaying": "true/false",
+		"musicMessages": "true/false",
 		"voteSkip": "true/false",
 		"songLength": "song length in seconds"
 	}

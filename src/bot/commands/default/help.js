@@ -1,5 +1,5 @@
 module.exports = {
-	async run({ args, author, flags: { dm }, t, wiggle }) {
+	async run({ args, author, flags: { dm }, guild, t, wiggle }) {
 		if(args[0]) {
 			const command = wiggle.categories.map(category => category.commands.get(args[0])).find(cmd => cmd);
 			if(!command) return t("commands.help.noCommandFound");
@@ -11,11 +11,19 @@ module.exports = {
 				usage: command.usage
 			});
 		} else {
+			const disabledCommands = await wiggle.locals.r.table("commandSettings")
+				.getAll(guild.id, { index: "guildID" })
+				.pluck("enabled", "id")
+				.filter({ enabled: false })
+				.map(wiggle.locals.r.row("id")(1).split(".").nth(-1))
+				.run();
+
 			const helpMessage = [...wiggle.categories.values()].reduce((msg, { name, commands, subcommands }) => {
 				if(name === "creator") return msg;
 				msg += `__**${name.charAt(0).toUpperCase() + name.substring(1)}** `;
 				msg += `(${commands.size + subcommands.size} ${t("words.commands")})__\n`;
-				msg += [...commands.values()].concat(...subcommands.values())
+				msg += commands.filter(command => !~disabledCommands.indexOf(command.name))
+					.concat(subcommands.filter(subcommand => !~disabledCommands.indexOf(subcommand.name)))
 					.map(({ name: commandName }) => commandName).join(", ");
 				msg += "\n\n";
 

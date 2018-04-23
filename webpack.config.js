@@ -47,7 +47,11 @@ module.exports = {
 			loaders: ["style-loader", "css-loader"]
 		}, {
 			test: /\.(woff|woff2|eot|ttf|otf|png|svg|jpe?g|gif)$/,
-			use: ["file-loader"]
+			loader: "file-loader",
+			options: {
+				name: "[name].[ext]",
+				outputPath: "site/public/img/"
+			}
 		}]
 	},
 	plugins: [

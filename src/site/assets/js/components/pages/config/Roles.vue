@@ -1,42 +1,45 @@
 <template>
 	<div>
 		<form v-if="loaded" @submit.prevent="update()">
-			<h4>Autorole</h4>
-			<p>Roles automatically added to a user when they join the server</p>
-			<div class="form-check form-group">
-				<div class="row" id="autorole">
-					<div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3" v-for="(role, index) in roles.filter(({ canGive }) => canGive)" :key="index">
-						<label class="form-check-label">
-							<input type="checkbox" class="form-check-input" v-model="updateModel.autoRole" :value="role.id" :checked="~autoRole.indexOf(role.id)">
-							{{ role.name }}
-						</label>
+			<div class="mb-3">
+				<div class="row">
+					<div class="col-sm-12 col-md-6">
+						<h4>Autorole</h4>
+						<p>Roles automatically added to a user when they join the server</p>
+					</div>
+					<div class="col-sm-12 col-md-6"></div>
+					<div class="col-sm-12 col-md-6">
+						<role-selector :roles="roles" v-model="updateModel.autoRole"></role-selector>
 					</div>
 				</div>
 			</div>
-			<h4>Roleme</h4>
-			<p>Roles that a user can recieve by using the roleme command</p>
-			<div class="form-check form-group">
-				<div class="row" id="roleme">
-					<div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3" v-for="(role, index) in roles.filter(({ canGive }) => canGive)" :key="index">
-						<label class="form-check-label">
-							<input type="checkbox" class="form-check-input" v-model="updateModel.roleMe" :value="role.id" :checked="~roleMe.indexOf(role.id)">
-							{{ role.name }}
-						</label>
+
+			<div class="mb-3">
+				<div class="row">
+					<div class="col-sm-12 col-md-6">
+						<h4>Roleme</h4>
+						<p>Roles that a user can recieve by using the roleme command</p>
+					</div>
+					<div class="col-sm-12 col-md-6"></div>
+					<div class="col-sm-12 col-md-6">
+						<role-selector :roles="roles" v-model="updateModel.roleMe"></role-selector>
 					</div>
 				</div>
 			</div>
-			<h4>Role Persist</h4>
-			<p>Roles that are persisted; if a user leaves the server with an enabled role and joins back, they will get the role again</p>
-			<div class="form-check form-group">
-				<div class="row" id="persist">
-					<div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3" v-for="(role, index) in roles.filter(({ canGive }) => canGive)" :key="index">
-						<label class="form-check-label">
-							<input type="checkbox" class="form-check-input" v-model="updateModel.rolePersist" :value="role.id" :checked="~rolePersist.indexOf(role.id)">
-							{{ role.name }}
-						</label>
+
+			<div>
+				<div class="row">
+					<div class="col-sm-12 col-md-6">
+						<h4>Role Persist</h4>
+						<p>Roles that are persisted; if a user leaves the server with an enabled role and joins back, they will get the role again</p>
+					</div>
+					<div class="col-sm-12 col-md-6"></div>
+					<div class="col-sm-12 col-md-6">
+						<role-selector :roles="roles" v-model="updateModel.rolePersist"></role-selector>
 					</div>
 				</div>
 			</div>
+
 			<p class="form-text text-muted">Don't see your role(s)? Make sure Oxyl has permission to Manage Roles and that his highest role is above the role you want to give.</p>
 			<button type="submit" class="btn btn-success">Save All</button>
 		</form>

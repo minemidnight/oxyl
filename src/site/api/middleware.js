@@ -1,4 +1,4 @@
-const oauth = require("../../oauth/index");
+const { clientID, dashboardURL } = require("../../../config");
 
 async function inGuild(id) {
 	return await process.output({
@@ -12,22 +12,27 @@ async function inGuild(id) {
 module.exports = {
 	async hasGuild(req, res, next, guild) {
 		if(!await inGuild(guild)) {
-			return res.status(400).json({ error: "Oxyl not in guild", redirect: { name: "invite" } });
+			const url = `https://discordapp.com/oauth2/authorize?client_id=${clientID}&scope=bot&response_type=code` +
+				`&permissions=298183686&redirect_uri=${encodeURIComponent(dashboardURL)}&guild_id=${guild}`;
+
+			return res.status(400).json({ error: "Oxyl not in guild", popup: { url } });
 		} else {
 			return next();
 		}
 	},
 	async canManage(req, res, next, guild) {
-		let auth;
 		try {
-			auth = JSON.parse(req.headers.authorization);
+			res.locals.token = JSON.parse(req.headers.authorization);
 		} catch(err) {
 			return res.status(400).json({ error: "Authorization not JSON", redirect: { name: "selector" } });
 		}
 
 		try {
-			let guilds = await oauth.info(auth, "/users/@me/guilds");
+			const { discordAuth } = require("./oauth"); // circular deps if i don't require inside function ;(
+
+			let guilds = await discordAuth.info(res.locals.token, "/users/@me/guilds");
 			if(guilds.token) {
+				res.locals.token = guilds.token;
 				res.set("New-Token", JSON.stringify(guilds.token));
 				guilds = guilds.info;
 			}
@@ -50,3 +55,4 @@ module.exports = {
 };
 
 Object.entries(module.exports).forEach(([key, value]) => module.exports[key] = () => value);
+module.exports.inGuild = inGuild;

@@ -1,8 +1,17 @@
 const bodyParser = require("body-parser");
 const config = require("../../config");
 const express = require("express");
-const oauth = require("../oauth/index");
 const path = require("path");
+
+const OAuth2 = require("../oauth2/index");
+const discordAuth = new OAuth2({
+	api: "https://discordapp.com/api/",
+	oauth2: "https://discordapp.com/api/oauth2/"
+}, {
+	clientID: config.clientID,
+	secret: config.secret,
+	redirectURI: config.panelURL
+});
 
 const app = express();
 app.set("env", process.env.NODE_ENV);
@@ -34,7 +43,7 @@ app.get("/api/info", async (req, res) => {
 	}
 
 	try {
-		const info = await oauth.info(auth, req.query.path);
+		const info = await discordAuth.info(auth, req.query.path);
 		res.status(200).json(info);
 	} catch(err) {
 		res.status(400).send({ error: "Invalid path or token" });
@@ -49,7 +58,7 @@ app.post("/api/callback", async (req, res) => {
 	}
 
 	try {
-		const token = await oauth.token(req.body.code, config.panelURL);
+		const token = await discordAuth.token(req.body.code);
 		res.status(200).json(token);
 	} catch(err) {
 		res.status(400).send({ error: "Invalid code" });

@@ -9,15 +9,24 @@ async function makeCall(request, token) {
 		});
 
 		if(headers["new-token"]) {
-			if(!token) localStorage.token = headers["new-token"];
+			if(token === localStorage.token) localStorage.token = headers["new-token"];
 			else return { body, token: JSON.parse(headers["new-token"]) };
 		}
 
 		return { body };
 	} catch({ response: { headers, body } }) {
-		if(body.redirect && body.redirect.name !== app.$route.name) app.$router.push(body.redirect);
+		if(body.popup) {
+			const options = `dependent=yes,width=500,height=${window.innerHeight}`;
+			const popup = window.open(body.popup.url, "_blank", options);
+
+			if(!popup) window.location = body.popup.url;
+			else popup.focus();
+		} else if(body.redirect && body.redirect.name !== app.$route.name) {
+			app.$router.push(body.redirect);
+		}
+
 		if(headers["new-token"]) {
-			if(!token) localStorage.token = headers["new-token"];
+			if(token === localStorage.token) localStorage.token = headers["new-token"];
 			else return { error: true, body, token: JSON.parse(headers["new-token"]) };
 		}
 
@@ -37,7 +46,7 @@ module.exports = ["get", "post", "delete", "head", "patch", "post", "put"]
 				token = typeof tokenToUse === "object" ? JSON.stringify(tokenToUse) : tokenToUse;
 				return request;
 			};
-			request.then = cb => makeCall(request, token).then(cb);
+			request.then = (cb, errCb) => makeCall(request, token).then(cb, errCb);
 
 			return request;
 		};

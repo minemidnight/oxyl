@@ -2,12 +2,12 @@
 	<div>
 		<div class="container-fluid" v-if="loaded">
 			<div class="card-group my-2" :key="i" v-for="(guildGroup, i) in chunkify(guilds, [4, 3, 2].find(size => !(guilds.length % size)) || 4)">
-				<router-link class="card color-600 color-hover-630 color-text color-text-hover-100 transition no-decoration" style="cursor:pointer" :key="index" v-for="(guild, index) in guildGroup" :to="{ name: 'dashboard', params: { guild: guild.id } }">
+				<a class="card color-600 color-hover-630 color-text color-text-hover-100 transition no-decoration" style="cursor:pointer" :key="index" v-for="(guild, index) in guildGroup" @click="openPopup(guild)">
 					<div class="card-body d-flex align-items-center">
 						<h4 class="card-title text-truncate">{{ guild.name }}</h4>
 						<img v-if="guild.icon" class="rounded-circle ml-auto" :src="`https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`" style="max-height:96px;max-width:96px" />
 					</div>
-				</router-link>
+				</a>
 			</div>
 			<small class="text-muted">Missing guilds? You must have the Manage Server permission to use the dashboard for a guild.</small>
 		</div>
@@ -26,17 +26,35 @@ module.exports = {
 		};
 	},
 	async created() {
-		const { error, body: guilds } = await apiCall.get("oauth/info").query({ path: "/users/@me/guilds" });
+		const { error, body: guilds } = await apiCall.get("oauth/discord/info")
+			.query({ path: "/users/@me/guilds" });
 		if(error) return;
 
 		this.guilds = guilds.filter(({ owner, permissions }) => owner || permissions & 32);
+		const { body: { clientID } } = await apiCall.get("oauth/discord/clientid");
+		this.clientID = clientID;
+
 		this.loaded = true;
 	},
 	methods: {
-		chunkify: (array, size) => {
+		chunkify(array, size) {
 			const chunkified = [];
 			for(let i = 0; i < array.length; i += size) chunkified.push(array.slice(i, i + size));
 			return chunkified;
+		},
+		openPopup(guild) {
+			if(!guild.needsInvite) {
+				this.$router.push({ name: "dashboard", params: { guild: guild.id } });
+				return;
+			}
+
+			const url = `https://discordapp.com/oauth2/authorize?client_id=${this.clientID}&scope=bot&response_type=code` +
+				`&permissions=298183686&redirect_uri=${encodeURIComponent(window.location.origin)}&guild_id=${guild.id}`;
+			const options = `dependent=yes,width=500,height=${window.innerHeight}`;
+
+			const popup = window.open(url, "_blank", options);
+			if(!popup) window.location = url;
+			else popup.focus();
 		}
 	}
 };

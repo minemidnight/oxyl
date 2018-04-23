@@ -2,31 +2,41 @@
 	<div>
 		<div v-if="loaded">
 			<form id="add-feed" @submit.prevent="add()">
-				<h4>Add Channel</h4>
-				<p>Oxyl will post to a certain channel when a Twitch stream goes on or offline</p>
-				<p class="form-text text-danger" v-if="errors.add.alreadyExists">You already have the same twitch channel posting to the same discord channel, please edit it instead.</p>
-				<div class="form-group">
-					<label for="twitch-channel">
-						Twitch Channel
-						<small class="form-text">The Twitch channel to detect when streaming (not a full url)</small>
-					</label>
-					<input id="twitch-channel" v-model.trim="insertModel.twitchChannel" class="form-control" placeholder="Enter a channel" required pattern="^[a-zA-Z0-9_]{4,25}$" />
-					<small class="form-text text-danger" v-if="errors.add.invalidChannel">Please enter a valid Twitch channel.</small>
-				</div>
-				<div class="form-group">
-					<label for="discord-channel">
-						Discord Channel
-						<small class="form-text">What Discord channel to post to</small>
-					</label>
-					<select class="form-control" id="discord-channel" v-model="insertModel.discordChannel">
-						<option v-for="(discordChannel, index) in discordChannels.filter(({ canSend }) => canSend)" :key="index" :value="discordChannel.id">#{{ discordChannel.name }}</option>
-					</select>
-					<small class="form-text text-muted">Don't see your text channel? Make sure Oxyl has permission to Send Messages and Read Messages in that text channel.</small>
+				<div class="row">
+					<div class="col-sm-12 col-md-6">
+						<h4>Add Channel</h4>
+						<p>Oxyl will post to a certain channel when a Twitch stream goes on or offline</p>
+					</div>
+					<div class="col-sm-12 col-md-6">
+						<p class="form-text text-danger" v-if="errors.add.alreadyExists">You already have the same twitch channel posting to the same discord channel, please edit it instead.</p>
+					</div>
+					<div class="col-sm-12 col-md-6">
+						<div class="form-group">
+							<label for="twitch-channel">
+								Twitch Channel
+								<small class="form-text">The Twitch channel to detect when streaming (not a full url)</small>
+							</label>
+							<input id="twitch-channel" v-model.trim="insertModel.twitchChannel" class="form-control" placeholder="Enter a channel" required pattern="^[a-zA-Z0-9_]{4,25}$" />
+							<small class="form-text text-danger" v-if="errors.add.invalidChannel">Please enter a valid Twitch channel.</small>
+						</div>
+					</div>
+					<div class="col-sm-12 col-md-6">
+						<div class="form-group">
+							<label for="discord-channel">
+								Discord Channel
+								<small class="form-text">What Discord channel to post to</small>
+							</label>
+							<select class="form-control" id="discord-channel" v-model="insertModel.discordChannel">
+								<option v-for="(discordChannel, index) in discordChannels.filter(({ canSend }) => canSend)" :key="index" :value="discordChannel.id">#{{ discordChannel.name }}</option>
+							</select>
+							<small class="form-text text-muted">Don't see your text channel? Make sure Oxyl has permission to Send Messages and Read Messages in that text channel.</small>
+						</div>
+					</div>
 				</div>
 				<button type="submit" class="btn btn-primary">Add Channel</button>
 			</form>
 
-			<h4>Current Channels</h4>
+			<h4 class="mt-4" v-if="twitchFeeds.length">Current Channels</h4>
 			<div class="card-group" v-for="(feedChunk, i) in chunkify(twitchFeeds, [4, 3, 2].find(size => !(twitchFeeds.length % size)) || 4)" :key="i">
 				<div class="card color-600 color-hover-630" v-for="(feed, index) in feedChunk" :key="index" :data-index="index">
 					<div class="card-body">

@@ -2,46 +2,61 @@
 	<div>
 		<div v-if="loaded">
 			<form id="add-sub" @submit.prevent="add()">
-				<h4>Add Subreddit</h4>
-				<p>Oxyl will post new posts or top posts from a given subreddit to a certain channel</p>
-				<p class="form-text text-danger" v-if="errors.add.alreadyExists">You already have the same subreddit posting to the same channel.</p>
-				<div class="form-group">
-					<label for="subreddit">
-						Subreddit
-						<small class="form-text">The subreddit to pull posts from (/r/ is optional)</small>
-					</label>
-					<input id="subreddit" v-model.trim="insertModel.subreddit" class="form-control" placeholder="Enter a subreddit" required pattern="^(?:\/?r\/)?[A-Za-z0-9_]{3,21}$" />
-					<small class="form-text text-danger" v-if="errors.add.invalidSubreddit">Please only enter valid subreddits.</small>
-				</div>
-				<div class="form-group">
-					<label for="channel">
-						Channel
-						<small class="form-text">What Discord channel to post to</small>
-					</label>
-					<select class="form-control" id="channel" v-model="insertModel.channelID" required>
-						<option v-for="(channel, index) in channels.filter(({ canSend }) => canSend)" :key="index" :value="channel.id">#{{ channel.name }}</option>
-					</select>
-					<small class="form-text text-muted">Don't see your channel? Make sure Oxyl has permission to Send Messages and Read Messages in that channel.</small>
-				</div>
-				<small class="form-text">Type of content to post</small>
-				<div class="form-group">
-					<div class="form-check">
-						<label class="form-check-label">
-							<input class="form-check-input" v-model="insertModel.type" type="radio" name="type" value="new" checked />
-							Post all new posts to the subreddit
-						</label>
+				<div class="row mb-3">
+					<div class="col-sm-12 col-md-6">
+						<h4>Add Subreddit</h4>
+						<p>Oxyl will post new posts or top posts from a given subreddit to a certain channel</p>
 					</div>
-					<div class="form-check">
-						<label class="form-check-label">
-							<input class="form-check-input" v-model="insertModel.type" type="radio" name="type" value="top" />
-							Post all top content
+					<div class="col-sm-12 col-md-6">
+						<p class="form-text text-danger" v-if="errors.add.alreadyExists">You already have the same subreddit posting to the same channel.</p>
+					</div>
+					<div class="col-sm-12 col-md-6">
+						<div class="form-group">
+							<label for="subreddit">
+								Subreddit
+								<small class="form-text">The subreddit to pull posts from (/r/ is optional)</small>
+							</label>
+							<input id="subreddit" v-model.trim="insertModel.subreddit" class="form-control" placeholder="Enter a subreddit" required pattern="^(?:\/?r\/)?[A-Za-z0-9_]{3,21}$" />
+							<small class="form-text text-danger" v-if="errors.add.invalidSubreddit">Please only enter valid subreddits.</small>
+						</div>
+					</div>
+					<div class="col-sm-12 col-md-6">
+						<div class="form-group">
+							<label for="channel">
+								Channel
+								<small class="form-text">What Discord channel to post to</small>
+							</label>
+							<select class="form-control" id="channel" v-model="insertModel.channelID" required>
+								<option v-for="(channel, index) in channels.filter(({ canSend }) => canSend)" :key="index" :value="channel.id">#{{ channel.name }}</option>
+							</select>
+							<small class="form-text text-muted">Don't see your channel? Make sure Oxyl has permission to Send Messages and Read Messages in that channel.</small>
+						</div>
+					</div>
+					<div class="col-sm-12 col-md-6">
+						<label>
+							Type
+							<small class="form-text">Type of content to post</small>
 						</label>
+						<div class="form-group">
+							<div class="form-check">
+								<label class="form-check-label">
+									<input class="form-check-input" v-model="insertModel.type" type="radio" name="type" value="new" checked />
+									New
+								</label>
+							</div>
+							<div class="form-check">
+								<label class="form-check-label">
+									<input class="form-check-input" v-model="insertModel.type" type="radio" name="type" value="top" />
+									Top
+								</label>
+							</div>
+						</div>
 					</div>
 				</div>
 				<button type="submit" class="btn btn-primary">Add Subreddit</button>
 			</form>
 
-			<h4>Current Subreddits</h4>
+			<h4 class="mt-4" v-if="subs.length">Current Subreddits</h4>
 			<div class="card-group" v-for="(subs, i) in chunkify(subs, [4, 3, 2].find(size => !(subs.length % size)) || 4)" :key="i">
 				<div class="card color-600 color-hover-630" v-for="(sub, index) in subs" :key="index" :data-index="index">
 					<div class="card-body">

@@ -1,0 +1,16 @@
+{
+	"name": "discordPatreonLink",
+	"primary": "id",
+	"model": {
+		"id": "discord user id",
+		"patreonID": "patreon user id",
+		"pledge": "how much the pledge is for in cents, if not pledging then 0",
+		"premiumServers": "amount of premium servers user has made",
+		"token": {
+			"accessToken": "access token",
+			"expiresIn": "how long after the timestamp it expires",
+			"refreshToken": "refresh tokne",
+			"timestamp": "time when it was created"
+		}
+	}
+}

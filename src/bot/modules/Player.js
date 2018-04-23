@@ -3,14 +3,17 @@ const superagent = require("superagent");
 
 const players = new Map();
 class Player {
-	constructor(guild) {
+	constructor(guild, wiggle) {
 		this.guild = guild;
 		this.queue = [];
-		this.client = guild.shard.client;
+		this.client = wiggle.erisClient;
+		this.r = wiggle.locals.r;
 		this.currentSong = null;
 		this.repeat = false;
 		this.voteSkips = 0;
 		this.maxSongLength = null;
+		this.textChannelID = null;
+		this.playingMessages = null;
 
 		players.set(this.guild.id, this);
 	}
@@ -87,6 +90,7 @@ class Player {
 
 		this.currentSong = song;
 		this.connection.play(song.track);
+		this.createPlayingMessage();
 
 		this.connection.once("end", () => {
 			if(this.repeat) this.queue.push(this.currentSong);
@@ -98,6 +102,43 @@ class Player {
 		});
 
 		this.connection.once("error", () => this.play());
+	}
+
+	async createPlayingMessage() {
+		if(!~[true, false].indexOf(this.playingMessages)) {
+			this.playingMessages = await this.r.table("musicSettings")
+				.get(this.guild.id)
+				.default({ musicMessages: true })
+				.getField("musicMessages")
+				.run();
+		}
+
+		if(!this.playingMessages) return;
+		const embed = {
+			author: { name: "Now Playing" },
+			description: `**[${this.currentSong.title}](${this.currentSong.uri})** ` +
+				`(${Player.formatDuration(this.currentSong.length / 1000)})`
+		};
+
+		const thumbnail = this.getThumbnail();
+		if(thumbnail) embed.image = { url: thumbnail };
+
+		this.client.createMessage(this.textChannelID, { embed });
+	}
+
+	getThumbnail() {
+		const { identifier, uri } = this.currentSong;
+		if(/^(https?:\/\/)?www\.youtube\.com\//.test(uri)) {
+			return `https://img.youtube.com/vi/${identifier}/mqdefault.jpg`;
+		} else if(/^(https?:\/\/)?twitch\.tv\//.test(uri)) {
+			return `https://static-cdn.jtvnw.net/previews-ttv/live_user_${identifier}-320x180.jpg`;
+		} else {
+			return undefined;
+		}
+	}
+
+	move(channelID) {
+		this.client.joinVoiceChannel(channelID);
 	}
 
 	isListening(member) {
@@ -120,5 +161,8 @@ class Player {
 	}
 }
 
-setInterval(() => [...players.values()].forEach(player => player.maxSongLength = null), 600000);
+setInterval(() => [...players.values()].forEach(player => {
+	player.maxSongLength = null;
+	player.playingMessages = null;
+}), 600000);
 module.exports = Player;

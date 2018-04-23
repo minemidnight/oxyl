@@ -2,53 +2,68 @@
 	<div>
 		<div v-if="loaded">
 			<form id="add-censor" @submit.prevent="add()">
-				<h4>Add Censor</h4>
-				<p>Oxyl will create a censor which blocks out certain phrases. There can also be an action associated with them. Users with the "Manage Messages" permission will not be affected by censors</p>
-				<div class="form-group">
-					<label for="regex">
-						Censor Regex
-						<small class="form-text">The regex for the censor to use</small>
-					</label>
-					<input id="regex" class="form-control" placeholder="/test/i" v-model="insertModel.regex" required />
-					<small class="form-text text-danger" v-if="errors.add.invalidRegex">Invalid regex: {{ errors.add.invalidRegex }}. Please contact support if you need help with regular expressions.</small>
-				</div>
-				<div class="form-group">
-					<label for="action">
-						Action
-						<small class="form-text">The action to take when someone says a censored phrase. This is added to the message being deleted</small>
-					</label>
-					<select class="form-control" id="action" v-model="insertModel.action">
-						<option v-for="(action, index) in actions" :key="index" :value="action.value" :selected="action.selected">{{ action.display }}</option>
-					</select>
-				</div>
-				<div class="form-group" v-if="insertModel.action === 'role'">
-					<label for="role">
-						Role
-						<small class="form-text">The Discord role to give the user when the phrase is said</small>
-					</label>
-					<select class="form-control" id="role" v-model="insertModel.roleID" required>
-						<option v-for="(role, index) in roles.filter(({ canGive }) => canGive)" :key="index" :value="role.id">{{ role.name }}</option>
-					</select>
-					<small class="form-text text-muted">Don't see your role? Make sure Oxyl has permission to Manage Roles and that his highest role is above the role you want to give.</small>
-				</div>
-				<div class="form-group" v-if="~['ban', 'role'].indexOf(insertModel.action)">
-					<label for="time">
-						Time
-						<small class="form-text">The amount of time in seconds, until the ban/role is removed (0 = no removal)</small>
-					</label>
-					<input id="song-length" class="form-control" type="number" min="0" max="63113904" v-model.number="insertModel.time" required />
-				</div>
-				<div class="form-group">
-					<label for="message">
-						Message
-						<small class="form-text" v-pre>The message to send if this regex is triggered. Placeholders {{id}}, {{discrim}}, {{mention}} and {{username}} will be replaced accordingly.</small>
-					</label>
-					<input id="message" class="form-control" v-model.trim="insertModel.message" required />
+				<div class="row">
+					<div class="col-sm-12 col-md-6">
+						<h4>Add Censor</h4>
+						<p>Oxyl will create a censor which blocks out certain phrases. There can also be an action associated with them. Users with the "Manage Messages" permission will not be affected by censors</p>
+					</div>
+					<div class="col-sm-12 col-md-6"></div>
+					<div class="col-sm-12 col-md-6">
+						<div class="form-group">
+							<label for="regex">
+								Censor Regex
+								<small class="form-text">The regex for the censor to use</small>
+							</label>
+							<input id="regex" class="form-control" placeholder="/test/i" v-model="insertModel.regex" required />
+							<small class="form-text text-danger" v-if="errors.add.invalidRegex">Invalid regex: {{ errors.add.invalidRegex }}. Please contact support if you need help with regular expressions.</small>
+						</div>
+					</div>
+					<div class="col-sm-12 col-md-6">
+						<div class="form-group">
+							<label for="message">
+								Message
+								<small class="form-text" v-pre>The message to send if this regex is triggered. Placeholders {{id}}, {{discrim}}, {{mention}} and {{username}} will be replaced accordingly.</small>
+							</label>
+							<input id="message" class="form-control" v-model.trim="insertModel.message" required />
+						</div>
+					</div>
+					<div class="col-sm-12 col-md-6">
+						<div class="form-group">
+							<label for="action">
+								Action
+								<small class="form-text">The action to take when someone says a censored phrase. This is added to the message being deleted</small>
+							</label>
+							<select class="form-control" id="action" v-model="insertModel.action">
+								<option v-for="(action, index) in actions" :key="index" :value="action.value" :selected="action.selected">{{ action.display }}</option>
+							</select>
+						</div>
+					</div>
+					<div class="col-sm-12 col-md-6" v-if="insertModel.action === 'role'">
+						<div class="form-group">
+							<label for="role">
+								Role
+								<small class="form-text">The Discord role to give the user when the phrase is said</small>
+							</label>
+							<select class="form-control" id="role" v-model="insertModel.roleID" required>
+								<option v-for="(role, index) in roles.filter(({ canGive }) => canGive)" :key="index" :value="role.id">{{ role.name }}</option>
+							</select>
+							<small class="form-text text-muted">Don't see your role? Make sure Oxyl has permission to Manage Roles and that his highest role is above the role you want to give.</small>
+						</div>
+					</div>
+					<div class="col-sm-12 col-md-6" v-if="~['ban', 'role'].indexOf(insertModel.action)">
+						<div class="form-group">
+							<label for="time">
+								Time
+								<small class="form-text">The amount of time in seconds, until the ban/role is removed (0 = no removal)</small>
+							</label>
+							<input id="time" class="form-control" type="number" min="0" max="63113904" v-model.number="insertModel.time" required />
+						</div>
+					</div>
 				</div>
 				<button type="submit" class="btn btn-primary">Add Censor</button>
 			</form>
 
-			<h4>Current Censors</h4>
+			<h4 v-if="censors.length" class="mt-4">Current Censors</h4>
 			<div class="card-group" v-for="(censorChunk, i) in chunkify(censors, [4, 3, 2].find(size => !(censors.length % size)) || 4)" :key="i">
 				<div class="card color-600 color-hover-630" v-for="(censor, index) in censorChunk" :key="index" data-toggle="modal" data-target="#edit-censor" @click="editModel = Object.assign({}, censor); editModel.regex = `/${censor.regex}/${censor.flags.join('')}`; delete editModel.flags">
 					<div class="card-body">

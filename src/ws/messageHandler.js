@@ -1,7 +1,15 @@
 const config = require("../../config");
 const exec = require("util").promisify(require("child_process").exec);
-const oauth = require("../oauth/index");
 const path = require("path");
+const OAuth2 = require("../oauth2/index");
+const discordAuth = new OAuth2({
+	api: "https://discordapp.com/api/",
+	oauth2: "https://discordapp.com/api/oauth2/"
+}, {
+	clientID: config.clientID,
+	secret: config.secret,
+	redirectURI: config.panelURL
+});
 
 module.exports = async (client, message) => {
 	message = JSON.parse(message);
@@ -13,7 +21,7 @@ module.exports = async (client, message) => {
 		case "identify": {
 			if(!message.token) return client.sendJSON({ op: "error", code: 400 });
 
-			const info = await oauth.info(message.token, "users/@me");
+			const info = await discordAuth.info(message.token, "users/@me");
 			if(!~config.owners.indexOf(info.id)) return client.sendJSON({ op: "error", code: 403 });
 
 			client.sendHeartbeat();

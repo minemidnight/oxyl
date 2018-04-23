@@ -1,6 +1,12 @@
 const blocks = [{
 	name: "nav-bar",
 	file: "Navbar"
+}, {
+	name: "role-selector",
+	file: "RoleSelector"
+}, {
+	name: "channel-selector",
+	file: "ChannelSelector"
 }];
 
 module.exports = Vue => {

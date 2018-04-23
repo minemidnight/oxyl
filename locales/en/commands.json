@@ -87,5 +87,8 @@
 	"warns.noWarnings": "That user has no warnings",
 	"warns": "__Warnings for {{username}} (page {{page}} of {{pageCount}})__\n{{warns}}",
 	"pardons.noPardons": "That user has no pardons",
-	"pardons": "__Pardons for {{username}} (page {{page}} of {{pageCount}})__\n{{pardons}}"
+	"pardons": "__Pardons for {{username}} (page {{page}} of {{pageCount}})__\n{{pardons}}",
+	"volume": "Volume set to {{volume}}",
+	"movehere.notInChannel": "You must be in a voice channel to use this command",
+	"movehere": "Moved to {{locations}}"
 }

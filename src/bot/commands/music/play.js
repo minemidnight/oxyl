@@ -3,15 +3,21 @@ const Player = require("../../modules/Player");
 module.exports = {
 	run: async ({
 		args: [query], channel, flags: { soundcloud, pick }, guild,
-		message: { member }, reply, t, wiggle: { erisClient, locals: { r } }
+		message: { member }, reply, t, wiggle, wiggle: { erisClient, locals: { r } }
 	}) => {
 		let voiceChannel, player = Player.getPlayer(guild.id);
 		if(member.voiceState && member.voiceState.channelID) voiceChannel = guild.channels.get(member.voiceState.channelID);
 
-		if(!voiceChannel) return t("commands.play.notInChannel");
-		else if(!voiceChannel.permissionsOf(erisClient.user.id).has("voiceConnect")) return t("commands.play.cantJoin");
-		else if(!voiceChannel.permissionsOf(erisClient.user.id).has("voiceSpeak")) return t("commands.play.cantSpeak");
-		else if(!player) player = new Player(guild);
+		if(!voiceChannel) {
+			return t("commands.play.notInChannel");
+		} else if(!voiceChannel.permissionsOf(erisClient.user.id).has("voiceConnect")) {
+			return t("commands.play.cantJoin");
+		} else if(!voiceChannel.permissionsOf(erisClient.user.id).has("voiceSpeak")) {
+			return t("commands.play.cantSpeak");
+		} else if(!player) {
+			player = new Player(guild, wiggle);
+			player.textChannelID = channel.id;
+		}
 
 		if(player && !player.maxSongLength) {
 			player.maxSongLength = await r.table("musicSettings")
