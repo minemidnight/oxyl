@@ -22,10 +22,6 @@ app.use(express.static(path.resolve(__dirname, "public")));
 require("http").createServer(app).listen(config.dashboardPort, () => process.output({ op: "ready" }));
 
 app.use("/api", api);
-app.get("/oauth", (req, res) => {
-	res.redirect("https://discordapp.com/oauth2/authorize?response_type=code" +
-		`&redirect_uri=${encodeURIComponent(config.dashboardURL)}&scope=identify+guilds&client_id=${config.clientID}`);
-});
 app.get("/invite", (req, res) => {
 	res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${config.clientID}&scope=bot&permissions=298183686`);
 });

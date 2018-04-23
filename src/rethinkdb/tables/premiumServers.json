@@ -1,0 +1,9 @@
+{
+	"name": "premiumServers",
+	"primary": "id",
+	"indexes": ["donatorID"],
+	"model": {
+		"id": "guild id",
+		"donatorID": "user id who set server as premium"
+	}
+}
