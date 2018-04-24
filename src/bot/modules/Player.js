@@ -62,8 +62,8 @@ class Player {
 		if(typeof item === "string") {
 			return item;
 		} else if(Array.isArray(item)) {
-			this.queue = this.queue.concat(item.filter(track => track.length / 1000 < this.maxSongLength));
-		} else if(this.maxSongLength && item.length / 1000 > this.maxSongLength) {
+			this.queue = this.queue.concat(item.filter(track => (track.length / 1000) < this.maxSongLength));
+		} else if(this.maxSongLength && (item.length / 1000) > this.maxSongLength) {
 			return "SONG_LENGTH";
 		} else {
 			this.queue.push(item);
@@ -105,7 +105,7 @@ class Player {
 	}
 
 	async createPlayingMessage() {
-		if(!~[true, false].indexOf(this.playingMessages)) {
+		if(this.playingMessages === null) {
 			this.playingMessages = await this.r.table("musicSettings")
 				.get(this.guild.id)
 				.default({ musicMessages: true })

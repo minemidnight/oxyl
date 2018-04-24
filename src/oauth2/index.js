@@ -46,7 +46,7 @@ class OAuth2 {
 
 		return {
 			accessToken: body.access_token,
-			expiresIn: body.expires_in,
+			expiresIn: body.expires_in * 1000,
 			refreshToken: body.refresh_token,
 			timestamp: Date.now()
 		};

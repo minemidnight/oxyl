@@ -19,13 +19,13 @@ module.exports = {
 			player.textChannelID = channel.id;
 		}
 
-		if(player && !player.maxSongLength) {
+		if(player && player.maxSongLength === null) {
 			player.maxSongLength = await r.table("musicSettings")
 				.get(guild.id)
 				.default({ songLength: 0 })
 				.getField("songLength")
 				.mul(60)
-				.run();
+				.run() || Infinity;
 		}
 		if(soundcloud) query = `scsearch:${query}`;
 
@@ -57,7 +57,6 @@ module.exports = {
 		} else {
 			item = await player.queueItem(query);
 		}
-
 
 		if(typeof item === "string") {
 			if(item === "NOT_RESOLVED") return t("commands.play.notResolved");

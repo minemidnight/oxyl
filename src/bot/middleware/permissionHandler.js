@@ -1,10 +1,11 @@
 function getNode(command, wiggle) {
-	const category = command.category;
+	let category = command.category;
+	if(!wiggle.categories.has(category)) category = wiggle.categories.find(cat => cat.subcommands.has(category)).name;
 	command = command.name;
 
 	let node = `${category}.`;
 
-	if(!wiggle.categories.get(category).commands.has(command)) {
+	if(wiggle.categories.get(category).commands.has(command)) {
 		const subcommands = wiggle.categories.get(category).subcommands;
 		if(!subcommands) return false;
 		if(!subcommands.has(command)) {
