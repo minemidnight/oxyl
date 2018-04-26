@@ -1,6 +1,19 @@
 <template>
-	<div>
-		Home
+	<div style="height:calc(100vh - 80px);overflow:hidden">
+		<div class="container-fluid text-center mt-3 mb-5">
+			<h1 style="color-white">Oxyl</h1>
+			<h5 class="color-text mb-3">A high quality Discord bot for all your needs</h5>
+			<router-link class="discord-button btn m-1" :class="{ active: $route.name === 'invite' }" :to="{ name: 'invite' }">
+				<img src="/img/discord-logo.png" />
+				Add to Discord
+			</router-link>
+			<router-link class="btn learn-more m-1" :class="{ active: $route.name === 'features' }" :to="{ name: 'features' }">
+				Features
+			</router-link>
+		</div>
+		<div class="container">
+			<img class="float-animation no-shadow" src="/img/discord-screen.png" style="width:100%" />
+		</div>
 	</div>
 </template>
 
@@ -69,3 +82,36 @@ module.exports = {
 	}
 };
 </script>
+
+<style lang="scss" scoped>
+@import "../../../scss/_variables";
+.learn-more, .discord-button {
+	transition: 0.25s ease-in-out;
+	color: white;
+
+	&:hover {
+		transform: scale(1.1);
+	}
+}
+
+.learn-more {
+	background: $color-600;
+
+	&:hover {
+		background: $color-630;
+	}
+}
+
+.discord-button {
+	background: #7289DA;
+
+	&:hover {
+		background: darken(#7289DA, 10);
+	}
+
+	& img {
+		height: 22px;
+		margin-right: 4px;
+	}
+}
+</style>

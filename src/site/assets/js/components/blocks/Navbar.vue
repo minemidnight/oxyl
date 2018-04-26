@@ -14,9 +14,9 @@
 					</router-link>
 				</li>
 				<li class="nav-item">
-					<router-link class="nav-link" :class="{ active: $route.name === 'commands' }" :to="{ name: 'commands' }">
+					<router-link class="nav-link" :class="{ active: $route.name === 'features' }" :to="{ name: 'features' }">
 						<i class="fa fa-keyboard-o" aria-hidden="true"></i>
-						Commands
+						Features
 					</router-link>
 				</li>
 				<li class="nav-item dropdown d-lg-none active" :class="{ 'd-none': !$route.name.startsWith('dashboard') }">
@@ -62,6 +62,16 @@
 						Support
 					</router-link>
 				</li>
+				<li class="nav-item dropdown">
+					<button class="nav-link dropdown-toggle float" type="button" id="change-background" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Background
+					</button>
+					<div class="dropdown-menu color-700" aria-labelledby="change-background">
+						<button class="dropdown-item color-hover-800 color-text-hover-100 transition" v-for="(background, i) in backgrounds" :key="i" type="button" @click="changeBackground(background)">
+							{{ background.charAt(0).toUpperCase() + background.substring(1) }}
+						</button>
+					</div>
+				</li>
 			</ul>
 		</div>
 	</nav>
@@ -76,12 +86,33 @@
 		background: rgba(0, 0, 0, .3);
 	}
 }
+
+.nav-item button {
+	outline: none;
+	border: none;
+	background: transparent;
+}
 </style>
 
 <script>
 module.exports = {
 	data() {
-		return { pages: require("../../dashboardNavbar") };
+		return {
+			backgrounds: ["geometry", "robots", "shattered", "stardust"],
+			pages: require("../../dashboardNavbar")
+		};
+	},
+	methods: {
+		changeBackground(background) {
+			localStorage.background = background;
+			this.updateBackground();
+		},
+		updateBackground() {
+			$("#page-fill div").css("background-image", `url(/img/${localStorage.background || this.backgrounds[0]}.png)`);
+		}
+	},
+	created() {
+		this.$nextTick(this.updateBackground);
 	}
 };
 </script>

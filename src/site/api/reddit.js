@@ -1,9 +1,11 @@
 const router = module.exports = require("express").Router(); // eslint-disable-line new-cap
 const superagent = require("superagent");
 
-const middleware = require("./middleware");
-router.param("guild", middleware.hasGuild());
-router.param("guild", middleware.canManage());
+const canManage = require("./middleware/canManage");
+const expectedBody = require("./middleware/expectedBody");
+const hasGuild = require("./middleware/hasGuild");
+router.param("guild", canManage());
+router.param("guild", hasGuild());
 
 const getChannels = require("./getChannels");
 
@@ -23,16 +25,11 @@ router.get("/:guild(\\d{17,21})", async (req, res) => {
 	res.status(200).json({ subreddits: reddits, channels: await getChannels(req.params.guild) });
 });
 
-router.delete("/:guild(\\d{17,21})", async (req, res) => {
+router.delete("/:guild(\\d{17,21})", expectedBody({
+	subreddit: String,
+	channelID: String
+}), async (req, res) => {
 	const { r, redis } = req.app.locals;
-
-	if(typeof req.body.subreddit !== "string") {
-		res.status(400).json({ error: "No subreddit or invalid subreddit data" });
-		return;
-	} else if(typeof req.body.channelID !== "string") {
-		res.status(400).json({ error: "No channel or invalid channel data" });
-		return;
-	}
 
 	const { deleted } = await r.table("feeds")
 		.get(["reddit", req.body.subreddit, req.body.channelID])
@@ -52,7 +49,11 @@ router.delete("/:guild(\\d{17,21})", async (req, res) => {
 	res.status(204).end();
 });
 
-router.put("/:guild(\\d{17,21})", async (req, res) => {
+router.put("/:guild(\\d{17,21})", expectedBody({
+	subreddit: String,
+	channelID: String,
+	type: { in: ["new", "top"] }
+}), async (req, res) => {
 	const { r, redis } = req.app.locals;
 
 	if(typeof req.body.subreddit !== "string") {

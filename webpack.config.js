@@ -1,3 +1,4 @@
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const path = require("path");
 const webpack = require("webpack");
@@ -56,6 +57,10 @@ module.exports = {
 	},
 	plugins: [
 		new ExtractTextPlugin(path.join("[name]", "css", "app.bundle.css")),
-		new webpack.DefinePlugin({ "process.env": { NODE_ENV: `'${process.env.NODE_ENV}'` } })
+		new webpack.DefinePlugin({ "process.env": { NODE_ENV: `'${process.env.NODE_ENV}'` } }),
+		new CopyWebpackPlugin([{
+			from: "src/site/assets/img",
+			to: "site/public/img"
+		}])
 	]
 };

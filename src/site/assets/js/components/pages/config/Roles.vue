@@ -43,8 +43,8 @@
 			<p class="form-text text-muted">Don't see your role(s)? Make sure Oxyl has permission to Manage Roles and that his highest role is above the role you want to give.</p>
 			<button type="submit" class="btn btn-success">Save All</button>
 		</form>
-		<div v-else class="d-flex justify-content-center mt-4">
-			<i class="fa fa-spinner fa-spin" aria-hidden="true" style="font-size:48px"></i>
+		<div v-else class="mt-4 loading">
+			<i class="fa fa-spinner fa-spin" aria-hidden="true"></i>
 		</div>
 	</div>
 </template>

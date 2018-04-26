@@ -1,8 +1,10 @@
 const router = module.exports = require("express").Router(); // eslint-disable-line new-cap
 
-const middleware = require("./middleware");
-router.param("guild", middleware.hasGuild());
-router.param("guild", middleware.canManage());
+const canManage = require("./middleware/canManage");
+const expectedBody = require("./middleware/expectedBody");
+const hasGuild = require("./middleware/hasGuild");
+router.param("guild", canManage());
+router.param("guild", hasGuild());
 
 router.get("/:guild(\\d{17,21})", async (req, res) => {
 	const { r } = req.app.locals;
@@ -16,19 +18,12 @@ router.get("/:guild(\\d{17,21})", async (req, res) => {
 	res.status(200).json(settings);
 });
 
-router.put("/:guild(\\d{17,21})", async (req, res) => {
+router.put("/:guild(\\d{17,21})", expectedBody({
+	musicMessages: Boolean,
+	voteSkip: Boolean,
+	songLength: Number
+}), async (req, res) => {
 	const { r } = req.app.locals;
-
-	if(typeof req.body.musicMessages !== "boolean") {
-		res.status(400).json({ error: "No music messages or invalid music messages data" });
-		return;
-	} else if(typeof req.body.voteSkip !== "boolean") {
-		res.status(400).json({ error: "No vote skip or invalid vote skip data" });
-		return;
-	} else if(typeof req.body.songLength !== "number") {
-		res.status(400).json({ error: "No song length or invalid song length data" });
-		return;
-	}
 
 	await r.table("musicSettings")
 		.insert({

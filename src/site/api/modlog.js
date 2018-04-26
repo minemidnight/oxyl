@@ -1,8 +1,10 @@
 const router = module.exports = require("express").Router(); // eslint-disable-line new-cap
 
-const middleware = require("./middleware");
-router.param("guild", middleware.hasGuild());
-router.param("guild", middleware.canManage());
+const canManage = require("./middleware/canManage");
+const expectedBody = require("./middleware/expectedBody");
+const hasGuild = require("./middleware/hasGuild");
+router.param("guild", canManage());
+router.param("guild", hasGuild());
 
 const getChannels = require("./getChannels");
 const getRoles = require("./getRoles");
@@ -32,19 +34,12 @@ router.get("/:guild(\\d{17,21})", async (req, res) => {
 	res.status(200).json(Object.assign(data, { channels, roles, thresholds }));
 });
 
-router.put("/:guild(\\d{17,21})", async (req, res) => {
+router.put("/:guild(\\d{17,21})", expectedBody({
+	enabled: Boolean,
+	channelID: String,
+	tracked: [String]
+}), async (req, res) => {
 	const { r } = req.app.locals;
-
-	if(typeof req.body.enabled !== "boolean") {
-		res.status(400).json({ error: "No enabled or invalid enabled data" });
-		return;
-	} else if(typeof req.body.channelID !== "string") {
-		res.status(400).json({ error: "No channel id or invalid channel id data" });
-		return;
-	} else if(!Array.isArray(req.body.tracked) || req.body.tracked.some(roleID => typeof roleID !== "string")) {
-		res.status(400).json({ error: "No tracked or invalid tracked data" });
-		return;
-	}
 
 	await r.table("modLogSettings")
 		.insert({
@@ -58,22 +53,21 @@ router.put("/:guild(\\d{17,21})", async (req, res) => {
 	res.status(204).end();
 });
 
-router.put("/:guild(\\d{17,21})/thresholds", async (req, res) => {
-	const { r } = req.app.locals;
-
-	if(typeof req.body.warnCount !== "number") {
-		res.status(400).json({ error: "No warn count or invalid warn count data" });
-		return;
-	} else if(typeof req.body.action !== "string") {
-		res.status(400).json({ error: "No action or invalid action data" });
-		return;
-	} else if(req.body.action === "role" && typeof req.body.roleID !== "string") {
-		res.status(400).json({ error: "No role id or invalid role id data" });
-		return;
-	} else if(req.body.time && (!~["role", "ban"].indexOf(req.body.action) || typeof req.body.time !== "number")) {
-		res.status(400).json({ error: "Invalid time or time for invalid action" });
-		return;
+router.put("/:guild(\\d{17,21})/thresholds", expectedBody({
+	warnCount: Number,
+	action: String,
+	roleID: {
+		type: String,
+		if: "action",
+		is: "role"
+	},
+	time: {
+		type: Number,
+		if: "action",
+		in: ["role, ban"]
 	}
+}), async (req, res) => {
+	const { r } = req.app.locals;
 
 	const { changes: [{ new_val: threshold }] } = await r.table("warningThresholds")
 		.insert({
@@ -92,13 +86,8 @@ router.put("/:guild(\\d{17,21})/thresholds", async (req, res) => {
 	});
 });
 
-router.delete("/:guild(\\d{17,21})", async (req, res) => {
+router.delete("/:guild(\\d{17,21})", expectedBody({ warnCoun: Number }), async (req, res) => {
 	const { r } = req.app.locals;
-
-	if(typeof req.body.warnCount !== "number") {
-		res.status(400).json({ error: "No warn count or invalid warn count data" });
-		return;
-	}
 
 	const { deleted } = await r.table("warningThresholds")
 		.get([req.params.guild, req.body.warnCount])

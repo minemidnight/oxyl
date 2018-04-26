@@ -1,8 +1,10 @@
 const router = module.exports = require("express").Router(); // eslint-disable-line new-cap
 
-const middleware = require("./middleware");
-router.param("guild", middleware.hasGuild());
-router.param("guild", middleware.canManage());
+const canManage = require("./middleware/canManage");
+const expectedBody = require("./middleware/expectedBody");
+const hasGuild = require("./middleware/hasGuild");
+router.param("guild", canManage());
+router.param("guild", hasGuild());
 
 const getRoles = require("./getRoles");
 
@@ -20,22 +22,17 @@ router.get("/:guild(\\d{17,21})", async (req, res) => {
 	res.status(200).json(Object.assign(data, { roles }));
 });
 
-router.put("/:guild(\\d{17,21})", async (req, res) => {
+router.put("/:guild(\\d{17,21})", expectedBody({
+	type: Boolean,
+	setNickname: Boolean,
+	roleID: {
+		type: String,
+		if: "enabled",
+		is: true
+	},
+	groupID: "string?"
+}), async (req, res) => {
 	const { r } = req.app.locals;
-
-	if(typeof req.body.enabled !== "boolean") {
-		res.status(400).json({ error: "No enabled or invalid enabled data" });
-		return;
-	} else if(typeof req.body.setNickname !== "boolean") {
-		res.status(400).json({ error: "No set nickname or invalid set nickname data" });
-		return;
-	} else if(req.body.enabled && typeof req.body.roleID !== "string") {
-		res.status(400).json({ error: "No role id or invalid role id data" });
-		return;
-	} else if(req.body.groupID !== undefined && typeof req.body.groupID !== "string") {
-		res.status(400).json({ error: "Invalid group id data" });
-		return;
-	}
 
 	await r.table("robloxVerification")
 		.insert({

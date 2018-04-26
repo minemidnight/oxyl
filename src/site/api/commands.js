@@ -1,8 +1,10 @@
 const router = module.exports = require("express").Router(); // eslint-disable-line new-cap
 
-const middleware = require("./middleware");
-router.param("guild", middleware.hasGuild());
-router.param("guild", middleware.canManage());
+const canManage = require("./middleware/canManage");
+const expectedBody = require("./middleware/expectedBody");
+const hasGuild = require("./middleware/hasGuild");
+router.param("guild", canManage());
+router.param("guild", hasGuild());
 
 const getChannels = require("./getChannels");
 const getRoles = require("./getRoles");
@@ -73,24 +75,16 @@ router.get("/:guild(\\d{17,21})/:commandNode", async (req, res) => {
 	res.status(200).json(settings);
 });
 
-router.put("/:guild(\\d{17,21})/:commandNode", async (req, res) => {
+router.put("/:guild(\\d{17,21})/:commandNode", expectedBody({
+	enabled: Boolean,
+	roleType: { in: ["blacklist", "whitelist"] },
+	roles: [String],
+	blacklistedChannels: Array
+}), async (req, res) => {
 	const { r } = req.app.locals;
 
 	if(!checkNode(req.params.commandNode)) {
 		res.status(400).json({ error: "Invalid command node" });
-		return;
-	} else if(typeof req.body.enabled !== "boolean") {
-		res.status(400).json({ error: "No enabled or invalid enabled data" });
-		return;
-	} else if(!~["blacklist", "whitelist"].indexOf(req.body.roleType)) {
-		res.status(400).json({ error: "No role type or invalid role type data" });
-		return;
-	} else if(!Array.isArray(req.body.roles) || !req.body.roles.every(role => typeof role === "string")) {
-		res.status(400).json({ error: "No roles or invalid roles data" });
-		return;
-	} else if(!Array.isArray(req.body.blacklistedChannels) ||
-		!req.body.blacklistedChannels.every(role => typeof role === "string")) {
-		res.status(400).json({ error: "No blacklisted channels or invalid blacklisted channels data" });
 		return;
 	}
 

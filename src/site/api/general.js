@@ -1,8 +1,10 @@
 const router = module.exports = require("express").Router(); // eslint-disable-line new-cap
 
-const middleware = require("./middleware");
-router.param("guild", middleware.hasGuild());
-router.param("guild", middleware.canManage());
+const canManage = require("./middleware/canManage");
+const expectedBody = require("./middleware/expectedBody");
+const hasGuild = require("./middleware/hasGuild");
+router.param("guild", canManage());
+router.param("guild", hasGuild());
 
 const getChannels = require("./getChannels");
 
@@ -26,28 +28,17 @@ router.get("/:guild(\\d{17,21})", async (req, res) => {
 	res.status(200).json({ channels, prefix, suggestions });
 });
 
-router.put("/:guild(\\d{17,21})", async (req, res) => {
-	const { r } = req.app.locals;
-
-	if(typeof req.body.prefix !== "object") {
-		res.status(400).json({ error: "No prefix object or invalid prefix data" });
-		return;
-	} else if(typeof req.body.prefix.value !== "string") {
-		res.status(400).json({ error: "No prefix value object or invalid prefix data" });
-		return;
-	} else if(typeof req.body.prefix.overwrite !== "boolean") {
-		res.status(400).json({ error: "No prefix overwrite or invalid overwrite data" });
-		return;
-	} else if(typeof req.body.suggestions !== "object") {
-		res.status(400).json({ error: "No suggestions object or invalid suggestions data" });
-		return;
-	} else if(typeof req.body.suggestions.enabled !== "boolean") {
-		res.status(400).json({ error: "No suggestions enabled or invalid suggestions enabled data" });
-		return;
-	} else if(typeof req.body.suggestions.channelID !== "string") {
-		res.status(400).json({ error: "No suggestions channel ID overwrite or invalid suggestions channel ID data" });
-		return;
+router.put("/:guild(\\d{17,21})", expectedBody({
+	prefix: {
+		value: String,
+		overwrite: Boolean
+	},
+	suggestions: {
+		enabled: Boolean,
+		channelID: String
 	}
+}), async (req, res) => {
+	const { r } = req.app.locals;
 
 	if(req.body.prefix.value === "o!") {
 		await r.table("prefixes")

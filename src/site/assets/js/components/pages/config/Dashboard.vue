@@ -22,7 +22,7 @@
 			</ul>
 		</nav>
 		<div class="col-lg-10 col-12 container ml-0 mb-4">
-			<router-view></router-view>
+			<router-view id="loadedView"></router-view>
 		</div>
 	</div>
 </template>

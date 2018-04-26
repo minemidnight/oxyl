@@ -1,9 +1,11 @@
 const { discordAuth, patreonAuth } = require("./oauth");
 const router = module.exports = require("express").Router(); // eslint-disable-line new-cap
 
-const middleware = require("./middleware");
-router.param("guild", middleware.hasGuild());
-router.param("guild", middleware.canManage());
+const canManage = require("./middleware/canManage");
+const expectedBody = require("./middleware/expectedBody");
+const hasGuild = require("./middleware/hasGuild");
+router.param("guild", canManage());
+router.param("guild", hasGuild());
 
 router.get("/:guild(\\d{17,21})", async (req, res) => {
 	const { r } = req.app.locals;
@@ -43,7 +45,7 @@ router.get("/:guild(\\d{17,21})", async (req, res) => {
 	res.status(200).json(data);
 });
 
-router.put("/:guild(\\d{17,21})", async (req, res) => {
+router.put("/:guild(\\d{17,21})", expectedBody({ enabled: Boolean }), async (req, res) => {
 	const { r } = req.app.locals;
 
 	if(typeof req.body.enabled !== "boolean") {

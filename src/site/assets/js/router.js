@@ -13,9 +13,9 @@ const configEnter = (to, from, next) => {
 };
 
 const routes = [{
-	name: "commands",
-	path: "/commands",
-	component: require("./components/pages/Commands.vue")
+	name: "features",
+	path: "/features",
+	component: require("./components/pages/Features.vue")
 }, {
 	name: "config",
 	path: "/config",

@@ -1,8 +1,10 @@
 const router = module.exports = require("express").Router(); // eslint-disable-line new-cap
 
-const middleware = require("./middleware");
-router.param("guild", middleware.hasGuild());
-router.param("guild", middleware.canManage());
+const canManage = require("./middleware/canManage");
+const expectedBody = require("./middleware/expectedBody");
+const hasGuild = require("./middleware/hasGuild");
+router.param("guild", canManage());
+router.param("guild", hasGuild());
 
 const getRoles = require("./getRoles");
 
@@ -25,28 +27,23 @@ router.get("/:guild(\\d{17,21})", async (req, res) => {
 	res.status(200).json({ censors, roles });
 });
 
-router.put("/:guild(\\d{17,21})", async (req, res) => {
+router.put("/:guild(\\d{17,21})", expectedBody({
+	regex: String,
+	flags: [String],
+	action: String,
+	roleID: {
+		type: String,
+		if: "action",
+		is: "role"
+	},
+	time: {
+		type: Number,
+		if: "action",
+		in: ["role", "ban"]
+	},
+	message: String
+}), async (req, res) => {
 	const { r } = req.app.locals;
-
-	if(typeof req.body.regex !== "string") {
-		res.status(400).json({ error: "No regex or invalid regex data" });
-		return;
-	} else if(!Array.isArray(req.body.flags) || !req.body.flags.every(flag => typeof flag === "string")) {
-		res.status(400).json({ error: "No regex flags or invalid flag data" });
-		return;
-	} else if(typeof req.body.action !== "string") {
-		res.status(400).json({ error: "No action or invalid action data" });
-		return;
-	} else if(req.body.action === "role" && typeof req.body.roleID !== "string") {
-		res.status(400).json({ error: "No role id or invalid role id data" });
-		return;
-	} else if(req.body.time && (!~["role", "ban"].indexOf(req.body.action) || typeof req.body.time !== "number")) {
-		res.status(400).json({ error: "Invalid time or time for invalid action" });
-		return;
-	} else if(typeof req.body.message !== "string") {
-		res.status(400).json({ error: "No message or invalid message data" });
-		return;
-	}
 
 	const { changes: [{ new_val: censor }] } = await r.table("censors")
 		.insert({
@@ -64,34 +61,31 @@ router.put("/:guild(\\d{17,21})", async (req, res) => {
 		flags: censor.regex[1],
 		action: censor.action,
 		roleID: censor.roleID,
+		time: censor.time,
 		message: censor.message,
 		uuid: censor.id
 	});
 });
 
-router.patch("/:guild(\\d{17,21})", async (req, res) => {
+router.patch("/:guild(\\d{17,21})", expectedBody({
+	uuid: String,
+	regex: String,
+	flags: [String],
+	action: String,
+	roleID: {
+		type: String,
+		if: "action",
+		is: "role"
+	},
+	time: {
+		type: Number,
+		if: "action",
+		in: ["role", "ban"]
+	},
+	message: String
+}), async (req, res) => {
 	const { r } = req.app.locals;
 	const { previous, edited } = req.body;
-
-	if(typeof previous.uuid !== "string") {
-		res.status(400).json({ error: "No uuid or invalid uuid data" });
-		return;
-	} else if(typeof edited.regex !== "string") {
-		res.status(400).json({ error: "No regex or invalid regex data" });
-		return;
-	} else if(!Array.isArray(edited.flags) || !edited.flags.every(flag => typeof flag === "string")) {
-		res.status(400).json({ error: "No regex flags or invalid flag data" });
-		return;
-	} else if(typeof edited.action !== "string") {
-		res.status(400).json({ error: "No action or invalid action data" });
-		return;
-	} else if(edited.action === "role" && typeof edited.roleID !== "string") {
-		res.status(400).json({ error: "No role id or invalid role id data" });
-		return;
-	} else if(typeof edited.message !== "string") {
-		res.status(400).json({ error: "No message or invalid message data" });
-		return;
-	}
 
 	const { skipped, changes: [{ new_val: censor }] } = await r.table("censors")
 		.get(previous.uuid)
@@ -99,6 +93,7 @@ router.patch("/:guild(\\d{17,21})", async (req, res) => {
 			regex: [edited.regex, edited.flags],
 			action: edited.action,
 			roleID: edited.roleID,
+			time: req.body.time,
 			message: edited.message
 		}, { returnChanges: true })
 		.run();
@@ -111,6 +106,7 @@ router.patch("/:guild(\\d{17,21})", async (req, res) => {
 			flags: censor.regex[1],
 			action: censor.action,
 			roleID: censor.roleID,
+			time: censor.time,
 			message: censor.message,
 			uuid: censor.id
 		});

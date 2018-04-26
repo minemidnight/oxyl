@@ -1,8 +1,10 @@
 const router = module.exports = require("express").Router(); // eslint-disable-line new-cap
 
-const middleware = require("./middleware");
-router.param("guild", middleware.hasGuild());
-router.param("guild", middleware.canManage());
+const canManage = require("./middleware/canManage");
+const expectedBody = require("./middleware/expectedBody");
+const hasGuild = require("./middleware/hasGuild");
+router.param("guild", canManage());
+router.param("guild", hasGuild());
 
 const getChannels = require("./getChannels");
 
@@ -20,25 +22,14 @@ router.get("/:guild(\\d{17,21})", async (req, res) => {
 	res.status(200).json(Object.assign(data, { channels }));
 });
 
-router.put("/:guild(\\d{17,21})", async (req, res) => {
+router.put("/:guild(\\d{17,21})", expectedBody({
+	enabled: Boolean,
+	channelID: "string?",
+	greeting: "string?",
+	greetingDM: "boolean?",
+	farewell: "string?"
+}), async (req, res) => {
 	const { r } = req.app.locals;
-
-	if(typeof req.body.enabled !== "boolean") {
-		res.status(400).json({ error: "No enabled or invalid enabled data" });
-		return;
-	} else if(req.body.channelID !== undefined && typeof req.body.channelID !== "string") {
-		res.status(400).json({ error: "Invalid channel id data" });
-		return;
-	} else if(req.body.greeting !== undefined && typeof req.body.greeting !== "string") {
-		res.status(400).json({ error: "Invalid greeting data" });
-		return;
-	} else if(req.body.greetingDM !== undefined && typeof req.body.greetingDM !== "boolean") {
-		res.status(400).json({ error: "Invalid greeting dm data" });
-		return;
-	} else if(req.body.farewell !== undefined && typeof req.body.farewell !== "string") {
-		res.status(400).json({ error: "Invalid farewell data" });
-		return;
-	}
 
 	await r.table("userlog")
 		.insert({

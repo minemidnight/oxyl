@@ -1,5 +1,5 @@
 const { discordAuth } = require("../oauth");
-const { inGuild } = require("../middleware");
+const inGuild = require("../middleware/inGuild");
 const router = module.exports = require("express").Router(); // eslint-disable-line new-cap
 
 router.get("/clientid", async (req, res) => {

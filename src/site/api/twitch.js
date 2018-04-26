@@ -2,9 +2,11 @@ const router = module.exports = require("express").Router(); // eslint-disable-l
 const clientID = "jzkbprff40iqj646a697cyrvl0zt2m6";
 const superagent = require("superagent");
 
-const middleware = require("./middleware");
-router.param("guild", middleware.hasGuild());
-router.param("guild", middleware.canManage());
+const canManage = require("./middleware/canManage");
+const expectedBody = require("./middleware/expectedBody");
+const hasGuild = require("./middleware/hasGuild");
+router.param("guild", canManage());
+router.param("guild", hasGuild());
 
 const getChannels = require("./getChannels");
 
@@ -23,16 +25,11 @@ router.get("/:guild(\\d{17,21})", async (req, res) => {
 	res.status(200).json({ twitchFeeds, discordChannels });
 });
 
-router.delete("/:guild(\\d{17,21})", async (req, res) => {
+router.delete("/:guild(\\d{17,21})", expectedBody({
+	twitchChannel: String,
+	discordChannel: String
+}), async (req, res) => {
 	const { r, redis } = req.app.locals;
-
-	if(typeof req.body.twitchChannel !== "string") {
-		res.status(400).json({ error: "No twitch channel or invalid twitch channel data" });
-		return;
-	} else if(typeof req.body.discordChannel !== "string") {
-		res.status(400).json({ error: "No discord channel or invalid discord channel data" });
-		return;
-	}
 
 	const { deleted } = await r.table("feeds")
 		.get(["twitch", req.body.twitchChannel, req.body.discordChannel])
@@ -52,16 +49,11 @@ router.delete("/:guild(\\d{17,21})", async (req, res) => {
 	res.status(204).end();
 });
 
-router.put("/:guild(\\d{17,21})", async (req, res) => {
+router.put("/:guild(\\d{17,21})", expectedBody({
+	twitchChannel: String,
+	discordChannel: String
+}), async (req, res) => {
 	const { r, redis } = req.app.locals;
-
-	if(typeof req.body.twitchChannel !== "string") {
-		res.status(400).json({ error: "No twitch channel or invalid twitch channel data" });
-		return;
-	} else if(typeof req.body.discordChannel !== "string") {
-		res.status(400).json({ error: "No discord channel or invalid discord channel data" });
-		return;
-	}
 
 	try {
 		const { body: { name } } = await superagent

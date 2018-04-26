@@ -9,8 +9,10 @@
 	<body>
 		<div id="app">
 			<nav-bar></nav-bar>
-			<div class="color-500" style="height:100vh;width:100vw;position:fixed;top:0;left:0;z-index:-5"></div>
-			<div class="container-fluid text-light">
+			<div id="page-fill" class="color-500" style="height:100vh;width:100vw;position:fixed;top:0;left:0;z-index:-5">
+				<div class="float-animation no-shadow" style="width:100%;height:calc(100% + 20px);animation-delay:-5.5s"></div>
+			</div>
+			<div id="main-view" class="container-fluid text-light">
 				<router-view class="mt-4"></router-view>
 			</div>
 		</div>

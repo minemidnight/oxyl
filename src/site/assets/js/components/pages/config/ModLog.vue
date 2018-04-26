@@ -126,8 +126,8 @@
 				</div>
 			</div>
 		</div>
-		<div v-else class="d-flex justify-content-center mt-4">
-			<i class="fa fa-spinner fa-spin" aria-hidden="true" style="font-size:48px"></i>
+		<div v-else class="mt-4 loading">
+			<i class="fa fa-spinner fa-spin" aria-hidden="true"></i>
 		</div>
 	</div>
 </template>

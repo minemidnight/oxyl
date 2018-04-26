@@ -1,8 +1,12 @@
 <template>
 	<div>
 		<div class="container-fluid" v-if="loaded">
+			<router-link class="switch-account my-2" :to="{ name: 'accounts' }">
+				<i class="fa fa-chevron-left pr-1" aria-hidden="true"></i>
+				Switch Account
+			</router-link>
 			<div class="card-group my-2" :key="i" v-for="(guildGroup, i) in chunkify(guilds, [4, 3, 2].find(size => !(guilds.length % size)) || 4)">
-				<a class="card color-600 color-hover-630 color-text color-text-hover-100 transition no-decoration" style="cursor:pointer" :key="index" v-for="(guild, index) in guildGroup" @click="openPopup(guild)">
+				<a class="card color-600 color-hover-630 color-text color-text-hover-100 guild transition no-decoration" style="cursor:pointer" :key="index" v-for="(guild, index) in guildGroup" @click="openPopup(guild)">
 					<div class="card-body d-flex align-items-center">
 						<h4 class="card-title text-truncate">{{ guild.name }}</h4>
 						<img v-if="guild.icon" class="rounded-circle ml-auto" :src="`https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`" style="max-height:96px;max-width:96px" />
@@ -11,8 +15,8 @@
 			</div>
 			<small class="text-muted">Missing guilds? You must have the Manage Server permission to use the dashboard for a guild.</small>
 		</div>
-		<div v-else class="d-flex justify-content-center mt-4">
-			<i class="fa fa-spinner fa-spin" aria-hidden="true" style="font-size:48px"></i>
+		<div v-else class="mt-4 loading">
+			<i class="fa fa-spinner fa-spin" aria-hidden="true"></i>
 		</div>
 	</div>
 </template>
@@ -59,3 +63,46 @@ module.exports = {
 	}
 };
 </script>
+
+<style lang="scss" scoped>
+@import "../../../../scss/_variables";
+.switch-account {
+	color: rgba(255, 255, 255, 0.8);
+	transition: 0.25s ease-in;
+	text-decoration: none;
+	border-radius: 4px;
+	background: $color-600;
+	padding: 0.5rem;
+		
+	&:hover {
+		color: white;
+		background: $color-630;
+	}
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) translate3d(0, 0, 0);
+  }
+
+  50% {
+    opacity: 0.9;
+    transform: scale(1.1);
+  }
+  80% {
+    opacity: 1;
+    transform: scale(0.89);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+}
+
+.guild {
+	animation-name: bounceIn;
+	animation-duration: 0.75s;
+}
+</style>
