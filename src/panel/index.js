@@ -18,7 +18,7 @@ app.set("env", process.env.NODE_ENV);
 app.set("x-powered-by", false);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(path.resolve(__dirname, "public")));
+app.use(express.static(path.resolve(__dirname, "public"), { maxAge: 31536000000 }));
 require("http").createServer(app).listen(config.panelPort, () => process.output({ op: "ready" }));
 
 app.get("/api/config", async (req, res) => {
@@ -66,6 +66,9 @@ app.post("/api/callback", async (req, res) => {
 	}
 });
 
-app.get("*", (req, res) => res.status(200).sendFile(path.resolve(__dirname, "public", "app.html")));
+app.get("*", (req, res) => {
+	res.cookie("maxAge", 0);
+	res.status(200).sendFile(path.resolve(__dirname, "public", "app.html"));
+});
 module.exports = { app };
 

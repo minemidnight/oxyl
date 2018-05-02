@@ -18,7 +18,7 @@ app.set("env", process.env.NODE_ENV);
 app.set("x-powered-by", false);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(path.resolve(__dirname, "public")));
+app.use(express.static(path.resolve(__dirname, "public"), { maxAge: 31536000000 }));
 require("http").createServer(app).listen(config.dashboardPort, () => process.output({ op: "ready" }));
 
 app.use("/api", api);
@@ -28,6 +28,9 @@ app.get("/invite", (req, res) => {
 app.get("/patreon", (req, res) => res.redirect("https://www.patreon.com/minemidnight"));
 app.get("/support", (req, res) => res.redirect("https://discord.gg/9wkTDcE"));
 
-app.get("*", (req, res) => res.status(200).sendFile(path.resolve(__dirname, "public", "app.html")));
+app.get("*", (req, res) => {
+	res.cookie("maxAge", 0);
+	res.status(200).sendFile(path.resolve(__dirname, "public", "app.html"));
+});
 
 module.exports = { app };
