@@ -31,19 +31,23 @@ module.exports = async (client, message) => {
 		}
 
 		case "output": {
-			client.sendJSON({ op: "result", code: 200, reuslt: await process.output(message) });
+			client.sendJSON({ op: "result", code: 200, result: await process.output(message) });
 
 			break;
 		}
 
 		case "restartBotHard": {
+			client.sendJSON({ op: "log", message: "Hard restarting bot..." });
 			await process.output({ op: "restartBotHard" });
+			client.sendJSON({ op: "log", message: "Hard restart finished" });
 
 			break;
 		}
 
 		case "restartBotRolling": {
+			client.sendJSON({ op: "log", message: "Rolling restarting bot..." });
 			await process.output({ op: "restartBotRolling" });
+			client.sendJSON({ op: "log", message: "Rolling restarting finished" });
 
 			break;
 		}

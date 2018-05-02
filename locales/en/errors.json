@@ -2,6 +2,5 @@
 	"prefix": "errors.",
 	"notCreator": "You can't run this command (creators only)",
 	"noCommandPermission": "You do not have permission to run this command! It requires the {{permission}} permission",
-	"userNotInGuild": "That user is not in the guild",
 	"notPremium": "This server must be premium to use that command! For more information about premium visit the dashboard"
 }

@@ -2,9 +2,8 @@ const modLog = require("../../modules/modLog");
 
 module.exports = {
 	async run({
-		args: [user, reason = "Unspecified"], author, flags: { time, deleteDays, softban },
-		guild, message: { member: authorMember }, t,
-		wiggle: { erisClient: client }, wiggle
+		args: [user, reason = "Unspecified"], author, client, flags: { time, deleteDays, softban },
+		guild, message: { member: authorMember }, t, wiggle
 	}) {
 		if(!guild.members.get(client.user.id).permission.has("banMembers")) return t("commands.ban.botNoPerms");
 
@@ -14,7 +13,7 @@ module.exports = {
 			else if(!member.punishable(authorMember)) return t("commands.ban.youCantBan");
 		}
 
-		modLog.ban({
+		await modLog.ban({
 			punished: user,
 			guild,
 			responsible: author,

@@ -198,16 +198,20 @@ module.exports = async (message, sentFrom, workerData, spawnWorker) => {
 
 		case "ready": {
 			workerData.get(sentFrom.id).status = "ready";
-			if(process.uptime() >= 10) {
-				process.output({
-					op: "eval",
-					target: "ws",
-					input: `context.server.broadcast({ op: "workerReady", workerID: ${sentFrom.id} })`
-				}, workerData);
-			}
+			module.exports.wsBroadcast({ op: "workerReady", workerID: sentFrom.id }, workerData);
 
 			break;
 		}
+	}
+};
+
+module.exports.wsBroadcast = (data, workerData) => {
+	if(process.uptime() >= 10) {
+		process.output({
+			op: "eval",
+			target: "ws",
+			input: `context.server.broadcast(${JSON.stringify(data)})`
+		}, workerData);
 	}
 };
 

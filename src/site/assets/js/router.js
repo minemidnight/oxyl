@@ -103,6 +103,14 @@ const routes = [{
 	component: require("./components/pages/404.vue")
 }];
 
+function fixComponents(routeList) {
+	routeList.forEach(route => {
+		if(route.children) fixComponents(route.children);
+		if(route.component) route.component = route.component.default;
+	});
+}
+
+fixComponents(routes);
 module.exports = Vue => {
 	Vue.use(VueRouter);
 	return new VueRouter({

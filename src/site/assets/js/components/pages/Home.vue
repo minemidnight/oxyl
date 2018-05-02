@@ -1,11 +1,11 @@
 <template>
 	<div style="height:calc(100vh - 80px);overflow:hidden">
 		<div class="container-fluid text-center mt-3 mb-5">
-			<h1 style="color-white">Oxyl</h1>
-			<h5 class="color-text mb-3">A high quality Discord bot for all your needs</h5>
-			<router-link class="discord-button btn m-1" :class="{ active: $route.name === 'invite' }" :to="{ name: 'invite' }">
+			<h1><img src="/img/oxyl-text.png" style="height:40px" /></h1>
+			<h5 class="color-text mb-3">A Discord bot for all your needs</h5>
+			<router-link class="discord-button btn m-1 p-2" :class="{ active: $route.name === 'invite' }" :to="{ name: 'invite' }">
 				<img src="/img/discord-logo.png" />
-				Add to Discord
+				<i class="fa fa-sign-in" aria-hidden="true"></i>
 			</router-link>
 			<router-link class="btn learn-more m-1" :class="{ active: $route.name === 'features' }" :to="{ name: 'features' }">
 				Features
@@ -96,6 +96,8 @@ module.exports = {
 
 .learn-more {
 	background: $color-600;
+	font-size: 20px;
+	padding: 9px;
 
 	&:hover {
 		background: $color-630;
@@ -104,14 +106,14 @@ module.exports = {
 
 .discord-button {
 	background: #7289DA;
+	font-size: 20px;
 
 	&:hover {
 		background: darken(#7289DA, 10);
 	}
 
 	& img {
-		height: 22px;
-		margin-right: 4px;
+		height: 30px;
 	}
 }
 </style>

@@ -28,6 +28,6 @@ app.get("/invite", (req, res) => {
 app.get("/patreon", (req, res) => res.redirect("https://www.patreon.com/minemidnight"));
 app.get("/support", (req, res) => res.redirect("https://discord.gg/9wkTDcE"));
 
-app.get("*", (req, res) => res.status(200).sendFile(path.resolve(__dirname, "index.html")));
+app.get("*", (req, res) => res.status(200).sendFile(path.resolve(__dirname, "public", "app.html")));
 
 module.exports = { app };

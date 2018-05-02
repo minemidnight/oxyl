@@ -2,7 +2,7 @@ const modLog = require("../../modules/modLog");
 
 async function getMutedRole(message) {
 	const guild = message.channel.guild;
-	const botMember = guild.members.get(bot.user.id);
+	const botMember = guild.members.get(guild.shard.client.user.id);
 	let mutedRole = guild.roles.find(role => role.name.toLowerCase() === "muted");
 
 	if(mutedRole && !mutedRole.addable) {
@@ -36,20 +36,16 @@ async function getMutedRole(message) {
 
 module.exports = {
 	async run({
-		args: [user, reason = "Unspecified"], author, flags: { time }, guild,
-		message, message: { member: authorMember }, t,
-		wiggle: { erisClient: client }, wiggle
+		args: [member, reason = "Unspecified"], author, client, flags: { time }, guild,
+		message, message: { member: authorMember }, t, wiggle
 	}) {
 		const mutedRole = await getMutedRole(message);
 		if(typeof mutedRole === "string") return mutedRole;
 
-		const member = guild.members.get(user.id);
-		if(!member) return t("errors.userNotInGuild");
-		else if(!member.punishable(authorMember)) return t("commands.mute.cantPunish");
-
+		if(!member.punishable(authorMember)) return t("commands.mute.cantPunish");
 		if(~member.roles.indexOf(mutedRole.id)) {
-			modLog.removeRole({
-				punished: user,
+			await modLog.removeRole({
+				punished: member.user,
 				guild,
 				responsible: author,
 				reason,
@@ -57,11 +53,11 @@ module.exports = {
 			}, wiggle);
 
 			await member.removeRole(mutedRole.id, message.args[1]);
-			return t("commands.mute.unmuted", { user: `${user.username}#${user.discriminator}` });
+			return t("commands.mute.unmuted", { user: `${member.username}#${member.discriminator}` });
 		}
 
-		modLog.addRole({
-			punished: user,
+		await modLog.addRole({
+			punished: member.user,
 			guild,
 			responsible: author,
 			reason,
@@ -70,15 +66,15 @@ module.exports = {
 		}, wiggle);
 
 		if(time) {
-			return t("commands.mute.tempmute", { user: `${user.username}#${user.discriminator}` });
+			return t("commands.mute.tempmute", { user: `${member.username}#${member.discriminator}` });
 		} else {
 			await member.addRole(mutedRole.id, message.args[1]);
-			return t("commands.mute.muted", { user: `${user.username}#${user.discriminator}` });
+			return t("commands.mute.muted", { user: `${member.username}#${member.discriminator}` });
 		}
 	},
 	guildOnly: true,
-	perm: "kickMembers",
-	args: [{ type: "user" }, {
+	perm: "manageRoles",
+	args: [{ type: "member" }, {
 		type: "text",
 		label: "reason",
 		optional: true

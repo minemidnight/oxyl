@@ -102,9 +102,6 @@
 							<input id="time" class="form-control" type="number" min="0" max="63113904" v-model.number="thresholdInsertModel.time" required />
 						</div>
 					</div>
-					<div class="col-sm-12 col-md-6"></div>
-					<div class="col-sm-12 col-md-6"></div>
-					<div class="col-sm-12 col-md-6"></div>
 				</div>
 				<button type="submit" class="btn btn-primary">Add Threshold</button>
 			</form>

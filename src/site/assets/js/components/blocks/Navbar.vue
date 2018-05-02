@@ -1,9 +1,11 @@
 <template>
-	<nav class="navbar navbar-expand-md navbar-dark color-630">
+	<nav class="navbar navbar-expand-md navbar-dark color-630" style="height:56px">
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-nav" aria-controls="main-nav" aria-expanded="false">
 			<span class="navbar-toggler-icon"></span>
 		</button>
-		<router-link class="navbar-brand" :to="{ name: 'home' }">Oxyl Dashboard</router-link>
+		<router-link class="navbar-brand" :to="{ name: 'home' }">
+			<img src="/img/oxyl-logo.png" style="height:40px" />
+		</router-link>
 
 		<div class="navbar-collapse collapse" id="main-nav">
 			<ul class="navbar-nav">	
@@ -62,16 +64,6 @@
 						Support
 					</router-link>
 				</li>
-				<li class="nav-item dropdown">
-					<button class="nav-link dropdown-toggle float" type="button" id="change-background" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						Background
-					</button>
-					<div class="dropdown-menu color-700" aria-labelledby="change-background">
-						<button class="dropdown-item color-hover-800 color-text-hover-100 transition" v-for="(background, i) in backgrounds" :key="i" type="button" @click="changeBackground(background)">
-							{{ background.charAt(0).toUpperCase() + background.substring(1) }}
-						</button>
-					</div>
-				</li>
 			</ul>
 		</div>
 	</nav>
@@ -79,40 +71,19 @@
 
 <style lang="scss" scoped>
 .dropdown-item {
-	color: rgba(255, 255, 255, 0.5);
+	color: rgba(255, 255, 255, .5);
 
 	&.active {
 		color: white;
 		background: rgba(0, 0, 0, .3);
 	}
 }
-
-.nav-item button {
-	outline: none;
-	border: none;
-	background: transparent;
-}
 </style>
 
 <script>
 module.exports = {
 	data() {
-		return {
-			backgrounds: ["geometry", "robots", "shattered", "stardust"],
-			pages: require("../../dashboardNavbar")
-		};
-	},
-	methods: {
-		changeBackground(background) {
-			localStorage.background = background;
-			this.updateBackground();
-		},
-		updateBackground() {
-			$("#page-fill div").css("background-image", `url(/img/${localStorage.background || this.backgrounds[0]}.png)`);
-		}
-	},
-	created() {
-		this.$nextTick(this.updateBackground);
+		return { pages: require("../../dashboardNavbar") };
 	}
 };
 </script>

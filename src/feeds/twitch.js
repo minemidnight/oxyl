@@ -40,7 +40,8 @@ async function checkChannels(redis) {
 			superagent.get(`https://api.twitch.tv/kraken/channels/${key}`).set("Client-ID", clientID),
 			redis.get(`feeds:twitchData:${key}`)
 		])
-		.map(Promise.all.bind(Promise)));
+		.map(Promise.all.bind(Promise))
+	);
 
 	for(const [{ body: channelData }, redisData] of offlineData) {
 		const parsedData = JSON.parse(redisData);

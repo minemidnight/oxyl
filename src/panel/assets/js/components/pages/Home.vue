@@ -1,8 +1,8 @@
 <template>
 	<div>
 		<h2 class="text-white">Workers</h2>
-		<div class="row" v-for="chunk in chunkify(workers, 3)" :key="chunk">
-			<div class="col-lg-4 col-md-6 col-sm-12 mb-2" v-for="worker in chunk" :key="worker">
+		<div class="row" v-for="(chunk, i) in chunkify(workers, 3)" :key="i">
+			<div class="col-lg-4 col-md-6 col-sm-12 mb-2" v-for="(worker, i2) in chunk" :key="i2">
 				<div class="card text-white" :class="{ 'border-danger': worker.status === 'offline', 'border-warning': worker.status === 'online', 'border-success': worker.status === 'ready' }">
 					<div class="card-header bg-elegant-dark d-flex justify-content-end">
 						<span class="lead mr-auto">Worker {{ worker.id }}</span>
@@ -11,7 +11,7 @@
 					</div>
 					<div class="card-body bg-elegant">
 						<h5 class="card-title">Type: {{ worker.type }}</h5>
-						<p class="card-text" v-if="worker.status !== 'offline'">Memory Usage (GiB): {{ worker.heap / Math.pow(1024, 3) }}</p>
+						<!-- <p class="card-text" v-if="worker.status !== 'offline'">Memory Usage (GiB): {{ worker.heap / Math.pow(1024, 3) }}</p> -->
 						<p class="card-text" v-if="worker.type === 'bot' && worker.shards">Shards: {{ worker.shards.substring(worker.shards.indexOf(" ") + 1) }}</p>
 						<p class="card-text" v-if="worker.status !== 'offline'">Start Time: {{ new Date(worker.startTime).toLocaleString("en-US") }}</p>
 					</div>
@@ -23,7 +23,7 @@
 		<div class="jumbotron p-0 terminal">
 			<div class="terminal-container">
 				<div class="terminal-lines p-2">
-					<pre v-for="log in logs" :key="log">{{ log }}</pre>
+					<pre v-for="(log, i) in logs" :key="i">{{ log }}</pre>
 				</div>
 
 				<div class="input">
@@ -46,7 +46,7 @@
 <script>
 export default {
 	data() {
-		return require("../../data")
+		return require("../../data");
 	},
 	methods: {
 		chunkify: (array, size) => {
@@ -58,10 +58,10 @@ export default {
 	watch: {
 		logs: (val, oldVal) => {
 			app.$nextTick(() => {
-				const div = document.querySelector(".terminal-container .terminal-lines")
+				const div = document.querySelector(".terminal-container .terminal-lines");
 				div.scrollTop = div.scrollHeight;
 			});
 		}
 	}
-}
+};
 </script>

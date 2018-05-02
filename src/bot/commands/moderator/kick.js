@@ -2,30 +2,27 @@ const modLog = require("../../modules/modLog");
 
 module.exports = {
 	async run({
-		args: [user, reason = "Unspecified"], author, guild,
-		message: { member: authorMember }, t,
-		wiggle: { erisClient: client }, wiggle
+		args: [member, reason = "Unspecified"], author, client,
+		guild, message: { member: authorMember }, t, wiggle
 	}) {
 		if(!guild.members.get(client.user.id).permission.has("kickMembers")) return t("commands.kick.botNoPerms");
 
-		const member = guild.members.get(user.id);
-		if(!member) return t("errors.userNotInGuild");
-		else if(!member.kickable) return t("commands.kick.botCantKick");
+		if(!member.kickable) return t("commands.kick.botCantKick");
 		else if(!member.punishable(authorMember)) return t("commands.kick.youCantKick");
 
-		modLog.kick({
-			punished: user,
+		await modLog.kick({
+			punished: member.user,
 			guild,
 			responsible: author,
 			reason
 		}, wiggle);
 
-		await client.kickGuildMember(guild.id, user.id, reason);
-		return t("commands.kick", { user: `${user.username}#${user.discriminator}` });
+		await client.kickGuildMember(guild.id, member.id, reason);
+		return t("commands.kick", { user: `${member.username}#${member.discriminator}` });
 	},
 	guildOnly: true,
 	perm: "kickMembers",
-	args: [{ type: "user" }, {
+	args: [{ type: "member" }, {
 		type: "text",
 		label: "reason",
 		optional: true

@@ -97,7 +97,7 @@ module.exports = {
 				if(body.invalidChannel) this.errors.add.invalidChannel = true;
 				else if(body.alreadyExists) this.errors.add.alreadyExists = true;
 			} else {
-				this.twitchChannels.push(body);
+				this.twitchFeeds.push(body);
 				this.insertModel = {};
 				$("#add-channel").trigger("reset");
 			}

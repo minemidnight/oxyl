@@ -23,7 +23,7 @@ router.get("/:guild(\\d{17,21})", async (req, res) => {
 });
 
 router.put("/:guild(\\d{17,21})", expectedBody({
-	type: Boolean,
+	enabled: Boolean,
 	setNickname: Boolean,
 	roleID: {
 		type: String,

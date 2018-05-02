@@ -66,6 +66,6 @@ app.post("/api/callback", async (req, res) => {
 	}
 });
 
-app.get("*", (req, res) => res.status(200).sendFile(path.resolve(__dirname, "index.html")));
+app.get("*", (req, res) => res.status(200).sendFile(path.resolve(__dirname, "public", "app.html")));
 module.exports = { app };
 

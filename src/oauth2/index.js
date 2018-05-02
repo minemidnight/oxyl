@@ -60,7 +60,8 @@ class OAuth2 {
 				client_id: this.clientID, // eslint-disable-line camelcase
 				client_secret: this.secret, // eslint-disable-line camelcase
 				grant_type: "refresh_token", // eslint-disable-line camelcase
-				refresh_token: refreshToken // eslint-disable-line camelcase
+				refresh_token: refreshToken, // eslint-disable-line camelcase
+				redirect_uri: this.redirectURI // eslint-disable-line camelcase
 			});
 
 		return {

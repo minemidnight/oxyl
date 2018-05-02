@@ -1,23 +1,20 @@
 const { getPardons } = require("../../modules/warnings");
 
 module.exports = {
-	async run({ args: [user, page = 1], guild, wiggle: { erisClient, locals: { r } }, t }) {
-		const member = guild.members.get(user.id);
-		if(!member) return t("errors.userNotInGuild");
-
+	async run({ args: [member, page = 1], client, guild, wiggle: { locals: { r } }, t }) {
 		const pardons = await getPardons(member, r);
 		if(!pardons.length) return t("commands.pardons.noPardons");
 		else if(page > Math.ceil(pardons.length / 5)) page = Math.ceil(pardons.length / 5);
 
 		return t("commands.pardons", {
-			username: user.username,
+			username: member.username,
 			pardons: pardons.slice((page - 1) * 5, ((page - 1) * 5) + 5).map(pardon => {
-				const warner = erisClient.users.has(pardon.warning.warnerID) ?
-					erisClient.users.get(pardon.warning.warnerID).username :
+				const warner = client.users.has(pardon.warning.warnerID) ?
+					client.users.get(pardon.warning.warnerID).username :
 					pardon.warning.warnerID;
 
-				const pardoner = erisClient.users.has(pardon.pardonerID) ?
-					erisClient.users.get(pardon.pardonerID).username :
+				const pardoner = client.users.has(pardon.pardonerID) ?
+					client.users.get(pardon.pardonerID).username :
 					pardon.pardonerID;
 
 				return `Original Warning: ${pardon.warning.reason} (warner: ${warner})\n` +
@@ -28,7 +25,7 @@ module.exports = {
 		});
 	},
 	guildOnly: true,
-	args: [{ type: "user" }, {
+	args: [{ type: "member" }, {
 		type: "int",
 		label: "page",
 		min: 1,

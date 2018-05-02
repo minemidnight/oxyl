@@ -12,6 +12,7 @@
 		"roleID": "id of special role if applicable",
 		"messageID": "message id created for entry",
 		"reason": "reason, if any",
-		"time": "Time in ms that the action lasted"
+		"time": "time in ms that the action lasted",
+		"warnCount": "warn count when entry was made, if a warn or pardon"
 	}
 }

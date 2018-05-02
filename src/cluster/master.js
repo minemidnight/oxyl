@@ -12,13 +12,11 @@ function spawnWorker(data) {
 	worker.on("exit", async (code, signal) => {
 		if(signal) return;
 
-		if(process.uptime() >= 10) {
-			process.output({
-				op: "eval",
-				target: "ws",
-				input: `context.server.broadcast({ op: "workerOffline", workerID: ${worker.id}, code: ${code} })`
-			}, workerData);
-		}
+		messageHandler.wsBroadcast({
+			op: "workerOffline",
+			workerID: worker.id,
+			code
+		}, workerData);
 		if(!code) return;
 
 		workerData.delete(worker.id);
@@ -37,14 +35,13 @@ function spawnWorker(data) {
 
 	return new Promise(resolve => {
 		worker.once("online", () => {
-			if(process.uptime() >= 10) {
-				process.output({
-					op: "eval",
-					target: "ws",
-					input: `context.server.broadcast({ op: "workerOnline", type: "${data.type}", id: ${worker.id}, ` +
-					`status: "online", startTime: ${Date.now()} })`
-				}, workerData);
-			}
+			messageHandler.wsBroadcast({
+				op: "workerOnline",
+				type: data.type,
+				id: worker.id,
+				status: "online",
+				startTime: Date.now()
+			}, workerData);
 
 			data = workerData.get(worker.id);
 			data.status = "online";

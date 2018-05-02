@@ -1,5 +1,5 @@
 module.exports = {
-	async run({ channel, guild, reply, t, wiggle: { erisClient: client } }) {
+	async run({ channel, client, guild, reply, t }) {
 		if(!guild.members.get(client.user.id).permission.has("manageMessages")) {
 			const msg = await reply(t("commands.purge.botNoPerms"));
 			setTimeout(() => msg.delete(), 3000);

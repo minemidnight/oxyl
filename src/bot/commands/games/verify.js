@@ -1,6 +1,6 @@
 const crypto = require("crypto");
 const superagent = require("superagent");
-const syncGroupRole = require("../../modules/syncGroupRole");
+const { updateMember: syncGroupRole } = require("../../modules/syncGroupRole");
 
 module.exports = {
 	async run({ args: [username], author, guild, message: { member }, t, wiggle: { locals: { r } } }) {
@@ -24,9 +24,9 @@ module.exports = {
 		if(alreadyVerified) return t("commands.verify.alreadyVerified");
 
 		const { text: html } = await superagent.get(`https://www.roblox.com/users/${userID}/profile`);
-		let [status] = html.match(/data-statustext=(".+?"|[^\s]+)/);
+		let [, status] = html.match(/data-statustext=(".+?"|[^\s]+)/);
 		if(status.startsWith(`"`) && status.endsWith(`"`)) status = status.slice(1, -1);
-		const [about] = html.match(/<span .+?ng-non-bindable\s*>(.+?)<\/span>/);
+		const [, about] = html.match(/<span .*?class=".*?profile-about-content-text.*?".*?>(.+?)<\/span>/);
 
 		if(~about.indexOf(hash) || ~status.indexOf(hash)) {
 			if(settings.setNickname) member.edit({ nick: name }).catch(err => { }); // eslint-disable-line handle-callback-err, no-empty-function, max-len
@@ -50,6 +50,6 @@ module.exports = {
 	guildOnly: true,
 	args: [{
 		type: "text",
-		label: "username"
+		label: "roblox username"
 	}]
 };

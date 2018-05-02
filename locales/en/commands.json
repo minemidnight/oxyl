@@ -90,5 +90,21 @@
 	"pardons": "__Pardons for {{username}} (page {{page}} of {{pageCount}})__\n{{pardons}}",
 	"volume": "Volume set to {{volume}}",
 	"movehere.notInChannel": "You must be in a voice channel to use this command",
-	"movehere": "Moved to {{locations}}"
+	"movehere": "Moved to {{locations}}",
+	"reason.noCases": "There are no cases for this guild",
+	"reason.invalidRange": "Invalid range given. Make sure that you only give numbers in your range, and that your first number is less than your second",
+	"reason.NaN": "Please only enter numbers for your case ids",
+	"reason.invalidCase": "Case {{case}} does not exist",
+	"reason.noChannel": "No channel is set for the mod log",
+	"reason.noMessage": "Case {{case}} has no message",
+	"reason.updatedOne": "Updated case {{case}}",
+	"reason.updatedMultiple": "Updated {{caseCount}} cases",
+	"mute.bothPerms": "I am missing the permissions `Manage Roles` and `Manage Channels`, so I cannot create and edit the Muted role",
+	"mute.rolePerms": "I can not create the Muted role! I need the permission `Manage Roles`",
+	"mute.channelPerms": "I can not edit channel-specific permissions for the Muted role! I need the permission `Manage Channels`",
+	"mute.cantPunish": "You do not have permission to punish this user! (They have a higher role)",
+	"mute.cantAdd": "I cannot add the Muted role to anybody! Make sure my highest role is higher than the Muted role in the role list",
+	"mute.unmuted": "{{user}} has been unmuted",
+	"mute.muted": "{{user}} has been muted",
+	"mute.tempmute": "{{user}} has been temporarily muted"
 }

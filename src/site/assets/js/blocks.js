@@ -10,5 +10,5 @@ const blocks = [{
 }];
 
 module.exports = Vue => {
-	blocks.forEach(({ name, file }) => Vue.component(name, require(`./components/blocks/${file}.vue`)));
+	blocks.forEach(({ name, file }) => Vue.component(name, require(`./components/blocks/${file}.vue`).default));
 };

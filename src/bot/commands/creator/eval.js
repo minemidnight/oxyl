@@ -1,7 +1,7 @@
 const util = require("util");
 module.exports = {
 	async run(ctx) {
-		const { args, author, category, channel, flags, guild, message, reply, Resolver, t, wiggle } = ctx; // eslint-disable-line no-unused-vars, max-len, id-length
+		const { args, author, category, channel, client, flags, guild, message, reply, resolver, t, wiggle } = ctx; // eslint-disable-line no-unused-vars, max-len, id-length
 
 		try {
 			let output;
@@ -28,10 +28,10 @@ module.exports = {
 					op: "eval",
 					target: flags.target,
 					targetValue,
-					input: message.args[0]
+					input: args[0]
 				});
 			} else {
-				output = await eval(`(async function(){${message.args[0]}}).call()`);
+				output = await eval(`(async function(){${args[0]}}).call()`);
 			}
 
 			output = util.inspect(output, { depth: 0 })

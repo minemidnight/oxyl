@@ -4,7 +4,7 @@ const path = require("path");
 const { champions } = require("../../../modules/PaladinsAPI");
 
 module.exports = {
-	async run({ args: [page = 1], t, wiggle }) {
+	async run({ args: [page = 1], t }) {
 		let buffer;
 		const fileName = `champions-page-${page}.png`;
 		const savedPath = path.resolve("src", "bot", "modules", "images", "saved", fileName);

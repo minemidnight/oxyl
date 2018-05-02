@@ -2,7 +2,7 @@ const recentActions = new Map();
 
 const createTimedEvent = async (data, r) => r.table("timedEvents").insert(data).run();
 const createEntry = async (data, wiggle) => {
-	const { action, guild, punished, responsible, reason, role, time } = data;
+	const { action, guild, punished, responsible, reason, role, time, warnCount } = data;
 	const caseID = await wiggle.locals.r.table("modLog").getAll(guild.id, { index: "guildID" }).count().add(1);
 	data.caseID = caseID;
 
@@ -15,7 +15,8 @@ const createEntry = async (data, wiggle) => {
 		userID: punished.id,
 		roleID: role ? role.id : undefined,
 		reason,
-		time
+		time,
+		warnCount
 	};
 
 	entry.messageID = await entryMessage(data, wiggle);
@@ -24,17 +25,28 @@ const createEntry = async (data, wiggle) => {
 };
 
 const updateEntry = async (caseID, data, wiggle) => {
-	const messageID = await wiggle.locals.r.table("modLog")
+	const entry = await wiggle.locals.r.table("modLog")
 		.get([caseID, data.guild.id])
-		.getField("messageID")
 		.default(null)
 		.run();
-	if(!messageID) return;
+	if(!entry) return "NO_CASE";
+	else if(!entry.messageID) return "NO_MESSAGE";
+
+	await wiggle.locals.r.table("modLog")
+		.get([caseID, data.guild.id])
+		.update({
+			action: data.action || entry.action,
+			modID: data.responsible ? data.responsible.id : entry.modID,
+			reason: data.reason || entry.reason
+		})
+		.run();
 
 	const channelID = await getChannel(data.guild.id, wiggle.locals.r);
-	if(!channelID) return;
+	if(!channelID) return "NO_CHANNEL";
 
-	await wiggle.erisClient.editMessage(channelID, messageID, buildMessage(data));
+	if(!data.punished) data.punished = wiggle.erisClient.users.get(entry.userID) || { id: entry.userID };
+	else if(entry.roleID && !data.role) data.role = data.guild.roles.get(entry.roleID).name;
+	return await wiggle.erisClient.editMessage(channelID, entry.messageID, buildMessage(Object.assign(entry, data)));
 };
 
 const getChannel = async (guildID, r) => {
@@ -49,7 +61,7 @@ const buildMessage = ({ action, caseID, guild, punished, responsible, reason, ro
 	message += `**USER**: ${punished.username}#${punished.discriminator} (${punished.id})\n`;
 
 	if(warnCount) message += `**TOTAL WARNINGS**: ${warnCount}\n`;
-	if(role) message += `**ROLE**: ${role.name ? role.name : guild.roles.has(role.id).name} (${role.id})\n`;
+	if(role) message += `**ROLE**: ${role.name ? role.name : guild.roles.get(role.id).name} (${role.id})\n`;
 	if(time) {
 		const timespanString = Object.entries({
 			months: Math.floor(time / 2592000000),
@@ -211,4 +223,4 @@ const pardon = async ({ punished, guild, responsible, reason }, wiggle) => await
 		.run()
 }, wiggle);
 
-module.exports = { addRole, removeRole, ban, kick, unban, warn, pardon };
+module.exports = { addRole, removeRole, ban, kick, updateEntry, unban, warn, pardon };

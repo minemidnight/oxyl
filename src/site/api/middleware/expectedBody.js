@@ -1,8 +1,12 @@
 const checkValue = (expected, key, body) => {
 	const value = body[key];
 
-	if(typeof value === "undefined" && !expected.endsWith("?")) return `Expected field "${key}" but none found`;
-	if(expected.endsWith("?")) expected = expected.slice(0, -1);
+	if(typeof value === "undefined") {
+		if(typeof expected === "string" && expected.endsWith("?")) return true;
+		else return `Expected field "${key}" but none found`;
+	}
+
+	if(typeof expected === "string" && expected.endsWith("?")) expected = expected.slice(0, -1);
 
 	if(expected === "string" && typeof value !== "string") {
 		return `Expected field "${key}" to be a string, got ${typeof value}`;
@@ -10,7 +14,7 @@ const checkValue = (expected, key, body) => {
 		return `Expected field "${key}" to be a number, got ${typeof value}`;
 	} else if(expected === "boolean" && typeof value !== "boolean") {
 		return `Expected field "${key}" to be a boolean, got ${typeof value}`;
-	} else if(expected === "object" && typeof value !== "object") {
+	} else if(expected === "object" && (typeof value !== "object" || Array.isArray(value))) {
 		return `Expected field "${key}" to be an object, got ${typeof value}`;
 	} else if((expected === "array" || Array.isArray(expected)) && !Array.isArray(value)) {
 		return `Expected field "${key}" to be an array, got ${typeof value}`;
@@ -19,8 +23,8 @@ const checkValue = (expected, key, body) => {
 	} else if(typeof expected === "object") {
 		if(expected.hasOwnProperty("if")) {
 			if(expected.hasOwnProperty("is")) {
-				if(body[expected.if] !== expected.is) {
-					return `Expected field "${key}" to exist only if ${expected.if} was ${expected.equals}`;
+				if(body[expected.if] && body[expected.if] !== expected.is) {
+					return `Expected field "${key}" to exist only if ${expected.if} was ${expected.is}`;
 				}
 			} else if(expected.hasOwnProperty("in")) {
 				if(!~expected.in.indexOf(body[expected.if])) {
@@ -46,7 +50,7 @@ const checkValue = (expected, key, body) => {
 			}
 		} else {
 			if(typeof value !== "object") return `Expected field "${key}" to be an object, got ${typeof value}`;
-			for(const [key2, type] of expected) {
+			for(const [key2, type] of Object.entries(expected)) {
 				const check = checkValue(type, key2, value);
 				if(check !== true) return check;
 			}
@@ -65,8 +69,8 @@ const typeResultMap = {
 };
 
 function convertType(type) {
-	if(typeof type === "object") {
-		if(type.hasOwnProperty("type")) type.type = convertType(type);
+	if(typeof type === "object" && !Array.isArray(type)) {
+		if(type.hasOwnProperty("type")) type.type = convertType(type.type);
 		else Object.entries(type).forEach(([key, value]) => type[key] = convertType(value));
 	}
 
@@ -77,7 +81,7 @@ function convertType(type) {
 		type;
 }
 
-module.exports = expectedBody => (req, res, next, guild) => {
+module.exports = expectedBody => (req, res, next) => {
 	for(const [key, type] of Object.entries(expectedBody)) {
 		const check = checkValue(convertType(type), key, req.body);
 		if(check !== true) {

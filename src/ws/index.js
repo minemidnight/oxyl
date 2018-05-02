@@ -20,6 +20,8 @@ server.broadcast = data => server.clients.forEach(client => {
 	else client.send(JSON.stringify(data));
 });
 
+server.on("error", err => server.broadcast({ op: "log", message: err.stack }));
+
 async function updateHeartbeat() {
 	const data = await process.output({
 		op: "eval",
