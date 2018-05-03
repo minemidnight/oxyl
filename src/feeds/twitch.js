@@ -31,7 +31,7 @@ async function checkChannels(redis) {
 			followers: stream.channel.followers,
 			time: new Date(stream.created_at).getTime(),
 			views: stream.channel.views
-		}), 1814400);
+		}), "EX", 1814400);
 	}
 
 	const offlineData = await Promise.all(onlineData
