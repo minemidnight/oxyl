@@ -10,7 +10,7 @@ module.exports = {
 		if(!player.queue.length) return t("commands.jump.noQueue");
 		else if(position > player.queue.length) t("commands.jump.invalidPosition");
 
-		player.queue.unshift(player.queue.slice(position - 1, 1)[0]);
+		player.queue.unshift(player.queue.splice(position - 1, 1)[0]);
 		player.connection.stop();
 
 		return t("commands.jump", { position });
