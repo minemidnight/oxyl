@@ -34,7 +34,7 @@ module.exports = {
 						} else {
 							resolve(data
 								.replace(/\r\n\r\n/g, "\r\n")
-								.replace("{{usage}}", command.usage ? "" : `${command.name} ${command.usage}`)
+								.replace("{{usage}}", command.usage ? `${command.name} ${command.usage}` : "")
 							);
 						}
 					});
