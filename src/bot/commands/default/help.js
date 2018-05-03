@@ -1,15 +1,47 @@
-module.exports = {
-	async run({ args, author, flags: { dm }, guild, t, wiggle }) {
-		if(args[0]) {
-			const command = wiggle.categories.map(category => category.commands.get(args[0])).find(cmd => cmd);
-			if(!command) return t("commands.help.noCommandFound");
+const fs = require("fs");
+const path = require("path");
 
-			return t("commands.help.command", {
-				category: command.category,
-				description: t(`description.${command.name}`),
-				name: command.name,
-				usage: command.usage
-			});
+module.exports = {
+	async run({ args: [command], author, flags: { dm }, guild, message: { locale }, t, wiggle }) {
+		if(command) {
+			categoryLoop:
+			for(const { commands, subcommands } of wiggle.categories.values()) {
+				if(commands.has(command)) {
+					command = commands.get(command);
+					break;
+				} else {
+					for(const [subcommand, { commands: { subcommandCommands } }] of subcommands.values()) {
+						if(subcommand === command) {
+							command = subcommand;
+							break categoryLoop;
+						} else if(subcommandCommands.has(command)) {
+							command = subcommandCommands.get(command);
+							break categoryLoop;
+						}
+					}
+				}
+			}
+
+			if(typeof command !== "object") return t("commands.help.noCommandFound");
+			try {
+				return await new Promise((resolve, reject) => {
+					const filePath = path.resolve(__dirname, "..", "..", "..", "..", "locales",
+						locale, "help", `${command.name}.md`);
+
+					fs.readFile(filePath, "utf8", (err, data) => {
+						if(err) {
+							reject(err);
+						} else {
+							resolve(data
+								.replace(/\r\n\r\n/g, "\r\n")
+								.replace("{{usage}}", command.usage ? "" : `${command.name} ${command.usage}`)
+							);
+						}
+					});
+				});
+			} catch(err) {
+				return t("commands.help.noDescription");
+			}
 		} else {
 			const disabledCommands = await wiggle.locals.r.table("commandSettings")
 				.getAll(guild.id, { index: "guildID" })
@@ -22,7 +54,7 @@ module.exports = {
 				if(name === "creator") return msg;
 				msg += `__**${name.charAt(0).toUpperCase() + name.substring(1)}** `;
 				msg += `(${commands.size + subcommands.size} ${t("words.commands")})__\n`;
-				msg += commands.filter(command => !~disabledCommands.indexOf(command.name))
+				msg += commands.filter(cmd => !~disabledCommands.indexOf(cmd.name))
 					.concat(subcommands.filter(subcommand => !~disabledCommands.indexOf(subcommand.name)))
 					.map(({ name: commandName }) => commandName).join(", ");
 				msg += "\n\n";

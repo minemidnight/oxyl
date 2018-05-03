@@ -22,7 +22,7 @@ const client = wiggle({
 	locales: "locales",
 	listeners: "src/bot/listeners",
 	commands: "src/bot/commands",
-	getPrefixes: async ({ channel: { guild } }) => {
+	async getPrefixes({ channel: { guild } }) {
 		if(!guild) return config.prefixes;
 		else if(cachedPrefixes.has(guild.id)) return cachedPrefixes.get(guild.id);
 
@@ -36,6 +36,10 @@ const client = wiggle({
 
 		setTimeout(() => cachedPrefixes.delete(guild.id), 600000);
 		return cachedPrefixes.get(guild.id);
+	},
+	async localeFunction(message) {
+		message.locale = "en";
+		message.channel.guild.locale = "en";
 	}
 }).use("message",
 	wiggle.middleware.commandParser(),

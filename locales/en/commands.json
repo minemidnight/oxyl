@@ -13,7 +13,7 @@
 	"help": "{{message}}\n\nRun `help <command>` to get more info on a command",
 	"help.sentDM": "📨 Help has been sent to your DMs!",
 	"help.noCommandFound": "No command found",
-	"help.command": "__Command__: {{name}}\nCategory: {{category}}\nDescription: {{description}}\nUsage: {{usage}}",
+	"help.noDescription": "No file describing this command was found. Please contact support.",
 	"ping": "Pong! `{{latency}}ms`",
 	"ping.pinging": "pinging...",
 	"paladins.invalidPlayer": "No player was found",
