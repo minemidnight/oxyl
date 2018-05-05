@@ -6,16 +6,18 @@ module.exports = {
 		if(command) {
 			categoryLoop:
 			for(const { commands, subcommands } of wiggle.categories.values()) {
-				if(commands.has(command)) {
-					command = commands.get(command);
+				if(commands.has(command) || commands.find(cmd => ~cmd.aliases.indexOf(command))) {
+					command = commands.get(command) || commands.find(cmd => ~cmd.aliases.indexOf(command));
 					break;
 				} else {
-					for(const { name: subcommand, commands: subcommandCommands } of subcommands.values()) {
-						if(subcommand === command) {
+					for(const subcommand of subcommands.values()) {
+						if(subcommand.name === command || ~subcommand.aliases.indexOf(command)) {
 							command = subcommand;
 							break categoryLoop;
-						} else if(subcommandCommands.has(command)) {
-							command = subcommandCommands.get(command);
+						} else if(subcommand.commands.has(command) ||
+							subcommand.commands.find(cmd => ~cmd.aliases.indexOf(command))) {
+							command = subcommand.commands.get(command) ||
+								subcommand.commands.find(cmd => ~cmd.aliases.indexOf(command));
 							break categoryLoop;
 						}
 					}
