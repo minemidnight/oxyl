@@ -1,5 +1,7 @@
 module.exports = async () => {
-	const ws = new WebSocket(`ws://ws.${window.location.host}`);
+	const ws = new WebSocket(process.env.NODE_ENV === "development" ?
+		`ws://localhost:7251` :
+		`ws://ws.${window.location.host}`);
 	ws.sendJSON = json => ws.send(JSON.stringify(json));
 
 	ws.onopen = () => {

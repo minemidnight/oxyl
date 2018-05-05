@@ -1,7 +1,7 @@
 const { createCanvas, Image } = require("canvas");
 const superagent = require("superagent");
 
-async function generate(image, width, height) {
+async function generate({ image, width, height }) {
 	const { body } = await superagent.get(image);
 	image = new Image();
 	image.src = body;

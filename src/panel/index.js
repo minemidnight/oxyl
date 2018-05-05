@@ -67,7 +67,7 @@ app.post("/api/callback", async (req, res) => {
 });
 
 app.get("*", (req, res) => {
-	res.cookie("maxAge", 0);
+	res.header("cache-control", "no-cache");
 	res.status(200).sendFile(path.resolve(__dirname, "public", "app.html"));
 });
 module.exports = { app };

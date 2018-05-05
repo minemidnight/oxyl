@@ -10,7 +10,9 @@ module.exports = {
 					command = commands.get(command);
 					break;
 				} else {
-					for(const [subcommand, { commands: { subcommandCommands } }] of subcommands.values()) {
+					console.log("SUB", subcommands);
+					console.log("COM", commands);
+					for(const { name: subcommand, commands: subcommandCommands } of subcommands.values()) {
 						if(subcommand === command) {
 							command = subcommand;
 							break categoryLoop;
