@@ -5,4 +5,4 @@
 **Usage**: `{{usage}}`
 
 
-Gets a random dog picture.
+Toggle song repeating.

@@ -13,7 +13,7 @@ module.exports = {
 			moves.push();
 		}
 
-		if(channel.id !== player.textChannelID) {
+		if(channel.id !== player.textChannelID && player._playingMessages) {
 			player.textChannelID = channel.id;
 			moves.push(channel.mention);
 		}

@@ -1,4 +1,5 @@
 {
 	"prefix": "words.",
-	"commands": "commands"
+	"commands": "commands",
+	"none": "none"
 }

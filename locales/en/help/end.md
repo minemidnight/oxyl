@@ -5,4 +5,4 @@
 **Usage**: `{{usage}}`
 
 
-Gets a random dog picture.
+Stops the music and disconnects Oxyl from the voice channel.

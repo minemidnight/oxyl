@@ -1,4 +1,6 @@
-**Command**: paladins
+**Command**: {{command}}
 
-Group of subcommands to get a user's statistics for the game Paladins.
+**Aliases**: {{aliases}}
 
+
+Group of subcommands to get a data about the game Paladins.

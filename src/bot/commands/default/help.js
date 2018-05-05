@@ -10,8 +10,6 @@ module.exports = {
 					command = commands.get(command);
 					break;
 				} else {
-					console.log("SUB", subcommands);
-					console.log("COM", commands);
 					for(const { name: subcommand, commands: subcommandCommands } of subcommands.values()) {
 						if(subcommand === command) {
 							command = subcommand;
@@ -36,7 +34,10 @@ module.exports = {
 						} else {
 							resolve(data
 								.replace(/\r\n\r\n/g, "\r\n")
+								.replace("{{command}}", command.name)
+								.replace("{{aliases}}", command.aliases.length ? command.aliases.join(", ") : t("words.none"))
 								.replace("{{usage}}", command.usage ? `${command.name} ${command.usage}` : "")
+								.replace(/^\* +/gm, "\u2022")
 							);
 						}
 					});

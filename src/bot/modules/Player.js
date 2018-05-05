@@ -111,6 +111,8 @@ class Player {
 				.default({ musicMessages: true })
 				.getField("musicMessages")
 				.run();
+
+			this._playingMessages = this.playingMessages;
 		}
 
 		if(!this.playingMessages) return;

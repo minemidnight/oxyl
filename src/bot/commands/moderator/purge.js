@@ -65,7 +65,7 @@ module.exports = {
 		default: false
 	}, {
 		name: "files",
-		short: "f",
+		short: "fi",
 		type: "boolean",
 		default: false
 	}, {
