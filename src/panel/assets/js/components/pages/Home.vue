@@ -6,8 +6,8 @@
 				<div class="card text-white" :class="{ 'border-danger': worker.status === 'offline', 'border-warning': worker.status === 'online', 'border-success': worker.status === 'ready' }">
 					<div class="card-header bg-elegant-dark d-flex justify-content-end">
 						<span class="lead mr-auto">Worker {{ worker.id }}</span>
-						<button type="button" class="btn btn-outline-danger mr-2" :disabled="worker.status === 'offline'" @click="ws.sendJSON({ op: 'kill', id: worker.id })">Kill Worker</button>
-						<button type="button" class="btn btn-outline-warning" :disabled="worker.status === 'offline' || worker.status === 'online'" @click="ws.sendJSON({ op: 'restart', id: worker.id })">Restart Worker</button>
+						<button type="button" class="btn btn-outline-danger mr-2" :disabled="worker.status === 'offline'" @click="ws.send({ op: 'kill', id: worker.id })">Kill Worker</button>
+						<button type="button" class="btn btn-outline-warning" :disabled="worker.status === 'offline' || worker.status === 'online'" @click="ws.send({ op: 'restart', id: worker.id })">Restart Worker</button>
 					</div>
 					<div class="card-body bg-elegant">
 						<h5 class="card-title">Type: {{ worker.type }}</h5>
@@ -27,7 +27,7 @@
 				</div>
 
 				<div class="input">
-					<input @keyup.enter="ws.sendJSON({ op: 'exec', command: $event.target.value });$event.target.value = ''" />
+					<input @keyup.enter="ws.send({ op: 'exec', command: $event.target.value });$event.target.value = ''" />
 				</div>
 			</div>
 		</div>
@@ -36,8 +36,8 @@
 		<div class="container mb-2 d-flex justify-content-center">
 			<h5 class="mr-auto text-white">Bot</h5>
 			<div class="btn-group" role="group">
-				<button type="button" class="btn btn-danger" @click="ws.sendJSON({ op: 'restartBotHard' })">Hard Restart</button>
-				<button type="button" class="btn btn-warning" @click="ws.sendJSON({ op: 'restartBotRolling' })">Rolling Restart</button>
+				<button type="button" class="btn btn-danger" @click="ws.send({ op: 'restartBotHard' })">Hard Restart</button>
+				<button type="button" class="btn btn-warning" @click="ws.send({ op: 'restartBotRolling' })">Rolling Restart</button>
 			</div>
 		</div>
 	</div>

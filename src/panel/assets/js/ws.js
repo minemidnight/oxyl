@@ -2,10 +2,12 @@ module.exports = async () => {
 	const ws = new WebSocket(process.env.NODE_ENV === "development" ?
 		`ws://localhost:7251` :
 		`ws://ws.${window.location.host}`);
-	ws.sendJSON = json => ws.send(JSON.stringify(json));
+
+	ws._send = ws.send;
+	ws.send = json => ws._send(JSON.stringify(json));
 
 	ws.onopen = () => {
-		ws.sendJSON({ op: "identify", token: JSON.parse(localStorage.token) });
+		ws.send({ op: "identify", token: JSON.parse(localStorage.token) });
 	};
 
 	ws.onmessage = ({ data: message }) => {
@@ -24,7 +26,7 @@ module.exports = async () => {
 
 			case "workerOnline": {
 				app.workers.push(message);
-				app.logs.push(`Worker ${message.id} online, type ${message.type}`);
+				app.logs.push(`Worker ${message.workerID} online, type ${message.type}`);
 
 				break;
 			}
@@ -44,8 +46,14 @@ module.exports = async () => {
 			}
 
 			case "heartbeat": {
-				ws.sendJSON({ op: "pong" });
+				ws.send({ op: "pong" });
 				app.workers = message.workers;
+
+				break;
+			}
+
+			case "logs": {
+				app.logs.push(...message.messages);
 
 				break;
 			}

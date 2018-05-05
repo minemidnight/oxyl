@@ -38,7 +38,7 @@ function spawnWorker(data) {
 			messageHandler.wsBroadcast({
 				op: "workerOnline",
 				type: data.type,
-				id: worker.id,
+				workerID: worker.id,
 				status: "online",
 				startTime: Date.now()
 			}, workerData);

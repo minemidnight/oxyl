@@ -16,38 +16,46 @@ module.exports = async (client, message) => {
 	const { op } = message;
 	delete message.op;
 
-	if(client.authenicated === false && op !== "identify") return client.sendJSON({ op: "error", code: 401 });
+	if(client.authenicated === false && op !== "identify") return client.send({ op: "error", code: 401 });
 	switch(op) {
 		case "identify": {
-			if(!message.token) return client.sendJSON({ op: "error", code: 400 });
+			if(!message.token) return client.send({ op: "error", code: 400 });
 
 			const info = await discordAuth.info(message.token, "users/@me");
-			if(!~config.owners.indexOf(info.id)) return client.sendJSON({ op: "error", code: 403 });
+			if(!~config.owners.indexOf(info.id)) return client.send({ op: "error", code: 403 });
 
-			client.sendHeartbeat();
+			client.heartbeat();
 			client.alive = true;
 			delete client.authenicated;
+
+			client.send({
+				op: "logs",
+				messages: (await client.server.redis.multi(
+					(await client.server.redis.keys("logs::*")).map(key => ["get", key])
+				).exec()).map(([, data]) => data)
+			});
+
 			break;
 		}
 
 		case "output": {
-			client.sendJSON({ op: "result", code: 200, result: await process.output(message) });
+			client.send({ op: "result", code: 200, result: await process.output(message) });
 
 			break;
 		}
 
 		case "restartBotHard": {
-			client.sendJSON({ op: "log", message: "Hard restarting bot..." });
+			client.send({ op: "log", message: "Hard restarting bot..." });
 			await process.output({ op: "restartBotHard" });
-			client.sendJSON({ op: "log", message: "Hard restart finished" });
+			client.send({ op: "log", message: "Hard restart finished" });
 
 			break;
 		}
 
 		case "restartBotRolling": {
-			client.sendJSON({ op: "log", message: "Rolling restarting bot..." });
+			client.send({ op: "log", message: "Rolling restarting bot..." });
 			await process.output({ op: "restartBotRolling" });
-			client.sendJSON({ op: "log", message: "Rolling restarting finished" });
+			client.send({ op: "log", message: "Rolling restarting finished" });
 
 			break;
 		}
@@ -59,9 +67,9 @@ module.exports = async (client, message) => {
 					maxBuffer: Infinity
 				});
 
-				client.sendJSON({ op: "log", message: stdout });
+				client.send({ op: "log", message: stdout });
 			} catch(err) {
-				client.sendJSON({ op: "log", message: err.message });
+				client.send({ op: "log", message: err.message });
 			}
 
 			break;
@@ -70,7 +78,7 @@ module.exports = async (client, message) => {
 		case "kill": {
 			const targetValue = message.id;
 			await process.output({ op: "eval", target: "worker", targetValue, input: () => process.exit(0) });
-			client.sendJSON({ op: "log", message: `Worker ${targetValue} killed` });
+			client.send({ op: "log", message: `Worker ${targetValue} killed` });
 
 			break;
 		}
@@ -78,18 +86,20 @@ module.exports = async (client, message) => {
 		case "restart": {
 			const targetValue = message.id;
 			await process.output({ op: "eval", target: "worker", targetValue, input: () => process.exit(1) });
-			client.sendJSON({ op: "log", message: `Worker ${targetValue} restarted` });
+			client.send({ op: "log", message: `Worker ${targetValue} restarted` });
 
 			break;
 		}
 
 		case "pong": {
 			client.alive = true;
+
 			break;
 		}
 
 		default: {
-			client.sendJSON({ op: "error", code: 400 });
+			client.send({ op: "error", code: 400 });
+
 			break;
 		}
 	}
