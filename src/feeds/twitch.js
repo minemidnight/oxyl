@@ -17,9 +17,15 @@ async function checkChannels(redis) {
 			channel: channels.join(","),
 			limit: 100
 		}));
-	requests = (await Promise.all(requests))
-		.map(({ body: { streams } }) => streams)
-		.reduce((a, b) => a.concat(b), []);
+
+	try {
+		requests = (await Promise.all(requests))
+			.map(({ body: { streams } }) => streams)
+			.reduce((a, b) => a.concat(b), []);
+	} catch(err) {
+		requests = [];
+	}
+
 
 	for(const stream of requests) {
 		const index = onlineData.indexOf(`feeds:twitchData:${stream.channel.name}`);
@@ -34,14 +40,19 @@ async function checkChannels(redis) {
 		}), "EX", 1814400);
 	}
 
-	const offlineData = await Promise.all(onlineData
-		.map(key => key.substring(key.lastIndexOf(":") + 1))
-		.map(key => [
-			superagent.get(`https://api.twitch.tv/kraken/channels/${key}`).set("Client-ID", clientID),
-			redis.get(`feeds:twitchData:${key}`)
-		])
-		.map(Promise.all.bind(Promise))
-	);
+	let offlineData;
+	try {
+		offlineData = await Promise.all(onlineData
+			.map(key => key.substring(key.lastIndexOf(":") + 1))
+			.map(key => [
+				superagent.get(`https://api.twitch.tv/kraken/channels/${key}`).set("Client-ID", clientID),
+				redis.get(`feeds:twitchData:${key}`)
+			])
+			.map(Promise.all.bind(Promise))
+		);
+	} catch(err) {
+		offlineData = [];
+	}
 
 	for(const [{ body: channelData }, redisData] of offlineData) {
 		const parsedData = JSON.parse(redisData);

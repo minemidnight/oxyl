@@ -11,7 +11,13 @@ async function getNew(redis) {
 	const alreadyPosted = (await redis.keys("feeds:reddit:newPosted:*"))
 		.map(key => key.substring(key.lastIndexOf(":") + 1));
 
-	let { body: { data: { children: newPosts } } } = await superagent.get("https://www.reddit.com/r/all/new.json");
+	let newPosts;
+	try {
+		({ body: { data: { children: newPosts } } } = await superagent.get("https://www.reddit.com/r/all/new.json"));
+	} catch(err) {
+		return [];
+	}
+
 	newPosts = newPosts.map(({ data }) => data)
 		.filter(({ subreddit, id }) => ~validReddits.indexOf(subreddit) && !~alreadyPosted.indexOf(id));
 	newPosts.forEach(({ id }) => redis.set(`feeds:reddit:newPosted:${id}`, "", "EX", 604800));
@@ -23,7 +29,13 @@ async function getTop(sub, redis) {
 	const alreadyPosted = (await redis.keys("feeds:reddit:topPosted:*"))
 		.map(key => key.substring(key.lastIndexOf(":") + 1));
 
-	let { body: { data: { children: newPosts } } } = await superagent.get(`https://www.reddit.com/r/${sub}/top.json`);
+	let newPosts;
+	try {
+		({ body: { data: { children: newPosts } } } = await superagent.get(`https://www.reddit.com/r/${sub}/top.json`));
+	} catch(err) {
+		return [];
+	}
+
 	newPosts = newPosts.map(({ data }) => data).filter(({ id }) => !~alreadyPosted.indexOf(id));
 	newPosts.forEach(({ id }) => redis.set(`feeds:reddit:topPosted:${id}`, "", "EX", 604800));
 
