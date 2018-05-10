@@ -115,7 +115,11 @@ class Player {
 			this._playingMessages = this.playingMessages;
 		}
 
-		if(!this.playingMessages) return;
+		const { length: listening } = this.guild.channels
+			.get(this.connection.channelId).voiceMembers
+			.filter(member => !member.bot && !member.voiceState.deaf && !member.voiceState.selfDeaf);
+
+		if(!this.playingMessages || !listening) return;
 		const embed = {
 			author: { name: "Now Playing" },
 			description: `**[${this.currentSong.title}](${this.currentSong.uri})** ` +
