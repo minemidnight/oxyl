@@ -38,10 +38,10 @@ module.exports = {
 		}
 
 		const { buffer } = await createMatchImage({ bans, matchDetails, player });
-		return ["", {
+		return {
 			file: buffer,
 			name: `${matchID}.png`
-		}];
+		};
 	},
 	aliases: ["matchdetails", "matchstats"],
 	args: [{

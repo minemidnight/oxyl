@@ -22,6 +22,7 @@ const client = wiggle({
 	locales: "locales",
 	listeners: "src/bot/listeners",
 	commands: "src/bot/commands",
+	contextLocals: ["r"],
 	async getPrefixes({ channel: { guild } }) {
 		if(!guild) return config.prefixes;
 		else if(cachedPrefixes.has(guild.id)) return cachedPrefixes.get(guild.id);

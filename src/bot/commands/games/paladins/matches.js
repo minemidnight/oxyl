@@ -27,10 +27,10 @@ module.exports = {
 			matchHistory: matches
 		});
 
-		return ["", {
+		return {
 			file: buffer,
 			name: `${player}-matches.png`
-		}];
+		};
 	},
 	args: [{
 		type: "text",

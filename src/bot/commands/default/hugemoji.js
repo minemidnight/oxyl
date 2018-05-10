@@ -17,10 +17,10 @@ module.exports = {
 		try {
 			const { body: buffer } = await superagent.get(file);
 
-			return ["", {
+			return {
 				file: buffer,
 				name: path.basename(file)
-			}];
+			};
 		} catch(err) {
 			return t("commands.hugemoji.error");
 		}

@@ -1,7 +1,7 @@
 const Player = require("../../modules/Player");
 
 module.exports = {
-	run: async ({ flags: { force }, guild, message: { member }, t, wiggle: { locals: { r } } }) => {
+	run: async ({ flags: { force }, guild, member, r, t }) => {
 		const player = Player.getPlayer(guild.id);
 
 		if(!player || !player.currentSong) return t("commands.music.notPlaying");

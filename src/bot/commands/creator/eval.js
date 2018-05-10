@@ -1,7 +1,7 @@
 const util = require("util");
 module.exports = {
 	async run(ctx) {
-		const { args, author, category, channel, client, flags, guild, message, reply, resolver, t, wiggle } = ctx; // eslint-disable-line no-unused-vars, max-len, id-length
+		const { args, author, category, channel, client, flags, guild, message, r, reply, resolver, t, wiggle } = ctx; // eslint-disable-line no-unused-vars, max-len, id-length
 
 		try {
 			let output;

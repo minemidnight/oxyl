@@ -4,10 +4,10 @@ module.exports = {
 	async run({ args: [text], flags: { user } }) {
 		const { buffer } = await killed({ text, avatar: user ? user.staticAvatarURL : undefined });
 
-		return ["", {
+		return {
 			file: buffer,
 			name: "killed.png"
-		}];
+		};
 	},
 	caseSensitive: true,
 	args: [{ type: "text" }],

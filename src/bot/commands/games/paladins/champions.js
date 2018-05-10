@@ -26,10 +26,10 @@ module.exports = {
 			}));
 		}
 
-		return ["", {
+		return {
 			file: buffer,
 			name: fileName
-		}];
+		};
 	},
 	args: [{
 		type: "int",

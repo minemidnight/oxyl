@@ -18,10 +18,10 @@ module.exports = {
 			status
 		});
 
-		return ["", {
+		return {
 			file: buffer,
 			name: `${player.Name}.png`
-		}];
+		};
 	},
 	args: [{
 		type: "text",

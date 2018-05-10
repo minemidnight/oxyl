@@ -1,5 +1,5 @@
 module.exports = {
-	async run({ args: [role], guild, message: { member }, wiggle: { locals: { r } }, t }) {
+	async run({ args: [role], guild, member, r, t }) {
 		const { roles } = await r.table("roleSettings")
 			.get([guild.id, "roleMe"])
 			.default({ roles: [] })

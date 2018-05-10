@@ -1,7 +1,7 @@
 const { getPardons } = require("../../modules/warnings");
 
 module.exports = {
-	async run({ args: [member, page = 1], client, guild, wiggle: { locals: { r } }, t }) {
+	async run({ args: [member, page = 1], client, guild, r, t }) {
 		const pardons = await getPardons(member, r);
 		if(!pardons.length) return t("commands.pardons.noPardons");
 		else if(page > Math.ceil(pardons.length / 5)) page = Math.ceil(pardons.length / 5);

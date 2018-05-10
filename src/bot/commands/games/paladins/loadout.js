@@ -38,10 +38,10 @@ module.exports = {
 				items: loadout.LoadoutItems.map(({ ItemId }) => items().find(item => item.ItemId === ItemId))
 			});
 
-			return ["", {
+			return {
 				file: buffer,
 				name: `loadout-${loadout.DeckId}.png`
-			}];
+			};
 		}
 	},
 	aliases: ["loadouts"],

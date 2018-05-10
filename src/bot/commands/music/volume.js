@@ -1,7 +1,7 @@
 const Player = require("../../modules/Player");
 
 module.exports = {
-	run: async ({ args: [volume], guild, message: { member }, t, wiggle: { locals: { r } } }) => {
+	run: async ({ args: [volume], guild, member, r, t }) => {
 		const isPremium = await r.table("premiumServers")
 			.get(guild.id)
 			.default(false)

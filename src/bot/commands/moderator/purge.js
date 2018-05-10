@@ -13,7 +13,7 @@ const filters = {
 module.exports = {
 	async run({
 		args: [limit], author, channel, client, flags, guild,
-		message: { member: authorMember }, message, reply, t, wiggle
+		member: authorMember, message, reply, t, wiggle
 	}) {
 		if(!guild.members.get(client.user.id).permission.has("manageMessages")) {
 			const msg = await reply(t("commands.purge.botNoPerms"));

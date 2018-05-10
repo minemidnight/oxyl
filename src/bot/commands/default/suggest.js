@@ -1,5 +1,5 @@
 module.exports = {
-	async run({ author, args: [title, description], channel, client, guild, wiggle: { locals: { r } }, t }) {
+	async run({ author, args: [title, description], channel, client, guild, r, t }) {
 		const { enabled, channelID } = await r.table("suggestions")
 			.get(guild.id)
 			.default({ enabled: false })

@@ -17,10 +17,10 @@ module.exports = {
 
 		const { buffer } = await createStatsImage(championStats);
 
-		return ["", {
+		return {
 			file: buffer,
 			name: "champion-stats.png"
-		}];
+		};
 	},
 	aliases: ["championinfo"],
 	args: [{

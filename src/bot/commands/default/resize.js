@@ -4,10 +4,10 @@ module.exports = {
 	async run({ args: [image, width, height] }) {
 		const { buffer } = await resize({ image, width, height });
 
-		return ["", {
+		return {
 			file: buffer,
 			name: "resized.png"
-		}];
+		};
 	},
 	args: [{ type: "image" }, {
 		type: "int",

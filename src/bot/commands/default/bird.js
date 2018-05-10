@@ -6,9 +6,9 @@ module.exports = {
 		const { body: [file] } = await superagent.get("http://shibe.online/api/birds?count=1");
 		const { body: buffer } = await superagent.get(file);
 
-		return ["", {
+		return {
 			file: buffer,
 			name: path.basename(file)
-		}];
+		};
 	}
 };

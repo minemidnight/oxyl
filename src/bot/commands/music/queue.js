@@ -1,7 +1,7 @@
 const Player = require("../../modules/Player");
 
 module.exports = {
-	run: async ({ args: [page = 1], guild, message: { member }, t }) => {
+	run: async ({ args: [page = 1], guild, member, t }) => {
 		const player = Player.getPlayer(guild.id);
 
 		if(!player || (!player.currentSong && !player.queue.length)) return t("commands.music.notPlaying");

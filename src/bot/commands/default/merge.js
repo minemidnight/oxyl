@@ -4,10 +4,10 @@ module.exports = {
 	async run({ args: images, flags: { overlap } }) {
 		const { buffer } = await merge({ images, overlap });
 
-		return ["", {
+		return {
 			file: buffer,
 			name: "merged.png"
-		}];
+		};
 	},
 	args: [{ type: "image" }, { type: "image" }],
 	caseSensitive: true,

@@ -37,7 +37,7 @@ async function getMutedRole(message) {
 module.exports = {
 	async run({
 		args: [member, reason = "Unspecified"], author, client, flags: { time }, guild,
-		message, message: { member: authorMember }, t, wiggle
+		message, member: authorMember, t, wiggle
 	}) {
 		const mutedRole = await getMutedRole(message);
 		if(typeof mutedRole === "string") return mutedRole;

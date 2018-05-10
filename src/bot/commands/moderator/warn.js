@@ -3,7 +3,7 @@ const { warn } = require("../../modules/warnings");
 module.exports = {
 	async run({
 		args: [member, reason = "Unspecified"], author,
-		message: { member: authorMember }, t, wiggle
+		member: authorMember, t, wiggle
 	}) {
 		if(member && !member.punishable(authorMember)) {
 			return t("commands.warn.noPermission");

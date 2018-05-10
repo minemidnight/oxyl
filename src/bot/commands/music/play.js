@@ -3,7 +3,7 @@ const Player = require("../../modules/Player");
 module.exports = {
 	run: async ({
 		args: [query], channel, client, flags: { soundcloud, pick }, guild,
-		message: { member }, reply, t, wiggle, wiggle: { locals: { r } }
+		member, reply, t, wiggle, wiggle: { locals: { r } }
 	}) => {
 		let voiceChannel, player = Player.getPlayer(guild.id);
 		if(member.voiceState && member.voiceState.channelID) voiceChannel = guild.channels.get(member.voiceState.channelID);

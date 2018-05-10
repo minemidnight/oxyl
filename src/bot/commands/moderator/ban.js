@@ -3,7 +3,7 @@ const modLog = require("../../modules/modLog");
 module.exports = {
 	async run({
 		args: [user, reason = "Unspecified"], author, client, flags: { time, deleteDays, softban },
-		guild, message: { member: authorMember }, t, wiggle
+		guild, member: authorMember, t, wiggle
 	}) {
 		if(!guild.members.get(client.user.id).permission.has("banMembers")) return t("commands.ban.botNoPerms");
 

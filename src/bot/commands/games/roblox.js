@@ -3,7 +3,7 @@ const superagent = require("superagent");
 const { updateMember: syncGroupRole } = require("../../modules/syncGroupRole");
 
 module.exports = {
-	async run({ args: [username], author, guild, message: { member }, t, wiggle: { locals: { r } } }) {
+	async run({ args: [username], author, guild, member, r, t }) {
 		const settings = await r.table("robloxVerification")
 			.get(guild.id)
 			.default({ enabled: false })

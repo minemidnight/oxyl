@@ -1,7 +1,7 @@
 const { updateEntry } = require("../../modules/modLog");
 
 module.exports = {
-	async run({	args: [cases, reason], author, guild, t, wiggle: { locals: { r } }, wiggle }) {
+	async run({	args: [cases, reason], author, guild, t, r, wiggle }) {
 		const caseCount = await r.table("modLog")
 			.getAll(guild.id, { index: "guildID" })
 			.count()
