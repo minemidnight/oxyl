@@ -6,6 +6,7 @@ module.exports = {
 	async run({ args: [username], author, guild, message: { member }, t, wiggle: { locals: { r } } }) {
 		const settings = await r.table("robloxVerification")
 			.get(guild.id)
+			.default({ enabled: false })
 			.without("id")
 			.run();
 
@@ -48,6 +49,7 @@ module.exports = {
 		}
 	},
 	guildOnly: true,
+	aliases: ["verify"],
 	args: [{
 		type: "text",
 		label: "roblox username"
