@@ -11,6 +11,7 @@ module.exports = async message => {
 				const result = await eval(input);
 				reply({ op: "result", error: false, result });
 			} catch(err) {
+				console.log("err", err.stack);
 				reply({ op: "result", error: true, message: err.message });
 			}
 

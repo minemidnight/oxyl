@@ -97,7 +97,13 @@ module.exports = async (message, sentFrom, workerData, spawnWorker) => {
 						reply({ op: "result", error: true, message: "No bot workers started" });
 					} else {
 						try {
-							const results = await Promise.all(...botWorkers.map(work => process.output(message, work)));
+							const results = await Promise.all(botWorkers.map(work => process.output({
+								op: "eval",
+								target: "worker",
+								targetValue: work.id,
+								input: message.input
+							}, workerData)));
+
 							reply({ op: "result", error: false, results: results.map(({ result }) => result) });
 						} catch(err) {
 							reply({ op: "result", error: true, message: err.message });

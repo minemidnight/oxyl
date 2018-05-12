@@ -40,7 +40,8 @@ const client = wiggle({
 	},
 	async localeFunction(message) {
 		message.locale = "en";
-		message.channel.guild.locale = "en";
+
+		if(message.channel.guild) message.channel.guild.locale = "en";
 	}
 }).use("message",
 	wiggle.middleware.commandParser(),
