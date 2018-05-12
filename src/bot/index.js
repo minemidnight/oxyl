@@ -52,6 +52,7 @@ const client = wiggle({
 
 const { update: updateGroupRoles } = require("./modules/syncGroupRole");
 const { update: updateTimedEvents } = require("./modules/timedEvents");
+const { updateAll: updatePremiumServers } = require("./modules/timedEvents");
 module.exports = async ({ shardStart, shardEnd, shardCount, shards }) => {
 	client.set("clientOptions", {
 		firstShardID: shardStart,
@@ -75,6 +76,7 @@ module.exports = async ({ shardStart, shardEnd, shardCount, shards }) => {
 	client.locals.config = config;
 	client.locals.shardDisplay = shards;
 
+	setInterval(() => updatePremiumServers(client.locals.r), 14400000);
 	setInterval(() => updateGroupRoles(client), 900000);
 	setInterval(() => updateTimedEvents(client), 30000);
 
