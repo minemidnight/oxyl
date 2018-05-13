@@ -70,7 +70,7 @@ async function generate({ bans, matchDetails, player: specificPlayer }) {
 
 	const sectionHeight = (canvas.height - 50 - (specificPlayer ? 115 : 0) - (bans ? 100 : 0)) / 10;
 	const midLine = ((canvas.height - 50) / 2) +
-		(specificPlayer && specificPlayer.Win_Status === "Winner" ? 115 - sectionHeight : -sectionHeight);
+		(specificPlayer ? specificPlayer.Win_Status === "Winner" ? 115 - sectionHeight : -sectionHeight : 0);
 
 	ctx.lineWidth = 15;
 	ctx.beginPath();
