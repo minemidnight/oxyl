@@ -55,9 +55,7 @@ function getPostEmbed(post) {
 		embed.thumbnail = { url: "https://www.redditstatic.com/icon.png" };
 	}
 
-	if(post.post_hint && post.preview.images) {
-		embed.image = { url: post.preview.images[0].source.url.replace(/&amp;/g, "&") };
-	}
+	if(/\.(jpe?g|png|gifv?)$/.test(post.url)) embed.image = { url: post.url };
 
 	return embed;
 }
