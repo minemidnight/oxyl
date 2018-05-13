@@ -1,9 +1,9 @@
 <template>
-	<nav class="navbar navbar-expand-md navbar-dark color-630" style="height:56px">
+	<nav class="navbar navbar-expand-md navbar-dark color-630">
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-nav" aria-controls="main-nav" aria-expanded="false">
 			<span class="navbar-toggler-icon"></span>
 		</button>
-		<router-link class="navbar-brand" :to="{ name: 'home' }">
+		<router-link class="navbar-brand p-0" :to="{ name: 'home' }">
 			<img src="/img/oxyl-logo.png" style="height:40px" />
 		</router-link>
 
