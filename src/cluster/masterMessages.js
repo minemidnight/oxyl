@@ -212,13 +212,12 @@ module.exports = async (message, sentFrom, workerData, spawnWorker) => {
 };
 
 module.exports.wsBroadcast = (data, workerData) => {
-	if(process.uptime() >= 10) {
-		process.output({
-			op: "eval",
-			target: "ws",
-			input: `context.server.broadcast(${JSON.stringify(data)})`
-		}, workerData);
-	}
+	process.output({
+		op: "eval",
+		target: "ws",
+		input: `context.server.broadcast(${JSON.stringify(data)})`
+	}, workerData)
+		.catch(err => {}); // eslint-disable-line no-empty-function, handle-callback-err
 };
 
 require("./processOutput")(waitingOutputs, "master");
