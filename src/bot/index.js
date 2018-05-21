@@ -52,7 +52,7 @@ const client = wiggle({
 
 const { update: updateGroupRoles } = require("./modules/syncGroupRole");
 const { update: updateTimedEvents } = require("./modules/timedEvents");
-const { updateAll: updatePremiumServers } = require("./modules/timedEvents");
+const { updateAll: updatePremiumServers } = require("./modules/premiumChecker");
 module.exports = async ({ shardStart, shardEnd, shardCount, shards }) => {
 	client.set("clientOptions", {
 		firstShardID: shardStart,
