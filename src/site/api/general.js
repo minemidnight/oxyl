@@ -61,7 +61,7 @@ router.put("/:guild(\\d{17,21})", expectedBody({
 			guildID: req.params.guild,
 			enabled: req.body.suggestions.enabled,
 			channelID: req.body.suggestions.channelID
-		});
+		}, { conflict: "replace" });
 
 	res.status(204).end();
 });
