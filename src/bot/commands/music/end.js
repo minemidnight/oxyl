@@ -1,16 +1,15 @@
+const Player = require("../../modules/Player");
+
 module.exports = {
-	process: async message => {
-		let player = bot.players.get(message.channel.guild.id);
-		if(!player) {
-			return __("phrases.noMusic", message);
-		} else if(!player.voiceCheck(message.member)) {
-			return __("phrases.notListening", message);
-		} else {
-			player.destroy();
-			return __("commands.music.end.success", message);
-		}
+	run: async ({ guild, member, t }) => {
+		const player = Player.getPlayer(guild.id);
+
+		if(!player || !player.currentSong) return t("commands.music.notPlaying");
+		else if(!player.isListening(member)) return t("commands.music.notListening");
+
+		player.disconnect();
+		return t("commands.end");
 	},
 	guildOnly: true,
-	aliases: ["music"],
-	description: "Stop music in your channel"
+	aliases: ["disconnect", "stop"]
 };

@@ -1,4 +1,7 @@
 config.json
+src/panel/public
+src/site/public
+src/bot/modules/images/saved
 
 # Logs
 logs

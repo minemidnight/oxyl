@@ -1,5 +1,3 @@
-global.Promise = require("bluebird");
-global.cluster = require("cluster");
-require("./misc/logger.js");
-if(cluster.isMaster) require("./master.js");
-else require("./worker.js");
+const cluster = require("cluster");
+if(cluster.isMaster) require("./cluster/master");
+else require("./cluster/worker");

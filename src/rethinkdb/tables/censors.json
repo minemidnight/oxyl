@@ -1,0 +1,14 @@
+{
+	"name": "censors",
+	"primary": "id",
+	"indexes": ["guildID"],
+	"model": {
+		"guildID": "guild id",
+		"id": "generated uuid",
+		"regex": ["expression", ["flags"]],
+		"action": "action type",
+		"roleID": "if action is adding role, else undefined",
+		"message": "message to say when triggered",
+		"time": "time in seconds (for tempbans/temproles, not a string)"
+	}
+}

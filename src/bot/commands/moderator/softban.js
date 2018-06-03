@@ -1,34 +1,31 @@
-const modLog = require("../../modules/modLog.js");
+const modLog = require("../../modules/modLog");
+
 module.exports = {
-	process: async message => {
-		let banPerms = message.channel.guild.members.get(bot.user.id).permission.has("banMembers");
-		if(!banPerms) return __("commands.moderator.softban.noPerms", message);
+	async run({
+		args: [member, reason = "Unspecified"], author, client, guild,
+		member: authorMember, t, wiggle
+	}) {
+		if(!guild.members.get(client.user.id).permission.has("banMembers")) return t("commands.ban.botNoPerms");
 
-		let member = message.channel.guild.members.get(message.args[0].id);
-		if(!member) return __("phrases.notInGuild", message);
-
-		if(!member.bannable) {
-			return __("commands.moderator.softban.botCantBan", message);
-		} else if(!member.punishable(message.member)) {
-			return __("commands.moderator.softban.youCantBan", message);
-		} else {
-			if(message.args[1]) {
-				let guild = message.channel.guild;
-				let channel = await modLog.channel(guild);
-				if(channel) {
-					modLog.presetReasons[guild.id] = { mod: message.author, reason: message.args[1] };
-				}
-			}
-
-			await member.ban(7, message.args[1]);
-			member.unban("Softban");
-			return __("commands.moderator.softban.success", message, { user: member.user.username });
+		if(member) {
+			if(!member.bannable) return t("commands.ban.botCantBan");
+			else if(!member.punishable(authorMember)) return t("commands.ban.youCantBan");
 		}
+
+		await modLog.ban({
+			punished: member.user,
+			guild,
+			responsible: author,
+			reason
+		}, wiggle);
+
+		await client.banGuildMember(guild.id, member.id, 7, reason);
+		await client.unbanGuildMember(guild.id, member.id, reason);
+		return t("commands.ban.softban", { user: `${member.username}#${member.discriminator}` });
 	},
 	guildOnly: true,
 	perm: "banMembers",
-	description: "Softban a user from the guild (kick with message deletion)",
-	args: [{ type: "user" }, {
+	args: [{ type: "member" }, {
 		type: "text",
 		label: "reason",
 		optional: true

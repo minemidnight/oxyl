@@ -1,0 +1,9 @@
+{
+	"name": "suggestions",
+	"primary": "guildID",
+	"model": {
+		"guildID": "guild id",
+		"enabled": "true/false, whether or not feature is enabled",
+		"channelID": "channel id for where to send suggestions"
+	}
+}

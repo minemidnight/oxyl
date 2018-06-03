@@ -1,0 +1,10 @@
+{
+	"name": "rolePersist",
+	"primary": "id",
+	"indexes": ["guildID"],
+	"model": {
+		"guildID": "guild id",
+		"id": ["guild id", "user id"],
+		"roles": ["role ids"]
+	}
+}

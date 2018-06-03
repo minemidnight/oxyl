@@ -4,12 +4,6 @@
 		"node": true,
 		"es6": true
 	},
-	"globals": {
-		"bot": false,
-		"cluster": false,
-		"r": false,
-		"__": false
-	 },
 	"parserOptions": {
 		"ecmaVersion": 2017
 	},
@@ -58,7 +52,6 @@
 		"no-useless-call": "error",
 		"no-useless-concat": "error",
 		"no-useless-escape": "off",
-		"no-void": "error",
 		"no-warning-comments": "warn",
 		"wrap-iife": "error",
 		"yoda": "error",
@@ -84,7 +77,7 @@
 		"consistent-this": "error",
 		"eol-last": "error",
 		"func-style": ["error", "declaration", { "allowArrowFunctions": true }],
-		"id-length": ["error", { "exceptions": ["i", "j", "a", "b"] }],
+		"id-length": ["error", { "exceptions": ["i", "j", "a", "b", "t", "r"] }],
 		"indent": ["error", "tab", { "SwitchCase": 1 }],
 		"key-spacing": "error",
 		"keyword-spacing": ["error", {
@@ -130,6 +123,7 @@
 		"no-duplicate-imports": "error",
 		"no-useless-computed-key": "error",
 		"no-useless-constructor": "error",
+		"prefer-const": "error",
 		"prefer-arrow-callback": "error",
 		"prefer-rest-params": "error",
 		"prefer-spread": "error",

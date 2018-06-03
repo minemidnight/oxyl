@@ -1,0 +1,33 @@
+{
+        "clientID": "client id",
+        "owners": ["owner id"],
+        "prefixes": ["ob!", "oxylbeta", "oxylb", "mention"],
+        "token": "token here",
+        "secret": "bot secret",
+        "redisDB": 1,
+        "panelPort": 7250,
+        "panelURL": "url to use for redirect for panel",
+        "websocketPort": 7251,
+        "dashboardPort": 7252,
+        "dashboardURL": "url to use for redirect for dashboard",
+        "database": { 
+                "db": "... (these settings are passed directly into rethinkdbdash)",
+                "password": "..."
+        },
+        "paladinsDevId": "dev id",
+        "paladinsAuthKey": "auth key",
+        "lavalink": {
+                "url": "lavalink url",
+                "restPassword": "lavalink rest password",
+                "nodes": [{
+                        "host": "ws host",
+                        "port": 80,
+                        "region": "us",
+                        "password": "node password"
+                }]
+        },
+        "patreon": {
+                "clientID": "pateron client id",
+                "secret": "patreon secret"
+        }
+}

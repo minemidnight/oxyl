@@ -1,35 +1,59 @@
-const modLog = require("../../modules/modLog.js");
+const modLog = require("../../modules/modLog");
+
 module.exports = {
-	process: async message => {
-		let banPerms = message.channel.guild.members.get(bot.user.id).permission.has("banMembers");
-		if(!banPerms) return __("commands.moderator.ban.noPerms", message);
+	async run({
+		args: [user, reason = "Unspecified"], author, client, flags: { time, deleteDays, softban },
+		guild, member: authorMember, t, wiggle
+	}) {
+		if(!guild.members.get(client.user.id).permission.has("banMembers")) return t("commands.ban.botNoPerms");
 
-		let member = message.channel.guild.members.get(message.args[0].id);
-		if(!member) return __("phrases.notInGuild", message);
+		const member = guild.members.get(user.id);
+		if(member) {
+			if(!member.bannable) return t("commands.ban.botCantBan");
+			else if(!member.punishable(authorMember)) return t("commands.ban.youCantBan");
+		}
 
-		if(!member.bannable) {
-			return __("commands.moderator.ban.botCantBan", message, { user: member.user.username });
-		} else if(!member.punishable(message.member)) {
-			return __("commands.moderator.ban.youCantBan", message, { user: member.user.username });
+		await modLog.ban({
+			punished: user,
+			guild,
+			responsible: author,
+			reason,
+			time
+		}, wiggle);
+
+		await client.banGuildMember(guild.id, user.id, deleteDays, reason);
+		if(softban) {
+			await client.unbanGuildMember(guild.id, user.id, reason);
+			return t("commands.ban.softban", { user: `${user.username}#${user.discriminator}` });
+		} else if(time) {
+			return t("commands.tempban", { user: `${user.username}#${user.discriminator}` });
 		} else {
-			if(message.args[1]) {
-				let guild = message.channel.guild;
-				let channel = await modLog.channel(guild);
-				if(channel) {
-					modLog.presetReasons[guild.id] = { mod: message.author, reason: message.args[1] };
-				}
-			}
-
-			member.ban(7, message.args[1]);
-			return __("commands.moderator.ban.success", message, { user: member.user.username });
+			return t("commands.ban", { user: `${user.username}#${user.discriminator}` });
 		}
 	},
 	guildOnly: true,
 	perm: "banMembers",
-	description: "Ban a user from the guild",
 	args: [{ type: "user" }, {
 		type: "text",
 		label: "reason",
 		optional: true
+	}],
+	flags: [{
+		name: "time",
+		short: "t",
+		type: "timespan"
+	}, {
+		name: "deleteDays",
+		short: "d",
+		type: "int",
+		min: 0,
+		max: 7,
+		default: 7
+	}, {
+		name: "softban",
+		short: "s",
+		aliases: ["soft"],
+		type: "boolean",
+		default: false
 	}]
 };

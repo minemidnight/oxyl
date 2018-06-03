@@ -1,0 +1,11 @@
+{
+	"name": "robloxVerified",
+	"primary": "id",
+	"indexes": ["guildID"],
+	"model": {
+		"id": ["guildID", "discordID"],
+		"guildID": "guildID",
+		"username": "roblox username",
+		"userID": "roblox id"
+	}
+}

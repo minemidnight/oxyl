@@ -1,0 +1,12 @@
+{
+	"name": "userlog",
+	"primary": "id",
+	"model": {
+		"id": "guild id",
+		"enabled": "true/false",
+		"channelID": "channel id for userlog",
+		"greeting": "message for greeting",
+		"dmGreeting": "true/false",
+		"farewell": "message for farewell"
+	}
+}

@@ -1,0 +1,98 @@
+$toggle-height: 30px;
+$toggle-width: 60px;
+$switch-size: 30px;
+$anim-slight-bounce: cubic-bezier(0.34, 1.61, 0.7, 1);
+$anim-speed-normal: 250ms;
+$border-color: $color-200;
+
+.tgl {
+	position: relative;
+	display: block;
+	height: $toggle-height;
+	cursor: pointer;
+
+	>input {
+		position: absolute;
+		opacity: 0;
+		z-index: -1;
+		visibility: hidden;
+	}
+
+	.tgl_body {
+		width: $toggle-width;
+		height: $toggle-height;
+		background: white;
+		border: 2px solid $border-color;
+		display: inline-block;
+		position: relative;
+		border-radius: 50px;
+	}
+
+	.tgl_switch {
+		width: $toggle-height;
+		height: $toggle-height;
+		display: inline-block;
+		background-color: white;
+		position: absolute;
+		left: -2px;
+		top: -2px;
+		border-radius: 50%;
+		border: 1px solid darken($border-color, 5%);
+		box-shadow: 0 2px 2px rgba(0, 0, 0, .13);
+		transition: left $anim-slight-bounce $anim-speed-normal, transform $anim-slight-bounce $anim-speed-normal;
+		z-index: 1;
+	}
+
+	.tgl_track {
+		position: absolute;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		overflow: hidden;
+		border-radius: 50px;
+	}
+
+	.tgl_bgd {
+		position: absolute;
+		right: -10px;
+		top: 0;
+		bottom: 0;
+		width: $toggle-width - ($switch-size / 2) + 10;
+		transition: left $anim-slight-bounce $anim-speed-normal, right $anim-slight-bounce $anim-speed-normal;
+		background: green url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAKCAYAAACE2W/HAAAAAXNSR0IArs4c6QAAAIRJREFUKBWVkMsNgCAQREm8cfKCBwvwYuzALu1HmrAF68C3cYmAxOAmw2RhHj9jflQIYUIejV0rJxBZjxbUN3ECoRNJ7cgahlkbV9uFtTckQYWwcKAMpq9DCjqFsAf+hOLVCJXwylz+phguneCA5Lpp3R9RhsseIj25DYqbKLzhNs7V/AKLN9Tj5LBvmgAAAABJRU5ErkJggg==) center center no-repeat;
+	}
+
+	.tgl_bgd-negative {
+		right: auto;
+		left: -($toggle-width - ($switch-size / 2));
+		background: red url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAAXNSR0IArs4c6QAAAPtJREFUKBV1kT0OgkAQhd2lNaHC0sSCQOIpPIAnMFYWJnAIOAV3sPUCXkITfmNroLC0MIDvrS5BxE2WHWa+N5OZmRRFMY/j+JhlmTX5c5IkCdI03TMsCONdCyEuUsqVbdtVXwc4bNs2gO+J60jDMHaE4Vw2TXPqV9Iw4jXu1nXdq2A2QoQp0pXw7zMzYSAbx3EOZJWAxkBUAbaG8JeAP3mez+q6PhNWQSF8ZI5o6yO1wRewp+GP3+v3RF8nGDTosxeIfwahBH0YSdhgxBGPiQTgAJnCsQYHg1B7kgBvyMqldKODrQ6XqCvBcTdN86EC2PbijYx/WaksyymjL5GlsmrxkFTKAAAAAElFTkSuQmCC) center center no-repeat;
+	}
+
+	&:hover {
+		.tgl_switch {
+			border-color: darken($border-color, 13%);
+			transform: scale(1.06);
+		}
+	}
+
+	&:active {
+		.tgl_switch {
+			transform: scale(.95);
+		}
+	}
+
+	>:not(:checked)~.tgl_body {
+		>.tgl_switch {
+			left: $toggle-width - $switch-size;
+		}
+
+		.tgl_bgd {
+			right: -($toggle-width - ($switch-size / 2));
+			&.tgl_bgd-negative {
+				right: auto;
+				left: -10px;
+			}
+		}
+	}
+}

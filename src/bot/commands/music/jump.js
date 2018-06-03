@@ -1,26 +1,24 @@
-module.exports = {
-	process: async message => {
-		let player = bot.players.get(message.channel.guild.id);
-		if(!player || !player.connection) {
-			return __("phrases.noMusic", message);
-		} else if(!player.voiceCheck(message.member)) {
-			return __("phrases.notListening", message);
-		} else {
-			let queue = await player.getQueue();
-			if(queue.length === 0) return __("phrases.noQueue", message);
-			if(message.args[0] > queue.length) return __("commands.music.jump.invalidQueue", message);
-			queue = queue.slice(message.args[0] - 1).concat(queue.slice(0, message.args[0] - 1));
-			player.connection.stop();
+const Player = require("../../modules/Player");
 
-			await player.setQueue(queue);
-			return __("commands.music.jump.success", message, { queue: message.args[0] });
-		}
+module.exports = {
+	run: async ({ args: [position], guild, member, t }) => {
+		const player = Player.getPlayer(guild.id);
+
+		if(!player || !player.currentSong) return t("commands.music.notPlaying");
+		else if(!player.isListening(member)) return t("commands.music.notListening");
+
+		if(!player.queue.length) return t("commands.jump.noQueue");
+		else if(position > player.queue.length) t("commands.jump.invalidPosition");
+
+		player.queue.unshift(player.queue.splice(position - 1, 1)[0]);
+		player.connection.stop();
+
+		return t("commands.jump", { position });
 	},
 	guildOnly: true,
-	description: "Jump to a song in the queue",
 	args: [{
-		type: "num",
-		label: "queue #",
+		type: "int",
+		label: "queue position",
 		min: 1
 	}]
 };

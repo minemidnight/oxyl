@@ -1,59 +1,39 @@
+const Player = require("../../modules/Player");
+
 module.exports = {
-	process: async message => {
-		let player = bot.players.get(message.channel.guild.id);
-		if(!player || !player.connection) return __("phrases.noMusic", message);
+	run: async ({ args: [page = 1], guild, member, t }) => {
+		const player = Player.getPlayer(guild.id);
 
-		let current = await player.getCurrent();
-		let queue = await player.getQueue();
-		let options = await player.getOptions();
+		if(!player || (!player.currentSong && !player.queue.length)) return t("commands.music.notPlaying");
+		else if(page > Math.ceil(player.queue.length / 15)) page = Math.ceil(player.queue.length / 15);
 
-		let queueMsg = "";
-		let page = message.args[0] || 1;
-		let pageAmount = Math.ceil(queue.length / 15);
-		if(page > pageAmount) page = pageAmount;
-
-		if(queue.length > 0) {
-			queueMsg += queue.slice((page - 1) * 15, ((page - 1) * 15) + 15)
+		let queueMessage = t("commands.queue.inQueue", { count: player.queue.length });
+		queueMessage += "\n";
+		if(player.queue.length) {
+			queueMessage += player.queue.slice((page - 1) * 15, ((page - 1) * 15) + 15)
 				.map((song, i) => `[${((page - 1) * 15) + i + 1}] ${song.title}`)
 				.join("\n");
 
-			queueMsg += `\n**${__("words.page", message, {}, true)} ${page}/${pageAmount}**`;
+			queueMessage += "\n";
+			queueMessage += t("commands.queue.page", { page, totalPages: Math.ceil(player.queue.length / 15) });
 		} else {
-			queueMsg += `N/A`;
+			queueMessage += "N/A";
 		}
 
-		if(!current || !player.connection) {
-			queueMsg += "\n\n";
-			queueMsg += __("phrases.queueError", message);
-		} else {
-			if(current.length && current.length < 900000000000000) {
-				var videoDuration = bot.utils.secondsToDuration(current.length / 1000);
-			}
-
-			let playTime = bot.utils.secondsToDuration(Math.floor(player.connection.state.position / 1000));
-
-			queueMsg += "\n\n";
-			queueMsg += __("phrases.currentPlaying", message, {
-				title: current.title,
-				duration: videoDuration ? `${playTime}/${videoDuration}` : playTime
-			});
-		}
-
-		queueMsg += "\n";
-		queueMsg += __("phrases.autoplay", message, { autoplay: __(`words.${options.autoplay ? "on" : "off"}`, message) });
-		queueMsg += "\n";
-		queueMsg += __("phrases.repeat", message, { repeat: __(`words.${options.repeat ? "on" : "off"}`, message) });
-		return __("commands.music.queue.success", message, {
-			itemCount: queue.length,
-			message: queueMsg
+		queueMessage += "\n\n";
+		queueMessage += t("commands.queue.currentSong", {
+			title: player.currentSong.title,
+			playTime: Player.formatDuration(player.connection.state.position / 1000),
+			duration: player.currentSong.isStream ? "LIVE" : Player.formatDuration(player.currentSong.length / 1000)
 		});
+
+		return queueMessage;
 	},
 	guildOnly: true,
-	description: "List the music queue",
 	args: [{
-		type: "num",
+		type: "int",
 		label: "page",
-		optional: true,
-		min: 1
+		min: 1,
+		optional: true
 	}]
 };

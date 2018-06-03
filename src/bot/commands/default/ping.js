@@ -1,9 +1,20 @@
 module.exports = {
-	process: async message => {
-		let latency = message.channel.guild ?
-			message.channel.guild.shard.latency :
-			bot.shards.get(0).latency;
-		return __("commands.default.ping.success", message, { latency });
+	async run({ channel, flags: { https }, guild, reply, t }) {
+		if(https) {
+			const now = Date.now();
+			const msg = await reply(t("commands.ping", { latency: t("commands.ping.pinging") }));
+			msg.edit(t("commands.ping", { latency: Date.now() - now }));
+			return undefined;
+		} else {
+			const latency = guild ? guild.shard.latency : channel._client.shards.get(0).latency;
+			return t("commands.ping", { latency });
+		}
 	},
-	description: "Test Oxyl's responsiveness"
+	flags: [{
+		name: "https",
+		short: "h",
+		type: "boolean",
+		default: false,
+		aliases: ["http"]
+	}]
 };

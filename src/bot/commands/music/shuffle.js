@@ -1,25 +1,19 @@
-function shuffle(array) {
-	for(let i = array.length; i; i--) {
-		let index = Math.floor(Math.random() * i);
-		[array[i - 1], array[index]] = [array[index], array[i - 1]];
-	}
-}
+const Player = require("../../modules/Player");
 
 module.exports = {
-	process: async message => {
-		let player = bot.players.get(message.channel.guild.id);
-		if(!player || !player.connection) {
-			return __("phrases.noMusic", message);
-		} else if(!player.voiceCheck(message.member)) {
-			return __("phrases.notListening", message);
-		} else {
-			let queue = await player.getQueue();
-			shuffle(queue);
-			await player.setQueue(queue);
+	run: async ({ guild, member, t }) => {
+		const player = Player.getPlayer(guild.id);
 
-			return __("commands.music.shuffle.success", message);
+		if(!player || !player.currentSong) return t("commands.music.notPlaying");
+		else if(!player.isListening(member)) return t("commands.music.notListening");
+
+
+		for(let i = player.queue.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[player.queue[i], player.queue[j]] = [player.queue[j], player.queue[i]];
 		}
+
+		return t("commands.shuffle");
 	},
-	guildOnly: true,
-	description: "Shuffle the queue"
+	guildOnly: true
 };

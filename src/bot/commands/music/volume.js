@@ -1,31 +1,25 @@
+const Player = require("../../modules/Player");
+
 module.exports = {
-	process: async message => {
-		let donator = await r.db("Oxyl").table("donators").get(message.channel.guild.ownerID).run();
-		if(!donator) return __("commands.music.volume.donatorOnly", message);
+	run: async ({ args: [volume], guild, member, r, t }) => {
+		const isPremium = await r.table("premiumServers")
+			.get(guild.id)
+			.default(false)
+			.run();
+		if(!isPremium) return t("errors.notPremium");
 
-		let player = bot.players.get(message.channel.guild.id);
-		let current = await player.getCurrent();
-		if(!player || !player.connection) {
-			return __("phrases.noMusic", message);
-		} else if(!player.voiceCheck(message.member)) {
-			return __("phrases.notListening", message);
-		} else if(!current) {
-			return __("commands.music.volume.noMusicPlaying", message);
-		} else {
-			let options = await player.getOptions();
-			options.volume = message.args[0];
-			player.connection.setVolume(options.volume);
+		const player = Player.getPlayer(guild.id);
+		if(!player || !player.currentSong) return t("commands.music.notPlaying");
+		else if(!player.isListening(member)) return t("commands.music.notListening");
 
-			await player.setOptions(options);
-			return __("commands.music.volume.success", message, { volume: options.volume });
-		}
+		player.connection.setVolume(volume);
+		return t("commands.volume", { volume });
 	},
 	guildOnly: true,
-	description: "Changes the volume of the music",
 	args: [{
-		type: "num",
+		type: "int",
 		label: "volume",
 		min: 0,
-		max: 100
+		max: 150
 	}]
 };

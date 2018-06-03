@@ -1,0 +1,10 @@
+{
+	"name": "prefixes",
+	"primary": "id",
+	"model": {
+		"id": "guild id",
+		"value": "the prefix",
+		"overwrite": "true/false",
+		"escaped": "escaped prefix"
+	}
+}

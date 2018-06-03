@@ -1,55 +1,59 @@
-const modLog = require("../../modules/modLog.js");
+const { updateEntry } = require("../../modules/modLog");
+
 module.exports = {
-	process: async message => {
-		let cases = [], casecount = (await modLog.cases(message.channel.guild)).length;
-		if(casecount.length === 0) return __("commands.moderator.reason.noCases", message);
+	async run({	args: [cases, reason], author, guild, t, r, wiggle }) {
+		const caseCount = await r.table("modLog")
+			.getAll(guild.id, { index: "guildID" })
+			.count()
+			.run();
+		if(!caseCount) return t("commands.reason.noCases");
 
-		if(message.args[0].indexOf("-") !== -1) {
-			let match = message.args[0].match(/((?:\d|l(?:atest)?)+)\s?-\s?((?:\d|l(?:atest)?)+)/);
-			if(match[1] === "l" || match[1] === "latest") match[1] = casecount;
-			else match[1] = parseInt(match[1]);
-			if(match[2] === "l" || match[1] === "latest") match[2] = casecount;
-			else match[2] = parseInt(match[2]);
+		const caseList = [];
+		for(let casePart of cases.split(",")) {
+			if(~casePart.indexOf("-")) {
+				let [, start, end] = cases.match(/(\d+)\s?-\s?(\d+|l(?:atest)?)/) || [0, 0, 0];
+				if(!start || !end) return t("commands.reason.invalidRange");
 
-			if(match[2] < match[1]) return __("phrases.invalidRange", message);
-			for(let i = match[1]; i <= match[2]; i++) cases.push(i);
-		} else if(message.args[0].indexOf(",") !== -1) {
-			message.args[0].split(",").forEach(part => cases.push(part));
-		} else {
-			cases.push(message.args[0]);
+				if(~["l", "latest"].indexOf(end)) end = caseCount;
+				start = parseInt(start);
+				end = parseInt(end);
+				if(isNaN(start) || isNaN(end)) return t("commands.reason.NaN");
+				else if(end >= start) return t("commands.reason.invalidRange");
+				caseList.push(...Array.from({ length: end - start + 1 }, (ele, i) => i + start));
+			} else {
+				if(~["l", "latest"].indexOf(casePart)) casePart = caseCount;
+				casePart = parseInt(casePart);
+
+				if(isNaN(casePart)) return t("commands.reason.NaN");
+				else caseList.push(casePart);
+			}
 		}
 
-		cases = cases.map(int => {
-			if(int === "l" || int === "latest") return casecount;
-			else return parseInt(int);
-		});
-		if(cases.some(int => isNaN(int))) return __("commands.moderator.reason.invalidInput", message);
+		let casesUpdated = 0, errorMessage;
+		for(const caseID of caseList) {
+			if(errorMessage) break;
+			const update = await updateEntry(caseID, {
+				guild,
+				responsible: author,
+				reason
+			}, wiggle);
 
-		let errMsg, casesSet = 0;
-		for(let caseNum of cases) {
-			if(errMsg) break;
-			let resp = await modLog.set(message.channel.guild, caseNum, message.args[1], message.author);
-
-			if(resp === "SUCCESS") casesSet++;
-			else if(resp === "NO_DATA") errMsg = __("commands.moderator.reason.invalidCase", message, { caseNum });
-			else if(resp === "NO_CHANNEL") errMsg = __("commands.moderator.reason.noChannel", message);
-			else if(resp === "NO_MSG") errMsg = __("commands.moderator.reason.noMessage", message, { caseNum });
-			else errMsg = resp;
+			if(update === "NO_CASE") errorMessage = t("commands.reason.invalidCase", { case: caseID });
+			else if(update === "NO_CHANNEL") errorMessage = t("commands.reason.noChannel");
+			else if(update === "NO_MESSAGE") errorMessage = t("commands.reason.noMessage", { case: caseID });
+			casesUpdated++;
 		}
 
-		let returnMsg = "";
-		if(cases.length === 1 && !errMsg) {
-			returnMsg = __("commands.moderator.reason.successOneCase", message, { caseNum: cases[0] });
-		} else if(casesSet) {
-			returnMsg = __("commands.moderator.reason.successMultipleCases", message, { casesCount: cases.length });
-		}
-		if(errMsg) returnMsg += errMsg;
-		return returnMsg;
+		let returnMessage;
+		if(cases.length === 1 && !errorMessage) returnMessage = t("commands.reason.updatedOne", { case: caseList[0] });
+		else if(casesUpdated) returnMessage = t("commands.reason.updatedMultiple", { caseCount: casesUpdated });
+
+		if(errorMessage) returnMessage += errorMessage;
+		return returnMessage;
 	},
 	caseSensitive: true,
 	guildOnly: true,
 	perm: "kickMembers",
-	description: "Set a reason of a case (or multiple) on the mod log",
 	args: [{
 		type: "text",
 		label: "cases"

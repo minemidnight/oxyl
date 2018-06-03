@@ -1,20 +1,20 @@
-module.exports = {
-	process: async message => {
-		let member = message.channel.guild.members.get(message.args[0].id);
-		if(!member) return __("phrases.notInGuild", message);
+const { warn } = require("../../modules/warnings");
 
-		if(!member.punishable(message.member)) {
-			return __("commands.moderator.warn.noPerms", message);
-		} else {
-			let warnCount = await bot.utils.warnMember(member, message.author, message.args[1]);
-			return __("commands.moderator.warn.success", message, { user: member.user.username, warnCount });
+module.exports = {
+	async run({
+		args: [member, reason = "Unspecified"], author,
+		member: authorMember, t, wiggle
+	}) {
+		if(member && !member.punishable(authorMember)) {
+			return t("commands.warn.noPermission");
 		}
+
+		const warnCount = await warn(member, reason, author, wiggle);
+		return t("commands.warn.warned", { user: `${member.username}#${member.discriminator}`, warnCount });
 	},
-	caseSensitive: true,
 	guildOnly: true,
 	perm: "banMembers",
-	description: "Give a member a warning",
-	args: [{ type: "user" }, {
+	args: [{ type: "member" }, {
 		type: "text",
 		label: "reason",
 		optional: true

@@ -1,36 +1,87 @@
-const modLog = require("../../modules/modLog.js");
+const modLog = require("../../modules/modLog");
+
+async function getMutedRole(message) {
+	const guild = message.channel.guild;
+	const botMember = guild.members.get(guild.shard.client.user.id);
+	let mutedRole = guild.roles.find(role => role.name.toLowerCase() === "muted");
+
+	if(mutedRole && !mutedRole.addable) {
+		return message.t("commands.mute.cantAdd");
+	} else if(!mutedRole) {
+		const rolePerms = botMember.permission.has("manageRoles");
+		const channelPerms = botMember.permission.has("manageChannels");
+		if(!rolePerms && !channelPerms) {
+			return message.t("commands.mute.bothPerms");
+		} else if(!rolePerms) {
+			return message.t("commands.mute.rolePerms");
+		} else if(!channelPerms) {
+			return message.t("commands.mute.channelPerms");
+		} else {
+			mutedRole = await guild.createRole({
+				name: "Muted",
+				permissions: 0,
+				color: 0xDF4242
+			});
+
+			guild.channels
+				.filter(channel => channel.type === 0)
+				.forEach(channel => channel.editPermission(mutedRole.id, 0, 2048, "role", "Configure Muted Role")
+					.catch(err => { })); // eslint-disable-line handle-callback-err, no-empty-function
+			return mutedRole;
+		}
+	} else {
+		return mutedRole;
+	}
+}
 
 module.exports = {
-	process: async message => {
-		let mutedRole = await bot.utils.getMutedRole(message);
+	async run({
+		args: [member, reason = "Unspecified"], author, client, flags: { time }, guild,
+		message, member: authorMember, t, wiggle
+	}) {
+		const mutedRole = await getMutedRole(message);
 		if(typeof mutedRole === "string") return mutedRole;
 
-		if(message.args[1]) {
-			let guild = message.channel.guild;
-			let channel = await modLog.channel(guild);
-			let trackedList = await r.table("settings").get(["modLog.track", guild.id]).run();
-			if(channel && trackedList && ~trackedList.value.indexOf(mutedRole.id)) {
-				modLog.presetReasons[guild.id] = { mod: message.author, reason: message.args[1] };
-			}
+		if(!member.punishable(authorMember)) return t("commands.mute.cantPunish");
+		if(~member.roles.indexOf(mutedRole.id)) {
+			await modLog.removeRole({
+				punished: member.user,
+				guild,
+				responsible: author,
+				reason,
+				role: mutedRole
+			}, wiggle);
+
+			await member.removeRole(mutedRole.id, message.args[1]);
+			return t("commands.mute.unmuted", { user: `${member.username}#${member.discriminator}` });
 		}
 
-		let member = message.channel.guild.members.get(message.args[0].id);
-		if(!member) return __("phrases.notInGuild", message);
-		let isMuted = ~member.roles.indexOf(mutedRole.id);
-		if(isMuted) {
-			await member.removeRole(mutedRole.id, message.args[1]);
-			return __("commands.moderator.mute.unmuted", message, { user: member.user.username });
+		await modLog.addRole({
+			punished: member.user,
+			guild,
+			responsible: author,
+			reason,
+			time,
+			role: mutedRole
+		}, wiggle);
+
+		if(time) {
+			return t("commands.mute.tempmute", { user: `${member.username}#${member.discriminator}` });
 		} else {
 			await member.addRole(mutedRole.id, message.args[1]);
-			return __("commands.moderator.mute.muted", message, { user: member.user.username });
+			return t("commands.mute.muted", { user: `${member.username}#${member.discriminator}` });
 		}
 	},
 	guildOnly: true,
 	perm: "manageRoles",
-	description: "Toggle a person's mute state in the guild (for text chat)",
-	args: [{ type: "user" }, {
+	args: [{ type: "member" }, {
 		type: "text",
 		label: "reason",
 		optional: true
+	}],
+	flags: [{
+		name: "time",
+		short: "t",
+		type: "timespan"
 	}]
 };

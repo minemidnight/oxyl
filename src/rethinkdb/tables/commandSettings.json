@@ -1,0 +1,13 @@
+{
+	"name": "commandSettings",
+	"primary": "id",
+	"indexes": ["guildID"],
+	"model": {
+		"id": ["guildID", "command node (default.bird, games.paladins.player, etc)"],
+		"guildID": "guild id",
+		"enabled": "true/false",
+		"roleType": "whitelist/blacklist",
+		"roles": ["role id", "role id"],
+		"blacklistedChannels": ["channel id", "channel id"]
+	}
+}

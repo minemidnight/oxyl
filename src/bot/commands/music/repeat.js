@@ -1,19 +1,14 @@
-module.exports = {
-	process: async message => {
-		let player = bot.players.get(message.channel.guild.id);
-		if(!player || !player.connection) {
-			return __("phrases.noMusic", message);
-		} else if(!player.voiceCheck(message.member)) {
-			return __("phrases.notListening", message);
-		} else {
-			let options = await player.getOptions();
-			options.repeat = !options.repeat;
-			await player.setOptions(options);
+const Player = require("../../modules/Player");
 
-			return __("commands.music.repeat.success", message,
-				{ value: __(`words.${options.repeat ? "on" : "off"}`, message) });
-		}
+module.exports = {
+	run: async ({ guild, member, t }) => {
+		const player = Player.getPlayer(guild.id);
+
+		if(!player || !player.currentSong) return t("commands.music.notPlaying");
+		else if(!player.isListening(member)) return t("commands.music.notListening");
+
+		player.repeat = !player.repeat;
+		return t(`commands.repeat.${player.repeat ? "en" : "dis"}abled`);
 	},
-	guildOnly: true,
-	description: "Toggle repeating of the queue"
+	guildOnly: true
 };

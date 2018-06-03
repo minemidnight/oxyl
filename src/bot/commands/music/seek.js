@@ -1,24 +1,24 @@
-module.exports = {
-	process: async message => {
-		let player = bot.players.get(message.channel.guild.id);
-		if(!player || !player.connection) {
-			return __("phrases.noMusic", message);
-		} else if(!player.voiceCheck(message.member)) {
-			return __("phrases.notListening", message);
-		} else {
-			const current = await player.getCurrent();
-			if(message.args[0] > current.length / 1000) {
-				return __("commands.music.seek.error", message, { max: current.length / 1000 });
-			}
+const Player = require("../../modules/Player");
 
-			await player.connection.seek(message.args[0] * 1000);
-			return __("commands.music.seek.success", message, { time: message.args[0] });
+module.exports = {
+	run: async ({ args: [seconds], guild, member, t }) => {
+		const player = Player.getPlayer(guild.id);
+
+		if(!player || !player.currentSong) return t("commands.music.notPlaying");
+		else if(!player.isListening(member)) return t("commands.music.notListening");
+
+		if(player.currentSong.length / 1000 < seconds) {
+			return t("commands.seek.cantSeek", { max: Math.floor(player.currentSong.length / 1000) });
+		} else if(player.currentSong.isStream) {
+			return t("commands.seek.isStream");
 		}
+
+		player.connection.seek(seconds * 1000);
+		return t("commands.seek", { seconds });
 	},
 	guildOnly: true,
-	description: "Seek to a position in current playing song",
 	args: [{
-		type: "num",
+		type: "int",
 		label: "seconds",
 		min: 0
 	}]

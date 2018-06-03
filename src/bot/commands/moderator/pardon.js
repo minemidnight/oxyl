@@ -1,35 +1,23 @@
-const modLog = require("../../modules/modLog.js");
+const { pardon } = require("../../modules/warnings");
+
 module.exports = {
-	process: async message => {
-		let member = message.channel.guild.members.get(message.args[0].id);
-		if(!member) return __("phrases.notInGuild", message);
+	async run({ args: [warningID, reason = "Unspecified"], author, guild, t, wiggle }) {
+		const warning = await wiggle.locals.r.table("warnings").get(warningID).run();
+		if(!warning) return t("commands.pardon.invalidWarning");
+		else if(warning.guildAndUserID[0] !== guild.id) return t("commands.pardon.wrongGuild");
 
-		if(!member.punishable(message.member)) {
-			return __("commands.moderator.pardon.noPerms", message);
-		} else {
-			let warnings = await r.table("warnings")
-				.getAll(member.id, { index: "userID" })
-				.filter({ guildID: message.channel.guild.id }).run();
-			let warnCount = warnings.length - 1;
-			if(warnCount < 0) return __("commands.moderator.pardon.noWarnings", message);
+		const member = guild.members.get(warning.guildAndUserID[1]);
+		if(!member) return t("errors.userNotInGuild");
 
-			let channel = await modLog.channel(message.channel.guild);
-			if(channel) {
-				if(message.args[1]) {
-					modLog.presetReasons[message.channel.guild.id] = { reason: message.args[1], mod: message.author };
-				}
-				await modLog.create(message.channel.guild, "pardon", member.user, { warnCount });
-			}
-
-			await r.table("warnings").get(warnings[warnings.length - 1].uuid).delete().run();
-			return __("commands.moderator.pardon.success", message, { user: member.user.username, warnCount });
-		}
+		await pardon(member, reason, warningID, author, wiggle);
+		return t("commands.pardon.pardoned", { user: `${member.username}#${member.discriminator}`, warningID });
 	},
-	caseSensitive: true,
 	guildOnly: true,
 	perm: "banMembers",
-	description: "Remove a warning from a member",
-	args: [{ type: "user" }, {
+	args: [{
+		type: "text",
+		label: "warning id"
+	}, {
 		type: "text",
 		label: "reason",
 		optional: true

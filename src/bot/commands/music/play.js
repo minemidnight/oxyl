@@ -1,84 +1,92 @@
-const Player = require("../../structures/player.js");
-const resolver = require("../../modules/audio/main.js");
-
-const cheerio = require("cheerio");
-const superagent = require("superagent");
-const fs = require("fs");
-let dfm = fs.readdirSync(`${__dirname}/../../../../discordfm`).reduce((all, playlist) => {
-	let listname = playlist.substring(0, playlist.lastIndexOf(".")).replace(/-/g, " ");
-	all[listname] = `${__dirname}/../../../../discordfm/${playlist}`;
-	require(all[listname]);
-
-	return all;
-}, {});
+const Player = require("../../modules/Player");
 
 module.exports = {
-	process: async message => {
-		let voiceChannel, player = bot.players.get(message.channel.guild.id);
-		if(message.member && message.member.voiceState && message.member.voiceState.channelID) {
-			voiceChannel = message.channel.guild.channels.get(message.member.voiceState.channelID);
-		} else {
-			voiceChannel = undefined;
+	run: async ({
+		args: [query], channel, client, flags: { soundcloud, pick }, guild,
+		member, reply, t, wiggle, wiggle: { locals: { r } }
+	}) => {
+		let voiceChannel, player = Player.getPlayer(guild.id);
+		if(member.voiceState && member.voiceState.channelID) voiceChannel = guild.channels.get(member.voiceState.channelID);
+
+		if(!voiceChannel) {
+			return t("commands.play.notInChannel");
+		} else if(!voiceChannel.permissionsOf(client.user.id).has("voiceConnect")) {
+			return t("commands.play.cantJoin");
+		} else if(!voiceChannel.permissionsOf(client.user.id).has("voiceSpeak")) {
+			return t("commands.play.cantSpeak");
+		} else if(!player) {
+			player = new Player(guild, wiggle);
+			player.textChannelID = channel.id;
 		}
 
-		if(!voiceChannel) return __("commands.music.play.notInVoice", message);
-		else if(!player) player = new Player(message.channel.guild, { channelID: message.channel.id });
+		if(player && player.maxSongLength === null) {
+			player.maxSongLength = await r.table("musicSettings")
+				.get(guild.id)
+				.default({ songLength: 0 })
+				.getField("songLength")
+				.mul(60)
+				.run() || Infinity;
+		}
+		if(soundcloud) query = `scsearch:${query}`;
 
-		if(player && player.connection && !player.voiceCheck(message.member)) {
-			return __("phrases.notListening", message);
-		} else if(voiceChannel && !voiceChannel.permissionsOf(bot.user.id).has("voiceConnect")) {
-			return __("phrases.cantJoin", message);
-		} else if(voiceChannel && !voiceChannel.permissionsOf(bot.user.id).has("voiceSpeak")) {
-			return __("phrases.cantSpeak", message);
-		} else if(message.args[0].startsWith("dfm:")) {
-			message.args[0] = message.args[0].substring(4).trim();
-			let key = Object.keys(dfm).find(loopKey => loopKey.toLowerCase() === message.args[0]);
-			if(message.args[0] === "list") {
-				return __("commands.music.play.dfmPlaylists", message, { genres: Object.keys(dfm).join(", ") });
-			} else if(key) {
-				if(!player.connection) await player.connect(voiceChannel.id);
-				let res = await player.addQueue(require(dfm[key]));
+		let item;
+		if(pick) {
+			item = await player.queueItem(query, async songs => {
+				reply(t("commands.play.select", {
+					songs: songs
+						.map(({ author, title }, i) => `${i + 1}). ${title} \`${author}\``)
+						.join("\n")
+				}));
 
-				if(typeof res === "string") return res;
-				return __("commands.music.play.addedDFM", message, { genre: key });
-			} else {
-				return __("commands.music.play.invalidDFM", message);
-			}
-		} else if(message.args[0].startsWith("sq:")) {
-			message.args[0] = message.args[0].substring(3).trim();
-			let donator = await r.db("Oxyl").table("donators").get(message.author.id).run();
-			if(!donator) return __("commands.music.play.donatorOnly", message);
+				let [choice] = await channel.awaitMessages(msg => msg.author.id === member.id, {
+					time: 45000,
+					maxMatches: 1
+				});
 
-			let queueNumber = parseInt(message.args[0]);
-			if(!queueNumber || queueNumber < 1 || queueNumber > 3) {
-				return __("commands.music.play.invalidSavedQueue", message);
-			}
+				if(!choice) return t("commands.play.select.timedOut");
+				else choice = choice.content.toLowerCase();
 
-			let savedQueue = await r.table("savedQueues").get([queueNumber, message.author.id]).run();
-			if(!savedQueue) return __("commands.music.play.noSavedQueue", message, { save: queueNumber });
-
-			if(!player.connection) await player.connect(voiceChannel.id);
-			await player.addQueue(savedQueue.queue);
-			return __("commands.music.play.loadedSavedQueue", message, {
-				save: queueNumber,
-				itemCount: savedQueue.queue.length
+				if(~["c", "cancel"].indexOf(choice)) {
+					return t("commands.play.select.cancelled");
+				} else if(isNaN(choice) || parseInt(choice) < 1 || parseInt(choice) > songs.length) {
+					return t("commands.play.select.invalidInput");
+				} else {
+					return songs[parseInt(choice) - 1];
+				}
 			});
 		} else {
-			let result = await resolver(message.args[0]);
-			if(result === "NO_VIDEO") return __("commands.music.play.noVideo", message);
-
-			if(!player.connection) await player.connect(voiceChannel.id);
-			let res2 = await player.addQueue(result);
-			if(typeof res2 === "string") return res2;
-			else if(result.title) return __("commands.music.play.addedItem", message, { title: result.title });
-			else return __("commands.music.play.addedPlaylist", message, { items: result.length });
+			item = await player.queueItem(query);
 		}
+
+		if(typeof item === "string") {
+			if(item === "NOT_RESOLVED") return t("commands.play.notResolved");
+			else if(item === "QUEUE_LIMIT") return t("commands.play.queueLimit");
+			else if(item === "SONG_LENGTH") return t("commands.play.songLength", { minutes: player.maxSongLength / 60 });
+			else return item;
+		}
+
+		if(player && !player.connection) await player.connect(voiceChannel);
+		if(!player.currentSong) player.play();
+
+		if(Array.isArray(item)) return t("commands.play.playlist", { count: item.length });
+		else return t("commands.play.song", { title: item.title });
 	},
-	caseSensitive: true,
 	guildOnly: true,
-	description: "Add items to the music queue",
+	caseSensitive: true,
 	args: [{
 		type: "text",
-		label: "link|search query|dfm:<playlist>/list"
+		label: "search query|link"
+	}],
+	flags: [{
+		name: "soundcloud",
+		short: "s",
+		type: "boolean",
+		default: false
+	}, {
+		name: "pick",
+		short: "p",
+		aliases: ["search", "select"],
+		type: "boolean",
+		default: false
 	}]
 };

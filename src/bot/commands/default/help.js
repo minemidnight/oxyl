@@ -1,65 +1,89 @@
+const fs = require("fs");
+const path = require("path");
+
 module.exports = {
-	process: async message => {
-		if(message.args[0]) {
-			let command = Object.keys(bot.commands)
-				.map(key => bot.commands[key])
-				.find(cmd => message.args[0] === cmd.name || ~cmd.aliases.indexOf(message.args[0]));
-			if(!command) return __("commands.default.help.commandNotFound", message);
+	async run({ args: [command], author, flags: { dm }, guild, message: { locale }, t, wiggle }) {
+		if(command) {
+			categoryLoop:
+			for(const { commands, subcommands } of wiggle.categories.values()) {
+				if(commands.has(command) || commands.find(cmd => ~cmd.aliases.indexOf(command))) {
+					command = commands.get(command) || commands.find(cmd => ~cmd.aliases.indexOf(command));
+					break;
+				} else {
+					for(const subcommand of subcommands.values()) {
+						if(subcommand.name === command || ~subcommand.aliases.indexOf(command)) {
+							command = subcommand;
+							break categoryLoop;
+						} else if(subcommand.commands.has(command) ||
+							subcommand.commands.find(cmd => ~cmd.aliases.indexOf(command))) {
+							command = subcommand.commands.get(command) ||
+								subcommand.commands.find(cmd => ~cmd.aliases.indexOf(command));
+							break categoryLoop;
+						}
+					}
+				}
+			}
 
-			let helpMsg = `__**Command Name**__: ${command.name}\n`;
-			helpMsg += `Category: ${command.type}\n`;
-			helpMsg += `Usage: ${command.usage}\n`;
-			helpMsg += `Aliases: ${command.aliases.length ? command.aliases.join(", ") : "None"}\n`;
-			helpMsg += `Description: ${command.description || "None provided"}\n`;
-			if(command.perm) helpMsg += `Required Permission: ${command.perm}\n`;
-			else if(command.guildOnly) helpMsg += `This command will only work in guilds\n`;
-			helpMsg += `Uses: ${command.uses}`;
+			if(typeof command !== "object") return t("commands.help.noCommandFound");
+			try {
+				return await new Promise((resolve, reject) => {
+					const filePath = path.resolve(__dirname, "..", "..", "..", "..", "locales",
+						locale, "help", `${command.name}.md`);
 
-			return __("commands.default.help.commandInfo", message, {
-				command: command.name,
-				category: command.type,
-				usage: command.usage,
-				aliases: command.aliases.length ? command.aliases.join(", ") : __("words.none", message, {}, true),
-				description: command.description || __("phrases.noneProvided", message),
-				perm: command.perm || __("phrases.noneRequired", message)
-			});
+					fs.readFile(filePath, "utf8", (err, data) => {
+						if(err) {
+							reject(err);
+						} else {
+							resolve(data
+								.replace(/\r\n\r\n/g, "\r\n")
+								.replace("{{command}}", command.name)
+								.replace("{{aliases}}", command.aliases.length ? command.aliases.join(", ") : t("words.none"))
+								.replace("{{usage}}", command.usage ? `${command.name} ${command.usage}` : "")
+								.replace(/^\* +/gm, "\u2022")
+							);
+						}
+					});
+				});
+			} catch(err) {
+				return t("commands.help.noDescription");
+			}
 		} else {
-			let disabled;
-			if(message.channel.guild) {
-				disabled = await r.table("editedCommands")
-					.getAll(message.channel.guild.id, { index: "guildID" })
-					.filter({ enabled: false }).getField("command").run();
+			const disabledCommands = await wiggle.locals.r.table("commandSettings")
+				.getAll(guild.id, { index: "guildID" })
+				.pluck("enabled", "id")
+				.filter({ enabled: false })
+				.map(wiggle.locals.r.row("id")(1).split(".").nth(-1))
+				.run();
+
+			const helpMessage = [...wiggle.categories.values()].reduce((msg, { name, commands, subcommands }) => {
+				if(name === "creator") return msg;
+				msg += `__**${name.charAt(0).toUpperCase() + name.substring(1)}** `;
+				msg += `(${commands.size + subcommands.size} ${t("words.commands")})__\n`;
+				msg += commands.filter(cmd => !~disabledCommands.indexOf(cmd.name))
+					.concat(subcommands.filter(subcommand => !~disabledCommands.indexOf(subcommand.name)))
+					.map(({ name: commandName }) => commandName).join(", ");
+				msg += "\n\n";
+
+				return msg;
+			}, "").trim();
+
+			if(dm) {
+				await author.createMessage(t("commands.help", { message: helpMessage }));
+				return t("commands.help.sentDM");
 			} else {
-				disabled = [];
+				return t("commands.help", { message: helpMessage });
 			}
-
-			let commandMsg = "", commandTypes = {};
-			for(let cmd in bot.commands) {
-				cmd = bot.commands[cmd];
-				if(cmd.type === "creator") continue;
-				else if(~disabled.indexOf(cmd.name)) continue;
-				else if(!commandTypes[cmd.type]) commandTypes[cmd.type] = [];
-				commandTypes[cmd.type].push(cmd.name);
-				commandTypes[cmd.type].concat(cmd.aliases);
-			}
-
-			for(let category in commandTypes) {
-				commandTypes[category].sort();
-				commandMsg += `\n__${category.charAt(0).toUpperCase() + category.substring(1)}__\n`;
-				commandMsg += commandTypes[category].join(", ");
-				commandMsg += `\n`;
-			}
-
-			return __("commands.default.help.commandList", message, {
-				count: Object.keys(bot.commands).length,
-				commands: commandMsg
-			});
 		}
 	},
-	description: "List commands, or get info on one",
 	args: [{
 		type: "text",
 		label: "command",
 		optional: true
+	}],
+	flags: [{
+		name: "dm",
+		short: "d",
+		type: "boolean",
+		default: false
 	}]
 };

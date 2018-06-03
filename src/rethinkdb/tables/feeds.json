@@ -1,0 +1,10 @@
+{
+	"name": "feeds",
+	"primary": "id",
+	"indexes": ["guildID"],
+	"model": {
+		"guildID": "guild id",
+		"id": ["reddit/twitch", "identifier", "channelToPostTo"],
+		"type": "new/top (reddit only)"
+	}
+}

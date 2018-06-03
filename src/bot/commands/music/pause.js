@@ -1,23 +1,15 @@
-module.exports = {
-	process: async message => {
-		let player = bot.players.get(message.channel.guild.id);
-		if(!player || !player.connection) {
-			return __("phrases.noMusic", message);
-		} else if(!player.voiceCheck(message.member)) {
-			return __("phrases.notListening", message);
-		} else {
-			let options = await player.getOptions();
-			if(options.paused) {
-				return __("commands.music.pause.alreadyPaused", message);
-			} else {
-				options.paused = true;
-				await player.setOptions(options);
-			}
+const Player = require("../../modules/Player");
 
-			player.connection.setPause(options.paused);
-			return __("commands.music.pause.success", message);
-		}
+module.exports = {
+	run: async ({ guild, member, t }) => {
+		const player = Player.getPlayer(guild.id);
+
+		if(!player || !player.currentSong) return t("commands.music.notPlaying");
+		else if(!player.isListening(member)) return t("commands.music.notListening");
+		else if(player.connection.paused) return t("commands.pause.alreadyPaused");
+
+		player.connection.setPause(true);
+		return t("commands.pause");
 	},
-	guildOnly: true,
-	description: "Pause music in your channel"
+	guildOnly: true
 };
