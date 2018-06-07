@@ -86,7 +86,7 @@ router.put("/:guild(\\d{17,21})/thresholds", expectedBody({
 	});
 });
 
-router.delete("/:guild(\\d{17,21})", expectedBody({ warnCoun: Number }), async (req, res) => {
+router.delete("/:guild(\\d{17,21})", expectedBody({ warnCount: Number }), async (req, res) => {
 	const { r } = req.app.locals;
 
 	const { deleted } = await r.table("warningThresholds")

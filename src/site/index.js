@@ -18,7 +18,11 @@ app.set("env", process.env.NODE_ENV);
 app.set("x-powered-by", false);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(path.resolve(__dirname, "public"), { maxAge: 31536000000 }));
+app.use(express.static(
+	path.resolve(__dirname, "public"),
+	{ maxAge: process.env.NODE_ENV === "production" ? 31536000000 : 0 }
+));
+
 require("http").createServer(app).listen(config.dashboardPort, () => process.output({ op: "ready" }));
 
 app.use("/api", api);

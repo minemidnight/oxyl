@@ -1,11 +1,15 @@
 {
+	"parser": "babel-eslint",
 	"extends": "eslint:recommended",
+	"plugins": ["html", "import"],
 	"env": {
 		"node": true,
-		"es6": true
+		"es6": true,
+		"browser": true
 	},
 	"parserOptions": {
-		"ecmaVersion": 2017
+		"ecmaVersion": 2017,
+		"sourceType": "module"
 	},
 	"rules": {
 		"no-extra-parens": ["warn", "all", {
@@ -65,6 +69,11 @@
 		"no-mixed-requires": "error",
 		"no-new-require": "error",
 		"no-path-concat": "error",
+		"sort-imports": ["error", {
+			"ignoreCase": true,
+			"ignoreMemberSort": false,
+			"memberSyntaxSortOrder": ["none", "all", "multiple", "single"]
+		}],
 
 		"array-bracket-spacing": "error",
 		"block-spacing": "error",
@@ -121,11 +130,6 @@
 		"arrow-body-style": "error",
 		"arrow-spacing": "error",
 		"no-duplicate-imports": "error",
-		"sort-imports": ["error", {
-			"ignoreCase": true,
-			"ignoreMemberSort": false,
-			"memberSyntaxSortOrder": ["none", "all", "multiple", "single"]
-		}],
 		"no-useless-computed-key": "error",
 		"no-useless-constructor": "error",
 		"prefer-const": "error",
