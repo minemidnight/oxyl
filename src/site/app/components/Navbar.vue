@@ -1,6 +1,6 @@
 <template>
 	<nav class="navbar navbar-expand-md navbar-dark color-630">
-		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-nav" aria-controls="main-nav" aria-expanded="false">
+		<button class="navbar-toggler" type="button" @click="toggleNavbar()">
 			<span class="navbar-toggler-icon"></span>
 		</button>
 		<router-link class="navbar-brand p-0" :to="{ name: 'home' }">
@@ -22,11 +22,11 @@
 					</router-link>
 				</li>
 				<li class="nav-item dropdown d-lg-none active" :class="{ 'd-none': !$route.name.startsWith('dashboard') }">
-					<a class="nav-link dropdown-toggle" id="dashboardDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<a class="nav-link dropdown-toggle" role="button" @click="toggleDropdown()">
 						<i class="fa fa-cogs" aria-hidden="true"></i>
 						Configuration
 					</a>
-					<div class="dropdown-menu color-700" aria-labelledby="dashboardDropdown">
+					<div class="dropdown-menu color-700" id="dashboardDropdown">
 						<router-link class="dropdown-item color-hover-800 color-text-hover-100 transition" :to="{ name: 'accounts' }">
 							Switch Account
 						</router-link>
@@ -78,6 +78,22 @@
 		background: rgba(0, 0, 0, .3);
 	}
 }
+
+#main-nav {
+	overflow: hidden;
+	max-height: 0px;
+	transition: max-height 0.4s ease-in-out;
+	display: block;
+	padding: 0px;
+	border: none;
+	margin: 0px;
+
+	&.show {
+		max-height: 800px;
+		border: unset;
+		margin: unset;
+	}
+}
 </style>
 
 <script>
@@ -85,7 +101,33 @@ import routes from "../router/routes";
 
 export default {
 	data() {
-		return { pages: routes.dashboard.children };
+		return {
+			pages: routes.dashboard.children,
+			shown: {
+				navbar: false,
+				dropdown: false
+			}
+		};
+	},
+	methods: {
+		toggleNavbar() {
+			if(this.shown.navbar) {
+				this.shown.navbar = false;
+				this.$el.querySelector("#main-nav").classList.remove("show");
+			} else {
+				this.shown.navbar = true;
+				this.$el.querySelector("#main-nav").classList.add("show");
+			}
+		},
+		toggleDropdown() {
+			if(this.shown.dropdown) {
+				this.shown.dropdown = false;
+				this.$el.querySelector("#dashboardDropdown").classList.remove("show");
+			} else {
+				this.shown.dropdown = true;
+				this.$el.querySelector("#dashboardDropdown").classList.add("show");
+			}
+		}
 	}
 };
 </script>
