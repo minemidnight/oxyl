@@ -70,6 +70,8 @@
 </template>
 
 <style lang="scss" scoped>
+@import "~bootstrap/scss/bootstrap";
+
 .dropdown-item {
 	color: rgba(255, 255, 255, .5);
 
@@ -79,19 +81,21 @@
 	}
 }
 
-#main-nav {
-	overflow: hidden;
-	max-height: 0px;
-	transition: max-height 0.4s ease-in-out;
-	display: block;
-	padding: 0px;
-	border: none;
-	margin: 0px;
+@include media-breakpoint-down(md) {
+	#main-nav {
+		overflow: hidden;
+		max-height: 0px;
+		transition: max-height 0.4s ease-in-out;
+		display: block;
+		padding: 0px;
+		border: none;
+		margin: 0px;
 
-	&.show {
-		max-height: 800px;
-		border: unset;
-		margin: unset;
+		&.show {
+			max-height: 800px;
+			border: unset;
+			margin: unset;
+		}
 	}
 }
 </style>

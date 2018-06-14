@@ -46,7 +46,7 @@
 						</div>
 						<div class="col-sm-12 col-md-6"></div>
 						<div class="col-sm-12 col-md-6">
-							<role-selector :roles="roles" v-model="updateModel.tracked"></role-selector>
+							<roleselector :roles="roles" v-model="updateModel.tracked" />
 						</div>
 					</div>
 				</div>

@@ -63,7 +63,7 @@
 								Blacklisted Roles
 								<small class="form-text">The following roles are forbidden to use the command</small>
 							</label>
-							<role-selector :roles="roles" v-model="updateModel.roles"></role-selector>
+							<roleselector :roles="roles" v-model="updateModel.roles" />
 							<button type="button" class="btn toggle-button" @click="updateModel.roleType = updateModel.roleType === 'whitelist' ? 'blacklist' : 'whitelist'">
 								Toggle to {{ updateModel.roleType === "whitelist" ? "blacklist" : "whitelist" }}
 							</button>
@@ -75,7 +75,7 @@
 								Blacklisted Channels
 								<small class="form-text">The following channels cannot have the command ran inside of it</small>
 							</label>
-							<channel-selector :channels="channels" v-model="updateModel.blacklistedChannels"></channel-selector>
+							<channelselector :channels="channels" v-model="updateModel.blacklistedChannels" />
 						</div>
 					</div>
 					<div class="container">
