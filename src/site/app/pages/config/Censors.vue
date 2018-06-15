@@ -195,7 +195,11 @@ export default {
 				return;
 			}
 
-			$("#add-censor button[type=submit]").addClass("disabled");
+			this.$el.querySelectorAll("#add-censor button[type=submit]").forEach(button => {
+				button.classList.add("disabled");
+				button.disabled = true;
+			});
+
 			const { error, body: censor } = await apiCall.put(`censors/${this.$route.params.guild}`).send({
 				regex: match[1] || match[0],
 				flags: match[2] ? match[2].split("") : [],
@@ -211,16 +215,25 @@ export default {
 			this.censors.push(censor);
 
 			this.insertModel = Object.assign({}, defaultInsert);
-			$("#add-censor").trigger("reset");
+			this.$el.querySelector("#add-censor").reset()
 		},
 		async remove() {
-			$("#edit-censor button").addClass("disabled");
+			this.$el.querySelectorAll("#edit-censor button").forEach(button => {
+				button.classList.add("disabled");
+				button.disabled = true;
+			});
+
 			const { error } = await apiCall.delete(`censors/${this.$route.params.guild}`)
 				.send({ uuid: this.editModel.uuid });
 
 			if(error) return;
 			this.censors.splice(this.censors.findIndex(censor => censor.uuid === this.editModel.uuid), 1);
-			$("#edit-censor button").removeClass("disabled");
+
+			this.$el.querySelectorAll("#add-censor button[type=submit]").forEach(button => {
+				button.classList.remove("disabled");
+				button.disabled = false;
+			});
+
 			$("#edit-censor").modal("hide");
 		},
 		async edit() {
@@ -234,7 +247,11 @@ export default {
 				return;
 			}
 
-			$("#edit-censor button").addClass("disabled");
+			this.$el.querySelectorAll("#edit-censor button").forEach(button => {
+				button.classList.add("disabled");
+				button.disabled = true;
+			});
+
 			const { error, body: censor } = await apiCall.patch(`censors/${this.$route.params.guild}`).send({
 				previous: { uuid: this.editModel.uuid },
 				edited: {
@@ -249,7 +266,11 @@ export default {
 			if(error) return;
 			Object.assign(this.censors[this.censors.findIndex(cen => cen.uuid === this.editModel.uuid)], censor);
 
-			$("#edit-censor button").removeClass("disabled");
+			this.$el.querySelectorAll("#add-censor button[type=submit]").forEach(button => {
+				button.classList.remove("disabled");
+				button.disabled = false;
+			});
+
 			$("#edit-censor").modal("hide");
 		}
 	}
