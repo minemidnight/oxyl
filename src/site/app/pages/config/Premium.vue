@@ -104,7 +104,11 @@ export default {
 			else popup.focus();
 		},
 		async setPremium(enabled) {
-			$("button").attr("diabled", true);
+			this.$el.querySelectorAll("button").forEach(button => {
+				button.classList.add("disabled");
+				button.disabled = true;
+			});
+
 			const { error } = await apiCall
 				.put(`premium/${this.$route.params.guild}`)
 				.send({ enabled });
@@ -120,7 +124,10 @@ export default {
 				this.activator = null;
 			}
 
-			$("button").attr("diabled", false);
+			this.$el.querySelectorAll("button").forEach(button => {
+				button.classList.remove("disabled");
+				button.disabled = false;
+			});
 		}
 	}
 };

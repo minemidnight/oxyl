@@ -85,12 +85,20 @@ export default {
 		async add() {
 			this.errors.add = Object.assign({}, defaultAdd);
 
-			$("#add-channel button[type=submit]").addClass("disabled");
+			this.$el.querySelectorAll("#add-channel button[type=submit]").forEach(button => {
+				button.classList.add("disabled");
+				button.disabled = true;
+			});
+
 			const { error, body } = await apiCall
 				.put(`twitch/${this.$route.params.guild}`)
 				.send(this.insertModel);
 
-			$("#add-channel button[type=submit]").removeClass("disabled");
+			this.$el.querySelectorAll("#add-censor button[type=submit]").forEach(button => {
+				button.classList.remove("disabled");
+				button.disabled = false;
+			});
+
 			if(error && body.redirect) {
 				return;
 			} else if(error) {
@@ -99,11 +107,12 @@ export default {
 			} else {
 				this.twitchFeeds.push(body);
 				this.insertModel = {};
-				$("#add-channel").trigger("reset");
+				this.$el.querySelector("#add-channel").reset();
 			}
 		},
 		async remove(index) {
-			$(`[data-index=${index}] button`).addClass("disabled");
+			this.$el.querySelector(`[data-index=${index}] button`).classList.add("disabled");
+			this.$el.querySelector(`[data-index=${index}] button`).disabled = true;
 			const { error } = await apiCall.delete(`twitch/${this.$route.params.guild}`).send({
 				twitchChannel: this.twitchFeeds[index].twitchChannel,
 				discordChannel: this.twitchFeeds[index].discordChannel

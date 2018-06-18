@@ -172,14 +172,21 @@ export default {
 			return node;
 		},
 		async update() {
-			$("form button[type=submit]").addClass("disabled");
+			this.$el.querySelectorAll("form button[type=submit]").forEach(button => {
+				button.classList.add("disabled");
+				button.disabled = true;
+			});
 
 			const { error } = await apiCall
 				.put(`commands/${this.$route.params.guild}/${encodeURIComponent(this.getNode())}`)
 				.send(this.updateModel);
 
 			if(error) return;
-			$("form button[type=submit]").removeClass("disabled");
+
+			this.$el.querySelectorAll("form button[type=submit]").forEach(button => {
+				button.classList.remove("disabled");
+				button.disabled = false;
+			});
 		}
 	},
 	watch: {

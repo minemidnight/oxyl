@@ -172,7 +172,11 @@ export default {
 			return chunkified;
 		},
 		async add() {
-			$("#add-threshold button[type=submit]").addClass("disabled");
+			this.$el.querySelectorAll("#add-threshold button[type=submit]").forEach(button => {
+				button.classList.add("disabled");
+				button.disabled = true;
+			});
+
 			const { error, body: threshold } = await apiCall.put(`modlog/${this.$route.params.guild}/thresholds`).send({
 				warnCount: this.thresholdInsertModel.warnCount,
 				action: this.thresholdInsertModel.action,
@@ -186,11 +190,12 @@ export default {
 			this.data.thresholds.push(threshold);
 			this.thresholdInsertModel = {};
 
-			$("#add-threshold").trigger("reset");
-			$("#add-threshold button[type=submit]").removeClass("disabled");
+			this.$el.querySelector("#add-threshold").reset();
 		},
 		async remove(index) {
-			$(`[data-index=${index}] button`).addClass("disabled");
+			this.$el.querySelector("[data-index=${index}] button").classList.add("disabled");
+			this.$el.querySelector("[data-index=${index}] button").disabled = true;
+
 			const { error } = await apiCall.delete(`modlog/${this.$route.params.guild}/thresholds`)
 				.send({ warnCount: this.data.thresholds[index].warnCount });
 

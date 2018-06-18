@@ -65,7 +65,7 @@
 
 			<h4 v-if="censors.length" class="mt-4">Current Censors</h4>
 			<div class="card-group" v-for="(censorChunk, i) in chunkify(censors, [4, 3, 2].find(size => !(censors.length % size)) || 4)" :key="i">
-				<div class="card color-600 color-hover-630" v-for="(censor, index) in censorChunk" :key="index" data-toggle="modal" data-target="#edit-censor" @click="editModel = Object.assign({}, censor); editModel.regex = `/${censor.regex}/${censor.flags.join('')}`; delete editModel.flags">
+				<div class="card color-600 color-hover-630" v-for="(censor, index) in censorChunk" :key="index" @click="editCensor(censor)">
 					<div class="card-body">
 						<p class="card-text">Regex: /{{ censor.regex }}/{{ censor.flags.join("") }}</p>
 						<p class="card-text">
@@ -78,65 +78,60 @@
 				</div>
 			</div>
 
-			<div class="modal fade" tabindex="-1" role="dialog" id="edit-censor" aria-hidden="true">
-				<div class="modal-dialog" role="document">
-					<form class="modal-content color-700" @submit.prevent="edit()">
-						<div class="modal-header border-dark">
-							<h5 class="modal-title">Edit Censor</h5>
-							<button type="button" class="close text-danger" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
+			<modal ref="editCensor">
+				<template slot="header">Edit Censor</template>
+
+				<div class="modal-body">
+					<form @submit.prevent="edit()">
+						<div class="form-group">
+							<label for="regex-edit">
+								Censor Regex
+								<small class="form-text">The regex for the censor to use</small>
+							</label>
+							<input id="regex-edit" class="form-control" placeholder="/test/i" v-model="editModel.regex" required />
+							<small class="form-text text-danger" v-if="errors.edit.invalidRegex">Invalid regex: {{ errors.add.invalidRegex }}. Please contact support if you need help with regular expressions.</small>
 						</div>
-						<div class="modal-body">
-							<div class="form-group">
-								<label for="regex-edit">
-									Censor Regex
-									<small class="form-text">The regex for the censor to use</small>
-								</label>
-								<input id="regex-edit" class="form-control" placeholder="/test/i" v-model="editModel.regex" required />
-								<small class="form-text text-danger" v-if="errors.edit.invalidRegex">Invalid regex: {{ errors.add.invalidRegex }}. Please contact support if you need help with regular expressions.</small>
-							</div>
-							<div class="form-group">
-								<label for="action-edit">
-									Action
-									<small class="form-text">The action to take when someone says a censored phrase. This is added to the message being deleted</small>
-								</label>
-								<select class="form-control" id="action-edit" v-model="editModel.action" required>
-									<option v-for="(action, index) in actions" :key="index" :value="action.value" :selected="action.value === editModel.action">{{ action.display }}</option>
-								</select>
-							</div>
-							<div class="form-group" v-if="editModel.action === 'role'">
-								<label for="role-edit">
-									Role
-									<small class="form-text">The Discord role to give the user when the phrase is said</small>
-								</label>
-								<select class="form-control" id="role-edit" v-model="editModel.roleID" required>
-									<option v-for="(role, index) in roles.filter(({ canGive }) => canGive)" :key="index" :value="role.id" :selected="role.id === editModel.roleID">{{ role.name }}</option>
-								</select>
-								<small class="form-text text-muted">Don't see your role? Make sure Oxyl has permission to Manage Roles and that his highest role is above the role you want to give.</small>
-							</div>
-							<div class="form-group" v-if="~['ban', 'role'].indexOf(editModel.action)">
-								<label for="time">
-									Time
-									<small class="form-text">The amount of time in seconds, until the ban/role is removed (0 = no removal)</small>
-								</label>
-								<input id="song-length" class="form-control" type="number" min="0" max="63113904" v-model.number="editModel.time" required />
-							</div>
-							<div class="form-group">
-								<label for="message-edit">
-									Message
-									<small class="form-text" v-pre>The message to send if this regex is triggered. Placeholders {{id}}, {{disrim}}, {{mention}} and {{username}} will be replaced accordingly.</small>
-								</label>
-								<input id="message-edit" class="form-control" v-model.trim="editModel.message" required  />
-							</div>
+						<div class="form-group">
+							<label for="action-edit">
+								Action
+								<small class="form-text">The action to take when someone says a censored phrase. This is added to the message being deleted</small>
+							</label>
+							<select class="form-control" id="action-edit" v-model="editModel.action" required>
+								<option v-for="(action, index) in actions" :key="index" :value="action.value" :selected="action.value === editModel.action">{{ action.display }}</option>
+							</select>
 						</div>
-						<div class="modal-footer border-dark">
-							<button type="submit" class="btn btn-success">Save</button>
-							<button type="button" class="btn btn-danger" @click="remove()">Delete</button>
+						<div class="form-group" v-if="editModel.action === 'role'">
+							<label for="role-edit">
+								Role
+								<small class="form-text">The Discord role to give the user when the phrase is said</small>
+							</label>
+							<select class="form-control" id="role-edit" v-model="editModel.roleID" required>
+								<option v-for="(role, index) in roles.filter(({ canGive }) => canGive)" :key="index" :value="role.id" :selected="role.id === editModel.roleID">{{ role.name }}</option>
+							</select>
+							<small class="form-text text-muted">Don't see your role? Make sure Oxyl has permission to Manage Roles and that his highest role is above the role you want to give.</small>
+						</div>
+						<div class="form-group" v-if="~['ban', 'role'].indexOf(editModel.action)">
+							<label for="time">
+								Time
+								<small class="form-text">The amount of time in seconds, until the ban/role is removed (0 = no removal)</small>
+							</label>
+							<input id="song-length" class="form-control" type="number" min="0" max="63113904" v-model.number="editModel.time" required />
+						</div>
+						<div class="form-group">
+							<label for="message-edit">
+								Message
+								<small class="form-text" v-pre>The message to send if this regex is triggered. Placeholders {{id}}, {{disrim}}, {{mention}} and {{username}} will be replaced accordingly.</small>
+							</label>
+							<input id="message-edit" class="form-control" v-model.trim="editModel.message" required  />
 						</div>
 					</form>
 				</div>
-			</div>
+
+				<template slot="footer">
+					<button type="submit" class="btn btn-success">Save</button>
+					<button type="button" class="btn btn-danger" @click="remove()">Delete</button>
+				</template>
+			</modal>
 		</div>
 		<div v-else class="mt-4 loading">
 			<i class="fa fa-spinner fa-spin" aria-hidden="true"></i>
@@ -184,6 +179,12 @@ export default {
 			for(let i = 0; i < array.length; i += size) chunkified.push(array.slice(i, i + size));
 			return chunkified;
 		},
+		editCensor(censor) {
+			this.editModel = Object.assign({}, censor);
+			this.editModel.regex = `/${censor.regex}/${censor.flags.join("")}`;
+			delete this.editModel.flags;
+			this.$refs.editCensor.show();
+		},
 		async add() {
 			this.errors.add = Object.assign({}, errors);
 
@@ -215,7 +216,7 @@ export default {
 			this.censors.push(censor);
 
 			this.insertModel = Object.assign({}, defaultInsert);
-			this.$el.querySelector("#add-censor").reset()
+			this.$el.querySelector("#add-censor").reset();
 		},
 		async remove() {
 			this.$el.querySelectorAll("#edit-censor button").forEach(button => {
@@ -234,7 +235,7 @@ export default {
 				button.disabled = false;
 			});
 
-			$("#edit-censor").modal("hide");
+			this.$refs.editCensor.close();
 		},
 		async edit() {
 			this.errors.edit = Object.assign({}, errors);
@@ -271,7 +272,7 @@ export default {
 				button.disabled = false;
 			});
 
-			$("#edit-censor").modal("hide");
+			this.$refs.editCensor.close();
 		}
 	}
 };

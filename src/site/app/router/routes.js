@@ -44,7 +44,7 @@ export default {
 				component: "config/Censors",
 				icon: "asterisk"
 			},
-			dashboard_comamnds: {
+			dashboard_commands: {
 				path: "commands",
 				component: "config/Commands",
 				icon: "exclamation"
