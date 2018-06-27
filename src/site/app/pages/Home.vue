@@ -12,7 +12,7 @@
 			</router-link>
 		</div>
 		<div class="container">
-			<img class="float-animation no-shadow" src="/static/discord-screen.png" style="width:100%" />
+			<img class="float" src="/static/discord-screen.png" style="width:100%" />
 		</div>
 	</div>
 </template>

@@ -1,16 +1,16 @@
 <html lang="en">
 	<head>
-		<title>Oxyl Dashboard</title>
+		<title>Oxyl Panel</title>
 		<link rel="stylesheet" href="{{css}}" />
 		<link rel="shortcut icon" href="/static/favicon.ico" />
 
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta charset="UTF-8">
 
 		<meta property="og:type" content="website" />
 		<meta property="og:site-name" content="Oxyl" />
-		<meta property="og:title" content="Oxyl Dashboard" />
-		<meta property="og:description" content="A discord bot created for all your needs, with a simple web panel to configure all your settings." />
+		<meta property="og:title" content="Oxyl Panel" />
+		<meta property="og:description" content="A web panel made for Oxyl's owners to manage oxyl." />
 		<meta property="og:image" content="/static/oxyl-logo.png" />
 		<meta property="og:locale" content="en_US" />
 	</head>
@@ -18,7 +18,7 @@
 		<div id="app">
 			<navbar></navbar>
 			<div id="page-fill" class="color-500" style="height:100vh;width:100vw;position:fixed;top:0;left:0;z-index:-5">
-				<div class="float" style="width:100%;height:calc(100% + 20px);animation-delay:-5s;background-image:url(/static/geometry.png)"></div>
+				<div class="float cog-background" style="width:100%;height:calc(100% + 20px);animation-delay:-5s"></div>
 			</div>
 			<div id="main-view" class="container-fluid text-light">
 				<router-view class="mt-4"></router-view>
