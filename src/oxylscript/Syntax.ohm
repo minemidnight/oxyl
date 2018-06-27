@@ -1,0 +1,507 @@
+OxylScript {
+	Program = SourceElement*
+	SourceElement = Condition
+					| Expression
+					| Statement
+					| Loop
+					| Effect
+					| literal
+
+	Block = "{" SourceElement* "}"
+ 
+	space := whitespace | lineTerminator | comment | lineSuffix
+
+	whitespace = "\t"
+				| "\x0B" -- verticalTab
+				| "\x0C" -- formFeed
+				| " "
+				| "\u00A0" -- noBreakSpace
+				| "\uFEFF"  -- byteOrderMark
+				| "\u2000".."\u200B"
+				| "\u3000"
+
+	lineSuffix = &space ";"
+ 	lineTerminator = "\n" | "\r" | "\u2028" | "\u2029"
+	lineTerminatorSequence = "\n" | "\r" ~"\n" | "\u2028" | "\u2029" | "\r\n"
+
+	comment = multiLineComment | singleLineComment
+
+	multiLineComment = "/*" (~"*/" any)* "*/"
+ 	singleLineComment = "//" (~lineTerminator any)*
+ 
+	AnyType = String
+			| Boolean
+			| Permission
+			| Number
+			| Integer
+			| User
+			| Member
+			| Message
+			| Channel
+			| Role
+			| Guild
+			| Variable
+
+	// Expressions
+	Expression = AbsoluteValue
+				| Arithmetic
+				| CleanContent
+				| CreationTimestamp
+				| DefaultChannel
+				| Difference
+				| FormatDate
+				| ID
+				| IndexOf
+				| MemberCount
+				| MemberGame
+				| MemberJoinTimestamp
+				| MemberStatus
+				| Mention
+				| MessageAuthor
+				| MessageContent
+				| Name
+				| RandomNumber
+				| Rounded
+				| RoundedDown
+				| RoundedUp
+				| GuildIcon
+				| GuildRegion
+				| GuildOwner
+				| Substring
+				| Concat
+				| Length
+				| Lowercase
+				| Uppercase
+				| UserAvatar
+				| UserDiscriminator
+				| UserTag
+				| MessageFromID
+				| UserFromID
+				| MemberFromUser
+				| MemberFromID
+				| ChannelFromID
+				| RoleFromID
+				| RoleFromName
+
+	AbsoluteValue = "abs" "value"? "of" Number
+					//	| "|" Number "|"
+						| "absolute" "value"? "of" Number
+
+	Arithmetic = Addition
+
+	Addition = Addition "+" Multiplication -- plus
+			| Addition "-" Multiplication -- minus
+			| Multiplication
+			
+	Multiplication = Multiplication "*" Exponent -- times
+					| Multiplication "/" Exponent -- divide
+					| Exponent
+		
+	Exponent = ArithmeticNumber "^" Exponent -- power
+			| ArithmeticNumber
+		
+	ArithmeticNumber = "(" Arithmetic ")" -- paren
+					| "+" ArithmeticNumber -- pos
+					| "-" ArithmeticNumber -- neg
+					| Number
+
+	CleanContent = "clean content of" Message
+				| Message "'s clean content"
+
+	CreationTimestamp = "creation timestamp of" DiscordType
+				| DiscordType "'s creation timestamp'"
+
+	DefaultChannel = "default channel of" Guild
+					| Guild "'s default channel"
+
+	Difference = "difference between" Number "and" Number
+
+	FormatDate = Number "formatted as date"
+
+	ID = "id of" DiscordType
+		| DiscordType "'s id"
+
+	IndexOf = "index of" String "in" String
+
+	MemberCount = "member count of" Guild
+				| Guild "'s member count"
+
+	MemberGame = "game of" Member
+				| Member "'s game"
+
+	MemberJoinTimestamp = "join timestamp of" Member
+						| Member "'s join timestamp"
+
+	MemberStatus = "status of" Member
+				| Member "'s status"
+
+	Mention = "mention of" Mentionable
+			| Mentionable "'s mention"
+
+	MessageAuthor = "author of" Message
+					| Message "'s author"
+
+	MessageContent = "content of" Message
+					| Message "'s content"
+
+	Name = "name of" HasName
+		| HasName "'s name"
+
+	RandomNumber = "random number from" Integer "to" Integer
+
+	Rounded = Number "rounded"
+
+	RoundedDown = Number "rounded down" | "floor" Number
+
+	RoundedUp = Number "rounded up" | "ceil" Number
+
+	GuildIcon = "icon of" Guild | Guild "'s icon"
+
+	GuildRegion = "region of" Guild | Guild "'s region"
+
+	GuildOwner = "owner of" Guild | Guild "'s owner"
+
+	Substring = SubstringFromIndices
+				| SubstringFirstCharacters
+				| SubstringLastCharacters
+
+	SubstringFromIndices = "the"? "part of" String ("between" | "from") Integer "to" Integer
+						| "the"? "substring of" String ("between" | "from") Integer "to" Integer
+
+	SubstringFirstCharacters = "the"? "first" Integer "characters of" String
+
+	SubstringLastCharacters = "the"? "last" Integer "characters of" String
+
+	Concat = String "+" AnyType
+			| AnyType "+" String
+			| String "added to" AnyType
+			| AnyType "added to" String
+
+	Length = "length of" String | String "'s length"
+
+	Lowercase = "lowercase of" String
+
+	Uppercase = "uppercase of" String
+
+	UserAvatar = "avatar of" User | User "'s avatar"
+
+	UserDiscriminator = "discriminator of" User | User "'s discriminato"
+
+	UserTag = "tag of" User | User "'s tag"
+
+	MessageFromID = "the"? "message" ("from" | "with" | "of") "id" String
+
+	UserFromID = "the"? "user" ("from" | "with" | "of") "id" String
+
+	MemberFromUser = "the"? "member" ("from" | "of") User
+
+	MemberFromID = "the"? "member" ("from" | "with" | "of") "id" String
+
+	ChannelFromID = "the"? "channel" ("from" | "with" | "of") "id" String
+
+	RoleFromID = "the"? "role" ("from" | "with" | "of") "id" String
+
+	RoleFromName = "the"? "role" ("from" | "with" | "of") "name" String
+
+	// Conditions
+	Condition = IsSet
+			| NotSet
+			| DiscordCondition
+			| Contains
+			| DoesntContain
+			| Equality
+			| Comparison
+
+	Contains = String "has" String
+			| String "contains" String
+			| String "includes" String
+	DoesntContain = String ("doesnt" | "doesn't" | "does not") ("contain" | "include") String
+	IsSet = AnyType "exists"
+			| AnyType "is set"
+	NotSet = AnyType ("doesnt" | "doesn't" | "does not") "exist"
+			| AnyType ("isnt" | "isn't" | "is not") "set"
+
+	Equality = Equals | NotEqual
+	Equals = AnyType "is" AnyType
+			| AnyType "equals" AnyType
+			| AnyType "is equal to" AnyType
+			| AnyType "==" AnyType
+			| AnyType "===" AnyType
+
+	NotEqualIsnt = ("isnt" | "isn't" | "is not") "equal to"?
+	NotEqualDoesnt = ("doesnt" | "doesn't" | "does not") "equal"
+	NotEqual = AnyType NotEqualIsnt AnyType
+			| AnyType NotEqualDoesnt AnyType
+			| AnyType "!=" AnyType
+			| AnyType "!==" AnyType
+
+	Comparison = GreaterThan
+				| LessThan
+				| GreaterThanOrEqual
+				| LessThanOrEqual
+
+	GreaterThanOptions = "is"? ("greater" | "more" | "higher" | "bigger" | "larger") "than"
+	GreaterThan = Comparable GreaterThanOptions Comparable
+				| Comparable ">" Comparable
+	
+	GreaterThanOrEqualOptions = "is"? ("greater" | "more" | "higher" | "bigger" | "larger") "than or" ("equal to" | "equals")
+	GreaterThanOrEqual = Comparable GreaterThanOrEqualOptions Comparable
+				| Comparable ">=" Comparable
+	
+	LessThanOptions = "is"? ("less" | "lower" | "smaller") "than"
+	LessThan = Comparable LessThanOptions Comparable
+				| Comparable "<" Comparable
+
+	LessThanOrEqualOptions = "is"? ("less" | "lower" | "smaller") "than or" ("equal to" | "equals")
+	LessThanOrEqual = Comparable LessThanOrEqualOptions Comparable
+				| Comparable "<=" Comparable
+
+	DiscordCondition = HasChannelPermission
+					| HasPermission
+					| HasRole
+					| IsBot
+					| IsHoisted
+
+	HasChannelPermission = Member "has" "the"? "permission"? "to"? Permission "in" Channel
+	HasPermission = Member "has" "the"? "permission"? "to"? Permission
+	HasRole = Member "has" "the"? "role"? Role
+	IsBot = User "is a bot"
+	IsHoisted = Role "is hoisted"
+				| Role "displays seperately"
+
+	// If Statements
+
+	Statement = (If | Else | ElseIf) Block
+
+	BooleanParenthesis = "(" Boolean ")"
+	If = "if" Boolean | "if" BooleanParenthesis
+	ElseIf = "else if" Boolean | "else if" BooleanParenthesis
+	Else = "else"
+
+	// Effects
+
+	Effect = AddRole
+			| Ban
+			| Kick
+			| RemoveRole
+			| CreateMessage
+			| SendDM
+			| SetNickname
+			| SetVariable
+
+	SetVariable = "set" "the"? "variable"? variableName "to" AnyType
+
+	WithReason = "with"? "reason"
+	Reason = (WithReason | "because" | "due to") String
+
+	AddRoleNoReason = "add" "the"? "role"? Role "to" Member
+	AddRoleReason = "add" "the"? "role"? Role "to" Member Reason
+	AddRole = AddRoleNoReason | AddRoleReason
+
+	RemoveRoleNoReason = "remove" "the"? "role"? Role "from" Member 
+	RemoveRoleReason = "remove" "the"? "role"? Role "from" Member Reason
+	RemoveRole = RemoveRoleNoReason | RemoveRoleReason
+
+	BanNoReason = "ban" "the"? "member"? Member
+	BanReason = "ban" "the"? "member"? Member Reason
+	Ban = BanNoReason | BanReason
+
+	KickNoReason = "kick" "the"? "member"? Member
+	KickReason = "kick" "the"? "member"? Member Reason
+	Kick = KickNoReason | KickReason
+
+	CreateMessage = ("create" | "send") "a"? "message"? ("with content" | "saying")? String
+
+	SendDM = "send" ("a" | "an")? ("dm" | "direct message") ("with content" | "saying")? String "to" User
+
+	SetNickname = "set" "the"? "nickname of" Member "to" String
+	
+	// Loops
+
+	Loop = (LoopTimes) Block
+
+	LoopTimes = "loop" Integer "times"
+
+	// Types of literals 
+	literal = stringLiteral
+			| booleanLiteral
+			| numericLiteral
+			| permissionLiteral
+			| userLiteral
+			| messageLiteral
+			| channelLiteral
+			| guildLiteral
+			| variableLiteral
+
+	// String literals
+	String = stringLiteral
+			| CleanContent
+			| ID
+			| FormatDate
+			| MemberStatus
+			| Mention
+			| MessageContent
+			| Name
+			| GuildIcon
+			| GuildRegion
+			| Substring
+			| Concat
+			| Lowercase
+			| Uppercase
+			| UserDiscriminator
+			| UserAvatar
+			| UserTag
+			| Variable
+	
+	stringLiteral = "\"" doubleStringCharacter* "\""
+				| "'" singleStringCharacter* "'"
+	doubleStringCharacter = ~("\"" | "\\") any -- nonEscaped
+							| "\\" escapeSequence -- escaped
+	singleStringCharacter = ~("'" | "\\") any -- nonEscaped
+							| "\\" escapeSequence -- escaped
+	escapeSequence = singleEscapeCharacter | nonEscapeCharacter
+	singleEscapeCharacter = "'" | "\"" | "\\" | "b" | "f" | "n" | "r" | "t" | "v"
+	nonEscapeCharacter = ~(singleEscapeCharacter | digit | "x" | "u" | lineTerminator) any
+	
+	// numeric literals
+	Number = numericLiteral
+			| Integer
+			| AbsoluteValue
+			| Arithmetic
+			| CreationTimestamp
+			| Difference
+			| IndexOf
+			| MemberCount
+			| MemberJoinTimestamp
+			| Variable
+
+	Integer = integerLiteral
+			| RandomNumber
+			| Rounded
+			| RoundedDown
+			| RoundedUp
+			| Length
+			| Variable
+
+	numericLiteral = integerLiteral | floatLiteral
+	
+	integer = digit+
+	integerLiteral = integer -- neg
+					| integer+
+					
+	float = digit* "." digit+
+	floatLiteral = float -- neg
+				| float
+
+	// booleans
+	Boolean = Condition
+			| booleanLiteral
+			| InvertBoolean
+			| And
+			| Or
+			| Variable
+
+	InvertBoolean = ("not" | "!") Boolean
+	And = Boolean ("&&" | "and") Boolean
+	Or = Boolean ("||" | "or") Boolean
+	booleanLiteral = "true" | "false"
+
+	// permission literal(s)
+	Permission = permissionLiteral | Variable
+
+	permissionLiteral = createInvite
+						| kickMembers
+						| banMembers
+						| administrator
+						| manageChannels
+						| manageGuild
+						| addReactions
+						| viewAuditLogs
+						| readMessages
+						| sendMessages
+						| sendTTSMessages
+						| manageMessages
+						| embedLinks
+						| attachFiles
+						| readMessageHistory
+						| mentionEveryone
+						| externalEmojis
+						| voiceConnect
+						| voiceSpeak
+						| voiceMuteMembers
+						| voiceDeafenMembers
+						| voiceMoveMembers
+						| voiceUseVAD
+						| changeNickname
+						| manageNicknames
+						| manageRoles
+						| manageWebhooks
+						| manageEmojis
+
+	createInvite = "create a invite" | "create an invite" | "create invites"
+	kickMembers = "kick members"
+	banMembers = "ban members"
+	administrator = "admin" | "administrator"
+	manageChannels = "manage channels"
+	manageGuild = "manage guild"
+	addReactions = "add reactions"
+	viewAuditLogs = "view logs" | "view audit logs"
+	readMessages = "read messages" | "read"
+	sendMessages = "send messages" | "send"
+	sendTTSMessages = "send tts messages" | "send tts" | "send text to speech" | "send text to speech messages"
+	manageMessages = "manage messages" | "delete messages"
+	embedLinks = "send links" | "embed links"
+	attachFiles = "send files" | "attach files"
+	readMessageHistory = "read message history" | "read history"
+	mentionEveryone = "mention everyone" | "use everyone"
+	externalEmojis = "external emojis" | "use external emojis" | "external emotes" | "use external emotes"
+	voiceConnect = "voice connect" | "connect to voice" | "connect"
+	voiceSpeak = "voice speak" | "speak in voice" | "speak"
+	voiceMuteMembers = "voice mute members" | "mute members"
+	voiceDeafenMembers = "voice deafen members" | "deafen members"
+	voiceMoveMembers = "move members" | "voice move members"
+	voiceUseVADOptions =  "voice use" caseInsensitive<"vad"> | "use" caseInsensitive<"vad">
+	voiceUseVAD = voiceUseVADOptions | caseInsensitive<"vad">
+	changeNickname = "change nickname"
+	manageNicknames = "manage nicknames"
+	manageRoles = "manage roles"
+	manageWebhooks = "manage webhooks"
+	manageEmojis = "manage emojis"
+
+	// other types
+	User = userLiteral
+		| Member
+		| MessageAuthor
+		| GuildOwner
+		| UserFromID
+		| Variable
+	Member = MemberFromID
+			| MemberFromUser
+			| Variable
+	Message = messageLiteral
+			| MessageFromID
+			| Variable
+	Channel = channelLiteral
+			| DefaultChannel
+			| ChannelFromID
+			| Variable
+	Role = RoleFromID
+			| RoleFromName
+			| Variable
+	Guild = guildLiteral
+			| Variable
+
+	userLiteral = "author" | "message sender" | "sender" | "message author"
+	messageLiteral = "message" | "sent message"
+	channelLiteral = "channel" | "channel from message"
+	guildLiteral = "guild" | "server" | "guild from message" | "server from message"
+
+	Variable = variableLiteral
+	variableLiteral = "value"? "of" variableName
+	variableName = alnum+
+
+	DiscordType = User | Member | Message | Channel | Role | Guild | Variable
+	Mentionable = User | Member | Channel | Role | Variable
+	HasName = User | Member | Channel | Role | Guild | Variable
+	Comparable = String | Number | Variable
+}
