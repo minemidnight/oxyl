@@ -29,6 +29,7 @@
     "express": "^4.16.2",
     "ioredis": "^3.2.2",
     "jimp": "^0.2.28",
+    "ohm-js": "^0.14.0",
     "rethinkdbdash": "^2.3.31",
     "superagent": "^3.8.3",
     "twemoji": "^2.5.0",

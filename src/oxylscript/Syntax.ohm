@@ -1,15 +1,17 @@
 OxylScript {
 	Program = SourceElement*
-	SourceElement = Condition
-					| Expression
-					| Statement
+	SourceElement = (Priority
+    				| Statement
 					| Loop
 					| Effect
-					| literal
+                    | Expression
+                    | Condition
+					| literal) semi?
 
+	Priority = "(" SourceElement ")"
 	Block = "{" SourceElement* "}"
  
-	space := whitespace | lineTerminator | comment | lineSuffix
+	space := whitespace | lineTerminator | comment
 
 	whitespace = "\t"
 				| "\x0B" -- verticalTab
@@ -20,7 +22,7 @@ OxylScript {
 				| "\u2000".."\u200B"
 				| "\u3000"
 
-	lineSuffix = &space ";"
+	semi = ";"
  	lineTerminator = "\n" | "\r" | "\u2028" | "\u2029"
 	lineTerminatorSequence = "\n" | "\r" ~"\n" | "\u2028" | "\u2029" | "\r\n"
 
@@ -47,7 +49,6 @@ OxylScript {
 				| Arithmetic
 				| CleanContent
 				| CreationTimestamp
-				| DefaultChannel
 				| Difference
 				| FormatDate
 				| ID
@@ -75,7 +76,6 @@ OxylScript {
 				| UserAvatar
 				| UserDiscriminator
 				| UserTag
-				| MessageFromID
 				| UserFromID
 				| MemberFromUser
 				| MemberFromID
@@ -83,9 +83,8 @@ OxylScript {
 				| RoleFromID
 				| RoleFromName
 
-	AbsoluteValue = "abs" "value"? "of" Number
-					//	| "|" Number "|"
-						| "absolute" "value"? "of" Number
+	AbsoluteValue = ("absolute" | "abs") "value"? "of" Number -- abs
+					| "|" Number "|" -- pipes
 
 	Arithmetic = Addition
 
@@ -101,65 +100,67 @@ OxylScript {
 			| ArithmeticNumber
 		
 	ArithmeticNumber = "(" Arithmetic ")" -- paren
-					| "+" ArithmeticNumber -- pos
-					| "-" ArithmeticNumber -- neg
-					| Number
+								| Number
 
-	CleanContent = "clean content of" Message
-				| Message "'s clean content"
+	CleanContent = "clean content of" Message -- messageLast
+				| Message "'s clean content" -- messageFirst
 
-	CreationTimestamp = "creation timestamp of" DiscordType
-				| DiscordType "'s creation timestamp'"
-
-	DefaultChannel = "default channel of" Guild
-					| Guild "'s default channel"
+	CreationTimestamp = "creation timestamp of" DiscordType -- objectLast
+				| DiscordType "'s creation timestamp'" -- objectFirst
 
 	Difference = "difference between" Number "and" Number
 
 	FormatDate = Number "formatted as date"
 
-	ID = "id of" DiscordType
-		| DiscordType "'s id"
+	ID = "id of" DiscordType -- objectLast
+		| DiscordType "'s id" -- objectFirst
 
 	IndexOf = "index of" String "in" String
 
-	MemberCount = "member count of" Guild
-				| Guild "'s member count"
+	MemberCount = "member count of" Guild -- guildLast
+				| Guild "'s member count" -- guildFirst
 
-	MemberGame = "game of" Member
-				| Member "'s game"
+	MemberGame = "game of" Member -- memberLast
+				| Member "'s game" -- memberFirst
 
-	MemberJoinTimestamp = "join timestamp of" Member
-						| Member "'s join timestamp"
+	MemberJoinTimestamp = "join timestamp of" Member -- memberLast
+						| Member "'s join timestamp" -- memberFirst
 
-	MemberStatus = "status of" Member
-				| Member "'s status"
+	MemberStatus = "status of" Member -- memberLast
+				| Member "'s status" -- memberFirst
 
-	Mention = "mention of" Mentionable
-			| Mentionable "'s mention"
+	Mention = "mention of" Mentionable -- mentionableLast
+			| Mentionable "'s mention" -- mentionableFirst
 
-	MessageAuthor = "author of" Message
-					| Message "'s author"
+	MessageAuthor = "author of" Message -- messageLast
+					| Message "'s author" -- messageFirst
 
-	MessageContent = "content of" Message
-					| Message "'s content"
+	MessageContent = "content of" Message -- messageLast
+					| Message "'s content" -- messageFirst
 
-	Name = "name of" HasName
-		| HasName "'s name"
+	Name = "name of" HasName -- objectLast
+		| HasName "'s name" -- objectFirst
 
-	RandomNumber = "random number from" Integer "to" Integer
+	Username = "username of" User -- userLast
+		| User "'s username" -- userFirst
+
+	RandomNumber = "random number between" Integer "to" Integer -- exclusive
+				| "random number between" Integer "to" Integer "inclusive" -- inclusive
 
 	Rounded = Number "rounded"
 
-	RoundedDown = Number "rounded down" | "floor" Number
+	RoundedDown = Number ("rounded down" | "floor")
 
-	RoundedUp = Number "rounded up" | "ceil" Number
+	RoundedUp = Number ("rounded up" | "ceil")
 
-	GuildIcon = "icon of" Guild | Guild "'s icon"
+	GuildIcon = "icon of" Guild -- guildLast
+				| Guild "'s icon" -- guildFirst
 
-	GuildRegion = "region of" Guild | Guild "'s region"
+	GuildRegion = "region of" Guild -- guildLast
+				| Guild "'s region" -- guildFirst
 
-	GuildOwner = "owner of" Guild | Guild "'s owner"
+	GuildOwner = "owner of" Guild --guildLast
+				| Guild "'s owner" -- guildFirst
 
 	Substring = SubstringFromIndices
 				| SubstringFirstCharacters
@@ -177,19 +178,21 @@ OxylScript {
 			| String "added to" AnyType
 			| AnyType "added to" String
 
-	Length = "length of" String | String "'s length"
+	Length = "length of" String -- stringLast
+			| String "'s length" -- stringFirst
 
 	Lowercase = "lowercase of" String
 
 	Uppercase = "uppercase of" String
 
-	UserAvatar = "avatar of" User | User "'s avatar"
+	UserAvatar = "avatar of" User -- userLast
+				| User "'s avatar" -- userFirst
 
-	UserDiscriminator = "discriminator of" User | User "'s discriminato"
+	UserDiscriminator = "discriminator of" User -- userLast
+						| User "'s discriminator" -- userFirst
 
-	UserTag = "tag of" User | User "'s tag"
-
-	MessageFromID = "the"? "message" ("from" | "with" | "of") "id" String
+	UserTag = "tag of" User -- userLast
+			| User "'s tag" -- userFirst
 
 	UserFromID = "the"? "user" ("from" | "with" | "of") "id" String
 
@@ -274,8 +277,10 @@ OxylScript {
 	Statement = (If | Else | ElseIf) Block
 
 	BooleanParenthesis = "(" Boolean ")"
-	If = "if" Boolean | "if" BooleanParenthesis
-	ElseIf = "else if" Boolean | "else if" BooleanParenthesis
+	If = "if" Boolean
+		| "if" BooleanParenthesis
+	ElseIf = "else if" Boolean
+			| "else if" BooleanParenthesis
 	Else = "else"
 
 	// Effects
@@ -292,23 +297,19 @@ OxylScript {
 	SetVariable = "set" "the"? "variable"? variableName "to" AnyType
 
 	WithReason = "with"? "reason"
-	Reason = (WithReason | "because" | "due to") String
+	ReasonText = (WithReason | "because" | "due to")
 
-	AddRoleNoReason = "add" "the"? "role"? Role "to" Member
-	AddRoleReason = "add" "the"? "role"? Role "to" Member Reason
-	AddRole = AddRoleNoReason | AddRoleReason
+	AddRole = "add" "the"? "role"? Role "to" Member -- noReason
+			| "add" "the"? "role"? Role "to" Member ReasonText String -- reason
 
-	RemoveRoleNoReason = "remove" "the"? "role"? Role "from" Member 
-	RemoveRoleReason = "remove" "the"? "role"? Role "from" Member Reason
-	RemoveRole = RemoveRoleNoReason | RemoveRoleReason
+	RemoveRole = "remove" "the"? "role"? Role "from" Member -- noReason
+				| "remove" "the"? "role"? Role "from" Member ReasonText String -- reason
 
-	BanNoReason = "ban" "the"? "member"? Member
-	BanReason = "ban" "the"? "member"? Member Reason
-	Ban = BanNoReason | BanReason
+	Ban = "ban" "the"? "member"? Member -- noReason
+		| "ban" "the"? "member"? Member ReasonText String -- reason
 
-	KickNoReason = "kick" "the"? "member"? Member
-	KickReason = "kick" "the"? "member"? Member Reason
-	Kick = KickNoReason | KickReason
+	Kick = "kick" "the"? "member"? Member -- noReason
+		| "kick" "the"? "member"? Member ReasonText String -- reason
 
 	CreateMessage = ("create" | "send") "a"? "message"? ("with content" | "saying")? String
 
@@ -351,6 +352,7 @@ OxylScript {
 			| UserDiscriminator
 			| UserAvatar
 			| UserTag
+			| AnyType
 			| Variable
 	
 	stringLiteral = "\"" doubleStringCharacter* "\""
@@ -385,13 +387,14 @@ OxylScript {
 
 	numericLiteral = integerLiteral | floatLiteral
 	
-	integer = digit+
-	integerLiteral = integer -- neg
-					| integer+
-					
-	float = digit* "." digit+
-	floatLiteral = float -- neg
+	integerLiteral = "-" integerLiteral -- neg
+					| integer
+	
+	floatLiteral = "-" floatLiteral -- neg
 				| float
+
+	integer = digit+
+	float = digit* "." digit+
 
 	// booleans
 	Boolean = Condition
@@ -478,18 +481,14 @@ OxylScript {
 	Member = MemberFromID
 			| MemberFromUser
 			| Variable
-	Message = messageLiteral
-			| MessageFromID
-			| Variable
+	Message = messageLiteral | Variable
 	Channel = channelLiteral
-			| DefaultChannel
 			| ChannelFromID
 			| Variable
 	Role = RoleFromID
 			| RoleFromName
 			| Variable
-	Guild = guildLiteral
-			| Variable
+	Guild = guildLiteral | Variable
 
 	userLiteral = "author" | "message sender" | "sender" | "message author"
 	messageLiteral = "message" | "sent message"
@@ -497,11 +496,11 @@ OxylScript {
 	guildLiteral = "guild" | "server" | "guild from message" | "server from message"
 
 	Variable = variableLiteral
-	variableLiteral = "value"? "of" variableName
-	variableName = alnum+
+	variableLiteral = "value"? "of"? variableName
+	variableName = "{" alnum+ "}"
 
 	DiscordType = User | Member | Message | Channel | Role | Guild | Variable
 	Mentionable = User | Member | Channel | Role | Variable
-	HasName = User | Member | Channel | Role | Guild | Variable
-	Comparable = String | Number | Variable
+	HasName = Channel | Role | Guild | Variable
+	Comparable = String | Number
 }
