@@ -1,2 +1,2 @@
-module.exports = (type, block) =>
-	type.run()(block);
+module.exports = node =>
+	node.run();

@@ -272,17 +272,16 @@ OxylScript {
 	IsHoisted = Role "is hoisted"
 				| Role "displays seperately"
 
-	// If Statements
+	// Conditionals
 
-	Statement = (If | Else | ElseIf) Block
+	Statement = IfStatement
 
-	BooleanParenthesis = "(" Boolean ")"
-	If = "if" Boolean
-		| "if" BooleanParenthesis
-	ElseIf = "else if" Boolean
-			| "else if" BooleanParenthesis
-	Else = "else"
+	If = "if" Boolean Block
+    ElseIf = "else" IfStatement
+    Else = "else" Block
 
+	IfStatement = If Else -- else
+				| If ElseIf* -- elseIf
 	// Effects
 
 	Effect = AddRole
@@ -397,8 +396,8 @@ OxylScript {
 	float = digit* "." digit+
 
 	// booleans
-	Boolean = Condition
-			| booleanLiteral
+	Boolean = booleanLiteral
+			| Condition
 			| InvertBoolean
 			| And
 			| Or

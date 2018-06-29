@@ -1,8 +1,8 @@
-module.exports = function(_a, boolean) {
-	return block => {
-		if(boolean.run()) {
-			this.source.ran = true;
-			block.run();
-		}
-	};
+module.exports = function(_a, boolean, block) {
+	if(boolean.run()) {
+		block.run();
+		return true;
+	} else {
+		return false;
+	}
 };
