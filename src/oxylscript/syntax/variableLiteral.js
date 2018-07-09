@@ -3,5 +3,5 @@ module.exports = function(_a, _b, variable) {
 	const value = this.data.variables[variable];
 
 	if(value === undefined) throw new Error(`${variable} has not been defined`);
-	return variable;
+	return value;
 };

@@ -1,14 +1,12 @@
 OxylScript {
 	Program = SourceElement*
-	SourceElement = (Priority
-    				| Statement
+	SourceElement = (Statement
 					| Loop
 					| Effect
                     | Expression
                     | Condition
-					| literal) semi?
+					 | AnyType ) semi?
 
-	Priority = "(" SourceElement ")"
 	Block = "{" SourceElement* "}"
  
 	space := whitespace | lineTerminator | comment
@@ -31,18 +29,33 @@ OxylScript {
 	multiLineComment = "/*" (~"*/" any)* "*/"
  	singleLineComment = "//" (~lineTerminator any)*
  
-	AnyType = String
-			| Boolean
+	AnyType = Boolean
 			| Permission
-			| Number
 			| Integer
+			| Number
 			| User
 			| Member
 			| Message
 			| Channel
 			| Role
 			| Guild
+			| String
 			| Variable
+
+	// Priority
+
+	BooleanPriority = "(" Boolean ")"
+	PermissionPriority = "(" Permission ")"
+	IntegerPriority = "(" Integer ")"
+	NumberPriority = "(" Number ")"
+	UserPriority = "(" User ")"
+	MemberPriority = "(" Member ")"
+	MessagePriority = "(" Message ")"
+	ChannelPriority = "(" Channel ")"
+	RolePriority = "(" Role ")"
+	GuildPriority = "(" Guild ")"
+	StringPriority = "(" String ")"
+	VariablePriority = "(" Variable ")"
 
 	// Expressions
 	Expression = AbsoluteValue
@@ -96,11 +109,8 @@ OxylScript {
 					| Multiplication "/" Exponent -- divide
 					| Exponent
 		
-	Exponent = ArithmeticNumber "^" Exponent -- power
-			| ArithmeticNumber
-		
-	ArithmeticNumber = "(" Arithmetic ")" -- paren
-								| Number
+	Exponent = Number "^" Exponent -- power
+			| Number
 
 	CleanContent = "clean content of" Message -- messageLast
 				| Message "'s clean content" -- messageFirst
@@ -318,23 +328,16 @@ OxylScript {
 	
 	// Loops
 
-	Loop = (LoopTimes) Block
+	Loop = LoopTimes Block
+
+	LoopIndex = "loop-index" | "loop index"
 
 	LoopTimes = "loop" Integer "times"
 
-	// Types of literals 
-	literal = stringLiteral
-			| booleanLiteral
-			| numericLiteral
-			| permissionLiteral
-			| userLiteral
-			| messageLiteral
-			| channelLiteral
-			| guildLiteral
-			| variableLiteral
 
 	// String literals
-	String = stringLiteral
+	String = StringPriority
+			| stringLiteral
 			| CleanContent
 			| ID
 			| FormatDate
@@ -365,26 +368,29 @@ OxylScript {
 	nonEscapeCharacter = ~(singleEscapeCharacter | digit | "x" | "u" | lineTerminator) any
 	
 	// numeric literals
-	Number = numericLiteral
+	Number = NumberPriority
+    		| Arithmetic
 			| Integer
+			| numericLiteral
 			| AbsoluteValue
-			| Arithmetic
-			| CreationTimestamp
 			| Difference
-			| IndexOf
-			| MemberCount
-			| MemberJoinTimestamp
 			| Variable
 
-	Integer = integerLiteral
+	Integer = IntegerPriority
+			| integerLiteral
+            | CreationTimestamp
+            | MemberJoinTimestamp
+            | MemberCount
+            | IndexOf
 			| RandomNumber
 			| Rounded
 			| RoundedDown
 			| RoundedUp
 			| Length
+			| LoopIndex
 			| Variable
 
-	numericLiteral = integerLiteral | floatLiteral
+	numericLiteral = floatLiteral | integerLiteral
 	
 	integerLiteral = "-" integerLiteral -- neg
 					| integer
@@ -396,7 +402,8 @@ OxylScript {
 	float = digit* "." digit+
 
 	// booleans
-	Boolean = booleanLiteral
+	Boolean = BooleanPriority
+			| booleanLiteral
 			| Condition
 			| InvertBoolean
 			| And
@@ -409,7 +416,9 @@ OxylScript {
 	booleanLiteral = "true" | "false"
 
 	// permission literal(s)
-	Permission = permissionLiteral | Variable
+	Permission = PermissionPriority
+				| permissionLiteral
+				| Variable
 
 	permissionLiteral = createInvite
 						| kickMembers
@@ -471,31 +480,44 @@ OxylScript {
 	manageEmojis = "manage emojis"
 
 	// other types
-	User = userLiteral
+	User = UserPriority
+		| userLiteral
 		| Member
 		| MessageAuthor
 		| GuildOwner
 		| UserFromID
 		| Variable
-	Member = MemberFromID
+
+	Member = MemberPriority
+			| MemberFromID
 			| MemberFromUser
 			| Variable
-	Message = messageLiteral | Variable
-	Channel = channelLiteral
+
+	Message = MessagePriority
+			| messageLiteral
+			| Variable
+
+	Channel = ChannelPriority
+			| channelLiteral
 			| ChannelFromID
 			| Variable
+
 	Role = RoleFromID
 			| RoleFromName
+			| RolePriority
 			| Variable
-	Guild = guildLiteral | Variable
+
+	Guild = GuildPriority
+			| guildLiteral
+			| Variable
 
 	userLiteral = "author" | "message sender" | "sender" | "message author"
 	messageLiteral = "message" | "sent message"
 	channelLiteral = "channel" | "channel from message"
 	guildLiteral = "guild" | "server" | "guild from message" | "server from message"
 
-	Variable = variableLiteral
-	variableLiteral = "value"? "of"? variableName
+	Variable = VariablePriority | variableLiteral
+	variableLiteral = ("value" "of")? variableName
 	variableName = "{" alnum+ "}"
 
 	DiscordType = User | Member | Message | Channel | Role | Guild | Variable

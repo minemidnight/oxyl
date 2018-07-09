@@ -10,6 +10,8 @@
         "websocketPort": 7251,
         "dashboardPort": 7252,
         "dashboardURL": "url to use for redirect for dashboard",
+        "editorPort": 7253,
+        "editorURL": "url to use for redirect for editor",
         "database": { 
                 "db": "... (these settings are passed directly into rethinkdbdash)",
                 "password": "..."

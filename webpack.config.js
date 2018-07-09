@@ -8,7 +8,7 @@ const path = require("path");
 const fs = require("fs");
 const webpack = require("webpack");
 
-const folders = ["panel", "site"];
+const folders = ["panel", "site", "oxylscript/editor"];
 const production = process.env.NODE_ENV === "production";
 
 function createConfig(folder) {
