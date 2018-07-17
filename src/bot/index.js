@@ -9,6 +9,9 @@ require("eris-additions")(require("eris"), {
 	]
 });
 
+const r = require("../rethinkdb/index");
+process.logger = require("../logger/index")(r);
+
 const cachedPrefixes = new Map();
 const config = require("../../config");
 const wiggle = require("eris-wiggle");
@@ -48,11 +51,43 @@ const client = wiggle({
 	wiggle.middleware.argHandler(),
 	require("./middleware/censors"),
 	require("./middleware/permissionHandler")
-);
+).use("creator", (message, next) => {
+	if(~client.locals.owners.indexOf(message.author.id)) return next();
+	else return message.channel.createMessage(message.t("errors.notCreator"));
+});
+
+client.locals.r = r;
+client.locals.owners = config.owners;
+client.locals.config = config;
+
+// post server count to sites if in production
+
+const cluster = require("cluster");
+const guildChangeMiddleware = [(guild, next) => {
+	r.table("stats").insert({
+		type: "guilds",
+		current: [process.ppid, cluster.worker.id],
+		time: Date.now(),
+		value: client.erisClient.guilds.size
+	});
+
+	return next();
+}];
+
+if(process.env.NODE_ENV === "production") {
+	guildChangeMiddleware.push(...Object.entries(config.serverCounts || {})
+		.map(([site, key]) => wiggle.middleware[site]({ key })));
+}
+
+client.use("guildCreate", ...guildChangeMiddleware)
+	.use("guildDelete", ...guildChangeMiddleware);
 
 const { update: updateGroupRoles } = require("./modules/syncGroupRole");
 const { update: updateTimedEvents } = require("./modules/timedEvents");
 const { updateAll: updatePremiumServers } = require("./modules/premiumChecker");
+
+// once message is recieved from master with shard info, start bot
+
 module.exports = async ({ shardStart, shardEnd, shardCount, shards }) => {
 	client.set("clientOptions", {
 		firstShardID: shardStart,
@@ -65,20 +100,16 @@ module.exports = async ({ shardStart, shardEnd, shardCount, shards }) => {
 		latencyThreshold: 1000 * 60 * 60
 	});
 
-	client.use("creator", (message, next) => {
-		if(~client.locals.owners.indexOf(message.author.id)) return next();
-		else return message.channel.createMessage(message.t("errors.notCreator"));
-	});
 	client.connect();
-
-	client.locals.owners = config.owners;
-	client.locals.r = require("../rethinkdb/index");
-	client.locals.config = config;
 	client.locals.shardDisplay = shards;
 
-	setInterval(() => updatePremiumServers(client.locals.r), 14400000);
-	setInterval(() => updateGroupRoles(client), 900000);
-	setInterval(() => updateTimedEvents(client), 30000);
+	// functions needing periodic updates, only if on shard 0 because it is not necessary to run multiple
+
+	if(shardStart === 0) {
+		setInterval(() => updatePremiumServers(client.locals.r), 14400000);
+		setInterval(() => updateGroupRoles(client), 900000);
+		setInterval(() => updateTimedEvents(client), 30000);
+	}
 
 	return { client };
 };

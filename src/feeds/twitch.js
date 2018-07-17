@@ -6,6 +6,8 @@ module.exports = redis => {
 };
 
 async function checkChannels(redis) {
+	process.logger.debug("feeds", "Checking Twitch channels");
+
 	const toCheck = (await redis.keys("feeds:twitch:*")).map(key => key.substring(key.lastIndexOf(":") + 1));
 	const onlineData = await redis.keys("feeds:twitchData:*");
 

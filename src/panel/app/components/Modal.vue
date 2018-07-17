@@ -1,19 +1,19 @@
 <template>
 	<div class="modal fade" role="dialog" aria-hidden="true" :class="{ show: shown }" @keydown.esc="close()">
-		<div class="modal-dialog modal-dialog-centered" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content color-500">
+				<div class="modal-header color-600">
 					<h5 class="modal-title">
 						<slot name="header" />
 					</h5>
-					<button v-if="closeable" type="button" class="close" data-dismiss aria-label="Close">
+					<button v-if="closeable" type="button" class="close text-danger" data-dismiss aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
 				<div class="modal-body">
 					<slot />
 				</div>
-				<div class="modal-footer" v-if="$slots.footer">
+				<div class="modal-footer color-600" v-if="$slots.footer">
 					<slot name="footer" />
 				</div>
 			</div>
@@ -24,6 +24,7 @@
 <style lang="scss" scoped>
 .modal.show {
 	display: block;
+	overflow-y: auto;
 }
 </style>
 

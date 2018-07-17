@@ -5,8 +5,8 @@ function addData(element, data) {
 	element.data = data;
 }
 
-module.exports = function(node) {
+module.exports = async function(sourceElements) {
 	addData(this, this.data);
 
-	return node.run();
+	for(const sourceElement of sourceElements.children) await sourceElement.run();
 };

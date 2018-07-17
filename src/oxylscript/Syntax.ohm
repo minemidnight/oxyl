@@ -1,16 +1,8 @@
 OxylScript {
 	Program = SourceElement*
-	SourceElement = (Statement
-					| Loop
-					| Effect
-                    | Expression
-                    | Condition
-					 | AnyType ) semi?
+	SourceElement = Statement #semicolon
 
-	Block = "{" SourceElement* "}"
- 
 	space := whitespace | lineTerminator | comment
-
 	whitespace = "\t"
 				| "\x0B" -- verticalTab
 				| "\x0C" -- formFeed
@@ -20,343 +12,282 @@ OxylScript {
 				| "\u2000".."\u200B"
 				| "\u3000"
 
-	semi = ";"
- 	lineTerminator = "\n" | "\r" | "\u2028" | "\u2029"
+	lineTerminator = "\n" | "\r" | "\u2028" | "\u2029"
 	lineTerminatorSequence = "\n" | "\r" ~"\n" | "\u2028" | "\u2029" | "\r\n"
 
+	multiLineCommentSingleLine = "/*" (~("*/" | lineTerminator) any)* "*/"
+
+	spacesNoNewline = (whitespace | singleLineComment | multiLineCommentSingleLine)*
+	semicolon = space* (";" | end)
+				| spacesNoNewline (lineTerminator | ~multiLineCommentSingleLine multiLineComment | &"}")
+
 	comment = multiLineComment | singleLineComment
-
 	multiLineComment = "/*" (~"*/" any)* "*/"
- 	singleLineComment = "//" (~lineTerminator any)*
- 
-	AnyType = Boolean
-			| Permission
-			| Integer
-			| Number
-			| User
-			| Member
-			| Message
-			| Channel
-			| Role
-			| Guild
-			| String
-			| Variable
-
-	// Priority
-
-	BooleanPriority = "(" Boolean ")"
-	PermissionPriority = "(" Permission ")"
-	IntegerPriority = "(" Integer ")"
-	NumberPriority = "(" Number ")"
-	UserPriority = "(" User ")"
-	MemberPriority = "(" Member ")"
-	MessagePriority = "(" Message ")"
-	ChannelPriority = "(" Channel ")"
-	RolePriority = "(" Role ")"
-	GuildPriority = "(" Guild ")"
-	StringPriority = "(" String ")"
-	VariablePriority = "(" Variable ")"
-
-	// Expressions
-	Expression = AbsoluteValue
-				| Arithmetic
-				| CleanContent
-				| CreationTimestamp
-				| Difference
-				| FormatDate
-				| ID
-				| IndexOf
-				| MemberCount
-				| MemberGame
-				| MemberJoinTimestamp
-				| MemberStatus
-				| Mention
-				| MessageAuthor
-				| MessageContent
-				| Name
-				| RandomNumber
-				| Rounded
-				| RoundedDown
-				| RoundedUp
-				| GuildIcon
-				| GuildRegion
-				| GuildOwner
-				| Substring
-				| Concat
-				| Length
-				| Lowercase
-				| Uppercase
-				| UserAvatar
-				| UserDiscriminator
-				| UserTag
-				| UserFromID
-				| MemberFromUser
-				| MemberFromID
-				| ChannelFromID
-				| RoleFromID
-				| RoleFromName
-
-	AbsoluteValue = ("absolute" | "abs") "value"? "of" Number -- abs
-					| "|" Number "|" -- pipes
-
-	Arithmetic = Addition
-
-	Addition = Addition "+" Multiplication -- plus
-			| Addition "-" Multiplication -- minus
-			| Multiplication
-			
-	Multiplication = Multiplication "*" Exponent -- times
-					| Multiplication "/" Exponent -- divide
-					| Exponent
-		
-	Exponent = Number "^" Exponent -- power
-			| Number
-
-	CleanContent = "clean content of" Message -- messageLast
-				| Message "'s clean content" -- messageFirst
-
-	CreationTimestamp = "creation timestamp of" DiscordType -- objectLast
-				| DiscordType "'s creation timestamp'" -- objectFirst
-
-	Difference = "difference between" Number "and" Number
-
-	FormatDate = Number "formatted as date"
-
-	ID = "id of" DiscordType -- objectLast
-		| DiscordType "'s id" -- objectFirst
-
-	IndexOf = "index of" String "in" String
-
-	MemberCount = "member count of" Guild -- guildLast
-				| Guild "'s member count" -- guildFirst
+  	singleLineComment = "//" (~lineTerminator any)*
+
+	noun<text> = ("the" space)? text
+	Noun<text> = #noun<text>
+
+	a<text> = (("an" | "a") space)? text
+	A<text> = #a<text>
+
+	ArityToOne<stuff> = stuff // convert the arity of something to one
+
+	Statement = BlockStatement
+				| EmptyStatement
+				| VariableStatement
+				| IfStatement
+				| LoopStatement
+				| AddRoleStatement
+				| RemoveRoleStatement
+				| BanStatement
+				| KickStatement
+				| CreateMessageStatement
+				| SendDMStatement
+				| SetNicknameStatement
+				| ExpressionStatement
+
+	BlockStatement = ~variableLiteral "{" Statement* "}"
+
+	EmptyStatement = ";"
+
+	VariableStatement = variableName "=" Expression -- setWithEqual
+						| "set" Noun<"variable">? variableName "to" Expression -- setNoEqual
+
+	IfStatement = "if" Expression Statement ("else" Statement)?
+
+	LoopStatement = "loop" Expression "times" Statement
+
+	AddRoleStatement = "add" Expression "to" Expression ArityToOne<("because" | "due to" | "with"? "reason")> Expression -- reason
+					| "add" Expression "to" Expression -- noReason
+
+	RemoveRoleStatement = "remove" Expression "from" Expression ArityToOne<("because" | "due to" | "with"? "reason")> Expression -- reason
+						| "remove" Expression "from" Expression -- noReason
+
+	BanStatement = "ban" Expression ArityToOne<("because" | "due to" | "with"? "reason")> Expression -- reason
+				| "ban" Expression -- noReason
+
+	KickStatement = "kick" Expression ArityToOne<("because" | "due to" | "with"? "reason")> Expression -- reason
+					| "kick" Expression -- noReason
+
+	CreateMessageStatement = ("create" | "send") (A<"message"> ("with content" | "saying")?)? Expression
+
+	SendDMStatement = ("create" | "send") (A<("dm" | "direct message")> ("with content" | "saying")?)? Expression "to" Expression
+
+	SetNicknameStatement = "set" Noun<"nickname"> "of" Expression "to" Expression
+
+	ExpressionStatement = Expression
+
+	Expression = AbsoluteValueExpression
+				| CleanContentExpression
+				| CreationTimestampExpression
+				| DifferenceExpression
+				| FormatDateExpression
+				| IDExpression
+				| IndexOfExpression
+				| MemberCountExpression
+				| MemberGameExpression
+				| MemberJoinTimestampExpression
+				| MemberStatusExpression
+				| MentionExpression
+				| MessageAuthorExpression
+				| MessageContentExpression
+				| NameExpression
+				| UsernameExpression
+				| RandomNumberExpression
+				| RoundExpression
+				| GuildIconExpression
+				| GuildRegionExpression
+				| GuildOwnerExpression
+				| SubstringExpression
+				| LengthExpression
+				| LowercaseExpression
+				| UppercaseExpression
+				| UserAvatarExpression
+				| UserDiscriminatorExpression
+				| UserTagExpression
+				| UserFromIDExpression
+				| MemberFromUserExpression
+				| MemberFromIDExpression
+				| ChannelFromIDExpression
+				| RoleFromIDExpression
+				| RoleFromNameExpression
+				| ContainsExpression
+				| DoesntContainExpression
+				| HasPermissionExpression
+				| HasChannelPermissionExpression
+				| HasRoleExpression
+				| IsBotExpression
+				| IsHoistedExpression
+				| ChannelFromMessageExpression
+				| GuildFromRoleExpression
+				| GuildFromMessageExpression
+				| GuildFromChannelExpression
+				| OrExpression
 
-	MemberGame = "game of" Member -- memberLast
-				| Member "'s game" -- memberFirst
+	AbsoluteValueExpression = (Noun<("absolute")> | Noun<"abs">) "value of" Expression -- words
+							| "|" Expression "|" -- pipes
 
-	MemberJoinTimestamp = "join timestamp of" Member -- memberLast
-						| Member "'s join timestamp" -- memberFirst
+	CleanContentExpression = Noun<"clean"> "content of" Expression -- exprLast
+							| Expression "'s clean content" -- exprFirst
 
-	MemberStatus = "status of" Member -- memberLast
-				| Member "'s status" -- memberFirst
+	CreationTimestampExpression = Noun<"creation"> "timestamp of" Expression -- exprLast
+								| Expression "'s creation timestamp" -- exprFirst
 
-	Mention = "mention of" Mentionable -- mentionableLast
-			| Mentionable "'s mention" -- mentionableFirst
+	DifferenceExpression = Noun<"difference"> "between" Expression "and" Expression
 
-	MessageAuthor = "author of" Message -- messageLast
-					| Message "'s author" -- messageFirst
+	FormatDateExpression = Expression ArityToOne<("formatted as a date" | "to date" "format"?)>
 
-	MessageContent = "content of" Message -- messageLast
-					| Message "'s content" -- messageFirst
+	IDExpression = Noun<"id"> "of" Expression -- exprLast
+				| Expression "'s id" -- exprFirst
 
-	Name = "name of" HasName -- objectLast
-		| HasName "'s name" -- objectFirst
+	IndexOfExpression = Noun<"index"> "of" Expression "in" Expression
 
-	Username = "username of" User -- userLast
-		| User "'s username" -- userFirst
+	MemberCountExpression = Noun<"member"> "count of" Expression -- exprLast
+							| Expression "'s member count" -- exprFirst
 
-	RandomNumber = "random number between" Integer "to" Integer -- exclusive
-				| "random number between" Integer "to" Integer "inclusive" -- inclusive
+	MemberGameExpression = Noun<"game"> "of" Expression -- exprLast
+							| Expression "'s game" -- exprFirst
 
-	Rounded = Number "rounded"
+	MemberJoinTimestampExpression = Noun<"join"> "timestamp of" Expression -- exprLast
+							| Expression "'s join timestamp" -- exprFirst
 
-	RoundedDown = Number ("rounded down" | "floor")
+	MemberStatusExpression = Noun<"status"> "of" Expression -- exprLast
+							| Expression "'s status" -- exprFirst
 
-	RoundedUp = Number ("rounded up" | "ceil")
+	MentionExpression = Noun<"mention"> "of" Expression -- exprLast
+						| Expression "'s mention" -- exprFirst
 
-	GuildIcon = "icon of" Guild -- guildLast
-				| Guild "'s icon" -- guildFirst
+	MessageAuthorExpression = Noun<"author"> "of" Expression -- exprLast
+							| Expression "'s author" -- exprFirst
 
-	GuildRegion = "region of" Guild -- guildLast
-				| Guild "'s region" -- guildFirst
+	MessageContentExpression = Noun<"content"> "of" Expression -- exprLast
+							| Expression "'s content" -- exprFirst
+						
+	NameExpression = Noun<"name"> "of" Expression -- exprLast
+					| Expression "'s name" -- exprFirst
 
-	GuildOwner = "owner of" Guild --guildLast
-				| Guild "'s owner" -- guildFirst
+	UsernameExpression = Noun<"username"> "of" Expression -- exprLast
+						| Expression "'s username" -- exprFirst
 
-	Substring = SubstringFromIndices
-				| SubstringFirstCharacters
-				| SubstringLastCharacters
+	RandomNumberExpression = A<"random"> "integer between" Expression "and" Expression "inclusive" -- inclusive
+							| A<"random"> "integer between" Expression "and" Expression -- exclusive
 
-	SubstringFromIndices = "the"? "part of" String ("between" | "from") Integer "to" Integer
-						| "the"? "substring of" String ("between" | "from") Integer "to" Integer
+	RoundExpression = Expression "rounded" -- round
+					| "floor of" Expression -- downExprLast
+					| Expression "rounded down" -- downExprFirst
+					| "ceil of" Expression -- upExprLast
+					| Expression "rounded up" -- upExprFirst
 
-	SubstringFirstCharacters = "the"? "first" Integer "characters of" String
+	GuildIconExpression = Noun<"icon"> "of" Expression -- exprLast
+						| Expression "'s icon" -- exprFirst
 
-	SubstringLastCharacters = "the"? "last" Integer "characters of" String
+	GuildRegionExpression = Noun<"region"> "of" Expression -- exprLast
+							| Expression "'s region" -- exprFirst
 
-	Concat = String "+" AnyType
-			| AnyType "+" String
-			| String "added to" AnyType
-			| AnyType "added to" String
+	GuildOwnerExpression = Noun<"owner"> "of" Expression -- exprLast
+							| Expression "'s owner" -- exprFirst
 
-	Length = "length of" String -- stringLast
-			| String "'s length" -- stringFirst
+	SubstringExpression = Noun<("part" | "substring")> "of" Expression ("between" | "from") Expression "to" Expression -- indicies
+						| Noun<"first"> Expression "characters of" Expression -- first
+						| Noun<"last"> Expression "characters of" Expression -- last
 
-	Lowercase = "lowercase of" String
+	LengthExpression = Noun<"length"> "of" Expression -- exprLast
+					| Expression "'s length" -- exprFirst
 
-	Uppercase = "uppercase of" String
+	LowercaseExpression = "lowercase of" Expression
 
-	UserAvatar = "avatar of" User -- userLast
-				| User "'s avatar" -- userFirst
+	UppercaseExpression = "uppercase of" Expression
 
-	UserDiscriminator = "discriminator of" User -- userLast
-						| User "'s discriminator" -- userFirst
+	UserAvatarExpression = Noun<"avatar"> "of" Expression -- exprLast
+						| Expression "'s avatar" -- exprFirst
 
-	UserTag = "tag of" User -- userLast
-			| User "'s tag" -- userFirst
+	UserDiscriminatorExpression = Noun<"discriminator"> "of" Expression -- exprLast
+								| Expression "'s discriminator" -- exprFirst
 
-	UserFromID = "the"? "user" ("from" | "with" | "of") "id" String
+	UserTagExpression = Noun<"tag"> "of" Expression -- exprLast
+						| Expression "'s tag" -- exprFirst
 
-	MemberFromUser = "the"? "member" ("from" | "of") User
+	UserFromIDExpression = Noun<"user"> ("from" | "with" | "of") Noun<"id"> Expression
 
-	MemberFromID = "the"? "member" ("from" | "with" | "of") "id" String
+	MemberFromUserExpression = Noun<"member"> ("from" | "of") Expression
 
-	ChannelFromID = "the"? "channel" ("from" | "with" | "of") "id" String
+	MemberFromIDExpression = Noun<"member"> ("from" | "with" | "of") Noun<"id"> Expression
 
-	RoleFromID = "the"? "role" ("from" | "with" | "of") "id" String
+	ChannelFromIDExpression = Noun<"channel"> ("from" | "with" | "of") Noun<"id"> Expression
 
-	RoleFromName = "the"? "role" ("from" | "with" | "of") "name" String
+	RoleFromIDExpression = Noun<"role"> ("from" | "with" | "of") Noun<"id"> Expression
 
-	// Conditions
-	Condition = IsSet
-			| NotSet
-			| DiscordCondition
-			| Contains
-			| DoesntContain
-			| Equality
-			| Comparison
+	RoleFromNameExpression = Noun<"role"> ("from" | "with" | "of") Noun<"name"> Expression
 
-	Contains = String "has" String
-			| String "contains" String
-			| String "includes" String
-	DoesntContain = String ("doesnt" | "doesn't" | "does not") ("contain" | "include") String
-	IsSet = AnyType "exists"
-			| AnyType "is set"
-	NotSet = AnyType ("doesnt" | "doesn't" | "does not") "exist"
-			| AnyType ("isnt" | "isn't" | "is not") "set"
+	ChannelFromMessageExpression = Noun<"channel"> ("from" | "of") Noun<"message"> Expression
 
-	Equality = Equals | NotEqual
-	Equals = AnyType "is" AnyType
-			| AnyType "equals" AnyType
-			| AnyType "is equal to" AnyType
-			| AnyType "==" AnyType
-			| AnyType "===" AnyType
+	GuildFromRoleExpression = Noun<("guild" | "server")> ("from" | "of") Noun<"role"> Expression
 
-	NotEqualIsnt = ("isnt" | "isn't" | "is not") "equal to"?
-	NotEqualDoesnt = ("doesnt" | "doesn't" | "does not") "equal"
-	NotEqual = AnyType NotEqualIsnt AnyType
-			| AnyType NotEqualDoesnt AnyType
-			| AnyType "!=" AnyType
-			| AnyType "!==" AnyType
+	GuildFromMessageExpression = Noun<("guild" | "server")> ("from" | "of") Noun<"message"> Expression
 
-	Comparison = GreaterThan
-				| LessThan
-				| GreaterThanOrEqual
-				| LessThanOrEqual
+	GuildFromChannelExpression = Noun<("guild" | "server")> ("from" | "of") Noun<"channel"> Expression
 
-	GreaterThanOptions = "is"? ("greater" | "more" | "higher" | "bigger" | "larger") "than"
-	GreaterThan = Comparable GreaterThanOptions Comparable
-				| Comparable ">" Comparable
-	
-	GreaterThanOrEqualOptions = "is"? ("greater" | "more" | "higher" | "bigger" | "larger") "than or" ("equal to" | "equals")
-	GreaterThanOrEqual = Comparable GreaterThanOrEqualOptions Comparable
-				| Comparable ">=" Comparable
-	
-	LessThanOptions = "is"? ("less" | "lower" | "smaller") "than"
-	LessThan = Comparable LessThanOptions Comparable
-				| Comparable "<" Comparable
+	ContainsExpression = Expression ("contains" | "includes") Expression
 
-	LessThanOrEqualOptions = "is"? ("less" | "lower" | "smaller") "than or" ("equal to" | "equals")
-	LessThanOrEqual = Comparable LessThanOrEqualOptions Comparable
-				| Comparable "<=" Comparable
+	DoesntContainExpression = Expression ("doesn't" | "doesnt" | "does not") ("contain" | "include") Expression
 
-	DiscordCondition = HasChannelPermission
-					| HasPermission
-					| HasRole
-					| IsBot
-					| IsHoisted
+	HasPermissionExpression = Expression "has" Noun<"permissson"> "to"? Expression
 
-	HasChannelPermission = Member "has" "the"? "permission"? "to"? Permission "in" Channel
-	HasPermission = Member "has" "the"? "permission"? "to"? Permission
-	HasRole = Member "has" "the"? "role"? Role
-	IsBot = User "is a bot"
-	IsHoisted = Role "is hoisted"
-				| Role "displays seperately"
+	HasChannelPermissionExpression = Expression "has" Noun<"permissson"> "to"? Expression "in" Expression
 
-	// Conditionals
+	HasRoleExpression = Expression "has" Noun<"role"> Expression
 
-	Statement = IfStatement
+	IsBotExpression = Expression "is" A<"bot">
 
-	If = "if" Boolean Block
-    ElseIf = "else" IfStatement
-    Else = "else" Block
+	IsHoistedExpression = Expression ("is hoisted" | "displays seperately")
 
-	IfStatement = If Else -- else
-				| If ElseIf* -- elseIf
-	// Effects
+	OrExpression = OrExpression ("||" | "or") AndExpression -- or
+				| AndExpression
 
-	Effect = AddRole
-			| Ban
-			| Kick
-			| RemoveRole
-			| CreateMessage
-			| SendDM
-			| SetNickname
-			| SetVariable
+	AndExpression = AndExpression ("&&" | "and") ExistenceExpression -- and
+					| ExistenceExpression
 
-	SetVariable = "set" "the"? "variable"? variableName "to" AnyType
+	ExistenceExpression = EqualityExpression ("exists" | "is set") -- exists
+						| EqualityExpression (("isn't" | "isnt" | "is not") "set" | ("does not" | "doesn't" | "doesnt") "exist") -- doesntExist
+						| EqualityExpression
 
-	WithReason = "with"? "reason"
-	ReasonText = (WithReason | "because" | "due to")
+	EqualityExpression = RelationalExpression ArityToOne< ("==" | "===" | "equals" | "is" "equal to"?)> RelationalExpression -- equal
+						| RelationalExpression ArityToOne<("!=" | "!==" | ("isn't" | "isnt" | "is not") "equal to"? | ("does not" | "doesn't" | "doesnt") "equal")> RelationalExpression -- notEqual
+						| RelationalExpression
 
-	AddRole = "add" "the"? "role"? Role "to" Member -- noReason
-			| "add" "the"? "role"? Role "to" Member ReasonText String -- reason
+	RelationalExpression = AdditiveExpression ArityToOne<("<" | "is"? ("less" | "lower" | "smaller") "than")> AdditiveExpression -- lt
+						| AdditiveExpression ArityToOne<(">" | "is"? ("greater" | "more" | "higher" | "bigger" | "larger") "than")> AdditiveExpression -- gt
+						| AdditiveExpression ArityToOne<("<=" | "is"? ("less" | "lower" | "smaller") "than or" ("equal to" | "equals"))> AdditiveExpression -- le
+						| AdditiveExpression ArityToOne<(">=" | "is"? ("greater" | "more" | "higher" | "bigger" | "larger") "than or" ("equal to" | "equals"))> AdditiveExpression -- ge
+						| AdditiveExpression
 
-	RemoveRole = "remove" "the"? "role"? Role "from" Member -- noReason
-				| "remove" "the"? "role"? Role "from" Member ReasonText String -- reason
+	AdditiveExpression = AdditiveExpression "+" MultiplicativeExpression -- add
+						| AdditiveExpression "-" MultiplicativeExpression -- sub
+						| MultiplicativeExpression
 
-	Ban = "ban" "the"? "member"? Member -- noReason
-		| "ban" "the"? "member"? Member ReasonText String -- reason
+	MultiplicativeExpression = MultiplicativeExpression "*" Expression -- mul
+								| MultiplicativeExpression "^" Expression -- exp
+								| MultiplicativeExpression "/" Expression -- div
+								| MultiplicativeExpression "%" Expression -- mod
+								| UnaryExpression
 
-	Kick = "kick" "the"? "member"? Member -- noReason
-		| "kick" "the"? "member"? Member ReasonText String -- reason
+	UnaryExpression = "!" UnaryExpression -- not
+					| PrimaryExpression
 
-	CreateMessage = ("create" | "send") "a"? "message"? ("with content" | "saying")? String
+	PrimaryExpression = literal
+						| "(" Expression ")" -- precedence
 
-	SendDM = "send" ("a" | "an")? ("dm" | "direct message") ("with content" | "saying")? String "to" User
+	literal = stringLiteral
+			| numericLiteral
+			| booleanLiteral
+			| permissionLiteral
+			| userLiteral
+			| messageLiteral
+			| channelLiteral
+			| guildLiteral
+			| variableLiteral
 
-	SetNickname = "set" "the"? "nickname of" Member "to" String
-	
-	// Loops
-
-	Loop = LoopTimes Block
-
-	LoopIndex = "loop-index" | "loop index"
-
-	LoopTimes = "loop" Integer "times"
-
-
-	// String literals
-	String = StringPriority
-			| stringLiteral
-			| CleanContent
-			| ID
-			| FormatDate
-			| MemberStatus
-			| Mention
-			| MessageContent
-			| Name
-			| GuildIcon
-			| GuildRegion
-			| Substring
-			| Concat
-			| Lowercase
-			| Uppercase
-			| UserDiscriminator
-			| UserAvatar
-			| UserTag
-			| AnyType
-			| Variable
-	
 	stringLiteral = "\"" doubleStringCharacter* "\""
 				| "'" singleStringCharacter* "'"
 	doubleStringCharacter = ~("\"" | "\\") any -- nonEscaped
@@ -366,59 +297,21 @@ OxylScript {
 	escapeSequence = singleEscapeCharacter | nonEscapeCharacter
 	singleEscapeCharacter = "'" | "\"" | "\\" | "b" | "f" | "n" | "r" | "t" | "v"
 	nonEscapeCharacter = ~(singleEscapeCharacter | digit | "x" | "u" | lineTerminator) any
-	
-	// numeric literals
-	Number = NumberPriority
-    		| Arithmetic
-			| Integer
-			| numericLiteral
-			| AbsoluteValue
-			| Difference
-			| Variable
 
-	Integer = IntegerPriority
-			| integerLiteral
-            | CreationTimestamp
-            | MemberJoinTimestamp
-            | MemberCount
-            | IndexOf
-			| RandomNumber
-			| Rounded
-			| RoundedDown
-			| RoundedUp
-			| Length
-			| LoopIndex
-			| Variable
+	numericLiteral = floatLiteral | integerLiteral | loopIndexLiteral
 
-	numericLiteral = floatLiteral | integerLiteral
-	
-	integerLiteral = "-" integerLiteral -- neg
-					| integer
-	
-	floatLiteral = "-" floatLiteral -- neg
-				| float
+	loopIndexLiteral = "loop" "-"? "index"
+
+	floatLiteral = "-" float -- negative
+				| float -- positive
+
+	integerLiteral = "-" integer -- negative
+				| integer -- positive
 
 	integer = digit+
 	float = digit* "." digit+
 
-	// booleans
-	Boolean = BooleanPriority
-			| booleanLiteral
-			| Condition
-			| InvertBoolean
-			| And
-			| Or
-			| Variable
-
-	InvertBoolean = ("not" | "!") Boolean
-	And = Boolean ("&&" | "and") Boolean
-	Or = Boolean ("||" | "or") Boolean
 	booleanLiteral = "true" | "false"
-
-	// permission literal(s)
-	Permission = PermissionPriority
-				| permissionLiteral
-				| Variable
 
 	permissionLiteral = createInvite
 						| kickMembers
@@ -471,57 +364,25 @@ OxylScript {
 	voiceMuteMembers = "voice mute members" | "mute members"
 	voiceDeafenMembers = "voice deafen members" | "deafen members"
 	voiceMoveMembers = "move members" | "voice move members"
-	voiceUseVADOptions =  "voice use" caseInsensitive<"vad"> | "use" caseInsensitive<"vad">
-	voiceUseVAD = voiceUseVADOptions | caseInsensitive<"vad">
+	voiceUseVAD = "voice"? "use"? caseInsensitive<"vad">
 	changeNickname = "change nickname"
 	manageNicknames = "manage nicknames"
 	manageRoles = "manage roles"
 	manageWebhooks = "manage webhooks"
 	manageEmojis = "manage emojis"
 
-	// other types
-	User = UserPriority
-		| userLiteral
-		| Member
-		| MessageAuthor
-		| GuildOwner
-		| UserFromID
-		| Variable
+	userLiteral = noun<"message author">
+				| noun<"message sender">
+				| noun<"author">
+				| noun<"sender">
 
-	Member = MemberPriority
-			| MemberFromID
-			| MemberFromUser
-			| Variable
+	messageLiteral = noun<"message">
 
-	Message = MessagePriority
-			| messageLiteral
-			| Variable
+	channelLiteral = noun<"channel">
 
-	Channel = ChannelPriority
-			| channelLiteral
-			| ChannelFromID
-			| Variable
+	guildLiteral = noun<"server"> | noun<"guild">
 
-	Role = RoleFromID
-			| RoleFromName
-			| RolePriority
-			| Variable
+	variableLiteral = (noun<"value of">)? variableName
 
-	Guild = GuildPriority
-			| guildLiteral
-			| Variable
-
-	userLiteral = "author" | "message sender" | "sender" | "message author"
-	messageLiteral = "message" | "sent message"
-	channelLiteral = "channel" | "channel from message"
-	guildLiteral = "guild" | "server" | "guild from message" | "server from message"
-
-	Variable = VariablePriority | variableLiteral
-	variableLiteral = ("value" "of")? variableName
 	variableName = "{" alnum+ "}"
-
-	DiscordType = User | Member | Message | Channel | Role | Guild | Variable
-	Mentionable = User | Member | Channel | Role | Variable
-	HasName = Channel | Role | Guild | Variable
-	Comparable = String | Number
 }

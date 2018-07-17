@@ -12,6 +12,8 @@ const patreonAuth = new OAuth2({
 
 module.exports = {
 	updateAll: async r => {
+		process.logger.debug("patreon", "Checking status of all patreons");
+
 		const premiums = await r.table("discordPatreonLink")
 			.filter(r.row("premiumServers").ne(0))
 			.map(doc => doc.merge({
@@ -26,6 +28,7 @@ module.exports = {
 
 			const max = Math.floor(premiumData.pledge / 100);
 			if(premiumData.premiumServers > max) {
+				process.logger.info("patreon", `${`Removing premium from ${max}` - premiumData.premiumServers} server(s)`);
 				for(const serverID of premiumData.serverIDs.slice(max - premiumData.premiumServers)) {
 					await r.table("premiumServers")
 						.get(serverID)

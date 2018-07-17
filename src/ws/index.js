@@ -1,7 +1,10 @@
 const config = require("../../config");
 const messageHandler = require("./messageHandler");
+const r = require("../rethinkdb/index");
 const WebSocket = require("ws");
 const server = new WebSocket.Server({ port: config.websocketPort });
+
+process.logger = require("../logger/index")(r);
 
 let Redis;
 if(process.env.NODE_ENV === "development") Redis = require("ioredis-mock");

@@ -2,6 +2,8 @@ const superagent = require("superagent");
 
 module.exports = {
 	async update({ erisClient: client, locals: { r } }) {
+		process.logger.debug("roblox", "Syncing group roles");
+
 		const groupSyncs = await r.table("robloxVerification")
 			.hasFields("groupID")
 			.filter(r.row("enabled").eq(true))

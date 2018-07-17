@@ -1,0 +1,21 @@
+@import "variables";
+@import "~codemirror/lib/codemirror";
+@import "~codemirror/theme/pastel-on-dark";
+@import "~codemirror/addon/dialog/dialog";
+@import "~codemirror/addon/hint/show-hint";
+@import "~codemirror/addon/lint/lint";
+@import "~codemirror/addon/scroll/simplescrollbars";
+
+.CodeMirror-activeline .CodeMirror-linenumber {
+	color: white;
+}
+
+.CodeMirror-lint-tooltip {
+	background-color: $color-700;
+	color: $color-text;
+
+	.CodeMirror-lint-message-error {
+		background-position: center left;
+		padding-left: 25px;
+	}
+}

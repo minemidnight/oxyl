@@ -1,3 +1,3 @@
-module.exports = function(boolean) {
+module.exports = async function(_a) {
 	return this.sourceString === "true";
 };

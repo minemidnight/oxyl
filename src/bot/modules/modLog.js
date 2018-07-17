@@ -2,6 +2,9 @@ const recentActions = new Map();
 
 const createTimedEvent = async (data, r) => r.table("timedEvents").insert(data).run();
 const createEntry = async (data, wiggle) => {
+	process.logger.info("modlog", `Creating mod log entry for ` +
+		`${data.guild.name} (${data.guild.id}), action ${data.action}`);
+
 	const { action, guild, punished, responsible, reason, role, time, warnCount } = data;
 	const caseID = await wiggle.locals.r.table("modLog").getAll(guild.id, { index: "guildID" }).count().add(1);
 	data.caseID = caseID;

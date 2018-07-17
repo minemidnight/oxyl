@@ -1,5 +1,5 @@
 <template>
-	<nav class="navbar navbar-expand-md navbar-dark color-630">
+	<nav class="navbar navbar-expand-lg navbar-dark color-630">
 		<button class="navbar-toggler" type="button" @click="toggleNavbar()">
 			<span class="navbar-toggler-icon"></span>
 		</button>
@@ -21,7 +21,7 @@
 						Features
 					</router-link>
 				</li>
-				<li class="nav-item dropdown d-lg-none active" :class="{ 'd-none': !$route.name.startsWith('dashboard') }">
+				<li class="nav-item dropdown d-lg-none active" v-if="$route.name.startsWith('dashboard')">
 					<a class="nav-link dropdown-toggle" role="button" @click="toggleDropdown()">
 						<i class="fa fa-cogs" aria-hidden="true"></i>
 						Configuration
@@ -70,7 +70,12 @@
 </template>
 
 <style lang="scss" scoped>
+@import "../variables";
 @import "~bootstrap/scss/bootstrap";
+
+.dropdown-menu {
+	background: $color-700;
+}
 
 .dropdown-item {
 	color: rgba(255, 255, 255, .5);
@@ -95,6 +100,8 @@
 			max-height: 800px;
 			border: unset;
 			margin: unset;
+
+			overflow-y: auto;
 		}
 	}
 }

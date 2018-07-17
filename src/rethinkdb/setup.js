@@ -23,7 +23,6 @@ module.exports = async r => {
 		await r.table(table.name).indexWait().run();
 	}
 
-	await r.getPoolMaster().drain();
-	return Promise.resolve();
+	return r;
 };
 

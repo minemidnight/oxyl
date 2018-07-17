@@ -1,2 +1,2 @@
-module.exports = (_a, escapeSequence) =>
-	`\\${escapeSequence.run()}`;
+module.exports = async (_a, escapeSequence) =>
+	`\\${await escapeSequence.run()}`;

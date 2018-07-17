@@ -31,5 +31,10 @@
         "patreon": {
                 "clientID": "pateron client id",
                 "secret": "patreon secret"
-        }
+        },
+        "serverCounts": {
+                "carbonitex": "optional carbonitex key to post to carbonitex.net when in prod",
+                "dbots": "optional dbots api key to post to bots.discord.pw when in prod",
+		"dbotsOrg": "optional dbots.org api key to post to discordbots.org when in prod"
+	}
 }

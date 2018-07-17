@@ -1,6 +1,7 @@
 config.json
 src/panel/public
 src/site/public
+src/oxylscript/editor/public
 src/bot/modules/images/saved
 
 # Logs

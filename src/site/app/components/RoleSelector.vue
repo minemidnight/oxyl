@@ -9,11 +9,11 @@
 
 				<li>
 					<div class="dropdown">
-						<button type="button" id="add-role" class="dropdown-toggle color-text" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<button type="button" id="add-role" class="dropdown-toggle color-text" @click="toggleDropdown">
 							<i class="fa fa-plus-circle" aria-hidden="true"></i>
 						</button>
 
-						<div class="dropdown-menu" aria-labelledby="add-role">
+						<div ref="dropdown"  class="dropdown-menu">
 							<button type="button" class="dropdown-item" v-for="(role, index) in roles.filter(role => !~value.indexOf(role.id))" :key="index" @click="addRole(role)">{{role.name}}</button>
 						</div>
 					</div>
@@ -122,8 +122,20 @@ div.main {
 
 <script>
 export default {
+	data() {
+		return { open: false };
+	},
 	props: { roles: Array, value: Array },
 	methods: {
+		toggleDropdown() {
+			if(this.open) {
+				this.open = false;
+				this.$refs.dropdown.classList.remove("show");
+			} else {
+				this.open = true;
+				this.$refs.dropdown.classList.add("show");
+			}
+		},
 		addRole(role) {
 			this.value.push(role.id);
 			this.$emit("input", this.value);

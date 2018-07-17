@@ -6,6 +6,8 @@ module.exports = redis => {
 };
 
 async function getNew(redis) {
+	process.logger.debug("feeds", "Getting new reddit feeds");
+
 	const validReddits = (await redis.keys("feeds:reddit:new:*"))
 		.map(key => key.substring(key.lastIndexOf(":") + 1));
 	const alreadyPosted = (await redis.keys("feeds:reddit:newPosted:*"))
@@ -26,6 +28,8 @@ async function getNew(redis) {
 }
 
 async function getTop(sub, redis) {
+	process.logger.debug("feeds", "Getting top reddit feeds");
+
 	const alreadyPosted = (await redis.keys("feeds:reddit:topPosted:*"))
 		.map(key => key.substring(key.lastIndexOf(":") + 1));
 

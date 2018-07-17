@@ -1,0 +1,12 @@
+{
+	"name": "stats",
+	"primary": "id",
+	"indexes": ["type", "current", "time"],
+	"model": {
+		"type": "type of stat (memory, guilds)",
+		"current": ["ppid", "worker id"],
+		"time": "timestamp of stat",
+		"id": "generated uuid",
+		"value": "value of stat, any type"
+	}
+}

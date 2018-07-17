@@ -22,6 +22,7 @@ module.exports = async (client, message) => {
 			if(!message.token) return client.send({ op: "error", code: 400 });
 
 			const info = await discordAuth.info(message.token, "users/@me");
+			process.logger.info("websocket", `User ${info.id} indetified, allowed: ${!!~config.owners.indexOf(info.id)}`);
 			if(!~config.owners.indexOf(info.id)) return client.send({ op: "error", code: 403 });
 
 			client.heartbeat();

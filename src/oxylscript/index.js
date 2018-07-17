@@ -2,6 +2,7 @@ const fs = require("fs");
 const ohm = require("ohm-js");
 const path = require("path");
 
+const checker = require("./ast/checker");
 const grammar = ohm.grammar(fs.readFileSync(path.resolve(__dirname, "syntax.ohm")));
 const operations = fs.readdirSync(path.resolve(__dirname, "syntax"));
 
@@ -20,7 +21,10 @@ module.exports = {
 	match(string) {
 		return grammar.match(string);
 	},
-	execute(match, message) {
+	check(match) {
+		return checker(match);
+	},
+	async execute(match, message) {
 		const sem = semantics(match);
 		sem.data = {
 			variables: {},
@@ -30,6 +34,6 @@ module.exports = {
 			guild: message.channel.guild
 		};
 
-		sem.run();
+		await sem.run();
 	}
 };

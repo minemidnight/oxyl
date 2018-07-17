@@ -7,11 +7,7 @@ module.exports = {
 			let output;
 			if(flags.target) {
 				let targetValue = null;
-				if(flags.target === "m") {
-					flags.target = "master";
-				} else if(flags.target === "p") {
-					flags.target = "panel";
-				} else if(flags.target !== "site" && flags.target.startsWith("s")) {
+				if(flags.target.startsWith("s")) {
 					targetValue = parseInt(flags.target.substring(1));
 					flags.target = "shard";
 				} else if(flags.target !== "ws" && flags.target.startsWith("w")) {

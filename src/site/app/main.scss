@@ -22,16 +22,16 @@ img {
 }
 
 .color {
-	&-100, &-hover-100:hover { background-color: $color-100; }
-	&-200, &-hover-200:hover { background-color: $color-200; }
-	&-300, &-hover-300:hover { background-color: $color-300; }
-	&-400, &-hover-400:hover { background-color: $color-400; }
-	&-500, &-hover-500:hover { background-color: $color-500; }
-	&-600, &-hover-600:hover { background-color: $color-600; }
-	&-630, &-hover-630:hover { background-color: $color-630; }
-	&-700, &-hover-700:hover { background-color: $color-700; }
-	&-800, &-hover-800:hover { background-color: $color-800; }
-	&-900, &-hover-900:hover { background-color: $color-900; }
+	&-100, &-hover-100:hover { background-color: $color-100 !important; }
+	&-200, &-hover-200:hover { background-color: $color-200 !important; }
+	&-300, &-hover-300:hover { background-color: $color-300 !important; }
+	&-400, &-hover-400:hover { background-color: $color-400 !important; }
+	&-500, &-hover-500:hover { background-color: $color-500 !important; }
+	&-600, &-hover-600:hover { background-color: $color-600 !important; }
+	&-630, &-hover-630:hover { background-color: $color-630 !important; }
+	&-700, &-hover-700:hover { background-color: $color-700 !important; }
+	&-800, &-hover-800:hover { background-color: $color-800 !important; }
+	&-900, &-hover-900:hover { background-color: $color-900 !important; }
 	&-text-100, &-text-hover-100:hover { color: $color-100 !important; }
 	&-text-200, &-text-hover-200:hover { color: $color-200 !important; }
 	&-text-300, &-text-hover-300:hover { color: $color-300 !important; }

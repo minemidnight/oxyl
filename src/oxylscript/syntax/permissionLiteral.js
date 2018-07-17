@@ -1,2 +1,2 @@
-module.exports = node =>
-	node.run();
+module.exports = async permissionLiteral =>
+	await permissionLiteral.run();

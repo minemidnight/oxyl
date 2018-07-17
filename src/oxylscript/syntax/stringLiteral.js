@@ -1,2 +1,6 @@
-module.exports = (_a, text, _b) =>
-	text.run().join("");
+module.exports = async (_a, text, _b) => {
+	let result = "";
+	for(const letter of text.children) result += await letter.run();
+
+	return result;
+};

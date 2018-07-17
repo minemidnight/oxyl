@@ -1,6 +1,8 @@
 const config = require("../../config");
 const r = require("../rethinkdb/index");
 
+process.logger = require("../logger/index")(r);
+
 let Redis;
 if(process.env.NODE_ENV === "development") Redis = require("ioredis-mock");
 else Redis = require("ioredis");

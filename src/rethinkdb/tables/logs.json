@@ -1,0 +1,12 @@
+{
+	"name": "logs",
+	"primary": "uuid",
+	"indexes": ["time", "level"],
+	"model": {
+		"level": "error/info/debug/warn",
+		"label": "label provided",
+		"time": "timestamp",
+		"message": "timestamp [label] level: message",
+		"uuid": "generated uuid"
+	}
+}

@@ -1,3 +1,2 @@
-module.exports = function(int) {
-	return parseInt(this.sourceString);
-};
+module.exports = async integerLiteral =>
+	await integerLiteral.run();

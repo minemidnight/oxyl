@@ -1,2 +1,3 @@
-module.exports = (node, _s) =>
-	node.run();
+module.exports = async (statements, _a) =>
+	await statements.run();
+

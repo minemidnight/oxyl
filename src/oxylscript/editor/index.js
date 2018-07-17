@@ -1,9 +1,9 @@
 const bodyParser = require("body-parser");
-const config = require("../../config");
+const config = require("../../../config");
 const express = require("express");
 const path = require("path");
 
-const OAuth2 = require("../oauth2/index");
+const OAuth2 = require("../../oauth2/index");
 const discordAuth = new OAuth2({
 	api: "https://discordapp.com/api/",
 	oauth2: "https://discordapp.com/api/oauth2/"

@@ -54,12 +54,16 @@ class APIRequest {
 
 class PaladinsAPI {
 	constructor(devId, authKey) {
+		process.logger.debug("paladins", "Creating Paladins API class");
+
 		this.devId = devId;
 		Object.defineProperty(this, "authKey", { value: authKey });
 		this.createSession();
 	}
 
 	async createSession() {
+		process.logger.debug("paladins", "Refreshing/creating a session");
+
 		const { session_id: session } = await new APIRequest(this).setEndpoint("createsession").send(false);
 		this.session = session;
 

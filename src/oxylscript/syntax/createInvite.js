@@ -1,2 +1,2 @@
-module.exports = node =>
-	"createInstantInvite";
+module.exports = async (_a) =>
+	"createInvite";

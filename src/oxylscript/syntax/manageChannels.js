@@ -1,2 +1,2 @@
-module.exports = node =>
+module.exports = async (_a) =>
 	"manageChannels";

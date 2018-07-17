@@ -54,11 +54,20 @@ const match = oxylscript.match(code);
 console.timeEnd("match");
 
 if(match.succeeded()) {
+	console.time("check");
+	const check = oxylscript.check(match);
+	if(check.failed()) {
+		console.error(check.message);
+		return;
+	}
+
+	console.timeEnd("check");
 	console.time("execute");
+
 	oxylscript.execute(match, message);
 	console.timeEnd("execute");
 } else {
-	console.error("Errored:", match.message);
+	console.error("Couldn't match:", match.message);
 }
 
 console.timeEnd("total");

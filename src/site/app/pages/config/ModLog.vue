@@ -171,6 +171,23 @@ export default {
 			for(let i = 0; i < array.length; i += size) chunkified.push(array.slice(i, i + size));
 			return chunkified;
 		},
+		async update() {
+			this.$el.querySelectorAll("#update-settings button[type=submit]").forEach(button => {
+				button.classList.add("disabled");
+				button.disabled = true;
+			});
+
+			const { error } = await apiCall
+				.put(`modlog/${this.$route.params.guild}`)
+				.send(this.updateModel);
+
+			if(error) return;
+
+			this.$el.querySelectorAll("#update-settings button[type=submit]").forEach(button => {
+				button.classList.remove("disabled");
+				button.disabled = false;
+			});
+		},
 		async add() {
 			this.$el.querySelectorAll("#add-threshold button[type=submit]").forEach(button => {
 				button.classList.add("disabled");

@@ -47,6 +47,9 @@ function createConfig(folder) {
 					}
 				}
 			}, {
+				test: /\.css$/,
+				use: ["style-loader", "css-loader"]
+			}, {
 				test: /\.scss$/,
 				include: [
 					/node_modules/,
@@ -56,6 +59,9 @@ function createConfig(folder) {
 			}, {
 				test: /\.(woff|woff2|eot|ttf|otf|png|svg|jpe?g|gif)$/,
 				loader: "file-loader"
+			}, {
+				test: /\.ohm$/,
+				loader: "raw-loader"
 			}]
 		},
 		plugins: [
@@ -73,10 +79,11 @@ function createConfig(folder) {
 				this.plugin("done", stats => {
 					stats = stats.toJson();
 					Object.keys(stats.entrypoints).forEach(entry => {
-						const siteFolder = path.resolve(stats.outputPath, entry, "..", "..");
+						const siteFolder = path.resolve(stats.outputPath, "..");
 						const jsFile = path.basename(stats.entrypoints[entry].assets.find(asset => path.extname(asset) === ".js"));
 						const cssFile = path.basename(stats.entrypoints[entry].assets
 							.find(asset => path.extname(asset) === ".css"));
+
 
 						fs.writeFileSync(path.resolve(siteFolder, "public", "app.html"),
 							fs.readFileSync(path.resolve(siteFolder, "app", "index.html"), "utf8")

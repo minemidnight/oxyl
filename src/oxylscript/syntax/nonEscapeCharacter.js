@@ -1,3 +1,3 @@
-module.exports = function(node) {
+module.exports = async function(node) {
 	return this.sourceString;
 };

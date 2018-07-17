@@ -9,11 +9,11 @@
 
 				<li>
 					<div class="dropdown">
-						<button type="button" id="add-channel" class="dropdown-toggle color-text" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<button type="button" id="add-channel" class="dropdown-toggle color-text" @click="toggleDropdown()">
 							<i class="fa fa-plus-circle" aria-hidden="true"></i>
 						</button>
 
-						<div class="dropdown-menu" aria-labelledby="add-channel">
+						<div class="dropdown-menu" ref="dropdown">
 							<button type="button" class="dropdown-item" v-for="(channel, index) in channels.filter(channel => !~value.indexOf(channel.id))" :key="index" @click="addChannel(channel)">#{{channel.name}}</button>
 						</div>
 					</div>
@@ -122,8 +122,20 @@ div.main {
 
 <script>
 export default {
+	data() {
+		return { open: false };
+	},
 	props: { channels: Array, value: Array },
 	methods: {
+		toggleDropdown() {
+			if(this.open) {
+				this.open = false;
+				this.$refs.dropdown.classList.remove("show");
+			} else {
+				this.open = true;
+				this.$refs.dropdown.classList.add("show");
+			}
+		},
 		addChannel(channel) {
 			this.value.push(channel.id);
 			this.$emit("input", this.value);

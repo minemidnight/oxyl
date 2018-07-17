@@ -1,3 +1,2 @@
-module.exports = function(float) {
-	return parseFloat(this.sourceString);
-};
+module.exports = async floatLiteral =>
+	await floatLiteral.run();

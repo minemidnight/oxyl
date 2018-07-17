@@ -1,5 +1,6 @@
 const cluster = require("cluster");
 const messageHandler = require("./workerMessages");
+const path = require("path");
 
 async function handleMessage(message) {
 	if(message.op !== "startup") {
@@ -7,7 +8,8 @@ async function handleMessage(message) {
 		return;
 	}
 
-	const context = require(`../${message.type}/index`);
+	cluster.worker.type = message.type;
+	const context = require(path.resolve(__dirname, "..", message.type, "index.js"));
 	process.evalContext = typeof context === "function" ? await context(message) : context;
 	cluster.worker.on("message", messageHandler);
 }

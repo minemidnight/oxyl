@@ -6,6 +6,7 @@ module.exports = {
 		waitingEvents.forEach(event => {
 			if(!module.exports[event.type] || !event || !event.type) return;
 			else module.exports[event.type](event, wiggle);
+			process.logger.debug("timed events", `Running timed event for ${event.type}`);
 			r.table("timedEvents").get(event.uuid).delete().run();
 		});
 	},

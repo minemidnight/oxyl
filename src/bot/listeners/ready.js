@@ -3,6 +3,7 @@ const { PlayerManager } = require("eris-lavalink");
 
 module.exports = (next, wiggle) => {
 	process.send({ op: "ready" });
+	process.logger.startup("ready", `${wiggle.locals.shardDisplay} ready`);
 
 	if(!(wiggle.erisClient.voiceConnections instanceof PlayerManager)) {
 		wiggle.erisClient.voiceConnections = new PlayerManager(wiggle.erisClient, config.lavalink.nodes, {

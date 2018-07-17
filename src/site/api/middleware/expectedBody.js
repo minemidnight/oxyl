@@ -1,7 +1,8 @@
 const checkValue = (expected, key, body) => {
 	const value = body[key];
+	console.log("checking", expected, key, value, body);
 
-	if(typeof value === "undefined") {
+	if(typeof value === "undefined" && !Array.isArray(expected)) {
 		if(typeof expected === "string" && expected.endsWith("?")) return true;
 		else return `Expected field "${key}" but none found`;
 	}
@@ -61,24 +62,22 @@ const checkValue = (expected, key, body) => {
 };
 
 const typeResultMap = {
-	String: "string",
-	Boolean: "boolean",
-	Object: "object",
-	Number: "number",
-	Array: "array"
+	[String]: "string",
+	[Boolean]: "boolean",
+	[Object]: "object",
+	[Number]: "number",
+	[Array]: "array"
 };
 
 function convertType(type) {
-	if(typeof type === "object" && !Array.isArray(type)) {
+	if(Array.isArray(type)) {
+		return type.map(expectedType => convertType(expectedType));
+	} else if(typeof type === "object" && !Array.isArray(type)) {
 		if(type.hasOwnProperty("type")) type.type = convertType(type.type);
 		else Object.entries(type).forEach(([key, value]) => type[key] = convertType(value));
 	}
 
-
-	return typeResultMap[type] ||
-		Array.isArray(type) ?
-		type.map(expectedType => typeResultMap[expectedType] || expectedType) :
-		type;
+	return typeResultMap[type] || type;
 }
 
 module.exports = expectedBody => (req, res, next) => {

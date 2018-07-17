@@ -1,7 +1,7 @@
-module.exports = function(_a, _b, variable) {
-	variable = variable.run();
-	const value = this.data.variables[variable];
+module.exports = async function(_a, variableName) {
+	variableName = await variableName.run();
+	const value = this.data.variables[variableName];
 
-	if(value === undefined) throw new Error(`${variable} has not been defined`);
+	if(value === undefined) throw new Error(`${variableName} has not been defined`);
 	return value;
 };

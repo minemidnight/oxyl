@@ -4,6 +4,7 @@ const superagent = require("superagent");
 const players = new Map();
 class Player {
 	constructor(guild, wiggle) {
+		process.logger.info("player", `Creating a player for ${guild.name} (${guild.id})`);
 		this.guild = guild;
 		this.queue = [];
 		this.client = wiggle.erisClient;
@@ -27,6 +28,7 @@ class Player {
 	}
 
 	disconnect() {
+		process.logger.info("player", `Destroying player for guild ${this.guild.name} (${this.guild.id})`);
 		this.connection.removeAllListeners();
 		this.client.leaveVoiceChannel(this.connection.channelId);
 
@@ -157,6 +159,10 @@ class Player {
 
 	static getPlayer(id) {
 		return players.get(id);
+	}
+
+	static getPlayers() {
+		return players;
 	}
 
 	static formatDuration(seconds) {
