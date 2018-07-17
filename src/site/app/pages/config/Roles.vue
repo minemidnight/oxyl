@@ -9,7 +9,7 @@
 					</div>
 					<div class="col-sm-12 col-md-6"></div>
 					<div class="col-sm-12 col-md-6">
-						<role-selector :roles="roles" v-model="updateModel.autoRole"></role-selector>
+						<roleselector :roles="roles" v-model="updateModel.autoRole" />
 					</div>
 				</div>
 			</div>
@@ -22,7 +22,7 @@
 					</div>
 					<div class="col-sm-12 col-md-6"></div>
 					<div class="col-sm-12 col-md-6">
-						<role-selector :roles="roles" v-model="updateModel.roleMe"></role-selector>
+						<roleselector :roles="roles" v-model="updateModel.roleMe" />>
 					</div>
 				</div>
 			</div>
@@ -35,7 +35,7 @@
 					</div>
 					<div class="col-sm-12 col-md-6"></div>
 					<div class="col-sm-12 col-md-6">
-						<role-selector :roles="roles" v-model="updateModel.rolePersist"></role-selector>
+						<roleselector :roles="roles" v-model="updateModel.rolePersist" />>
 					</div>
 				</div>
 			</div>

@@ -1,6 +1,5 @@
 const checkValue = (expected, key, body) => {
 	const value = body[key];
-	console.log("checking", expected, key, value, body);
 
 	if(typeof value === "undefined" && !Array.isArray(expected)) {
 		if(typeof expected === "string" && expected.endsWith("?")) return true;
@@ -15,13 +14,13 @@ const checkValue = (expected, key, body) => {
 		return `Expected field "${key}" to be a number, got ${typeof value}`;
 	} else if(expected === "boolean" && typeof value !== "boolean") {
 		return `Expected field "${key}" to be a boolean, got ${typeof value}`;
-	} else if(expected === "object" && (typeof value !== "object" || Array.isArray(value))) {
-		return `Expected field "${key}" to be an object, got ${typeof value}`;
 	} else if((expected === "array" || Array.isArray(expected)) && !Array.isArray(value)) {
 		return `Expected field "${key}" to be an array, got ${typeof value}`;
+	} else if(expected === "object" && (typeof value !== "object" || Array.isArray(value))) {
+		return `Expected field "${key}" to be an object, got ${typeof value}`;
 	} else if(Array.isArray(expected) && !value.every(arrayValue => ~expected.indexOf(typeof arrayValue))) {
 		return `Expected field "${key}" to be an array of ${expected.join(" or ")}`;
-	} else if(typeof expected === "object") {
+	} else if(typeof expected === "object" && !Array.isArray(expected)) {
 		if(expected.hasOwnProperty("if")) {
 			if(expected.hasOwnProperty("is")) {
 				if(body[expected.if] && body[expected.if] !== expected.is) {
