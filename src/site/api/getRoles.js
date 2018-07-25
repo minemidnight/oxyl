@@ -12,5 +12,4 @@ module.exports = async id => await process.output({
 			canGive: role.addable
 		}));
 	}
-})
-;
+});

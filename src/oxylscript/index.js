@@ -24,14 +24,11 @@ module.exports = {
 	check(match) {
 		return checker(match);
 	},
-	async execute(match, message) {
+	async execute(match, eventVariables) {
 		const sem = semantics(match);
 		sem.data = {
-			variables: {},
-			author: message.author,
-			message: message,
-			channel: message.channel,
-			guild: message.channel.guild
+			eventVariables,
+			variables: {}
 		};
 
 		await sem.run();

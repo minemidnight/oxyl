@@ -1,4 +1,4 @@
-module.exports = async function(_a, _b, _c, content) {
-	await this.data.channel.createMessage(await content.run());
+module.exports = async function(_a, _b, _c, content, _d, channel) {
+	(await channel.run()).createMessage(await content.run());
 	return;
 };

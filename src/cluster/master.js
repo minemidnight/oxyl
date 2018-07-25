@@ -8,7 +8,7 @@ function spawnWorker(data) {
 	data = Object.assign(data, { status: "offline", id: worker.id });
 	workerData.set(worker.id, data);
 
-	process.logger.info("cluster", `Spawning worker type ${data.type}`);
+	process.logger.info("cluster", `Spawning worker ${worker.id}, type ${data.type}`);
 
 	worker.on("message", message => messageHandler(message, worker, workerData, spawnWorker));
 	worker.on("exit", async (code, signal) => {
@@ -21,7 +21,7 @@ function spawnWorker(data) {
 		}, workerData);
 		if(!code) return;
 
-		process.logger.error("cluster", `Worker ${worker.id} crashed`);
+		process.logger.error("cluster", `Worker ${worker.id} crashed, exit code ${code}`);
 		workerData.delete(worker.id);
 		const crashes = (workerCrashes.get(worker.id) || 0) + 1;
 		workerCrashes.delete(worker.id);

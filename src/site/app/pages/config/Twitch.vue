@@ -94,7 +94,7 @@ export default {
 				.put(`twitch/${this.$route.params.guild}`)
 				.send(this.insertModel);
 
-			this.$el.querySelectorAll("#add-censor button[type=submit]").forEach(button => {
+			this.$el.querySelectorAll("#add-channel button[type=submit]").forEach(button => {
 				button.classList.remove("disabled");
 				button.disabled = false;
 			});
@@ -111,8 +111,8 @@ export default {
 			}
 		},
 		async remove(index) {
-			this.$el.querySelector(`[data-index=${index}] button`).classList.add("disabled");
-			this.$el.querySelector(`[data-index=${index}] button`).disabled = true;
+			this.$el.querySelector(`[data-index="${index}"] button`).classList.add("disabled");
+			this.$el.querySelector(`[data-index="${index}"] button`).disabled = true;
 			const { error } = await apiCall.delete(`twitch/${this.$route.params.guild}`).send({
 				twitchChannel: this.twitchFeeds[index].twitchChannel,
 				discordChannel: this.twitchFeeds[index].discordChannel

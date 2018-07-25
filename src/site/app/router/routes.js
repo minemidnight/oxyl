@@ -59,6 +59,11 @@ export default {
 				component: "config/Music",
 				icon: "music"
 			},
+			dashboard_oxylscript: {
+				path: "oxylscript",
+				component: "config/Oxylscript",
+				icon: "code"
+			},
 			dashboard_reddit: {
 				path: "reddit",
 				component: "config/Reddit",

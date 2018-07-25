@@ -9,6 +9,7 @@ const typechecks = require("./typechecks");
 function checkTypes(value, options, data) {
 	if(value.type === "variable") value = { type: { type: "variable", name: value.name } }; // hacky
 
+
 	for(let [key, expectedType] of Object.entries(options)) { // eslint-disable-line prefer-const
 		if(expectedType === "number") expectedType = ["float", "integer"];
 		else if(!Array.isArray(expectedType)) expectedType = [expectedType];

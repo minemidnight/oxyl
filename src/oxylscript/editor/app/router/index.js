@@ -17,10 +17,35 @@ const fixRoutes = routeList => Object.entries(routeList).map(([key, route]) => {
 	});
 });
 
+const router = new VueRouter({
+	mode: "history",
+	routes: fixRoutes(routes)
+});
+
+router.beforeEach(async (to, from, next) => {
+	if(to.meta.requiresAuth) {
+		if(!localStorage.token) return next({ name: "home" });
+
+		if(!sessionStorage.info) {
+			const { error, body } = await apiCall.get("oauth/discord/info")
+				.query({ path: "/users/@me" });
+
+			if(error) {
+				delete localStorage.token;
+				return next(false);
+			}
+
+			sessionStorage.info = JSON.stringify(body);
+		}
+
+		return next();
+	} else {
+		return next();
+	}
+});
+
 export default Vue => {
 	Vue.use(VueRouter);
-	return new VueRouter({
-		mode: "history",
-		routes: fixRoutes(routes)
-	});
+
+	return router;
 };

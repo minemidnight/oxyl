@@ -1,0 +1,10 @@
+{
+	"name": "oxylscriptSettings",
+	"primary": "id",
+	"indexes": ["guildID", "scriptID"],
+	"model": {
+		"id": ["guildID", "scriptID", "event"],
+		"guildID": "guild id",
+		"scriptID": "script id"
+	}
+}

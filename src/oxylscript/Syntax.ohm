@@ -70,7 +70,7 @@ OxylScript {
 	KickStatement = "kick" Expression ArityToOne<("because" | "due to" | "with"? "reason")> Expression -- reason
 					| "kick" Expression -- noReason
 
-	CreateMessageStatement = ("create" | "send") (A<"message"> ("with content" | "saying")?)? Expression
+	CreateMessageStatement = ("create" | "send") (A<"message"> ("with content" | "saying")?)? Expression "in" Expression
 
 	SendDMStatement = ("create" | "send") (A<("dm" | "direct message")> ("with content" | "saying")?)? Expression "to" Expression
 
@@ -282,10 +282,6 @@ OxylScript {
 			| numericLiteral
 			| booleanLiteral
 			| permissionLiteral
-			| userLiteral
-			| messageLiteral
-			| channelLiteral
-			| guildLiteral
 			| variableLiteral
 
 	stringLiteral = "\"" doubleStringCharacter* "\""
@@ -371,18 +367,12 @@ OxylScript {
 	manageWebhooks = "manage webhooks"
 	manageEmojis = "manage emojis"
 
-	userLiteral = noun<"message author">
-				| noun<"message sender">
-				| noun<"author">
-				| noun<"sender">
-
-	messageLiteral = noun<"message">
-
-	channelLiteral = noun<"channel">
-
-	guildLiteral = noun<"server"> | noun<"guild">
+	eventVariableIdentifier = "guild" -- guild
+					| "member" -- member
+					| "message" -- message
+					| "arguments" -- arguments
+	eventVariableLiteral = "event" "-"? eventVariableIdentifier
 
 	variableLiteral = (noun<"value of">)? variableName
-
 	variableName = "{" alnum+ "}"
 }

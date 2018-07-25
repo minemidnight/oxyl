@@ -7,6 +7,10 @@
 		"es6": true,
 		"browser": true
 	},
+	"globals": {
+		"app": false,
+		"apiCall": false
+	},
 	"parserOptions": {
 		"ecmaVersion": 2017,
 		"sourceType": "module"

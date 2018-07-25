@@ -1,3 +1,3 @@
 module.exports = async function(_a) {
-	return this.data.channel;
+	return this.sourceString;
 };

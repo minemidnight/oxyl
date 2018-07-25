@@ -27,10 +27,13 @@ require("http").createServer(app).listen(config.dashboardPort, () => process.out
 
 app.use("/api", api);
 app.get("/invite", (req, res) => {
-	res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${config.clientID}&scope=bot&permissions=298183686`);
+	res.redirect(
+		301,
+		`https://discordapp.com/oauth2/authorize?client_id=${config.clientID}&scope=bot&permissions=298183686`
+	);
 });
-app.get("/patreon", (req, res) => res.redirect("https://www.patreon.com/minemidnight"));
-app.get("/support", (req, res) => res.redirect("https://discord.gg/9wkTDcE"));
+app.get("/patreon", (req, res) => res.redirect(301, "https://www.patreon.com/minemidnight"));
+app.get("/support", (req, res) => res.redirect(301, "https://discord.gg/9wkTDcE"));
 
 app.get("*", (req, res) => {
 	res.header("cache-control", "no-cache, no-store, must-revalidate");

@@ -348,6 +348,11 @@ const transformations = {
 	messageLiteral: { type: "message" },
 	channelLiteral: { type: "channel" },
 	guildLiteral: { type: "guild" },
+	eventVariableIdentifier_guild: { type: "guild" },
+	eventVariableIdentifier_message: { type: "message" },
+	eventVariableIdentifier_member: { type: "member" },
+	eventVariableIdentifier_arguments: { type: "arguments" },
+	eventVariableLiteral: 2,
 	variableLiteral: {
 		type: "variable",
 		name: 1

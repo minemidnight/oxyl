@@ -210,8 +210,8 @@ export default {
 			this.$el.querySelector("#add-threshold").reset();
 		},
 		async remove(index) {
-			this.$el.querySelector("[data-index=${index}] button").classList.add("disabled");
-			this.$el.querySelector("[data-index=${index}] button").disabled = true;
+			this.$el.querySelector(`[data-index="${index}"] button`).classList.add("disabled");
+			this.$el.querySelector(`[data-index="${index}"] button`).disabled = true;
 
 			const { error } = await apiCall.delete(`modlog/${this.$route.params.guild}/thresholds`)
 				.send({ warnCount: this.data.thresholds[index].warnCount });

@@ -28,7 +28,7 @@ module.exports = {
 
 			const max = Math.floor(premiumData.pledge / 100);
 			if(premiumData.premiumServers > max) {
-				process.logger.info("patreon", `${`Removing premium from ${max}` - premiumData.premiumServers} server(s)`);
+				process.logger.info("patreon", `Removing premium from ${max - premiumData.premiumServers} server(s)`);
 				for(const serverID of premiumData.serverIDs.slice(max - premiumData.premiumServers)) {
 					await r.table("premiumServers")
 						.get(serverID)

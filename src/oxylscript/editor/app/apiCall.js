@@ -11,10 +11,7 @@ async function makeCall(request, token) {
 			});
 		});
 
-		if(headers["new-token"]) {
-			if(token === localStorage.token) localStorage.token = headers["new-token"];
-			else return { body, token: JSON.parse(headers["new-token"]) };
-		}
+		if(headers["new-token"]) localStorage.token = headers["new-token"];
 
 		return { body };
 	} catch({ response: { headers, body } }) {
@@ -28,28 +25,16 @@ async function makeCall(request, token) {
 			app.$router.push(body.redirect);
 		}
 
-		if(headers["new-token"]) {
-			if(token === localStorage.token) localStorage.token = headers["new-token"];
-			else return { error: true, body, token: JSON.parse(headers["new-token"]) };
-		}
-
+		if(headers["new-token"]) localStorage.token = headers["new-token"];
 		return { error: true, body };
 	}
 }
 
-const tokenFields = ["accessToken", "expiresIn", "refreshToken", "timestamp"];
 export default ["get", "post", "delete", "head", "patch", "post", "put"]
 	.reduce((a, b) => {
 		a[b] = (...args) => {
-			let token = localStorage.token;
-			if(typeof args[1] === "object" && tokenFields.every(field => args[1][field])) token = args.splice(1, 1)[0];
-
 			const request = superagent[b](`${API_BASE}/${args[0]}`);
-			request.token = tokenToUse => {
-				token = typeof tokenToUse === "object" ? JSON.stringify(tokenToUse) : tokenToUse;
-				return request;
-			};
-			request.then = (cb, errCb) => makeCall(request, token).then(cb, errCb);
+			request.then = (cb, errCb) => makeCall(request, localStorage.token).then(cb, errCb);
 
 			return request;
 		};

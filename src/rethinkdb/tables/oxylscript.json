@@ -1,0 +1,12 @@
+{
+	"name": "oxylscript",
+	"primary": "id",
+	"indexes": ["creatorID"],
+	"model": {
+		"id": "snowflake",
+		"creatorID": "user id of owner of script",
+		"name": "script name",
+		"lastUpdated": "time in ms when script was last updated",
+		"content": "script content"
+	}
+}

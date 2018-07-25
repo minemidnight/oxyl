@@ -48,11 +48,6 @@ router.get("/:guild(\\d{17,21})", async (req, res) => {
 router.put("/:guild(\\d{17,21})", expectedBody({ enabled: Boolean }), async (req, res) => {
 	const { r } = req.app.locals;
 
-	if(typeof req.body.enabled !== "boolean") {
-		res.status(400).json({ error: "No enabled or invalid enabled data" });
-		return;
-	}
-
 	const { id } = await discordAuth.info(res.locals.token, "/users/@me");
 	const link = await r.table("discordPatreonLink")
 		.get(id)

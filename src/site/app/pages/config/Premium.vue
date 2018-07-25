@@ -23,7 +23,7 @@
 				</div>
 				<div class="col-sm-12 col-md-6 text-center" v-else-if="!data.pledge">
 					<router-link :to="{ name: 'patreon' }">
-						<img class="patron-button" src="/img/become_patron.png" />
+						<img class="patron-button" src="/static/become_patron.png" />
 					</router-link>
 				</div>
 				<div class="col-sm-12 col-md-6 text-center" v-else-if="data.activator === data.self">

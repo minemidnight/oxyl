@@ -57,5 +57,9 @@ module.exports = {
 	floatLiteral: "float",
 	integerLiteral: "integer",
 	booleanLiteral: "boolean",
-	permissionLiteral: "permission"
+	permissionLiteral: "permission",
+	eventVariableIdentifier_guild: "guild",
+	eventVariableIdentifier_message: "message",
+	eventVariableIdentifier_member: "member",
+	eventVariableIdentifier_arguments: "arguments"
 };

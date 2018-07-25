@@ -3,11 +3,11 @@
 		<div class="container-fluid text-center mt-3 mb-5">
 			<h1><img src="/static/oxyl-text.svg" style="height:40px" /></h1>
 			<h5 class="color-text mb-3">A Discord bot for all your needs</h5>
-			<router-link class="discord-button btn m-1 p-2" :class="{ active: $route.name === 'invite' }" :to="{ name: 'invite' }">
+			<router-link class="discord-button btn m-1 p-2" :to="{ name: 'invite' }">
 				<img src="/static/discord-logo.png" />
 				<i class="fa fa-sign-in" aria-hidden="true"></i>
 			</router-link>
-			<router-link class="btn learn-more m-1" :class="{ active: $route.name === 'features' }" :to="{ name: 'features' }">
+			<router-link class="btn learn-more m-1" :to="{ name: 'features' }">
 				Features
 			</router-link>
 		</div>
