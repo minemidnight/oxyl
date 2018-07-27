@@ -17,7 +17,7 @@ module.exports = async () => {
 		if(type) service = `${service}:${type}`;
 		if(!a[service]) a[service] = { [identifier]: [channel] };
 		else if(!a[service][identifier]) a[service][identifier] = [channel];
-		else a[service][identifier].push(type ? [type, channel] : channel);
+		else a[service][identifier].push(channel);
 
 		return a;
 	}, {});
