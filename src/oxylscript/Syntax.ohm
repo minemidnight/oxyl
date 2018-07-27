@@ -90,7 +90,6 @@ OxylScript {
 				| MemberJoinTimestampExpression
 				| MemberStatusExpression
 				| MentionExpression
-				| MessageAuthorExpression
 				| MessageContentExpression
 				| NameExpression
 				| UsernameExpression
@@ -123,6 +122,7 @@ OxylScript {
 				| GuildFromRoleExpression
 				| GuildFromMessageExpression
 				| GuildFromChannelExpression
+				| MessageAuthorExpression
 				| OrExpression
 
 	AbsoluteValueExpression = (Noun<("absolute")> | Noun<"abs">) "value of" Expression -- words
@@ -220,13 +220,13 @@ OxylScript {
 
 	RoleFromNameExpression = Noun<"role"> ("from" | "with" | "of") Noun<"name"> Expression
 
-	ChannelFromMessageExpression = Noun<"channel"> ("from" | "of") Noun<"message"> Expression
+	ChannelFromMessageExpression = Noun<"channel"> ("from" | "of") Expression
 
-	GuildFromRoleExpression = Noun<("guild" | "server")> ("from" | "of") Noun<"role"> Expression
+	GuildFromRoleExpression = Noun<("guild" | "server")> ("from" | "of") Expression
 
-	GuildFromMessageExpression = Noun<("guild" | "server")> ("from" | "of") Noun<"message"> Expression
+	GuildFromMessageExpression = Noun<("guild" | "server")> ("from" | "of") Expression
 
-	GuildFromChannelExpression = Noun<("guild" | "server")> ("from" | "of") Noun<"channel"> Expression
+	GuildFromChannelExpression = Noun<("guild" | "server")> ("from" | "of") Expression
 
 	ContainsExpression = Expression ("contains" | "includes") Expression
 
@@ -236,7 +236,7 @@ OxylScript {
 
 	HasChannelPermissionExpression = Expression "has" Noun<"permissson"> "to"? Expression "in" Expression
 
-	HasRoleExpression = Expression "has" Noun<"role"> Expression
+	HasRoleExpression = Expression "has" Expression
 
 	IsBotExpression = Expression "is" A<"bot">
 
@@ -283,6 +283,7 @@ OxylScript {
 			| booleanLiteral
 			| permissionLiteral
 			| variableLiteral
+			| eventVariableLiteral
 
 	stringLiteral = "\"" doubleStringCharacter* "\""
 				| "'" singleStringCharacter* "'"

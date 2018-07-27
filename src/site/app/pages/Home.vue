@@ -19,8 +19,8 @@
 
 <script>
 export default {
-	async created() {
-		if(this.$route.query.state) {
+	async beforeRouteEnter(to, from, next) {
+		if(to.query.state) {
 			if(!localStorage.token) {
 				const { app } = window.opener;
 
@@ -29,14 +29,13 @@ export default {
 					else app.$router.push({ name: "accounts" });
 
 					window.close();
+					return next(false);
 				} else {
-					this.$router.replace({ name: "accounts" });
+					return next({ name: "accounts" });
 				}
-
-				return;
 			}
 
-			const { code } = this.$route.query;
+			const { code } = to.query;
 			await apiCall.post("oauth/patreon/callback")
 				.send({
 					discordToken: JSON.parse(localStorage.token),
@@ -50,22 +49,24 @@ export default {
 				else app.$router.push({ name: "dashboard_premium" });
 
 				window.close();
+				return next(false);
 			} else {
-				this.$router.replace({ name: "dashboard_premium" });
+				return next({ name: "dashboard_premium" });
 			}
-		} else if(this.$route.query.guild_id) {
-			if(!window.opener) return;
+		} else if(to.query.guild_id) {
+			if(!window.opener) return next(false);
 			const { app } = window.opener;
 
 			if(app.$route.name === "dashboard") window.opener.location.reload();
-			else app.$router.replace({ name: "dashboard", params: { guild: this.$route.query.guild_id } });
+			else app.$router.replace({ name: "dashboard", params: { guild: to.query.guild_id } });
 
 			window.close();
-		} else if(this.$route.query.code) {
+			return next(false);
+		} else if(to.query.code) {
 			const accounts = localStorage.accounts ? JSON.parse(localStorage.accounts) : [];
-			const { code } = this.$route.query;
+			const { code } = to.query;
 			const { error, body: token } = await apiCall.post("oauth/discord/callback").send({ code });
-			if(error) return;
+			if(error) return next(false);
 
 			localStorage.accounts = JSON.stringify(accounts.concat(token));
 			if(window.opener) {
@@ -75,9 +76,12 @@ export default {
 				else app.$router.replace({ name: "accounts" });
 
 				window.close();
+				return next(false);
 			} else {
-				this.$router.replace({ name: "accounts" });
+				return next({ name: "accounts" });
 			}
+		} else {
+			return next();
 		}
 	}
 };

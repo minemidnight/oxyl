@@ -20,10 +20,14 @@ module.exports = (waitingOutputs, type) => {
 		return new Promise((resolve, reject) => {
 			waitingOutputs.set(message.id, result => {
 				if(result.error) {
-					if(type === "worker") reject(result.message ? new Error(result.message) : result);
+					if(type === "worker") reject(result.message !== undefined ? new Error(result.message) : result);
 					else resolve(result);
 				} else if(type === "worker") {
-					resolve(result.results || result.result || result);
+					resolve(result.results === undefined ?
+						result.result === undefined ?
+							result :
+							result.result :
+						result.results);
 				} else {
 					resolve(result);
 				}
