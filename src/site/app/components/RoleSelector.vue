@@ -14,7 +14,7 @@
 						</button>
 
 						<div ref="dropdown"  class="dropdown-menu">
-							<button type="button" class="dropdown-item" v-for="(role, index) in roles.filter(role => !~value.indexOf(role.id))" :key="index" @click="addRole(role)">{{role.name}}</button>
+							<button type="button" class="dropdown-item" v-for="(role, index) in roles.filter(role => !value.includes(role.id))" :key="index" @click="addRole(role)">{{role.name}}</button>
 						</div>
 					</div>
 				</li>

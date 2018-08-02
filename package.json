@@ -72,7 +72,7 @@
     "vue-router": "^3.0.1",
     "vue-scroll-reveal": "^1.0.8",
     "vue-template-compiler": "^2.5.16",
-    "webpack": "^4.16.2",
+    "webpack": "^4.16.3",
     "webpack-cli": "^3.1.0",
     "webpack-md5-hash": "0.0.6"
   }

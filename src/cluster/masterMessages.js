@@ -218,20 +218,10 @@ module.exports = async (message, sentFrom, workerData, spawnWorker) => {
 		case "ready": {
 			process.logger.startup("worker", `Worker ${sentFrom.id} (${workerData.get(sentFrom.id).type}) is ready`);
 			workerData.get(sentFrom.id).status = "ready";
-			module.exports.wsBroadcast({ op: "workerReady", workerID: sentFrom.id }, workerData);
 
 			break;
 		}
 	}
-};
-
-module.exports.wsBroadcast = (data, workerData) => {
-	process.output({
-		op: "eval",
-		target: "ws",
-		input: `context.server.broadcast(${JSON.stringify(data)})`
-	}, workerData)
-		.catch(err => {}); // eslint-disable-line no-empty-function, handle-callback-err
 };
 
 require("./processOutput")(waitingOutputs, "master");

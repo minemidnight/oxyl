@@ -40,13 +40,13 @@ function checkNode(node) {
 
 	if(!category) {
 		return false;
-	} else if(~category.indexOf(parts[1])) {
+	} else if(category.includes(parts[1])) {
 		return true;
 	} else {
 		const subcommands = category.find(command => typeof command !== "string");
-		if(~Object.keys(subcommands).indexOf(parts[1])) return true;
+		if(Object.keys(subcommands).includes(parts[1])) return true;
 		else if(!parts[2]) return false;
-		else return Object.values(subcommands).some(cmds => ~cmds.indexOf(parts[2]));
+		else return Object.values(subcommands).some(cmds => cmds.includes(parts[2]));
 	}
 }
 

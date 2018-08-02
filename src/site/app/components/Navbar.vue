@@ -41,7 +41,7 @@
 					</div>
 				</li>
 				<li class="nav-item" :class="{ 'd-none d-lg-block': $route.name.startsWith('dashboard') }">
-					<router-link class="nav-link" :class="{ active: ~['accounts', 'selector'].indexOf($route.name) || $route.name.startsWith('dashboard') }" :to="{ name: 'config' }">
+					<router-link class="nav-link" :class="{ active: ['accounts', 'selector'].includes($route.name) || $route.name.startsWith('dashboard') }" :to="{ name: 'config' }">
 						<i class="fa fa-cogs" aria-hidden="true"></i>
 						Configuration
 					</router-link>

@@ -5,8 +5,8 @@ const filters = {
 	files: msg => msg.attachments[0] && !msg.attachments[0].width,
 	embeds: msg => msg.embeds.length,
 	links: msg => linkFilter.test(msg.content),
-	from: (msg, users) => ~users.indexOf(msg.author.id),
-	includes: (msg, content) => ~msg.content.indexOf(content),
+	from: (msg, users) => users.includes(msg.author.id),
+	includes: (msg, content) => msg.content.includes(content),
 	matches: (msg, regex) => regex.test(msg.content)
 };
 

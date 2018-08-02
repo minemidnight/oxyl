@@ -46,7 +46,7 @@ module.exports = {
 				if(!choice) return t("commands.play.select.timedOut");
 				else choice = choice.content.toLowerCase();
 
-				if(~["c", "cancel"].indexOf(choice)) {
+				if(["c", "cancel"].includes(choice)) {
 					return t("commands.play.select.cancelled");
 				} else if(isNaN(choice) || parseInt(choice) < 1 || parseInt(choice) > songs.length) {
 					return t("commands.play.select.invalidInput");

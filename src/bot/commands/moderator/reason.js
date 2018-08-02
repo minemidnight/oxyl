@@ -10,18 +10,18 @@ module.exports = {
 
 		const caseList = [];
 		for(let casePart of cases.split(",")) {
-			if(~casePart.indexOf("-")) {
+			if(casePart.includes("-")) {
 				let [, start, end] = cases.match(/(\d+)\s?-\s?(\d+|l(?:atest)?)/) || [0, 0, 0];
 				if(!start || !end) return t("commands.reason.invalidRange");
 
-				if(~["l", "latest"].indexOf(end)) end = caseCount;
+				if(["l", "latest"].includes(end)) end = caseCount;
 				start = parseInt(start);
 				end = parseInt(end);
 				if(isNaN(start) || isNaN(end)) return t("commands.reason.NaN");
 				else if(end >= start) return t("commands.reason.invalidRange");
 				caseList.push(...Array.from({ length: end - start + 1 }, (ele, i) => i + start));
 			} else {
-				if(~["l", "latest"].indexOf(casePart)) casePart = caseCount;
+				if(["l", "latest"].includes(casePart)) casePart = caseCount;
 				casePart = parseInt(casePart);
 
 				if(isNaN(casePart)) return t("commands.reason.NaN");

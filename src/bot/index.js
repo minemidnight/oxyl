@@ -52,7 +52,7 @@ const client = wiggle({
 	require("./middleware/censors"),
 	require("./middleware/permissionHandler")
 ).use("creator", (message, next) => {
-	if(~client.locals.owners.indexOf(message.author.id)) return next();
+	if(client.locals.owners.includes(message.author.id)) return next();
 	else return message.channel.createMessage(message.t("errors.notCreator"));
 });
 
@@ -64,9 +64,10 @@ client.locals.config = config;
 
 const cluster = require("cluster");
 const guildChangeMiddleware = [(guild, next) => {
-	r.table("stats").insert({
+	r.table("workerStats").insert({
 		type: "guilds",
-		current: [process.ppid, cluster.worker.id],
+		ppid: process.ppid,
+		workerID: cluster.worker.id,
 		time: Date.now(),
 		value: client.erisClient.guilds.size
 	});

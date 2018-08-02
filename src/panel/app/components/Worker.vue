@@ -6,7 +6,7 @@
 				<h6 class="card-subtitle text-muted">{{ worker.type }}</h6>
 			</div>
 			<div class="card-body color-630">
-				<p class="card-text mb-0">Memory Usage: {{ (worker.memoryUsage / Math.pow(1024, 3)).toFixed(2) }} GiB</p>
+				<p class="card-text mb-0">Memory Usage: {{ (worker.memoryUsage / 1024 / 1024).toFixed(2) }} MiB</p>
 				<p class="card-text" ref="uptime">Uptime: {{ getUptime() }}</p>
 				<small class="text-info float-right">Click for more info</small>
 			</div>
@@ -17,7 +17,7 @@
 				Worker {{ worker.id }}
 			</template>
 
-			<h6 class="text-muted lead">{{worker.type}}</h6>
+			<h6 class="text-muted lead">{{ worker.type }}</h6>
 			<template v-if="worker.type === 'bot'">
 				<p class="mb-0">Guilds: {{ worker.guilds }}</p>
 				<p class="mb-0">Streams: {{ worker.streams }}</p>
@@ -26,14 +26,24 @@
 			<p class="mb-0" ref="uptime2">Uptime: {{ getUptime() }}</p>
 			<p class="card-text mb-0">Memory Usage: {{ (worker.memoryUsage / Math.pow(1024, 3)).toFixed(2) }} GiB</p>
 		
-			<div class="container-fluid text-center mt-3">
-				<h6>Guilds</h6>
-				<chart
-					v-if="worker.type === 'bot'"
-					type="LineChart"
-					:data="worker.chartData.guilds"
-					:options="graphOptions"
-				/>
+			<div v-if="worker.type === 'bot'">
+				<div class="container-fluid text-center mt-3">
+					<h6>Guilds</h6>
+					<chart
+						type="LineChart"
+						:data="worker.chartData.guilds"
+						:options="graphOptions"
+					/>
+				</div>
+
+				<div class="container-fluid text-center mt-3">
+					<h6>Streams</h6>
+					<chart
+						type="LineChart"
+						:data="worker.chartData.streams"
+						:options="graphOptions"
+					/>
+				</div>
 			</div>
 
 			<div class="container-fluid text-center mt-3">
@@ -115,7 +125,7 @@ export default {
 					}
 				},
 				vAxis: {
-					format: "decimal",
+					format: "#,###",
 					gridlines: { count: 4 },
 					minorGridlines: { count: 1, color: "grey" }
 				},
@@ -136,7 +146,8 @@ export default {
 		clearInterval(this.interval);
 	},
 	methods: {
-		openModal() {
+		async openModal() {
+			if(!this.worker.chartData.memory) await this.updateStats();
 			this.$refs.modal.show();
 		},
 		getUptime() {
@@ -158,6 +169,36 @@ export default {
 			const uptime = `Uptime: ${this.getUptime()}`;
 			this.$refs.uptime.innerHTML = uptime;
 			this.$refs.uptime2.innerHTML = uptime;
+		},
+		async updateStats(timespan = -1) {
+			const { body: { guilds, memory, streams } } = await apiCall.get(`workers/${this.worker.id}`)
+				.query({ timespan });
+
+			if(this.worker.type === "bot") {
+				this.worker.chartData.guilds = [[
+					{ label: "Time", type: "date" },
+					{ label: "Guilds", type: "number" }
+				]].concat(guilds.map(({ time, value }) => [
+					new Date(time),
+					value
+				]));
+
+				this.worker.chartData.streams = [[
+					{ label: "Time", type: "date" },
+					{ label: "Streams", type: "number" }
+				]].concat(streams.map(({ time, value }) => [
+					new Date(time),
+					value
+				]));
+			}
+
+			this.worker.chartData.memory = [[
+				{ label: "Time", type: "date" },
+				{ label: "MiB", type: "number" }
+			]].concat(memory.map(({ time, value }) => [
+				new Date(time),
+				value / 1024 / 1024
+			]));
 		}
 	}
 };

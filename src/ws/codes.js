@@ -1,0 +1,7 @@
+module.exports = {
+	NOT_JSON: 1000,
+	INVALID_OP: 1001,
+	NOT_IDENTIFIED: 1002,
+	NO_TOKEN: 1003,
+	NOT_OWNER: 1004
+};

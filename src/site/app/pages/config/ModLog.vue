@@ -93,7 +93,7 @@
 							<small class="form-text text-muted">Don't see your role? Make sure Oxyl has permission to Manage Roles and that his highest role is above the role you want to give.</small>
 						</div>
 					</div>
-					<div class="col-sm-12 col-md-6" v-if="~['ban', 'role'].indexOf(thresholdInsertModel.action)">
+					<div class="col-sm-12 col-md-6" v-if="['ban', 'role'].includes(thresholdInsertModel.action)">
 						<div class="form-group">
 							<label for="time">
 								Time
@@ -198,7 +198,7 @@ export default {
 				warnCount: this.thresholdInsertModel.warnCount,
 				action: this.thresholdInsertModel.action,
 				roleID: this.thresholdInsertModel.action === "role" ? this.thresholdInsertModel.roleID : undefined,
-				time: this.thresholdInsertModel.time && ~["role", "ban"].indexOf(this.thresholdInsertModel.action) ?
+				time: this.thresholdInsertModel.time && ["role", "ban"].includes(this.thresholdInsertModel.action) ?
 					this.thresholdInsertModel.time :
 					undefined
 			});

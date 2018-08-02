@@ -21,7 +21,7 @@ async function getNew(redis) {
 	}
 
 	newPosts = newPosts.map(({ data }) => data)
-		.filter(({ subreddit, id }) => ~validReddits.indexOf(subreddit) && !~alreadyPosted.indexOf(id));
+		.filter(({ subreddit, id }) => validReddits.indexOf(subreddit) && !~alreadyPosted.includes(id));
 	newPosts.forEach(({ id }) => redis.set(`feeds:reddit:newPosted:${id}`, "", "EX", 604800));
 
 	return newPosts;
@@ -40,7 +40,7 @@ async function getTop(sub, redis) {
 		return [];
 	}
 
-	newPosts = newPosts.map(({ data }) => data).filter(({ id }) => !~alreadyPosted.indexOf(id));
+	newPosts = newPosts.map(({ data }) => data).filter(({ id }) => !alreadyPosted.includes(id));
 	newPosts.forEach(({ id }) => redis.set(`feeds:reddit:topPosted:${id}`, "", "EX", 604800));
 
 	return newPosts;

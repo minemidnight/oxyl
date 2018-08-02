@@ -14,8 +14,8 @@ module.exports = {
 			});
 		}
 
-		if(!~roles.indexOf(role.id)) return t("commands.roleme.notAvailable");
-		if(~member.roles.indexOf(role.id)) {
+		if(!roles.includes(role.id)) return t("commands.roleme.notAvailable");
+		if(member.roles.includes(role.id)) {
 			await member.removeRole(role.id);
 			return t("commands.roleme.removed", { role: role.name });
 		} else {

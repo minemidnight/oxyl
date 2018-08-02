@@ -1,10 +1,16 @@
 {
-	"name": "stats",
+	"name": "workerStats",
 	"primary": "id",
-	"indexes": ["type", "current", "time"],
+	"indexes": [
+		[
+			"compound",
+			["type", "ppid", "workerID", "time"]
+		]
+	],
 	"model": {
 		"type": "type of stat (memory, guilds)",
-		"current": ["ppid", "worker id"],
+		"ppid": "ppid",
+		"workerID": "worker id",
 		"time": "timestamp of stat",
 		"id": "generated uuid",
 		"value": "value of stat, any type"

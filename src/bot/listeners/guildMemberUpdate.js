@@ -1,7 +1,7 @@
 const modLog = require("../modules/modLog");
 
 module.exports = async (guild, member, oldMember, next, wiggle) => {
-	const newRoles = member.roles.filter(roleID => !~oldMember.roles.indexOf(roleID));
+	const newRoles = member.roles.filter(roleID => !oldMember.roles.includes(roleID));
 	if(!newRoles.length) return next();
 
 	const { enabled, tracked } = await wiggle.locals.r.table("modLogSettings")
@@ -12,7 +12,7 @@ module.exports = async (guild, member, oldMember, next, wiggle) => {
 
 	if(!enabled || !tracked.length) return next();
 
-	newRoles.filter(roleID => ~tracked.indexOf(roleID)).forEach(roleID => {
+	newRoles.filter(roleID => tracked.includes(roleID)).forEach(roleID => {
 		modLog.addRole({
 			punished: member.user,
 			guild: member.guild,

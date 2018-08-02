@@ -1,10 +1,11 @@
+const cluster = require("cluster");
 const config = require("../../../config.json");
 const superagent = require("superagent");
 
 const players = new Map();
 class Player {
 	constructor(guild, wiggle) {
-		process.logger.info("player", `Creating a player for ${guild.name} (${guild.id})`);
+		process.logger.debug("player", `Creating a player for ${guild.name} (${guild.id})`);
 		this.guild = guild;
 		this.queue = [];
 		this.client = wiggle.erisClient;
@@ -79,6 +80,14 @@ class Player {
 		if(this.disconnectTimeout) clearTimeout(this.disconnectTimeout);
 		if(!this.connection || this.connection.playing) return;
 		else if(this.connection.paused) this.connection.setPause(false);
+
+		this.r.table("workerStats").insert({
+			type: "streams",
+			ppid: process.pid,
+			workerID: cluster.worker.id,
+			time: Date.now(),
+			value: this.client.voiceConnections.filter(connection => connection.playing).length
+		}).run();
 
 		let song = this.queue.shift();
 		if(!song && !this.queue.length) {

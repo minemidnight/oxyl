@@ -13,7 +13,7 @@ module.exports = {
 				} else if(flags.target !== "ws" && flags.target.startsWith("w")) {
 					targetValue = parseInt(flags.target.substring(1));
 					flags.target = "worker";
-				} else if(~["g", "bots"].indexOf(flags.target)) {
+				} else if(["g", "bots"].includes(flags.target)) {
 					flags.target = "allBots";
 				} else if(flags.target.startsWith("g")) {
 					flags.target = flags.target.substring(1);

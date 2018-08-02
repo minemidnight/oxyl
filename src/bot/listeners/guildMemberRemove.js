@@ -23,7 +23,7 @@ module.exports = async (guild, member, next, { erisClient, locals: { r } }) => {
 		.run();
 
 	if(toPersist.length) {
-		const persisted = member.roles.filter(roleID => ~toPersist.indexOf(roleID));
+		const persisted = member.roles.filter(roleID => toPersist.includes(roleID));
 		if(persisted.length) {
 			await r.table("rolePersist")
 				.insert({

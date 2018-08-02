@@ -18,7 +18,7 @@ const checkValue = (expected, key, body) => {
 		return `Expected field "${key}" to be an array, got ${typeof value}`;
 	} else if(expected === "object" && (typeof value !== "object" || Array.isArray(value))) {
 		return `Expected field "${key}" to be an object, got ${typeof value}`;
-	} else if(Array.isArray(expected) && !value.every(arrayValue => ~expected.indexOf(typeof arrayValue))) {
+	} else if(Array.isArray(expected) && !value.every(arrayValue => expected.includes(typeof arrayValue))) {
 		return `Expected field "${key}" to be an array of ${expected.join(" or ")}`;
 	} else if(typeof expected === "object" && !Array.isArray(expected)) {
 		if(expected.hasOwnProperty("if")) {
@@ -27,11 +27,11 @@ const checkValue = (expected, key, body) => {
 					return `Expected field "${key}" to exist only if ${expected.if} was ${expected.is}`;
 				}
 			} else if(expected.hasOwnProperty("in")) {
-				if(!~expected.in.indexOf(body[expected.if])) {
+				if(!expected.in.includes(body[expected.if])) {
 					return `Expected field "${key}" to exist only if ${expected.if} was ${expected.in.join(" or ")}`;
 				}
 			} else if(expected.hasOwnProperty("notIn")) {
-				if(~expected.notIn.indexOf(body[expected.if])) {
+				if(expected.notIn.includes(body[expected.if])) {
 					return `Expected field "${key}" to exist only if ${expected.if} was not ${expected.notIn.join(" or ")}`;
 				}
 			}
@@ -41,11 +41,11 @@ const checkValue = (expected, key, body) => {
 				if(check !== true) return check;
 			}
 		} else if(expected.hasOwnProperty("in")) {
-			if(!~expected.in.indexOf(value)) {
+			if(!expected.in.includes(value)) {
 				return `Expected field "${key}" to be ${expected.in.join(" or ")}`;
 			}
 		} else if(expected.hasOwnProperty("notIn")) {
-			if(~expected.notIn.indexOf(value)) {
+			if(expected.notIn.includes(value)) {
 				return `Expected field "${key}" to not be ${expected.notIn.join(" or ")}`;
 			}
 		} else {

@@ -43,7 +43,7 @@ module.exports = {
 		if(typeof mutedRole === "string") return mutedRole;
 
 		if(!member.punishable(authorMember)) return t("commands.mute.cantPunish");
-		if(~member.roles.indexOf(mutedRole.id)) {
+		if(member.roles.includes(mutedRole.id)) {
 			await modLog.removeRole({
 				punished: member.user,
 				guild,

@@ -50,7 +50,7 @@
 							<small class="form-text text-muted">Don't see your role? Make sure Oxyl has permission to Manage Roles and that his highest role is above the role you want to give.</small>
 						</div>
 					</div>
-					<div class="col-sm-12 col-md-6" v-if="~['ban', 'role'].indexOf(insertModel.action)">
+					<div class="col-sm-12 col-md-6" v-if="['ban', 'role'].includes(insertModel.action)">
 						<div class="form-group">
 							<label for="time">
 								Time
@@ -110,7 +110,7 @@
 							</select>
 							<small class="form-text text-muted">Don't see your role? Make sure Oxyl has permission to Manage Roles and that his highest role is above the role you want to give.</small>
 						</div>
-						<div class="form-group" v-if="~['ban', 'role'].indexOf(editModel.action)">
+						<div class="form-group" v-if="['ban', 'role'].includes(editModel.action)">
 							<label for="time">
 								Time
 								<small class="form-text">The amount of time in seconds, until the ban/role is removed (0 = no removal)</small>
@@ -207,7 +207,7 @@ export default {
 				action: this.insertModel.action,
 				roleID: this.insertModel.action === "role" ? this.insertModel.roleID : undefined,
 				message: this.insertModel.message,
-				time: this.insertModel.time && ~["role", "ban"].indexOf(this.insertModel.action) ?
+				time: this.insertModel.time && ["role", "ban"].includes(this.insertModel.action) ?
 					this.insertModel.time :
 					undefined
 			});

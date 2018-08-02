@@ -31,11 +31,11 @@ function checkTypes(value, options, data) {
 		}
 
 		const actualType = value[key].type || value[key];
-		if(~expectedType.indexOf("string")) {
+		if(expectedType.includes("string")) {
 			continue;
-		} else if(actualType === "number" && (~expectedType.indexOf("float") || ~expectedType.indexOf("integer"))) {
+		} else if(actualType === "number" && (expectedType.indexOf("float") || ~expectedType.includes("integer"))) {
 			continue;
-		} else if(!~expectedType.indexOf(actualType)) {
+		} else if(!expectedType.includes(actualType)) {
 			data.checkResult.addError(`Expected type ${expectedType.join(" or ")} for ${key} in ${value.type}, ` +
 				`instead got ${actualType}`, value.startIndex, value.endIndex);
 

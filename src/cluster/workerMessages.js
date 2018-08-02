@@ -1,6 +1,6 @@
 const waitingOutputs = new Map();
 
-module.exports = async message => {
+module.exports = (extraHandlers = {}) => async message => {
 	const reply = data => process.send(Object.assign(data, { id: message.id }));
 	switch(message.op) {
 		case "eval": {
@@ -26,6 +26,12 @@ module.exports = async message => {
 		case "result": {
 			if(!waitingOutputs.has(message.id)) return;
 			waitingOutputs.get(message.id)(message);
+
+			break;
+		}
+
+		default: {
+			if(extraHandlers[message.op]) extraHandlers[message.op](message);
 
 			break;
 		}

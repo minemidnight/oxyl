@@ -1,7 +1,7 @@
 const configEnter = (to, from, next) => {
 	if(from.params.guild && to.name === "config") {
 		return next({ name: "dashboard", params: from.params });
-	} else if(~["config", "dashboard", "selector"].indexOf(to.name) && !localStorage.token) {
+	} else if(["config", "dashboard", "selector"].includes(to.name) && !localStorage.token) {
 		return next({ name: "accounts" });
 	} else if(to.name === "config") {
 		return next({ name: "selector" });

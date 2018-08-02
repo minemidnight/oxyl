@@ -1,4 +1,4 @@
-const components = ["Modal", "Navbar", "Terminal", "Worker"];
+const components = ["Modal", "Navbar", "Worker"];
 
 export default Vue => components
 	.forEach(file => Vue.component(file.toLowerCase(), () =>

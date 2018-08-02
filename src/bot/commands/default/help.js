@@ -6,18 +6,18 @@ module.exports = {
 		if(command) {
 			categoryLoop:
 			for(const { commands, subcommands } of wiggle.categories.values()) {
-				if(commands.has(command) || commands.find(cmd => ~cmd.aliases.indexOf(command))) {
-					command = commands.get(command) || commands.find(cmd => ~cmd.aliases.indexOf(command));
+				if(commands.has(command) || commands.find(cmd => cmd.aliases.includes(command))) {
+					command = commands.get(command) || commands.find(cmd => cmd.aliases.includes(command));
 					break;
 				} else {
 					for(const subcommand of subcommands.values()) {
-						if(subcommand.name === command || ~subcommand.aliases.indexOf(command)) {
+						if(subcommand.name === command || subcommand.aliases.includes(command)) {
 							command = subcommand;
 							break categoryLoop;
 						} else if(subcommand.commands.has(command) ||
-							subcommand.commands.find(cmd => ~cmd.aliases.indexOf(command))) {
+							subcommand.commands.find(cmd => cmd.aliases.includes(command))) {
 							command = subcommand.commands.get(command) ||
-								subcommand.commands.find(cmd => ~cmd.aliases.indexOf(command));
+								subcommand.commands.find(cmd => cmd.aliases.includes(command));
 							break categoryLoop;
 						}
 					}
@@ -59,8 +59,8 @@ module.exports = {
 				if(name === "creator") return msg;
 				msg += `__**${name.charAt(0).toUpperCase() + name.substring(1)}** `;
 				msg += `(${commands.size + subcommands.size} ${t("words.commands")})__\n`;
-				msg += commands.filter(cmd => !~disabledCommands.indexOf(cmd.name))
-					.concat(subcommands.filter(subcommand => !~disabledCommands.indexOf(subcommand.name)))
+				msg += commands.filter(cmd => !disabledCommands.includes(cmd.name))
+					.concat(subcommands.filter(subcommand => !disabledCommands.includes(subcommand.name)))
 					.map(({ name: commandName }) => commandName).join(", ");
 				msg += "\n\n";
 

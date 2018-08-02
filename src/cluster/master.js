@@ -12,14 +12,7 @@ function spawnWorker(data) {
 
 	worker.on("message", message => messageHandler(message, worker, workerData, spawnWorker));
 	worker.on("exit", async (code, signal) => {
-		if(signal) return;
-
-		messageHandler.wsBroadcast({
-			op: "workerOffline",
-			workerID: worker.id,
-			code
-		}, workerData);
-		if(!code) return;
+		if(signal || !code) return;
 
 		process.logger.error("cluster", `Worker ${worker.id} crashed, exit code ${code}`);
 		workerData.delete(worker.id);
@@ -40,14 +33,6 @@ function spawnWorker(data) {
 		worker.once("online", () => {
 			process.logger.startup("worker", `Worker ${worker.id} has started`);
 
-			messageHandler.wsBroadcast({
-				op: "workerOnline",
-				type: data.type,
-				workerID: worker.id,
-				status: "online",
-				startTime: Date.now()
-			}, workerData);
-
 			data = workerData.get(worker.id);
 			data.status = "online";
 			data.startTime = Date.now();
@@ -63,27 +48,69 @@ async function init() {
 
 	setInterval(async () => {
 		const memory = {};
+		const botData = {};
 
 		for(const worker of Object.values(cluster.workers)) {
-			memory[worker.id] = await process.output({
+			const { result: heapUsed } = await process.output({
 				op: "eval",
 				target: "worker",
 				targetValue: worker.id,
 				input: `return process.memoryUsage().heapUsed`
 			}, workerData);
 
-			r.table("stats").insert({
+			workerData.get(worker.id).memoryUsage = heapUsed;
+			r.table("workerStats").insert({
 				type: "memory",
-				current: [process.pid, worker.id],
+				ppid: process.pid,
+				workerID: worker.id,
 				time: Date.now(),
-				value: memory[worker.id]
+				value: heapUsed
 			}).run();
+
+			memory[worker.id] = heapUsed;
+
+			if(workerData.get(worker.id).type === "bot") {
+				const { result: { guilds, streams } } = await process.output({
+					op: "eval",
+					target: "worker",
+					targetValue: worker.id,
+					input: () => ({
+						guilds: context.client.erisClient.guilds.size, // eslint-disable-line no-undef
+						streams: context.client.erisClient.voiceConnections // eslint-disable-line no-undef
+							.filter(connection => connection.playing).length
+					})
+				}, workerData);
+
+				Object.assign(workerData.get(worker.id), { guilds, streams });
+				botData[worker.id] = { guilds, streams };
+			}
 		}
 
-		messageHandler.wsBroadcast({
+		const totals = {
+			memoryUsage: Object.values(memory).reduce((a, b) => a + b, 0),
+			streams: Object.values(botData).reduce((a, b) => a + b.streams, 0),
+			guilds: Object.values(botData).reduce((a, b) => a + b.guilds, 0)
+		};
+
+		await r.table("globalStats")
+			.insert(Object.entries(totals).map(([key, value]) => ({
+				type: key,
+				time: Date.now(),
+				value
+			})))
+			.run();
+
+		process.output({
 			op: "memoryUsage",
 			memory
-		}, workerData);
+		}, Object.values(cluster.workers)
+			.find(work => work.isConnected() && workerData.get(work.id).type === "ws"));
+
+		process.output({
+			op: "botData",
+			botData
+		}, Object.values(cluster.workers)
+			.find(work => work.isConnected() && workerData.get(work.id).type === "ws"));
 	}, 60000);
 
 	await spawnWorker({ type: "ws" });

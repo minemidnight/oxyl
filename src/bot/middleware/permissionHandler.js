@@ -38,12 +38,12 @@ module.exports = async ({ author, channel, channel: { guild }, command, member, 
 
 	if(!settings.enabled) {
 		return false;
-	} else if(~settings.blacklistedChannels.indexOf(channel.id)) {
+	} else if(settings.blacklistedChannels.includes(channel.id)) {
 		return false;
-	} else if(settings.roleType === "whitelist" && !~settings.roles.indexOf(guild.id) &&
-		!member.roles.some(roleID => ~settings.roles.indexOf(roleID))) {
+	} else if(settings.roleType === "whitelist" && !settings.roles.includes(guild.id) &&
+		!member.roles.some(roleID => settings.roles.includes(roleID))) {
 		return false;
-	} else if(settings.roleType === "blacklist" && member.roles.some(roleID => ~settings.roles.indexOf(roleID))) {
+	} else if(settings.roleType === "blacklist" && member.roles.some(roleID => settings.roles.includes(roleID))) {
 		return false;
 	} else if(((settings.roleType === "whitelist" &&
 		settings.roles.length === 1 &&

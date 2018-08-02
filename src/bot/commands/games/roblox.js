@@ -29,7 +29,7 @@ module.exports = {
 		if(status.startsWith(`"`) && status.endsWith(`"`)) status = status.slice(1, -1);
 		const [, about] = html.match(/<span .*?class=".*?profile-about-content-text.*?".*?>(.+?)<\/span>/);
 
-		if(~about.indexOf(hash) || ~status.indexOf(hash)) {
+		if(about.indexOf(hash) || ~status.includes(hash)) {
 			if(settings.setNickname) member.edit({ nick: name }).catch(err => { }); // eslint-disable-line handle-callback-err, no-empty-function, max-len
 			member.addRole(settings.roleID, "Verified ROBLOX Account").catch(err => { }); // eslint-disable-line handle-callback-err, no-empty-function, max-len
 

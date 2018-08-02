@@ -22,7 +22,7 @@
 						<li class="list-group-item" v-for="(command, index) in commands[selectedCategory].filter(command => typeof command === 'string')" :key="index" :class="{ active: command === selectedCommand }" @click="selectedCommand = command">
 							{{command}}
 						</li>
-						<li class="list-group-item" v-for="(value, key) in commands[selectedCategory].find(command => typeof command !== 'string')" :key="key" :class="{ active: key === selectedCommand || ~Object.values(value).indexOf(selectedCommand) }" data-toggle="collapse" :data-target="'#accordion-' + key" aria-expanded="false" aria-controls="'accordion' + key" @click="selectedCommand = key">
+						<li class="list-group-item" v-for="(value, key) in commands[selectedCategory].find(command => typeof command !== 'string')" :key="key" :class="{ active: key === selectedCommand || Object.values(value).includes(selectedCommand) }" data-toggle="collapse" :data-target="'#accordion-' + key" aria-expanded="false" aria-controls="'accordion' + key" @click="selectedCommand = key">
    							{{key}}
   						</li>
 						<li v-if="commands[selectedCategory].find(command => typeof command !== 'string')">
@@ -155,13 +155,13 @@ export default {
 	methods: {
 		getNode(category = this.selectedCategory, command = this.selectedCommand) {
 			let node = `${category}.`;
-			if(!~this.commands[category].indexOf(command)) {
+			if(!this.commands[category].includes(command)) {
 				const subcommands = this.commands[category].find(cmd => typeof cmd !== "string");
 
 				if(!subcommands) return false;
-				if(!~Object.keys(subcommands).indexOf(command)) {
+				if(!Object.keys(subcommands).includes(command)) {
 					const subcommand = Object.entries(subcommands)
-						.find(([key, value]) => ~value.indexOf(command));
+						.find(([key, value]) => value.includes(command));
 
 					if(!subcommand) return false;
 					else node += `${subcommand[0]}.`;

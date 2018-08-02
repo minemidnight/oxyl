@@ -14,7 +14,7 @@
 						</button>
 
 						<div class="dropdown-menu" ref="dropdown">
-							<button type="button" class="dropdown-item" v-for="(channel, index) in channels.filter(channel => !~value.indexOf(channel.id))" :key="index" @click="addChannel(channel)">#{{channel.name}}</button>
+							<button type="button" class="dropdown-item" v-for="(channel, index) in channels.filter(channel => !value.includes(channel.id))" :key="index" @click="addChannel(channel)">#{{channel.name}}</button>
 						</div>
 					</div>
 				</li>

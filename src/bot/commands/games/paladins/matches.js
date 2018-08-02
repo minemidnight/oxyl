@@ -10,7 +10,7 @@ module.exports = {
 			return t("commands.paladins.matches.noMatchHistory");
 		}
 
-		if(competitive) matchHistory = matchHistory.filter(match => ~["Competitive", "Ranked"].indexOf(match.Queue));
+		if(competitive) matchHistory = matchHistory.filter(match => ["Competitive", "Ranked"].includes(match.Queue));
 		if(champion) {
 			champion = champions().find(champ => champ.Name.toLowerCase().startsWith(champion));
 			if(champion) matchHistory = matchHistory.filter(match => match.ChampionId === champion.id);

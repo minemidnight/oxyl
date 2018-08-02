@@ -1,0 +1,13 @@
+{
+	"name": "globalStats",
+	"primary": "id",
+	"indexes": [
+		["compound", ["type", "time"]]
+	],
+	"model": {
+		"type": "type of stat (guilds)",
+		"time": "timestamp of stat",
+		"id": "generated uuid",
+		"value": "stat value"
+	}
+}

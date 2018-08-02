@@ -54,236 +54,312 @@ OxylScript {
 	VariableStatement = variableName "=" Expression -- setWithEqual
 						| "set" Noun<"variable">? variableName "to" Expression -- setNoEqual
 
-	IfStatement = "if" Expression Statement ("else" Statement)?
+	IfStatement = "if" BooleanExpression Statement ("else" Statement)?
 
-	LoopStatement = "loop" Expression "times" Statement
+	LoopStatement = "loop" IntegerExpression "times" Statement
 
-	AddRoleStatement = "add" Expression "to" Expression ArityToOne<("because" | "due to" | "with"? "reason")> Expression -- reason
-					| "add" Expression "to" Expression -- noReason
+	AddRoleStatement = "add" RoleExpression "to" MemberExpression ArityToOne<("because" | "due to" | "with"? "reason")> StringExpression -- reason
+					| "add" RoleExpression "to" MemberExpression -- noReason
 
-	RemoveRoleStatement = "remove" Expression "from" Expression ArityToOne<("because" | "due to" | "with"? "reason")> Expression -- reason
-						| "remove" Expression "from" Expression -- noReason
+	RemoveRoleStatement = "remove" RoleExpression "from" MemberExpression ArityToOne<("because" | "due to" | "with"? "reason")> StringExpression -- reason
+						| "remove" RoleExpression "from" MemberExpression -- noReason
 
-	BanStatement = "ban" Expression ArityToOne<("because" | "due to" | "with"? "reason")> Expression -- reason
-				| "ban" Expression -- noReason
+	BanStatement = "ban" MemberExpression ArityToOne<("because" | "due to" | "with"? "reason")> StringExpression -- reason
+				| "ban" MemberExpression -- noReason
 
-	KickStatement = "kick" Expression ArityToOne<("because" | "due to" | "with"? "reason")> Expression -- reason
-					| "kick" Expression -- noReason
+	KickStatement = "kick" MemberExpression ArityToOne<("because" | "due to" | "with"? "reason")> StringExpression -- reason
+					| "kick" MemberExpression -- noReason
 
-	CreateMessageStatement = ("create" | "send") (A<"message"> ("with content" | "saying")?)? Expression "in" Expression
+	CreateMessageStatement = ("create" | "send") (A<"message"> ("with content" | "saying")?)? StringExpression "in" ChannelExpression
 
-	SendDMStatement = ("create" | "send") (A<("dm" | "direct message")> ("with content" | "saying")?)? Expression "to" Expression
+	SendDMStatement = ("create" | "send") (A<("dm" | "direct message")> ("with content" | "saying")?)? StringExpression "to" UserExpression
 
-	SetNicknameStatement = "set" Noun<"nickname"> "of" Expression "to" Expression
+	SetNicknameStatement = "set" Noun<"nickname"> "of" MemberExpression "to" StringExpression
 
 	ExpressionStatement = Expression
 
-	Expression = AbsoluteValueExpression
-				| CleanContentExpression
-				| CreationTimestampExpression
-				| DifferenceExpression
-				| FormatDateExpression
-				| IDExpression
-				| IndexOfExpression
-				| MemberCountExpression
-				| MemberGameExpression
-				| MemberJoinTimestampExpression
-				| MemberStatusExpression
-				| MentionExpression
-				| MessageContentExpression
-				| NameExpression
-				| UsernameExpression
-				| RandomNumberExpression
-				| RoundExpression
-				| GuildIconExpression
-				| GuildRegionExpression
-				| GuildOwnerExpression
-				| SubstringExpression
-				| LengthExpression
-				| LowercaseExpression
-				| UppercaseExpression
-				| UserAvatarExpression
-				| UserDiscriminatorExpression
-				| UserTagExpression
-				| UserFromIDExpression
-				| MemberFromUserExpression
-				| MemberFromIDExpression
-				| ChannelFromIDExpression
-				| RoleFromIDExpression
-				| RoleFromNameExpression
-				| ContainsExpression
-				| DoesntContainExpression
-				| HasPermissionExpression
-				| HasChannelPermissionExpression
-				| HasRoleExpression
-				| IsBotExpression
-				| IsHoistedExpression
-				| ChannelFromMessageExpression
-				| GuildFromRoleExpression
-				| GuildFromMessageExpression
-				| GuildFromChannelExpression
-				| MessageAuthorExpression
-				| OrExpression
+	Expression = BooleanExpression
+				| FloatExpression
+				| IntegerExpression
+				| NumberExpression
+				| GuildExpression
+				| ChannelExpression
+				| MemberExpression
+				| UserExpression
+				| RoleExpression
+				| MessageExpression
+				| ArgumentsExpression
+				| StringExpression
 
-	AbsoluteValueExpression = (Noun<("absolute")> | Noun<"abs">) "value of" Expression -- words
-							| "|" Expression "|" -- pipes
+	BooleanExpression = IsHoistedExpression
+						| IsBotExpression
+						| HasRoleExpression
+						| HasChannelPermissionExpression
+						| HasPermissionExpression
+						| DoesntContainExpression
+						| ContainsExpression
+						| OrExpression<Expression>
+						| UnaryExpression
+						| booleanLiteral
+						| variableLiteral
+						| PrecedenceExpression<BooleanExpression>
 
-	CleanContentExpression = Noun<"clean"> "content of" Expression -- exprLast
-							| Expression "'s clean content" -- exprFirst
+	IntegerExpressionNoAdditive = DifferenceExpression<IntegerExpression>
+					| AbsoluteValueExpression<IntegerExpression>
+					| LengthExpression
+					| RoundExpression
+					| RandomNumberExpression
+					| MemberJoinTimestampExpression
+					| MemberCountExpression
+					| IndexOfExpression
+					| CreationTimestampExpression
+                    | loopIndexLiteral
+					| integerLiteral
+					| variableLiteral
+					| PrecedenceExpression<IntegerExpressionNoAdditive>
+                    
+    IntegerExpression = AdditiveExpression<IntegerExpressionNoAdditive, IntegerExpressionNoAdditive>
+    								| IntegerExpressionNoAdditive
+    								| PrecedenceExpression<IntegerExpression>
 
-	CreationTimestampExpression = Noun<"creation"> "timestamp of" Expression -- exprLast
-								| Expression "'s creation timestamp" -- exprFirst
+	FloatExpressionNoAdditive = DifferenceExpression<FloatExpression>
+					| AbsoluteValueExpression<FloatExpression>
+					| floatLiteral
+					| variableLiteral
+					| PrecedenceExpression<FloatExpressionNoAdditive>
+                    
+   FloatExpression = AdditiveExpression<FloatExpressionNoAdditive, FloatExpressionNoAdditive>
+   							| FloatExpressionNoAdditive
+                            | PrecedenceExpression<FloatExpression>
 
-	DifferenceExpression = Noun<"difference"> "between" Expression "and" Expression
+	NumberExpression = FloatExpression
+					| IntegerExpression
+					| PrecedenceExpression<NumberExpression>
 
-	FormatDateExpression = Expression ArityToOne<("formatted as a date" | "to date" "format"?)>
+	GuildExpression = GuildFromRoleExpression
+					| GuildFromMessageExpression
+					| GuildFromChannelExpression
+					| eventVariableLiteral_guild
+					| variableLiteral
+					| PrecedenceExpression<GuildExpression>
 
-	IDExpression = Noun<"id"> "of" Expression -- exprLast
-				| Expression "'s id" -- exprFirst
+	ChannelExpression = ChannelFromMessageExpression
+					| ChannelFromIDExpression
+					| variableLiteral
+					| PrecedenceExpression<ChannelExpression>
 
-	IndexOfExpression = Noun<"index"> "of" Expression "in" Expression
+	MemberExpression = MemberFromIDExpression
+					| MemberFromUserExpression
+					| eventVariableLiteral_member
+					| variableLiteral
+					| PrecedenceExpression<MemberExpression>
 
-	MemberCountExpression = Noun<"member"> "count of" Expression -- exprLast
-							| Expression "'s member count" -- exprFirst
+	UserExpression = MessageAuthorExpression
+					| UserFromIDExpression
+					| GuildOwnerExpression
+					| MemberExpression
+					| variableLiteral
+					| PrecedenceExpression<UserExpression>
 
-	MemberGameExpression = Noun<"game"> "of" Expression -- exprLast
-							| Expression "'s game" -- exprFirst
+	RoleExpression = RoleFromIDExpression
+					| RoleFromNameExpression
+					| variableLiteral
+					| PrecedenceExpression<RoleExpression>
 
-	MemberJoinTimestampExpression = Noun<"join"> "timestamp of" Expression -- exprLast
-							| Expression "'s join timestamp" -- exprFirst
+	MessageExpression = eventVariableLiteral_message
+					| variableLiteral
+					| PrecedenceExpression<MessageExpression>
 
-	MemberStatusExpression = Noun<"status"> "of" Expression -- exprLast
-							| Expression "'s status" -- exprFirst
+	ArgumentsExpression = eventVariableLiteral_arguments
+						| variableLiteral
+						| PrecedenceExpression<ArgumentsExpression>
 
-	MentionExpression = Noun<"mention"> "of" Expression -- exprLast
-						| Expression "'s mention" -- exprFirst
+	PermissionExpression = permissionLiteral
+						 | variableLiteral
+						 | PrecedenceExpression<PermissionExpression>
 
-	MessageAuthorExpression = Noun<"author"> "of" Expression -- exprLast
-							| Expression "'s author" -- exprFirst
+	StringExpression = UserTagExpression
+					| UserDiscriminatorExpression
+					| UserAvatarExpression
+					| LowercaseExpression
+					| UppercaseExpression
+					| SubstringExpression
+					| GuildRegionExpression
+					| GuildIconExpression
+					| UsernameExpression
+					| NameExpression
+					| MessageContentExpression
+					| MentionExpression
+					| MemberStatusExpression
+					| MemberGameExpression
+					| IDExpression
+					| FormatDateExpression
+					| CleanContentExpression
+					| stringLiteral
+					| variableLiteral
+					| PrecedenceExpression<StringExpression>
+					| BooleanExpression
+					| FloatExpression
+					| IntegerExpression
+					| NumberExpression
+					| GuildExpression
+					| ChannelExpression
+					| MemberExpression
+					| UserExpression
+					| MessageExpression
+					| PermissionExpression
+					| RoleExpression
+					| ArgumentsExpression
 
-	MessageContentExpression = Noun<"content"> "of" Expression -- exprLast
-							| Expression "'s content" -- exprFirst
+	GetArgumentExpression = #("arg" "ument"?) IntegerExpression "of" ArgumentsExpression
+
+	AbsoluteValueExpression<expressionType> = (Noun<("absolute")> | Noun<"abs">) "value of" expressionType -- words
+							| "|" expressionType "|" -- pipes
+
+	CleanContentExpression = Noun<"clean"> "content of" MessageExpression -- exprLast
+							| MessageExpression "'s clean content" -- exprFirst
+
+	CreationTimestampExpression = Noun<"creation"> "timestamp of" (RoleExpression | MessageExpression | MemberExpression | UserExpression | ChannelExpression | GuildExpression) -- exprLast
+								| (RoleExpression | MessageExpression | MemberExpression | UserExpression | ChannelExpression | GuildExpression) "'s creation timestamp" -- exprFirst
+
+	DifferenceExpression<expressionType> = Noun<"difference"> "between" expressionType "and" expressionType
+
+	FormatDateExpression = IntegerExpression ArityToOne<("formatted as a date" | "to date" "format"?)>
+
+	IDExpression = Noun<"id"> "of" (RoleExpression | MessageExpression | MemberExpression | UserExpression | ChannelExpression | GuildExpression) -- exprLast
+				| (RoleExpression | MessageExpression | MemberExpression | UserExpression | ChannelExpression | GuildExpression) "'s id" -- exprFirst
+
+	IndexOfExpression = Noun<"index"> "of" StringExpression "in" StringExpression
+
+	MemberCountExpression = Noun<"member"> "count of" GuildExpression -- exprLast
+							| GuildExpression "'s member count" -- exprFirst
+
+	MemberGameExpression = Noun<"game"> "of" MemberExpression -- exprLast
+							| MemberExpression "'s game" -- exprFirst
+
+	MemberJoinTimestampExpression = Noun<"join"> "timestamp of" MemberExpression -- exprLast
+							| MemberExpression "'s join timestamp" -- exprFirst
+
+	MemberStatusExpression = Noun<"status"> "of" MemberExpression -- exprLast
+							| MemberExpression "'s status" -- exprFirst
+
+	MentionExpression = Noun<"mention"> "of" (RoleExpression | MemberExpression | UserExpression | ChannelExpression) -- exprLast
+						| (RoleExpression | MemberExpression | UserExpression | ChannelExpression) "'s mention" -- exprFirst
+
+	MessageAuthorExpression = Noun<"author"> "of" MessageExpression -- exprLast
+							| MessageExpression "'s author" -- exprFirst
+
+	MessageContentExpression = Noun<"content"> "of" MessageExpression -- exprLast
+							| MessageExpression "'s content" -- exprFirst
 						
-	NameExpression = Noun<"name"> "of" Expression -- exprLast
-					| Expression "'s name" -- exprFirst
+	NameExpression = Noun<"name"> "of" (RoleExpression | MemberExpression | UserExpression | ChannelExpression | GuildExpression) -- exprLast
+					| (RoleExpression | MemberExpression | UserExpression | ChannelExpression | GuildExpression) "'s name" -- exprFirst
 
-	UsernameExpression = Noun<"username"> "of" Expression -- exprLast
-						| Expression "'s username" -- exprFirst
+	UsernameExpression = Noun<"username"> "of" UserExpression -- exprLast
+						| UserExpression "'s username" -- exprFirst
 
-	RandomNumberExpression = A<"random"> "integer between" Expression "and" Expression "inclusive" -- inclusive
-							| A<"random"> "integer between" Expression "and" Expression -- exclusive
+	RandomNumberExpression = A<"random"> "integer between" IntegerExpression "and" IntegerExpression "inclusive" -- inclusive
+							| A<"random"> "integer between" IntegerExpression "and" IntegerExpression -- exclusive
 
-	RoundExpression = Expression "rounded" -- round
-					| "floor of" Expression -- downExprLast
-					| Expression "rounded down" -- downExprFirst
-					| "ceil of" Expression -- upExprLast
-					| Expression "rounded up" -- upExprFirst
+	RoundExpression = NumberExpression "rounded" -- round
+					| "floor of" NumberExpression -- downExprLast
+					| NumberExpression "rounded down" -- downExprFirst
+					| "ceil of" NumberExpression -- upExprLast
+					| NumberExpression "rounded up" -- upExprFirst
 
-	GuildIconExpression = Noun<"icon"> "of" Expression -- exprLast
-						| Expression "'s icon" -- exprFirst
+	GuildIconExpression = Noun<"icon"> "of" GuildExpression -- exprLast
+						| GuildExpression "'s icon" -- exprFirst
 
-	GuildRegionExpression = Noun<"region"> "of" Expression -- exprLast
-							| Expression "'s region" -- exprFirst
+	GuildRegionExpression = Noun<"region"> "of" GuildExpression -- exprLast
+							| GuildExpression "'s region" -- exprFirst
 
-	GuildOwnerExpression = Noun<"owner"> "of" Expression -- exprLast
-							| Expression "'s owner" -- exprFirst
+	GuildOwnerExpression = Noun<"owner"> "of" GuildExpression -- exprLast
+							| GuildExpression "'s owner" -- exprFirst
 
-	SubstringExpression = Noun<("part" | "substring")> "of" Expression ("between" | "from") Expression "to" Expression -- indicies
-						| Noun<"first"> Expression "characters of" Expression -- first
-						| Noun<"last"> Expression "characters of" Expression -- last
+	SubstringExpression = Noun<("part" | "substring")> "of" StringExpression ("between" | "from") IntegerExpression "to" IntegerExpression -- indicies
+						| Noun<"first"> IntegerExpression "characters of" IntegerExpression -- first
+						| Noun<"last"> IntegerExpression "characters of" IntegerExpression -- last
 
-	LengthExpression = Noun<"length"> "of" Expression -- exprLast
-					| Expression "'s length" -- exprFirst
+	LengthExpression = Noun<"length"> "of" StringExpression -- exprLast
+					| StringExpression "'s length" -- exprFirst
 
-	LowercaseExpression = "lowercase of" Expression
+	LowercaseExpression = "lowercase of" StringExpression
 
-	UppercaseExpression = "uppercase of" Expression
+	UppercaseExpression = "uppercase of" StringExpression
 
-	UserAvatarExpression = Noun<"avatar"> "of" Expression -- exprLast
-						| Expression "'s avatar" -- exprFirst
+	UserAvatarExpression = Noun<"avatar"> "of" UserExpression -- exprLast
+						| UserExpression "'s avatar" -- exprFirst
 
-	UserDiscriminatorExpression = Noun<"discriminator"> "of" Expression -- exprLast
-								| Expression "'s discriminator" -- exprFirst
+	UserDiscriminatorExpression = Noun<"discriminator"> "of" UserExpression -- exprLast
+								| UserExpression "'s discriminator" -- exprFirst
 
-	UserTagExpression = Noun<"tag"> "of" Expression -- exprLast
-						| Expression "'s tag" -- exprFirst
+	UserTagExpression = Noun<"tag"> "of" UserExpression -- exprLast
+						| UserExpression "'s tag" -- exprFirst
 
-	UserFromIDExpression = Noun<"user"> ("from" | "with" | "of") Noun<"id"> Expression
+	UserFromIDExpression = Noun<"user"> ("from" | "with" | "of") Noun<"id"> StringExpression
 
-	MemberFromUserExpression = Noun<"member"> ("from" | "of") Expression
+	MemberFromUserExpression = Noun<"member"> ("from" | "of") UserExpression
 
-	MemberFromIDExpression = Noun<"member"> ("from" | "with" | "of") Noun<"id"> Expression
+	MemberFromIDExpression = Noun<"member"> ("from" | "with" | "of") Noun<"id"> StringExpression
 
-	ChannelFromIDExpression = Noun<"channel"> ("from" | "with" | "of") Noun<"id"> Expression
+	ChannelFromIDExpression = Noun<"channel"> ("from" | "with" | "of") Noun<"id"> StringExpression
 
-	RoleFromIDExpression = Noun<"role"> ("from" | "with" | "of") Noun<"id"> Expression
+	RoleFromIDExpression = Noun<"role"> ("from" | "with" | "of") Noun<"id"> StringExpression
 
-	RoleFromNameExpression = Noun<"role"> ("from" | "with" | "of") Noun<"name"> Expression
+	RoleFromNameExpression = Noun<"role"> ("from" | "with" | "of") Noun<"name"> StringExpression
 
-	ChannelFromMessageExpression = Noun<"channel"> ("from" | "of") Expression
+	ChannelFromMessageExpression = Noun<"channel"> ("from" | "of") MessageExpression
 
-	GuildFromRoleExpression = Noun<("guild" | "server")> ("from" | "of") Expression
+	GuildFromRoleExpression = Noun<("guild" | "server")> ("from" | "of") RoleExpression
 
-	GuildFromMessageExpression = Noun<("guild" | "server")> ("from" | "of") Expression
+	GuildFromMessageExpression = Noun<("guild" | "server")> ("from" | "of") MessageExpression
 
-	GuildFromChannelExpression = Noun<("guild" | "server")> ("from" | "of") Expression
+	GuildFromChannelExpression = Noun<("guild" | "server")> ("from" | "of") ChannelExpression
 
-	ContainsExpression = Expression ("contains" | "includes") Expression
+	ContainsExpression = StringExpression ("contains" | "includes") StringExpression
 
-	DoesntContainExpression = Expression ("doesn't" | "doesnt" | "does not") ("contain" | "include") Expression
+	DoesntContainExpression = StringExpression ("doesn't" | "doesnt" | "does not") ("contain" | "include") StringExpression
 
-	HasPermissionExpression = Expression "has" Noun<"permissson"> "to"? Expression
+	HasPermissionExpression = UserExpression "has" Noun<"permissson"> "to"? PermissionExpression
 
-	HasChannelPermissionExpression = Expression "has" Noun<"permissson"> "to"? Expression "in" Expression
+	HasChannelPermissionExpression = MemberExpression "has" Noun<"permissson"> "to"? PermissionExpression "in" ChannelExpression
 
-	HasRoleExpression = Expression "has" Expression
+	HasRoleExpression = MemberExpression "has" RoleExpression
 
-	IsBotExpression = Expression "is" A<"bot">
+	IsBotExpression = UserExpression "is" A<"bot">
 
-	IsHoistedExpression = Expression ("is hoisted" | "displays seperately")
+	IsHoistedExpression = RoleExpression ("is hoisted" | "displays seperately")
 
-	OrExpression = OrExpression ("||" | "or") AndExpression -- or
-				| AndExpression
+	OrExpression<expression> = BooleanExpression ("||" | "or") AndExpression<expression>
 
-	AndExpression = AndExpression ("&&" | "and") ExistenceExpression -- and
-					| ExistenceExpression
+	AndExpression<expression> = AndExpression<expression> ("&&" | "and") ExistenceExpression<expression>
 
-	ExistenceExpression = EqualityExpression ("exists" | "is set") -- exists
-						| EqualityExpression (("isn't" | "isnt" | "is not") "set" | ("does not" | "doesn't" | "doesnt") "exist") -- doesntExist
-						| EqualityExpression
+	ExistenceExpression<expression> = EqualityExpression<expression> ("exists" | "is set") -- exists
+						| EqualityExpression<expression> (("isn't" | "isnt" | "is not") "set" | ("does not" | "doesn't" | "doesnt") "exist") -- doesntExist
 
-	EqualityExpression = RelationalExpression ArityToOne< ("==" | "===" | "equals" | "is" "equal to"?)> RelationalExpression -- equal
-						| RelationalExpression ArityToOne<("!=" | "!==" | ("isn't" | "isnt" | "is not") "equal to"? | ("does not" | "doesn't" | "doesnt") "equal")> RelationalExpression -- notEqual
-						| RelationalExpression
+	EqualityExpression<expression> = RelationalExpression<expression> ArityToOne< ("==" | "===" | "equals" | "is" "equal to"?)> RelationalExpression<expression> -- equal
+						| RelationalExpression<expression> ArityToOne<("!=" | "!==" | ("isn't" | "isnt" | "is not") "equal to"? | ("does not" | "doesn't" | "doesnt") "equal")> RelationalExpression<expression> -- notEqual
 
-	RelationalExpression = AdditiveExpression ArityToOne<("<" | "is"? ("less" | "lower" | "smaller") "than")> AdditiveExpression -- lt
-						| AdditiveExpression ArityToOne<(">" | "is"? ("greater" | "more" | "higher" | "bigger" | "larger") "than")> AdditiveExpression -- gt
-						| AdditiveExpression ArityToOne<("<=" | "is"? ("less" | "lower" | "smaller") "than or" ("equal to" | "equals"))> AdditiveExpression -- le
-						| AdditiveExpression ArityToOne<(">=" | "is"? ("greater" | "more" | "higher" | "bigger" | "larger") "than or" ("equal to" | "equals"))> AdditiveExpression -- ge
-						| AdditiveExpression
+	RelationalExpression<expression> = (StringExpression | NumberExpression) ArityToOne<("<" | "is"? ("less" | "lower" | "smaller") "than")> (StringExpression | NumberExpression) -- lt
+						| (StringExpression | NumberExpression) ArityToOne<(">" | "is"? ("greater" | "more" | "higher" | "bigger" | "larger") "than")> (StringExpression | NumberExpression) -- gt
+						| (StringExpression | NumberExpression) ArityToOne<("<=" | "is"? ("less" | "lower" | "smaller") "than or" ("equal to" | "equals"))> (StringExpression | NumberExpression) -- le
+						| (StringExpression | NumberExpression) ArityToOne<(">=" | "is"? ("greater" | "more" | "higher" | "bigger" | "larger") "than or" ("equal to" | "equals"))> (StringExpression | NumberExpression) -- ge
+						| PrecedenceExpression<expression>
+						| expression
 
-	AdditiveExpression = AdditiveExpression "+" MultiplicativeExpression -- add
-						| AdditiveExpression "-" MultiplicativeExpression -- sub
-						| MultiplicativeExpression
+	AdditiveExpression<leftExpressionType, rightExpressionType> = AdditiveExpression<leftExpressionType, rightExpressionType> "+" MultiplicativeExpression<leftExpressionType, rightExpressionType> -- add
+						| AdditiveExpression<leftExpressionType, rightExpressionType> "-" MultiplicativeExpression<leftExpressionType, rightExpressionType> -- sub
+						| MultiplicativeExpression<leftExpressionType, rightExpressionType>
 
-	MultiplicativeExpression = MultiplicativeExpression "*" Expression -- mul
-								| MultiplicativeExpression "^" Expression -- exp
-								| MultiplicativeExpression "/" Expression -- div
-								| MultiplicativeExpression "%" Expression -- mod
-								| UnaryExpression
+	MultiplicativeExpression<leftExpressionType, rightExpressionType> = MultiplicativeExpression<leftExpressionType, rightExpressionType> "*" (leftExpressionType | rightExpressionType) -- mul
+								| MultiplicativeExpression<leftExpressionType, rightExpressionType> "^" (leftExpressionType | rightExpressionType) -- exp
+								| MultiplicativeExpression<leftExpressionType, rightExpressionType> "/" (leftExpressionType | rightExpressionType) -- div
+								| MultiplicativeExpression<leftExpressionType, rightExpressionType> "%" (leftExpressionType | rightExpressionType) -- mod
+								| leftExpressionType
 
-	UnaryExpression = "!" UnaryExpression -- not
-					| PrimaryExpression
+	UnaryExpression = "!" BooleanExpression -- not
 
-	PrimaryExpression = literal
-						| "(" Expression ")" -- precedence
-
-	literal = stringLiteral
-			| numericLiteral
-			| booleanLiteral
-			| permissionLiteral
-			| variableLiteral
-			| eventVariableLiteral
+	PrecedenceExpression<type> = "(" type ")" -- precedence
 
 	stringLiteral = "\"" doubleStringCharacter* "\""
 				| "'" singleStringCharacter* "'"
@@ -302,8 +378,8 @@ OxylScript {
 	floatLiteral = "-" float -- negative
 				| float -- positive
 
-	integerLiteral = "-" integer -- negative
-				| integer -- positive
+	integerLiteral = ~floatLiteral "-" integer -- negative
+				| ~floatLiteral integer -- positive
 
 	integer = digit+
 	float = digit* "." digit+
@@ -368,11 +444,11 @@ OxylScript {
 	manageWebhooks = "manage webhooks"
 	manageEmojis = "manage emojis"
 
-	eventVariableIdentifier = "guild" -- guild
-					| "member" -- member
-					| "message" -- message
-					| "arguments" -- arguments
-	eventVariableLiteral = "event" "-"? eventVariableIdentifier
+	eventVariablePrefix = "event" "-"?
+	eventVariableLiteral = eventVariablePrefix "guild" -- guild
+						| eventVariablePrefix "member" -- member
+						| eventVariablePrefix "message" -- message
+						| eventVariablePrefix "arguments" -- arguments
 
 	variableLiteral = (noun<"value of">)? variableName
 	variableName = "{" alnum+ "}"

@@ -2,6 +2,10 @@
 	"parser": "babel-eslint",
 	"extends": "eslint:recommended",
 	"plugins": ["html", "import"],
+	"globals": {
+		"apiCall": false,
+		"app": false
+	},
 	"env": {
 		"node": true,
 		"es6": true,
