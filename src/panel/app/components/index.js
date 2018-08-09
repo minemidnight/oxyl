@@ -1,4 +1,4 @@
-const components = ["Modal", "Navbar", "Worker"];
+const components = ["ChartTimespanSelector", "Modal", "Navbar", "Worker"];
 
 export default Vue => components
 	.forEach(file => Vue.component(file.toLowerCase(), () =>

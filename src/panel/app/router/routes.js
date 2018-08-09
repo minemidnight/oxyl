@@ -7,6 +7,10 @@ export default {
 		path: "/workers",
 		component: "Workers"
 	},
+	logs: {
+		path: "/logs",
+		component: "Logs"
+	},
 	forbidden: {
 		path: "/forbidden",
 		component: "Forbidden"

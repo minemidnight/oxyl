@@ -163,7 +163,29 @@ module.exports = async (message, sentFrom, workerData, spawnWorker) => {
 			break;
 		}
 
-		case "restartBotHard": {
+		case "killWorker": {
+			await process.output({
+				op: "eval",
+				target: "worker",
+				targetValue: message.target,
+				input: `process.exit(0)`
+			}, workerData);
+
+			break;
+		}
+
+		case "restartWorker": {
+			await process.output({
+				op: "eval",
+				target: "worker",
+				targetValue: message.target,
+				input: `process.exit(1)`
+			}, workerData);
+
+			break;
+		}
+
+		case "hardRestart": {
 			process.logger.info("bot", "Hard restarting all bot workers");
 
 			const botWorkers = Object.values(cluster.workers)
@@ -181,7 +203,7 @@ module.exports = async (message, sentFrom, workerData, spawnWorker) => {
 			break;
 		}
 
-		case "restartBotRolling": {
+		case "rollingRestart": {
 			const botWorkers = Object.values(cluster.workers)
 				.filter(work => work.isConnected() && workerData.get(work.id).type === "bot");
 
@@ -193,8 +215,7 @@ module.exports = async (message, sentFrom, workerData, spawnWorker) => {
 				worker.once("disconnect", async () => {
 					const newWorker = await new Promise(resolve => {
 						process.nextTick(() => {
-							const keys = Object.keys(cluster.workers);
-							resolve(cluster.workers[keys.length - 1]);
+							resolve(cluster.workers[Object.keys(cluster.workers).pop()]);
 						});
 					});
 
@@ -207,7 +228,12 @@ module.exports = async (message, sentFrom, workerData, spawnWorker) => {
 					process.nextTick(tryResolve);
 				});
 
-				worker.disconnect();
+				await process.output({
+					op: "eval",
+					target: "worker",
+					targetValue: worker.id,
+					input: `process.exit(1)`
+				}, workerData);
 
 				await waitReady;
 			}
@@ -218,6 +244,12 @@ module.exports = async (message, sentFrom, workerData, spawnWorker) => {
 		case "ready": {
 			process.logger.startup("worker", `Worker ${sentFrom.id} (${workerData.get(sentFrom.id).type}) is ready`);
 			workerData.get(sentFrom.id).status = "ready";
+
+			process.output({
+				op: "workerReady",
+				worker: workerData.get(sentFrom.id)
+			}, Object.values(cluster.workers)
+				.find(work => work.isConnected() && workerData.get(work.id).type === "ws"));
 
 			break;
 		}

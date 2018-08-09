@@ -28,11 +28,11 @@ export default async () => {
 			}
 
 			case "memoryUsage": {
-				Object.entries(message.memory).forEach(([workerID, heapUsed]) => {
+				Object.entries(message.memoryUsage).forEach(([workerID, heapUsed]) => {
 					if(!store.workers[workerID]) return;
 
-					if(store.workers[workerID].chartData.memory) {
-						store.workers[workerID].chartData.memory.push([
+					if(store.workers[workerID].chartData.memoryUsage) {
+						store.workers[workerID].chartData.memoryUsage.push([
 							new Date(),
 							heapUsed / 1024 / 1024
 						]);
@@ -40,6 +40,63 @@ export default async () => {
 
 					store.workers[workerID].memoryUsage = heapUsed;
 				});
+
+				const total = Object.values(message.memoryUsage).reduce((a, b) => a + b, 0);
+				if(store.chartData.memoryUsage) store.chartData.memoryUsage.push([new Date(), total / 1024 / 1024]);
+
+				break;
+			}
+
+			case "workerReady": {
+				const { worker } = message;
+
+				if(!store.workers[worker.id]) {
+					app.$set(store.workers, worker.id, {
+						id: worker.id,
+						startTime: worker.startTime,
+						status: worker.status,
+						type: worker.type,
+						memoryUsage: worker.memoryUsage,
+						guilds: worker.guilds,
+						streams: worker.streams,
+						chartData: {
+							memoryUsage: null,
+							guilds: null,
+							streams: null
+						}
+					});
+				} else {
+					store.workers[worker.id].status = "ready";
+				}
+
+				break;
+			}
+
+			case "workerOnline": {
+				const { worker } = message;
+
+				if(!store.workers[worker.id]) {
+					app.$set(store.workers, worker.id, {
+						id: worker.id,
+						startTime: worker.startTime,
+						status: worker.status,
+						type: worker.type,
+						memoryUsage: worker.memoryUsage,
+						guilds: worker.guilds,
+						streams: worker.streams,
+						chartData: {
+							memoryUsage: null,
+							guilds: null,
+							streams: null
+						}
+					});
+				}
+
+				break;
+			}
+
+			case "workerOffline": {
+				app.$delete(store.workers, message.worker.id);
 
 				break;
 			}
@@ -65,6 +122,17 @@ export default async () => {
 					store.workers[workerID].guilds = guilds;
 					store.workers[workerID].streams = streams;
 				});
+
+				const totals = Object.values(message.botData).reduce((a, b) => {
+					Object.entries(b).forEach(([key, value]) => a[key] = (a[key] || 0) + value);
+
+					return a;
+				}, {});
+
+				if(store.chartData.guilds) store.chartData.guilds.push([new Date(), totals.guilds]);
+				if(store.chartData.users) store.chartData.users.push([new Date(), totals.users]);
+				if(store.chartData.streams) store.chartData.streams.push([new Date(), totals.streams]);
+				if(store.chartData.messagesPerSecond) store.chartData.messagesPerSecond.push([new Date(), totals.messages]);
 
 				break;
 			}

@@ -12,10 +12,17 @@ function spawnWorker(data) {
 
 	worker.on("message", message => messageHandler(message, worker, workerData, spawnWorker));
 	worker.on("exit", async (code, signal) => {
-		if(signal || !code) return;
-
+		process.output({
+			op: "workerOffline",
+			worker: workerData.get(worker.id)
+		}, Object.values(cluster.workers)
+			.find(work => work.isConnected() && workerData.get(work.id).type === "ws"));
 		process.logger.error("cluster", `Worker ${worker.id} crashed, exit code ${code}`);
+
+
 		workerData.delete(worker.id);
+
+		if(signal || !code) return;
 		const crashes = (workerCrashes.get(worker.id) || 0) + 1;
 		workerCrashes.delete(worker.id);
 		if(crashes >= 3) return;
@@ -27,11 +34,20 @@ function spawnWorker(data) {
 		const count = workerCrashes.get(newWorker.id) - 1;
 		if(!count) workerCrashes.delete(newWorker.id);
 		else workerCrashes.set(newWorker.id, count);
+
+		worker.removeAllListeners();
 	});
 
 	return new Promise(resolve => {
 		worker.once("online", () => {
 			process.logger.startup("worker", `Worker ${worker.id} has started`);
+			if(Object.values(cluster.workers).find(work => work.isConnected() && workerData.get(work.id).type === "ws")) {
+				process.output({
+					op: "workerOnline",
+					worker: workerData.get(worker.id)
+				}, Object.values(cluster.workers)
+					.find(work => work.isConnected() && workerData.get(work.id).type === "ws"));
+			}
 
 			data = workerData.get(worker.id);
 			data.status = "online";
@@ -47,7 +63,7 @@ async function init() {
 	process.logger = require("../logger/index")(r);
 
 	setInterval(async () => {
-		const memory = {};
+		const memoryUsage = {};
 		const botData = {};
 
 		for(const worker of Object.values(cluster.workers)) {
@@ -67,30 +83,40 @@ async function init() {
 				value: heapUsed
 			}).run();
 
-			memory[worker.id] = heapUsed;
+			memoryUsage[worker.id] = heapUsed;
 
 			if(workerData.get(worker.id).type === "bot") {
-				const { result: { guilds, streams } } = await process.output({
+				const { result } = await process.output({
 					op: "eval",
 					target: "worker",
 					targetValue: worker.id,
-					input: () => ({
-						guilds: context.client.erisClient.guilds.size, // eslint-disable-line no-undef
-						streams: context.client.erisClient.voiceConnections // eslint-disable-line no-undef
-							.filter(connection => connection.playing).length
-					})
+					input: () => {
+						const messages = context.client.locals.messageCounter / 60; // eslint-disable-line no-undef
+						context.client.locals.messageCounter = 0; // eslint-disable-line no-undef
+
+						return {
+							guilds: context.client.erisClient.guilds.size, // eslint-disable-line no-undef
+							streams: context.client.erisClient.voiceConnections // eslint-disable-line no-undef
+								.filter(connection => connection.playing).length,
+							users: context.client.erisClient.users.size, // eslint-disable-line no-undef
+							messages
+						};
+					}
 				}, workerData);
 
-				Object.assign(workerData.get(worker.id), { guilds, streams });
-				botData[worker.id] = { guilds, streams };
+				Object.assign(workerData.get(worker.id), result);
+				botData[worker.id] = result;
 			}
 		}
 
-		const totals = {
-			memoryUsage: Object.values(memory).reduce((a, b) => a + b, 0),
-			streams: Object.values(botData).reduce((a, b) => a + b.streams, 0),
-			guilds: Object.values(botData).reduce((a, b) => a + b.guilds, 0)
-		};
+		const totals = Object.assign(
+			{ memoryUsage: Object.values(memoryUsage).reduce((a, b) => a + b, 0) },
+			Object.values(botData).reduce((a, stats) => {
+				Object.entries(stats).forEach(([key, value]) => a[key] = (a[key] || 0) + value);
+
+				return a;
+			}, {})
+		);
 
 		await r.table("globalStats")
 			.insert(Object.entries(totals).map(([key, value]) => ({
@@ -102,7 +128,7 @@ async function init() {
 
 		process.output({
 			op: "memoryUsage",
-			memory
+			memoryUsage
 		}, Object.values(cluster.workers)
 			.find(work => work.isConnected() && workerData.get(work.id).type === "ws"));
 

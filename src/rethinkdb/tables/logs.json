@@ -1,7 +1,7 @@
 {
 	"name": "logs",
 	"primary": "uuid",
-	"indexes": ["time", "level"],
+	"indexes": ["level", "time"],
 	"model": {
 		"level": "error/info/debug/warn",
 		"label": "label provided",

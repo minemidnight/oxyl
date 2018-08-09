@@ -38,16 +38,34 @@ process.output({ op: "ready" });
 module.exports = {
 	server,
 	extraHandlers: {
-		memoryUsage({ memory }) {
+		memoryUsage({ memoryUsage }) {
 			server.broadcast({
 				op: "memoryUsage",
-				memory
+				memoryUsage
 			});
 		},
 		botData({ botData }) {
 			server.broadcast({
 				op: "botData",
 				botData
+			});
+		},
+		workerReady({ worker }) {
+			server.broadcast({
+				op: "workerReady",
+				worker
+			});
+		},
+		workerOnline({ worker }) {
+			server.broadcast({
+				op: "workerOnline",
+				worker
+			});
+		},
+		workerOffline({ worker }) {
+			server.broadcast({
+				op: "workerOffline",
+				worker
 			});
 		}
 	}

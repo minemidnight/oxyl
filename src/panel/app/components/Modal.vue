@@ -1,6 +1,6 @@
 <template>
 	<div class="modal fade" role="dialog" aria-hidden="true" :class="{ show: shown }" @keydown.esc="close()">
-		<div class="modal-dialog" role="document">
+		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content color-500">
 				<div class="modal-header color-600">
 					<h5 class="modal-title">

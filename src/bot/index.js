@@ -50,7 +50,8 @@ const client = wiggle({
 	wiggle.middleware.commandParser(),
 	wiggle.middleware.argHandler(),
 	require("./middleware/censors"),
-	require("./middleware/permissionHandler")
+	require("./middleware/permissionHandler"),
+	require("./middleware/stats")
 ).use("creator", (message, next) => {
 	if(client.locals.owners.includes(message.author.id)) return next();
 	else return message.channel.createMessage(message.t("errors.notCreator"));
@@ -59,6 +60,7 @@ const client = wiggle({
 client.locals.r = r;
 client.locals.owners = config.owners;
 client.locals.config = config;
+client.locals.messageCounter = 0;
 
 // post server count to sites if in production
 

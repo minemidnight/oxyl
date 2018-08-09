@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div class="card color-630 mb-3" @click="openModal()">
+		<div class="card color-630 mb-3" @click="openModal()" :class="{ 'border-danger': worker.status !== 'ready' }">
 			<div class="card-header color-700">
 				<h5 class="card-title">Worker {{ worker.id }}</h5>
 				<h6 class="card-subtitle text-muted">{{ worker.type }}</h6>
@@ -26,9 +26,15 @@
 			<p class="mb-0" ref="uptime2">Uptime: {{ getUptime() }}</p>
 			<p class="card-text mb-0">Memory Usage: {{ (worker.memoryUsage / Math.pow(1024, 3)).toFixed(2) }} GiB</p>
 		
-			<div v-if="worker.type === 'bot'">
+			<template v-if="worker.type === 'bot'">
 				<div class="container-fluid text-center mt-3">
 					<h6>Guilds</h6>
+					<charttimespanselector
+						selected="1w"
+						:bind="{ object: worker.chartData, key: 'memoryUsage' }"
+						:transform="body => [[{ label: 'Time', type: 'date' }, { label: 'Guilds', type: 'number' }]].concat(body.Guilds.map(({ time, value }) => [new Date(time), value / 1024 / 1024]))"
+						:url="`workers/${worker.id}/guilds`"
+					/>
 					<chart
 						type="LineChart"
 						:data="worker.chartData.guilds"
@@ -38,22 +44,39 @@
 
 				<div class="container-fluid text-center mt-3">
 					<h6>Streams</h6>
+					<charttimespanselector
+						selected="24h"
+						:bind="{ object: worker.chartData, key: 'streams' }"
+						:transform="body => [[{ label: 'Time', type: 'date' }, { label: 'Streams', type: 'number' }]].concat(body.sstreams.map(({ time, value }) => [new Date(time), value / 1024 / 1024]))"
+						:url="`workers/${worker.id}/streams`"
+					/>
 					<chart
 						type="LineChart"
 						:data="worker.chartData.streams"
 						:options="graphOptions"
 					/>
 				</div>
-			</div>
+			</template>
 
 			<div class="container-fluid text-center mt-3">
 				<h6>Memory Usage (GiB)</h6>
+				<charttimespanselector
+					selected="24h"
+					:bind="{ object: worker.chartData, key: 'memoryUsage' }"
+					:transform="body => [[{ label: 'Time', type: 'date' }, { label: 'MiB', type: 'number' }]].concat(body.memoryUsage.map(({ time, value }) => [new Date(time), value / 1024 / 1024]))"
+					:url="`workers/${worker.id}/memoryUsage`"
+				/>
 				<chart
 					type="AreaChart"
-					:data="worker.chartData.memory"
+					:data="worker.chartData.memoryUsage"
 					:options="graphOptions"
 				/>
 			</div>
+
+			<template slot="footer">
+				<button type="button" class="btn btn-outline-warning" :disabled="worker.status !== 'ready'" @click="ws.send({ op: 'restartWorker', target: worker.id })">Restart</button>
+				<button type="button" class="btn btn-outline-danger" @click="ws.send({ op: 'killWorker', target: worker.id })">Kill</button>
+			</template>
 		</modal>
 	</div>
 </template>
@@ -69,44 +92,18 @@
 }
 </style>
 
-<style lang="scss">
-@import "../variables";
-
-.google-visualization-tooltip {
-	background: $color-630 !important;
-	border: 1px solid $color-700 !important;
-
-	box-shadow: none !important;
-	-webkit-box-shadow: none !important;
-	
-	padding: 0.5em 0.25em;
-	height: auto !important;
-
-	ul {
-		margin: 0;
-
-		li {
-			margin: 0.25em 0 !important;
-			padding: 0;
-
-			span {
-				color: $color-text !important;
-			}
-		}
-	}
-}
-</style>
-
 <script>
 import { GChart as chart } from "vue-google-charts";
+import store from "../store";
 
 export default {
 	data() {
 		return {
 			interval: null,
+			ws: store.ws,
 			graphOptions: {
 				backgroundColor: "#1f1f1f",
-				fontName: "Raleway",
+				fontName: "IBM Plex Sans",
 				hAxis: {
 					gridlines: {
 						count: -1,
@@ -147,7 +144,7 @@ export default {
 	},
 	methods: {
 		async openModal() {
-			if(!this.worker.chartData.memory) await this.updateStats();
+			if(!this.worker.chartData.memoryUsage) await this.updateStats();
 			this.$refs.modal.show();
 		},
 		getUptime() {
@@ -171,7 +168,7 @@ export default {
 			this.$refs.uptime2.innerHTML = uptime;
 		},
 		async updateStats(timespan = -1) {
-			const { body: { guilds, memory, streams } } = await apiCall.get(`workers/${this.worker.id}`)
+			const { body: { guilds, memoryUsage, streams } } = await apiCall.get(`workers/${this.worker.id}`)
 				.query({ timespan });
 
 			if(this.worker.type === "bot") {
@@ -192,10 +189,10 @@ export default {
 				]));
 			}
 
-			this.worker.chartData.memory = [[
+			this.worker.chartData.memoryUsage = [[
 				{ label: "Time", type: "date" },
 				{ label: "MiB", type: "number" }
-			]].concat(memory.map(({ time, value }) => [
+			]].concat(memoryUsage.map(({ time, value }) => [
 				new Date(time),
 				value / 1024 / 1024
 			]));

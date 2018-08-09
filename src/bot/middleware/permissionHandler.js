@@ -1,24 +1,4 @@
-function getNode(command, wiggle) {
-	let category = command.category;
-	if(!wiggle.categories.has(category)) category = wiggle.categories.find(cat => cat.subcommands.has(category)).name;
-	command = command.name;
-
-	let node = `${category}.`;
-
-	if(wiggle.categories.get(category).commands.has(command)) {
-		const subcommands = wiggle.categories.get(category).subcommands;
-		if(!subcommands) return false;
-		if(!subcommands.has(command)) {
-			const subcommand = subcommands.find(({ commands }) => commands.has(command));
-			if(!subcommand) return false;
-			else node += `${subcommand.name}.`;
-		}
-	}
-
-	node += command;
-	return node;
-}
-
+const getNode = require("../modules/getCommandNode");
 
 module.exports = async ({ author, channel, channel: { guild }, command, member, t }, next, wiggle) => {
 	const { r } = wiggle.locals;

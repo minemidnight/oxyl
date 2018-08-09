@@ -1,5 +1,6 @@
 export default {
 	authorized: null,
-	terminal: [],
+	ws: null,
+	chartData: {},
 	workers: {}
 };

@@ -1,11 +1,11 @@
 @import "variables";
 @import "~bootstrap/scss/bootstrap";
 @import "~font-awesome/scss/font-awesome";
-@import url(https://fonts.googleapis.com/css?family=Raleway:30);
+@import url(https://fonts.googleapis.com/css?family=IBM+Plex+Sans);
 @import url(https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-flash.min.css);
 
 body {
-	font-family: "Raleway", sans-serif;
+	font-family: "IBM Plex Sans", sans-serif;
 }
 
 img {
@@ -14,6 +14,31 @@ img {
 	-webkit-user-drag: none;
 	-webkit-user-select: none;
 	-ms-user-select: none;
+}
+
+.google-visualization-tooltip {
+	background: $color-630 !important;
+	border: 1px solid $color-700 !important;
+
+	box-shadow: none !important;
+	-webkit-box-shadow: none !important;
+	
+	height: auto !important;
+	text-align: center !important;
+	padding: 3px 1px !important;
+
+	ul {
+		margin: 0;
+
+		li {
+			margin: 0 !important;
+			padding: 0;
+
+			span {
+				color: $color-text !important;
+			}
+		}
+	}
 }
 
 .color {
@@ -38,6 +63,26 @@ img {
 	&-text-800, &-text-hover-800:hover { color: $color-800 !important; }
 	&-text-900, &-text-hover-900:hover { color: $color-900 !important; }
 	&-text { color: $color-text !important; }
+}
+
+input, select {
+	max-width: 420px;
+	transition: 0.4s ease-in-out !important;
+	border: none !important;
+	background: $color-600 !important;
+	color: rgba(255, 255, 255, 0.8) !important;
+	outline: none !important;
+
+	&[disabled] {
+		background: $color-630 !important;
+		cursor: not-allowed;
+	}
+
+	&:focus:not([disabled]), &:hover:not([disabled]) {
+		max-width: 720px;
+		color: white !important;
+		background: $color-630 !important;
+	}
 }
 
 ::-webkit-scrollbar {

@@ -1,0 +1,10 @@
+{
+	"name": "commandStats",
+	"primary": "id",
+	"indexes": ["time"],
+	"model": {
+		"id": "generated uuid",
+		"node": "category.command",
+		"time": "time of use"
+	}
+}

@@ -63,19 +63,20 @@ router.beforeEach(async (to, from, next) => {
 					guilds: worker.guilds,
 					streams: worker.streams,
 					chartData: {
-						memory: null,
+						memoryUsage: null,
 						guilds: null,
 						streams: null
 					}
 				});
 			});
 
-			app.ws = await ws();
+			store.ws = await ws();
+
 			return next();
 		}
 	} else if(store.authorized) {
 		return next();
-	} else if(!store.authorized) {
+	} else if(!store.authorized && store.authorized !== null) {
 		return next({ name: "forbidden" });
 	} else {
 		const { body: { clientID } } = await apiCall.get("oauth/discord/clientid");
