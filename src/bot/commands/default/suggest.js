@@ -10,6 +10,7 @@ module.exports = {
 			channel.createMessage(t("commands.suggestions.prompt.title"));
 			[title] = await channel.awaitMessages(msg => msg.author.id === author.id, { time: 45000, maxMatches: 1 });
 			if(!title) return t("commands.suggestions.prompt.timedOut");
+			else if(title.content.toLowerCase() === "cancel") return t("command.suggestions.prompt.cancelled");
 			else title = title.content;
 		}
 
@@ -17,6 +18,7 @@ module.exports = {
 			channel.createMessage(t("commands.suggestions.prompt.description"));
 			[description] = await channel.awaitMessages(msg => msg.author.id === author.id, { time: 45000, maxMatches: 1 });
 			if(!description) return t("commands.suggestions.prompt.timedOut");
+			else if(description.content.toLowerCase() === "cancel") return t("command.suggestions.prompt.cancelled");
 			else description = description.content;
 		}
 
