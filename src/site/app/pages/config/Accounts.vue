@@ -65,9 +65,13 @@ export default {
 			localStorage.accounts = JSON.stringify(accounts);
 		},
 		openPopup() {
+			const states = ["discord"];
+			if(this.$route.query.unsubscribe) states.push("unsubscribe");
+
 			const url = "https://discordapp.com/oauth2/authorize?response_type=code" +
 						`&redirect_uri=${encodeURIComponent(window.location.origin)}` +
-						`&scope=identify+guilds&client_id=${this.clientID}`;
+						`&scope=identify+guilds+email&client_id=${this.clientID}` +
+						`&state=${encodeURIComponent(states.join(","))}`;
 			const options = `dependent=yes,width=500,height=${window.innerHeight}`;
 
 			const popup = window.open(url, "_blank", options);

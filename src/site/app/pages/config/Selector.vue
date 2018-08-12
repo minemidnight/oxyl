@@ -22,6 +22,8 @@
 </template>
 
 <script>
+import createNotification from "../../createNotification";
+
 export default {
 	data() {
 		return {
@@ -30,6 +32,78 @@ export default {
 		};
 	},
 	async created() {
+		const { body: { email, dm } } = await apiCall.get("newsletter");
+
+		if(email === null && dm === null) {
+			const notification = createNotification([
+				app.$createElement("p",
+					{ class: ["card-text"] },
+					"Would you like to sign up for our newsletter to recieve updates about Oxyl?"),
+				app.$createElement("div", { class: ["text-center"] }, [
+					app.$createElement("a", {
+						class: ["btn", "btn-outline-success", "mx-1"],
+						on: {
+							click() {
+								notification.$el.remove();
+								notification.$destroy();
+
+								const options = createNotification([
+									app.$createElement("p",
+										{ class: ["card-text"] },
+										"How would you like to get these notifications?"),
+									app.$createElement("div", { class: ["form-check"] }, [
+										app.$createElement("input", {
+											attrs: { type: "checkbox", id: "email" },
+											class: ["form-check-input"]
+										}),
+										app.$createElement("label", {
+											attrs: { for: "email" },
+											class: ["form-check-label"]
+										}, "Email")
+									]),
+									app.$createElement("div", { class: ["form-check"] }, [
+										app.$createElement("input", {
+											attrs: { type: "checkbox", id: "dm" },
+											class: ["form-check-input"]
+										}),
+										app.$createElement("label", {
+											attrs: { for: "dm" },
+											class: ["form-check-label"]
+										}, "Discord Direct Message")
+									]),
+									app.$createElement("div", { class: ["text-center"] }, [
+										app.$createElement("a", {
+											class: ["btn", "btn-outline-primary", "mt-3"],
+											on: {
+												async click() {
+													options.$el.remove();
+													options.$destroy();
+
+													await apiCall.put("newsletter").send({
+														email: options.$el.querySelector("#email").checked,
+														dm: options.$el.querySelector("#dm").checked
+													});
+												}
+											}
+										}, "Confirm")
+									])
+								]);
+							}
+						}
+					}, "Yes"),
+					app.$createElement("a", {
+						class: ["btn", "btn-outline-danger", "mx-1"],
+						on: {
+							click() {
+								notification.$el.remove();
+								notification.$destroy();
+							}
+						}
+					}, "No")
+				])
+			]);
+		}
+
 		const { error, body: guilds } = await apiCall.get("oauth/discord/info")
 			.query({ path: "/users/@me/guilds" });
 		if(error) return;

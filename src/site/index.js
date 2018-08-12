@@ -14,6 +14,7 @@ const app = express();
 app.locals.config = config;
 app.locals.r = r;
 app.locals.redis = redis;
+app.disable("etag");
 app.set("env", process.env.NODE_ENV);
 app.set("x-powered-by", false);
 app.use(bodyParser.json());

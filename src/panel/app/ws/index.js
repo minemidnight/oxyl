@@ -17,7 +17,6 @@ export default async () => {
 
 	ws.onmessage = ({ data: message }) => {
 		message = JSON.parse(message);
-		console.log(message);
 		const { op } = message;
 
 		switch(op) {

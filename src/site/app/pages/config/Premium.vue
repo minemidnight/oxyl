@@ -96,7 +96,7 @@ export default {
 		openPopup() {
 			const url = "https://www.patreon.com/oauth2/authorize?response_type=code" +
 						`&redirect_uri=${encodeURIComponent(window.location.origin)}` +
-						`&client_id=${encodeURIComponent(this.clientID)}`;
+						`&client_id=${encodeURIComponent(this.clientID)}&state=patreon`;
 			const options = `dependent=yes,width=500,height=${window.innerHeight}`;
 
 			const popup = window.open(url, "_blank", options);

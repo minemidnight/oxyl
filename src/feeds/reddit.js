@@ -21,7 +21,7 @@ async function getNew(redis) {
 	}
 
 	newPosts = newPosts.map(({ data }) => data)
-		.filter(({ subreddit, id }) => validReddits.indexOf(subreddit) && !~alreadyPosted.includes(id));
+		.filter(({ subreddit, id }) => validReddits.includes(subreddit) && !alreadyPosted.includes(id));
 	newPosts.forEach(({ id }) => redis.set(`feeds:reddit:newPosted:${id}`, "", "EX", 604800));
 
 	return newPosts;
@@ -70,7 +70,7 @@ async function postNew(redis) {
 		const channels = JSON.parse(await redis.get(`feeds:reddit:new:${post.subreddit}`));
 		const embed = getPostEmbed(post);
 
-		channels.forEach((channel, i2) => createMessage(channel, embed, (i1 + i2) * 1250));
+		channels.forEach((channel, i2) => createMessage(channel, { embed }, (i1 + i2) * 1250));
 	});
 }
 
@@ -82,7 +82,7 @@ async function postTop(redis) {
 		const posts = await getTop(subreddit, redis);
 		posts.forEach((post, i2) => {
 			const embed = getPostEmbed(post);
-			channels.forEach((channel, i3) => createMessage(channel, embed, (i1 + i2 + i3) * 1250));
+			channels.forEach((channel, i3) => createMessage(channel, { embed }, (i1 + i2 + i3) * 1250));
 		});
 	});
 }

@@ -8,8 +8,9 @@ if(process.env.NODE_ENV === "development") Redis = require("ioredis-mock");
 else Redis = require("ioredis");
 const redis = new Redis({ db: config.redisDB });
 
-require("./reddit")(redis);
-require("./twitch")(redis);
+require("./reddit")(redis, r);
+require("./twitch")(redis, r);
+require("./medium")(redis, r);
 
 module.exports = async () => {
 	let feeds = await r.table("feeds").run();
@@ -31,5 +32,4 @@ module.exports = async () => {
 
 	await multi.exec();
 	process.send({ op: "ready" });
-	return { redis };
 };

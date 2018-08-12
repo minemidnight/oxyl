@@ -7,6 +7,7 @@ const path = require("path");
 const app = express();
 app.locals.r = require("../rethinkdb/index");
 
+app.disable("etag");
 app.set("env", process.env.NODE_ENV);
 app.set("x-powered-by", false);
 app.use(bodyParser.json());

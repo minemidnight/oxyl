@@ -33,7 +33,7 @@ function checkTypes(value, options, data) {
 		const actualType = value[key].type || value[key];
 		if(expectedType.includes("string")) {
 			continue;
-		} else if(actualType === "number" && (expectedType.indexOf("float") || ~expectedType.includes("integer"))) {
+		} else if(actualType === "number" && (expectedType.includes("float") || expectedType.includes("integer"))) {
 			continue;
 		} else if(!expectedType.includes(actualType)) {
 			data.checkResult.addError(`Expected type ${expectedType.join(" or ")} for ${key} in ${value.type}, ` +

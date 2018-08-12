@@ -21,38 +21,63 @@
 export default {
 	async beforeRouteEnter(to, from, next) {
 		if(to.query.state) {
-			if(!localStorage.token) {
-				const { app } = window.opener;
+			if(to.query.state.includes("patreon")) {
+				if(!localStorage.token) {
+					const { app } = window.opener;
+
+					if(window.opener) {
+						if(app.$route.name === "accounts") window.opener.location.reload();
+						else app.$router.push({ name: "accounts" });
+
+						window.close();
+						return next(false);
+					} else {
+						return next({ name: "accounts" });
+					}
+				}
+
+				const { code } = to.query;
+				await apiCall.post("oauth/patreon/callback")
+					.send({
+						discordToken: JSON.parse(localStorage.token),
+						code
+					});
 
 				if(window.opener) {
-					if(app.$route.name === "accounts") window.opener.location.reload();
-					else app.$router.push({ name: "accounts" });
+					const { app } = window.opener;
+
+					if(app.$route.name === "dashboard_premium") window.opener.location.reload();
+					else app.$router.push({ name: "dashboard_premium" });
 
 					window.close();
 					return next(false);
 				} else {
+					return next({ name: "dashboard_premium" });
+				}
+			} else if(to.query.state.includes("discord")) {
+				const accounts = localStorage.accounts ? JSON.parse(localStorage.accounts) : [];
+				const { code } = to.query;
+				const { error, body: token } = await apiCall.post("oauth/discord/callback").send({ code });
+				if(error) return next(false);
+
+				localStorage.accounts = JSON.stringify(accounts.concat(token));
+				if(window.opener) {
+					window.opener.location.reload();
+					window.close();
+					return next(false);
+				} else if(!to.query.state.includes("unsubscribe")) {
 					return next({ name: "accounts" });
 				}
 			}
 
-			const { code } = to.query;
-			await apiCall.post("oauth/patreon/callback")
-				.send({
-					discordToken: JSON.parse(localStorage.token),
-					code
+			if(to.query.state.includes("unsubscribe")) {
+				await apiCall.put("newsletter").send({
+					email: false,
+					dm: false
 				});
-
-			if(window.opener) {
-				const { app } = window.opener;
-
-				if(app.$route.name === "dashboard_premium") window.opener.location.reload();
-				else app.$router.push({ name: "dashboard_premium" });
-
-				window.close();
-				return next(false);
-			} else {
-				return next({ name: "dashboard_premium" });
 			}
+
+			return next();
 		} else if(to.query.guild_id) {
 			if(!window.opener) return next(false);
 			const { app } = window.opener;
@@ -62,23 +87,16 @@ export default {
 
 			window.close();
 			return next(false);
-		} else if(to.query.code) {
-			const accounts = localStorage.accounts ? JSON.parse(localStorage.accounts) : [];
-			const { code } = to.query;
-			const { error, body: token } = await apiCall.post("oauth/discord/callback").send({ code });
-			if(error) return next(false);
-
-			localStorage.accounts = JSON.stringify(accounts.concat(token));
-			if(window.opener) {
-				const { app } = window.opener;
-
-				if(app.$route.name === "accounts") window.opener.location.reload();
-				else app.$router.replace({ name: "accounts" });
-
-				window.close();
-				return next(false);
+		} else if(to.query.unsubscribe) {
+			if(!localStorage.token) {
+				return next({ name: "accounts", query: { unsubscribe: true } });
 			} else {
-				return next({ name: "accounts" });
+				await apiCall.put("newsletter").send({
+					email: false,
+					dm: false
+				});
+
+				return next();
 			}
 		} else {
 			return next();

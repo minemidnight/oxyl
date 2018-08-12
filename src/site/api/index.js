@@ -1,7 +1,10 @@
 const router = module.exports = require("express").Router(); // eslint-disable-line new-cap
 
-["reddit", "censors", "commands", "general",
-	"modlog", "music", "oauth", "oxylscript", "reddit",
+const getUser = require("./middleware/getUser");
+router.use(getUser());
+
+["reddit", "censors", "commands", "general", "modlog",
+	"music", "newsletter", "oauth", "oxylscript", "reddit",
 	"roblox", "roles", "twitch", "userlog", "premium"]
 	.forEach(route => router.use(`/${route.toLowerCase()}`, require(`./${route}`)));
 

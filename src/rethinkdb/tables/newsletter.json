@@ -1,0 +1,15 @@
+{
+	"name": "newsletter",
+	"primary": "userID",
+	"model": {
+		"userID": "user id",
+		"email": {
+			"enabled": "true/false",
+			"address": "john.smith@example.com"
+		},
+		"dm": {
+			"enabled": "true/false",
+			"channelID": "2941273219842313"
+		}
+	}
+}
