@@ -1,3 +1,6 @@
+# ARCHIVED
+## moved to [oxylbot](https://github.com/oxylbot)
+
 # oxyl
 
 Discord bot using Eris library
@@ -25,16 +28,27 @@ Example `public-config.json`:
 }
 ```
 beta is optional stating whether or not the bot is in beta, if true then some stuff is disabled
+
 creators is required and is an array of user ids
+
 datadog is optional if you want to send stats to datadog
+
 databaseName is optional, if you want a different database name besides Oxyl, set it there
+
 defaultInvitePermissionNumber is required and is used for the invite command
+
 donator is optional to say thank you for donating and add a role to a member in a server
+
 prefixes is an array of prefixes, mention is replaced with a bot mention
+
 postStats is not required, but if true see private-config to set the site tokens
+
 serverChannel is not required, sends server joins/leaves to a channel
+
 shardsPerWorker specifies how many shards should be put on each worker
+
 updates is all optional which sets up the update command
+
 websocketServer is optional and states whether or not to start a web socket server on 7025. should only be used if done with oxyl-site too
 
 
@@ -53,12 +67,22 @@ Example `private-config.json`:
 }
 ```
 database is optional but bot will most likely break without it. this is passed to rethinkdbdash login
+
 *Posting stuff - if a key is not present it will just not post to the site it corresponds to, if you have postStats off there is no reason for any of the keys*
+
 dbotsKey is to post to https://bots.discord.pw
+
 dbotsOrgKey is to post to http://discordbots.org
+
 carbonKey is to post to https://www.carbonitex.net/discord/bots
+
 googleKeys is an array of keys with the youtube data api v3 enabled and required for the bot to work correctly
+
 secret is only required if you use the web socket server
+
 sentryLink is optional, but if you want to use sentry.io put the link there
+
 token is required for the bot to log in
+
 webhook is optional for status about restarts and stuff
+
